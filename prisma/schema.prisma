@@ -1,0 +1,427 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════
+// USERS
+// ═══════════════════════════════════════
+model User {
+  id            Int       @id @default(autoincrement())
+  uuid          String    @unique @default(cuid())
+  name          String    @db.VarChar(100)
+  email         String    @unique @db.VarChar(255)
+  phone         String?   @unique @db.VarChar(15)
+  passwordHash  String?   @db.Text
+  role          UserRole  @default(TENANT)
+  avatar        String?   @db.Text
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  googleId      String?   @unique @db.VarChar(255)
+  referralCode  String?   @unique @db.VarChar(20)
+  referredBy    Int?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  listings      Listing[]
+  subscriptions Subscription[]
+  leads         Lead[]           @relation("TenantLeads")
+  reviews       Review[]
+  savedListings SavedListing[]
+  otpCodes      OtpCode[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+  @@map("users")
+}
+
+enum UserRole {
+  TENANT
+  OWNER
+  ADMIN
+}
+
+// ═══════════════════════════════════════
+// CITIES & LOCALITIES
+// ═══════════════════════════════════════
+model City {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(100)
+  slug       String     @unique @db.VarChar(120)
+  state      String     @db.VarChar(100)
+  isActive   Boolean    @default(true)
+  priority   Int        @default(0)
+  imageUrl   String?    @db.Text
+  latitude   Decimal?   @db.Decimal(10, 8)
+  longitude  Decimal?   @db.Decimal(11, 8)
+  createdAt  DateTime   @default(now())
+
+  localities Locality[]
+  listings   Listing[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@map("cities")
+}
+
+model Locality {
+  id        Int      @id @default(autoincrement())
+  cityId    Int
+  name      String   @db.VarChar(150)
+  slug      String   @db.VarChar(180)
+  isActive  Boolean  @default(true)
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+
+  city      City     @relation(fields: [cityId], references: [id])
+  listings  Listing[]
+
+  @@unique([cityId, slug])
+  @@index([cityId])
+  @@map("localities")
+}
+
+// ═══════════════════════════════════════
+// LISTINGS
+// ═══════════════════════════════════════
+model Listing {
+  id              Int           @id @default(autoincrement())
+  uuid            String        @unique @default(cuid())
+  slug            String        @unique @db.VarChar(255)
+  ownerId         Int
+  cityId          Int
+  localityId      Int?
+  title           String        @db.VarChar(200)
+  description     String        @db.Text
+  pgType          PGType
+  genderAllowed   GenderType
+  address         String        @db.VarChar(500)
+  landmark        String?       @db.VarChar(200)
+  pincode         String        @db.VarChar(10)
+  latitude        Decimal?      @db.Decimal(10, 8)
+  longitude       Decimal?      @db.Decimal(11, 8)
+  priceMin        Int
+  priceMax        Int
+  securityDeposit Int?
+  foodIncluded    Boolean       @default(false)
+  totalRooms      Int?
+  availableRooms  Int?
+  totalBeds       Int?
+  availableBeds   Int?
+  status          ListingStatus @default(PENDING)
+  isVerified      Boolean       @default(false)
+  isFeatured      Boolean       @default(false)
+  featuredUntil   DateTime?
+  isActive        Boolean       @default(true)
+  metaTitle       String?       @db.VarChar(160)
+  metaDesc        String?       @db.VarChar(320)
+  totalViews      Int           @default(0)
+  totalLeads      Int           @default(0)
+  totalReviews    Int           @default(0)
+  avgRating       Decimal       @default(0) @db.Decimal(3, 2)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  owner      User             @relation(fields: [ownerId], references: [id])
+  city       City             @relation(fields: [cityId], references: [id])
+  locality   Locality?        @relation(fields: [localityId], references: [id])
+  photos     ListingPhoto[]
+  amenities  ListingAmenity[]
+  leads      Lead[]
+  reviews    Review[]
+  saved      SavedListing[]
+  boosts     ListingBoost[]
+  analytics  ListingAnalytic[]
+
+  @@index([cityId, status, isActive])
+  @@index([cityId, localityId, status])
+  @@index([priceMin, priceMax])
+  @@index([genderAllowed])
+  @@index([isFeatured, featuredUntil])
+  @@index([ownerId])
+  @@index([slug])
+  @@index([status, isVerified, isActive])
+  @@map("listings")
+}
+
+enum PGType {
+  SINGLE_ROOM
+  DOUBLE_SHARING
+  TRIPLE_SHARING
+  DORMITORY
+  STUDIO
+  ENTIRE_FLAT
+}
+
+enum GenderType {
+  BOYS
+  GIRLS
+  COED
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  REJECTED
+  EXPIRED
+}
+
+// ═══════════════════════════════════════
+// PHOTOS
+// ═══════════════════════════════════════
+model ListingPhoto {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  url       String   @db.Text
+  publicId  String   @db.VarChar(255)
+  caption   String?  @db.VarChar(200)
+  sortOrder Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@map("listing_photos")
+}
+
+// ═══════════════════════════════════════
+// AMENITIES
+// ═══════════════════════════════════════
+model Amenity {
+  id       Int              @id @default(autoincrement())
+  name     String           @unique @db.VarChar(100)
+  slug     String           @unique @db.VarChar(100)
+  icon     String           @db.VarChar(50)
+  category String           @db.VarChar(50)
+  listings ListingAmenity[]
+
+  @@map("amenities")
+}
+
+model ListingAmenity {
+  listingId Int
+  amenityId Int
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  amenity   Amenity @relation(fields: [amenityId], references: [id])
+
+  @@id([listingId, amenityId])
+  @@index([listingId])
+  @@map("listing_amenities")
+}
+
+// ═══════════════════════════════════════
+// PLANS & SUBSCRIPTIONS
+// ═══════════════════════════════════════
+model Plan {
+  id             Int            @id @default(autoincrement())
+  name           String         @db.VarChar(50)
+  slug           String         @unique @db.VarChar(50)
+  price          Int
+  yearlyPrice    Int?
+  maxListings    Int
+  maxPhotos      Int
+  features       Json
+  razorpayPlanId String?        @db.VarChar(100)
+  isActive       Boolean        @default(true)
+  subscriptions  Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                Int          @id @default(autoincrement())
+  userId            Int
+  planId            Int
+  status            SubStatus    @default(ACTIVE)
+  billingCycle      BillingCycle @default(MONTHLY)
+  amount            Int
+  razorpaySubId     String?      @db.VarChar(100)
+  razorpayOrderId   String?      @db.VarChar(100)
+  razorpayPaymentId String?      @db.VarChar(100)
+  startDate         DateTime
+  endDate           DateTime
+  autoRenew         Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id])
+  plan     Plan      @relation(fields: [planId], references: [id])
+  invoices Invoice[]
+
+  @@index([userId, status])
+  @@index([endDate])
+  @@map("subscriptions")
+}
+
+enum SubStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+  TRIAL
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+// ═══════════════════════════════════════
+// INVOICES
+// ═══════════════════════════════════════
+model Invoice {
+  id              Int          @id @default(autoincrement())
+  subscriptionId  Int
+  amount          Int
+  currency        String       @default("INR") @db.VarChar(5)
+  status          String       @db.VarChar(20)
+  razorpayOrderId String?      @db.VarChar(100)
+  razorpayPayId   String?      @db.VarChar(100)
+  invoiceDate     DateTime     @default(now())
+  paidAt          DateTime?
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([subscriptionId])
+  @@map("invoices")
+}
+
+// ═══════════════════════════════════════
+// LISTING BOOSTS
+// ═══════════════════════════════════════
+model ListingBoost {
+  id              Int       @id @default(autoincrement())
+  listingId       Int
+  boostType       BoostType
+  amount          Int
+  startDate       DateTime
+  endDate         DateTime
+  razorpayOrderId String?   @db.VarChar(100)
+  razorpayPayId   String?   @db.VarChar(100)
+  isPaid          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@index([listingId, endDate])
+  @@map("listing_boosts")
+}
+
+enum BoostType {
+  SPOTLIGHT
+  FEATURED
+  HOMEPAGE
+  WHATSAPP_BLAST
+}
+
+// ═══════════════════════════════════════
+// LEADS
+// ═══════════════════════════════════════
+model Lead {
+  id        Int        @id @default(autoincrement())
+  listingId Int
+  tenantId  Int?
+  name      String     @db.VarChar(100)
+  phone     String     @db.VarChar(15)
+  email     String?    @db.VarChar(255)
+  message   String?    @db.Text
+  source    LeadSource @default(WEBSITE)
+  isRead    Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  tenant  User?   @relation("TenantLeads", fields: [tenantId], references: [id])
+
+  @@index([listingId, createdAt])
+  @@index([tenantId])
+  @@map("leads")
+}
+
+enum LeadSource {
+  WEBSITE
+  WHATSAPP
+  PHONE
+  APP
+}
+
+// ═══════════════════════════════════════
+// REVIEWS
+// ═══════════════════════════════════════
+model Review {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  userId     Int
+  rating     Int
+  comment    String?  @db.Text
+  isVerified Boolean  @default(false)
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([listingId, userId])
+  @@index([listingId, isApproved])
+  @@map("reviews")
+}
+
+// ═══════════════════════════════════════
+// SAVED LISTINGS
+// ═══════════════════════════════════════
+model SavedListing {
+  userId    Int
+  listingId Int
+  savedAt   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@id([userId, listingId])
+  @@map("saved_listings")
+}
+
+// ═══════════════════════════════════════
+// ANALYTICS (daily)
+// ═══════════════════════════════════════
+model ListingAnalytic {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  date      DateTime @db.Date
+  views     Int      @default(0)
+  leads     Int      @default(0)
+  saves     Int      @default(0)
+  whatsapps Int      @default(0)
+
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@unique([listingId, date])
+  @@index([listingId, date])
+  @@map("listing_analytics")
+}
+
+// ═══════════════════════════════════════
+// OTP CODES
+// ═══════════════════════════════════════
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  phone     String   @db.VarChar(15)
+  code      String   @db.VarChar(6)
+  purpose   String   @db.VarChar(20)
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([phone, expiresAt])
+  @@map("otp_codes")
+}

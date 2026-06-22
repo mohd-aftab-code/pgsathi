@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — Tailwind v4 Theme
+   ═══════════════════════════════════════════ */
+@theme {
+  /* Primary — Deep Violet */
+  --color-primary:       #6d28d9;
+  --color-primary-light: #7c3aed;
+  --color-primary-dark:  #4c1d95;
+  --color-primary-50:    #f5f3ff;
+  --color-primary-100:   #ede9fe;
+  --color-primary-200:   #ddd6fe;
+  --color-primary-300:   #c4b5fd;
+  --color-primary-400:   #a78bfa;
+  --color-primary-500:   #8b5cf6;
+  --color-primary-600:   #7c3aed;
+  --color-primary-700:   #6d28d9;
+  --color-primary-800:   #5b21b6;
+  --color-primary-900:   #4c1d95;
+  --color-primary-950:   #2e1065;
+
+  /* Secondary — Warm Orange */
+  --color-secondary:     #ea580c;
+  --color-accent:        #f97316;
+
+  /* Success / Warning / Error */
+  --color-success:       #16a34a;
+  --color-warning:       #d97706;
+  --color-error:         #dc2626;
+
+  /* Neutrals */
+  --color-neutral-50:  #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-700: #334155;
+  --color-neutral-900: #0f172a;
+
+  /* Typography */
+  --font-sans:     'Inter', system-ui, sans-serif;
+  --font-heading:  'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Radius */
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-card:      0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-hover:     0 4px 20px rgba(109,40,217,0.12), 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-glow:      0 0 30px rgba(109,40,217,0.25);
+}
+
+/* ═══════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════ */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-neutral-50);
+    color: var(--color-neutral-900);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-neutral-900);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   COMPONENT STYLES
+   ═══════════════════════════════════════════ */
+@layer components {
+
+  /* ── Buttons ─────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--color-secondary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background-color: #c2410c; }
+  .btn-secondary:active { transform: scale(0.98); }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-primary);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background-color: var(--color-primary-50); }
+  .btn-outline:active { transform: scale(0.98); }
+
+  .btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #25D366;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
+  }
+  .btn-whatsapp:hover { background-color: #1ebe5d; }
+  .btn-whatsapp:active { transform: scale(0.98); }
+
+  /* ── Cards ───────────────────────── */
+  .card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--color-neutral-100);
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+
+  .card-hover {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--color-neutral-100);
+    transition: box-shadow 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  .card-hover:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+  }
+
+  /* ── Badges ──────────────────────── */
+  .badge-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: #f0fdf4;
+    color: var(--color-success);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+  }
+
+  .badge-featured {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+  }
+
+  .badge-boys   { display: inline-flex; align-items: center; background: #eff6ff; color: #1d4ed8; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 9999px; }
+  .badge-girls  { display: inline-flex; align-items: center; background: #fdf2f8; color: #be185d; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 9999px; }
+  .badge-coed   { display: inline-flex; align-items: center; background: var(--color-primary-50); color: var(--color-primary); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 9999px; }
+
+  /* ── Input ───────────────────────── */
+  .input-base {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--color-neutral-200);
+    background: white;
+    color: var(--color-neutral-900);
+    font-size: 0.9375rem;
+    font-family: var(--font-sans);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  .input-base::placeholder { color: var(--color-neutral-400); }
+  .input-base:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(109,40,217,0.1);
+  }
+
+  /* ── Layout helpers ──────────────── */
+  .container-max { max-width: 80rem; margin: 0 auto; }
+  .section-padding { padding-left: 1rem; padding-right: 1rem; }
+
+  .section-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--color-neutral-900);
+    letter-spacing: -0.025em;
+  }
+  
+  .section-subtitle {
+    font-size: 1.125rem;
+    color: var(--color-neutral-500);
+    line-height: 1.6;
+  }
+
+  @media (min-width: 640px) {
+    .section-padding { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-title { font-size: 2.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .section-padding { padding-left: 2rem; padding-right: 2rem; }
+  }
+
+  /* ── Skeleton ────────────────────── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-neutral-100) 25%, var(--color-neutral-200) 50%, var(--color-neutral-100) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── Scrollbar hide ──────────────── */
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes skeleton-pulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in   { animation: fadeIn 0.5s ease-in-out; }
+.animate-slide-up  { animation: slideUp 0.4s ease-out; }
+.animate-slide-down { animation: slideDown 0.3s ease-out; }
