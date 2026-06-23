@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "send") {
-      // 1. Generate 6 digit OTP (Hardcoded to 123456 for testing)
-      const otp = "123456";
+      // 1. Generate 6 digit random OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
       // 2. Set expiry (5 minutes)
       const expiresAt = new Date();
@@ -28,13 +28,42 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // 4. Send via Email (since we don't have SMS API yet)
+      // Temporary for testing - ALWAYS log OTP in console
+      console.log(`\n========================================`);
+      console.log(`[DEV MODE] OTP for ${phone} is: ${otp}`);
+      console.log(`========================================\n`);
+
+      // 4. Send via Fast2SMS (If API Key is available)
+      const fast2smsKey = process.env.FAST2SMS_API_KEY;
+
+      if (fast2smsKey) {
+        try {
+          const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+            method: "POST",
+            headers: {
+              "authorization": fast2smsKey,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              route: "q", // "q" is for Quick SMS (no DLT required for testing)
+              message: `Your PGSathi verification OTP is ${otp}. Do not share this with anyone.`,
+              language: "english",
+              flash: 0,
+              numbers: phone,
+            })
+          });
+          
+          const result = await response.json();
+          // console.log("Fast2SMS Response:", result);
+        } catch (smsError) {
+          console.error("Fast2SMS Failed:", smsError);
+        }
+      }
+
+      // Send via Email as backup if email is provided
       if (email && name) {
         await sendOtpEmail(email, otp, name);
       }
-
-      // Temporary for testing - delete in production
-      console.log(`[DEV] OTP for ${phone} is ${otp}`);
 
       return NextResponse.json({ 
         success: true, 
