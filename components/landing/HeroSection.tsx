@@ -17,16 +17,16 @@ export default async function HeroSection() {
       <div className="container-max section-padding relative z-10 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium mb-8 animate-fade-in">
           <span className="flex h-2 w-2 rounded-full bg-green-400"></span>
-          Trusted by 50,000+ Students & Professionals
+          Trusted by 50,000+ Students & Professionals in NCR
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight animate-slide-up text-white drop-shadow-md" style={{ textWrap: "balance" }}>
-          Apna PG, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">Apna Sathi</span>
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight animate-slide-up text-white drop-shadow-md" style={{ textWrap: "balance" }}>
+          Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">Zero Brokerage PG</span> in Delhi NCR
         </h1>
         
-        <p className="text-lg md:text-xl text-primary-100 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "100ms" }}>
-          India's most trusted platform for verified PGs. Zero brokerage, transparent pricing, and direct owner contact.
-        </p>
+        <h2 className="text-lg md:text-2xl font-medium text-primary-100 mb-10 max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: "100ms", textWrap: "balance" }}>
+          PGSathi — India's most trusted platform for verified Boys & Girls PGs. Direct owner contact. No hidden fees.
+        </h2>
 
         {/* Real Search Bar Component */}
         <div className="max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: "200ms" }}>

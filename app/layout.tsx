@@ -24,22 +24,22 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi — Apna PG, Apna Sathi | Best PG Finder in India",
+    default: "PGSathi — Zero Brokerage PG in Delhi NCR, Noida & Gurgaon",
     template: "%s | PGSathi",
   },
   description:
-    "India ka sabse trusted PG dhundne ka platform. Verified PG listings for boys, girls and co-ed in Kota, Jaipur, Pune, Indore and more cities. No broker fees.",
+    "India's #1 verified platform for finding zero brokerage PGs, hostels, and rooms for rent directly from owners. Discover premium Boys, Girls, and Co-ed PGs in Delhi, Noida, and Gurgaon.",
   keywords: [
-    "PG in Kota",
-    "paying guest near me",
-    "PG for boys",
-    "PG for girls",
-    "student accommodation",
-    "PG rooms",
-    "PG without broker",
-    "affordable PG",
-    "hostel rooms",
-    "PG Sathi",
+    "Zero Brokerage PG in Noida",
+    "Direct Owner Boys PG in Delhi NCR",
+    "Verified Girls PG in Gurgaon without broker",
+    "Premium PG with Food in Knowledge Park Noida",
+    "Affordable PG in Mukherjee Nagar",
+    "Best PG in Sector 62 Noida",
+    "Paying Guest in South Delhi",
+    "Rooms for rent in Gurgaon DLF",
+    "PG for students in North Campus",
+    "PGSathi",
   ],
   authors: [{ name: "PGSathi" }],
   creator: "PGSathi",
@@ -48,22 +48,22 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi — Apna PG, Apna Sathi",
+    title: "PGSathi — Zero Brokerage PGs in NCR",
     description:
-      "India ka sabse trusted PG dhundne ka platform. Verified listings, no broker fees.",
+      "Find 100% verified PGs in Delhi, Noida, and Gurgaon without paying 1 month's rent as brokerage. Connect directly with owners.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PGSathi — Find Your Perfect PG",
+        alt: "PGSathi — Find Your Perfect Zero Brokerage PG",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PGSathi — Apna PG, Apna Sathi",
-    description: "Find verified PGs in your city. No broker. No hassle.",
+    title: "PGSathi — Verified PGs in Delhi NCR",
+    description: "Connect directly with owners. No brokers. No hidden fees.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -82,6 +82,9 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "https://pgsathi.in",
+  }
 };
 
 export const viewport: Viewport = {
@@ -95,11 +98,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "PGSathi",
+    "image": "https://pgsathi.in/images/logo.jpeg",
+    "description": "India's #1 verified platform for finding zero brokerage PGs directly from owners. Operating primarily in Delhi NCR.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Sector 62",
+      "addressLocality": "Noida",
+      "addressRegion": "UP",
+      "postalCode": "201309",
+      "addressCountry": "IN"
+    },
+    "telephone": "+919696110243",
+    "email": "pgsathi@gmail.com",
+    "url": "https://pgsathi.in"
+  };
+
   return (
     <html
       lang="en"
       className={`${inter.variable} ${plusJakarta.variable} ${notoDevanagari.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen bg-neutral-50 antialiased">
         {children}
       </body>
