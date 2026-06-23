@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { LayoutDashboard, Building2, Star, CreditCard, MessageSquare, Settings } from "lucide-react";
+import LogoutButton from "@/components/common/LogoutButton";
 
 export const metadata = {
   title: "Owner Dashboard - PGSathi",
@@ -69,6 +70,10 @@ export default async function OwnerDashboardLayout({
                   );
                 })}
               </nav>
+              
+              <div className="mt-2">
+                <LogoutButton />
+              </div>
             </div>
           </aside>
 

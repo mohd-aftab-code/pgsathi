@@ -124,7 +124,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      console.log("[DEBUG] jwt callback - token:", token, "user:", user);
       if (user) {
         token.id = user.id;
         token.uuid = user.uuid;
@@ -133,7 +132,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      console.log("[DEBUG] session callback - session:", session, "token:", token);
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.uuid = token.uuid as string;

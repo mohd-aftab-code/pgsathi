@@ -37,7 +37,7 @@ export function proxy(request: NextRequest) {
   // Redirect authenticated users away from auth pages
   if (AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
     if (isAuthenticated) {
-      return NextResponse.redirect(new URL("/dashboard/owner", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
