@@ -84,6 +84,9 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   alternates: {
     canonical: "https://pgsathi.in",
+  },
+  verification: {
+    google: "ZaMEO4rMht0Z5dIPt2AeWfLWDCu25rMA8baxz77ON28",
   }
 };
 
