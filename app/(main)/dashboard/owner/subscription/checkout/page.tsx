@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Check, ShieldCheck, Loader2, ArrowLeft } from "lucide-react";
+import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
+import Script from "next/script";
 
 const PLANS = {
   free: { name: "Starter", price: 0, duration: "30 Days" },
@@ -20,37 +21,110 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
 
+  const totalAmount = selectedPlan.price + Math.round(selectedPlan.price * 0.18);
+
   const handlePayment = async () => {
+    if (selectedPlan.price === 0) {
+      // Free plan logic
+      activateSubscription({});
+      return;
+    }
+
     setLoading(true);
     setPaymentStep("PROCESSING");
 
-    // Simulate payment gateway delay
-    setTimeout(async () => {
-      try {
-        const res = await fetch("/api/subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ planId, amount: selectedPlan.price }),
-        });
+    try {
+      // 1. Create order on backend
+      const res = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: totalAmount }),
+      });
 
-        if (res.ok) {
-          setPaymentStep("SUCCESS");
-          // Redirect after showing success for 2 seconds
-          setTimeout(() => {
-            router.push("/dashboard/owner/subscription");
-            router.refresh();
-          }, 2000);
-        } else {
-          alert("Payment failed. Please try again.");
-          setPaymentStep("IDLE");
-          setLoading(false);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(`Failed to create order: ${data.message}`);
+        setPaymentStep("IDLE");
+        setLoading(false);
+        return;
+      }
+
+      // 2. Initialize Razorpay
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
+        amount: totalAmount * 100,
+        currency: "INR",
+        name: "PGSathi",
+        description: `${selectedPlan.name} Plan Subscription`,
+        order_id: data.orderId,
+        handler: function (response: any) {
+          // 3. Verify and activate on success
+          activateSubscription({
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          });
+        },
+        prefill: {
+          name: "Owner",
+          email: "owner@pgsathi.in",
+          contact: "9999999999"
+        },
+        theme: {
+          color: "#f97316" // Tailwind orange-500
+        },
+        modal: {
+          ondismiss: function() {
+            setPaymentStep("IDLE");
+            setLoading(false);
+          }
         }
-      } catch (error) {
-        alert("Something went wrong");
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        alert(`Payment Failed: ${response.error.description}`);
+        setPaymentStep("IDLE");
+        setLoading(false);
+      });
+      rzp.open();
+
+    } catch (error) {
+      alert("Something went wrong initializing payment");
+      setPaymentStep("IDLE");
+      setLoading(false);
+    }
+  };
+
+  const activateSubscription = async (paymentDetails: any) => {
+    try {
+      const res = await fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          planId, 
+          amount: selectedPlan.price,
+          ...paymentDetails 
+        }),
+      });
+
+      if (res.ok) {
+        setPaymentStep("SUCCESS");
+        setTimeout(() => {
+          router.push("/dashboard/owner/subscription");
+          router.refresh();
+        }, 2000);
+      } else {
+        const data = await res.json();
+        alert(`Activation failed: ${data.message}`);
         setPaymentStep("IDLE");
         setLoading(false);
       }
-    }, 2500);
+    } catch (error) {
+      alert("Failed to activate subscription after payment.");
+      setPaymentStep("IDLE");
+      setLoading(false);
+    }
   };
 
   if (paymentStep === "SUCCESS") {
@@ -68,6 +142,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      
       <Link href="/pricing" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 mb-8 font-medium transition-colors">
         <ArrowLeft size={18} /> Back to Plans
       </Link>
@@ -107,12 +183,12 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between pt-3 border-t border-neutral-100 text-lg font-bold text-neutral-900">
               <span>Total Amount</span>
-              <span>₹{selectedPlan.price + Math.round(selectedPlan.price * 0.18)}</span>
+              <span>₹{totalAmount}</span>
             </div>
           </div>
         </div>
 
-        {/* Right: Payment Simulation */}
+        {/* Right: Payment Gateway */}
         <div>
           <h2 className="text-2xl font-bold text-neutral-900 mb-6">Complete Payment</h2>
           
@@ -120,21 +196,25 @@ export default function CheckoutPage() {
             {paymentStep === "PROCESSING" && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in">
                 <Loader2 size={40} className="animate-spin text-primary-600 mb-4" />
-                <p className="font-bold text-neutral-800">Processing Payment...</p>
-                <p className="text-sm text-neutral-500 mt-1 text-center px-6">Please do not close this window or click back.</p>
+                <p className="font-bold text-neutral-800">Opening Secure Payment...</p>
+                <p className="text-sm text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
               </div>
             )}
 
-            <p className="text-neutral-500 text-sm mb-6 bg-blue-50 text-blue-700 p-4 rounded-xl border border-blue-100">
-              <strong>Simulated Payment:</strong> Since this is a test environment, clicking "Pay Now" will simulate a successful transaction without charging any real money.
-            </p>
+            <div className="mb-6 bg-green-50 p-4 rounded-xl border border-green-100 flex items-start gap-3">
+              <CreditCard className="text-green-600 shrink-0 mt-0.5" size={20} />
+              <div>
+                <strong className="text-green-800 block mb-1">UPI & Cards Accepted</strong>
+                <p className="text-green-700 text-sm">Pay securely via Google Pay, PhonePe, Paytm, or Credit/Debit cards.</p>
+              </div>
+            </div>
 
             <button
               onClick={handlePayment}
               disabled={loading}
               className="w-full h-14 bg-neutral-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
-              Pay ₹{selectedPlan.price + Math.round(selectedPlan.price * 0.18)} Now
+              Pay ₹{totalAmount} via Razorpay
             </button>
             
             <div className="flex items-center justify-center gap-2 mt-6 text-xs text-neutral-400 font-medium">

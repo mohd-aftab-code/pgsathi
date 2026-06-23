@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,14 +11,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const { planId, amount } = await req.json();
+    const { planId, amount, razorpayPaymentId, razorpayOrderId, razorpaySignature } = await req.json();
 
     if (!planId) {
       return NextResponse.json({ success: false, message: "Missing planId" }, { status: 400 });
     }
 
-    // Since this is a simulated payment, we will just create a basic subscription directly.
-    // In a real app, you would verify the Razorpay signature here.
+    // Verify signature for paid plans
+    if (amount > 0 && razorpayPaymentId && razorpayOrderId && razorpaySignature) {
+      const generatedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET as string)
+        .update(razorpayOrderId + "|" + razorpayPaymentId)
+        .digest("hex");
+
+      if (generatedSignature !== razorpaySignature) {
+        return NextResponse.json({ success: false, message: "Invalid payment signature" }, { status: 400 });
+      }
+    }
 
     // 1. Get the plan from DB, or fallback to dummy data if plans aren't seeded
     let plan = await db.plan.findUnique({ where: { slug: planId } });
@@ -31,7 +41,7 @@ export async function POST(req: NextRequest) {
           price: amount,
           maxListings: planId === "pro" ? 999 : 5,
           maxPhotos: planId === "pro" ? 99 : 10,
-          features: {},
+          features: [],
         }
       });
     }
@@ -49,9 +59,9 @@ export async function POST(req: NextRequest) {
         amount: amount,
         startDate: new Date(),
         endDate: endDate,
-        razorpaySubId: `sim_sub_${Date.now()}`,
-        razorpayOrderId: `sim_order_${Date.now()}`,
-        razorpayPaymentId: `sim_pay_${Date.now()}`,
+        razorpaySubId: razorpayOrderId || `sim_sub_${Date.now()}`,
+        razorpayOrderId: razorpayOrderId || `sim_order_${Date.now()}`,
+        razorpayPaymentId: razorpayPaymentId || `sim_pay_${Date.now()}`,
       }
     });
 
@@ -64,8 +74,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data: subscription });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Subscription Error:", error);
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message || "Internal server error" }, { status: 500 });
   }
 }
