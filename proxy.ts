@@ -14,8 +14,12 @@ const AUTH_ROUTES = ["/login", "/register", "/verify-otp", "/forgot-password"];
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Get session token (NextAuth sets this cookie)
+  // Get session token (NextAuth v5 sets this cookie)
+  // v5 uses "authjs.session-token" (not "next-auth.session-token" which was v4)
   const sessionToken =
+    request.cookies.get("authjs.session-token")?.value ||
+    request.cookies.get("__Secure-authjs.session-token")?.value ||
+    // Fallback for v4 style just in case
     request.cookies.get("next-auth.session-token")?.value ||
     request.cookies.get("__Secure-next-auth.session-token")?.value;
 

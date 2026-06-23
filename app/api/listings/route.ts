@@ -87,7 +87,12 @@ export async function POST(req: NextRequest) {
         status: "PENDING", // Admin will publish later
         
         photos: {
-          create: (data.photos || []).map((url: string) => ({ url }))
+          create: (data.photos || []).map((photo: { url: string; publicId: string }, index: number) => ({
+            url: photo.url,
+            publicId: photo.publicId || `pgsathi/listings/${Date.now()}_${index}`,
+            sortOrder: index,
+            isPrimary: index === 0,
+          }))
         }
       },
     });

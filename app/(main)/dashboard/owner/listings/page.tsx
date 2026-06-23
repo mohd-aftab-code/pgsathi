@@ -76,8 +76,13 @@ export default async function OwnerListingsPage() {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-3">
-                        <Link href={`/pg/${listing.slug}`} className="text-neutral-400 hover:text-primary-600 transition-colors" title="View">
-                          <Eye size={18} />
+                        <Link 
+                          href={`/pg/${listing.slug}`} 
+                          className="text-neutral-400 hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-medium" 
+                          title={listing.status === "PENDING" ? "Preview (Only you can see)" : "View Live"}
+                        >
+                          <Eye size={16} />
+                          {listing.status === "PENDING" ? "Preview" : "View"}
                         </Link>
                         <Link href={`/dashboard/owner/listings/${listing.id}/edit`} className="text-neutral-400 hover:text-blue-600 transition-colors" title="Edit">
                           <Edit size={18} />

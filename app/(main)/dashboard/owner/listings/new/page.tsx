@@ -42,53 +42,92 @@ const ROOM_AMENITIES_LIST = [
   { id: "cupboard", label: "Cupboard", icon: "archive" },
 ];
 
+const DRAFT_KEY = "pgsathi_new_listing_draft";
+
+// Defined at module level so TypeScript can infer FormData type
+const DEFAULT_FORM = {
+  // Step 1: Basic
+  title: "",
+  description: "",
+  pgType: "SINGLE_ROOM",
+  genderAllowed: "BOYS",
+  
+  // Step 2: Location
+  cityId: "",
+  localityId: "",
+  address: "",
+  pincode: "",
+  landmark: "",
+  latitude: null as number | null,
+  longitude: null as number | null,
+
+  // Step 3: PG Details
+  availableFrom: "",
+  noticePeriod: "No",
+  foodIncluded: "No",
+  gateClosingTime: "No",
+  preferredGuest: "Both",
+  rentLockIn: true,
+  noGuardiansStay: true,
+
+  // Step 4: Amenities
+  laundryService: "No",
+  roomCleaning: "No",
+  parking: "No",
+  selectedAmenities: [] as string[],
+  selectedRoomAmenities: [] as string[],
+
+  // Step 5: Pricing
+  priceMin: "",
+  priceMax: "",
+  securityDeposit: "",
+  photos: [] as { url: string; publicId: string }[],
+  
+  // Internal: track auto-filled address from map
+  _autoAddress: "",
+};
+
+type FormData = typeof DEFAULT_FORM;
+
 export default function NewListingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [cities, setCities] = useState<any[]>([]);
   const [localities, setLocalities] = useState<any[]>([]);
   const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({
-    // Step 1: Basic
-    title: "",
-    description: "",
-    pgType: "SINGLE_ROOM",
-    genderAllowed: "BOYS",
-    
-    // Step 2: Location
-    cityId: "",
-    localityId: "",
-    address: "",
-    pincode: "",
-    landmark: "",
-    latitude: null as number | null,
-    longitude: null as number | null,
-
-    // Step 3: PG Details
-    availableFrom: "",
-    noticePeriod: "No",
-    foodIncluded: "No",
-    gateClosingTime: "No",
-    preferredGuest: "Both",
-    rentLockIn: true,
-    noGuardiansStay: true,
-
-    // Step 4: Amenities
-    laundryService: "No",
-    roomCleaning: "No",
-    parking: "No",
-    selectedAmenities: [] as string[],
-    selectedRoomAmenities: [] as string[],
-
-    // Step 5: Pricing
-    priceMin: "",
-    priceMax: "",
-    securityDeposit: "",
-    photos: [] as string[],
+  // Load saved draft from localStorage on first render
+  const [currentStep, setCurrentStep] = useState<StepType>(() => {
+    if (typeof window === "undefined") return 1;
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return (parsed.currentStep as StepType) || 1;
+      }
+    } catch {}
+    return 1;
   });
+
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (typeof window === "undefined") return DEFAULT_FORM;
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...DEFAULT_FORM, ...parsed.formData } as FormData;
+      }
+    } catch {}
+    return DEFAULT_FORM;
+  });
+
+  // Auto-save draft to localStorage on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ currentStep, formData }));
+    } catch {}
+  }, [currentStep, formData]);
 
   useEffect(() => {
     fetch("/api/cities?localities=true")
@@ -148,7 +187,7 @@ export default function NewListingPage() {
 
     try {
       const files = Array.from(e.target.files);
-      const uploadedUrls: string[] = [];
+      const uploaded: { url: string; publicId: string }[] = [];
 
       for (const file of files) {
         const fileData = new FormData();
@@ -160,13 +199,13 @@ export default function NewListingPage() {
         });
         const data = await res.json();
         if (data.success) {
-          uploadedUrls.push(data.url);
+          uploaded.push({ url: data.url, publicId: data.publicId });
         }
       }
 
       setFormData(prev => ({
         ...prev,
-        photos: [...prev.photos, ...uploadedUrls]
+        photos: [...prev.photos, ...uploaded]
       }));
     } catch (error) {
       setError("Failed to upload image. Please try again.");
@@ -235,6 +274,8 @@ export default function NewListingPage() {
       const data = await res.json();
       
       if (data.success) {
+        // Clear saved draft on success
+        localStorage.removeItem(DRAFT_KEY);
         router.push("/dashboard/owner/listings");
       } else {
         setError(data.message || "Failed to create listing");
@@ -364,12 +405,17 @@ export default function NewListingPage() {
               {localities.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Complete Address *</label>
-            <input 
-              type="text" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              placeholder="Building No, Street..."
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              Complete Address *
+              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+                Auto-fills when you select on map
+              </span>
+            </label>
+            <textarea 
+              rows={2}
+              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+              placeholder="Will auto-fill when you click/search on map below, or type manually..."
               value={formData.address}
               onChange={e => setFormData({...formData, address: e.target.value})}
             />
@@ -416,7 +462,13 @@ export default function NewListingPage() {
           <LocationPicker 
             latitude={formData.latitude} 
             longitude={formData.longitude} 
-            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))} 
+            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))}
+            onAddressFound={(address) => setFormData(prev => ({
+              ...prev,
+              // Only auto-fill if user hasn't typed their own address yet
+              address: !prev.address || prev.address === prev._autoAddress ? address : prev.address,
+              _autoAddress: address,
+            }))}
           />
         </div>
       </div>
@@ -601,9 +653,9 @@ export default function NewListingPage() {
         
         {formData.photos.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {formData.photos.map((url, i) => (
+            {formData.photos.map((photo, i) => (
               <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200 group shadow-sm">
-                <img src={url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+                <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
                 <button 
                   type="button"
                   onClick={() => removePhoto(i)}
@@ -661,14 +713,30 @@ export default function NewListingPage() {
   return (
     <div className="max-w-5xl mx-auto pb-24">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200 hover:text-primary-600 transition-colors">
-          <ArrowLeft size={20} />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900">List Your Property</h1>
-          <p className="text-neutral-500 text-sm">Fill in the details — live after verification</p>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200 hover:text-primary-600 transition-colors">
+            <ArrowLeft size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-neutral-900">List Your Property</h1>
+            <p className="text-neutral-500 text-sm">
+              ✅ Draft auto-saved — fill in the details, live after verification
+            </p>
+          </div>
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            if (confirm("Start fresh? All filled data will be cleared.")) {
+              localStorage.removeItem(DRAFT_KEY);
+              window.location.reload();
+            }
+          }}
+          className="text-xs text-neutral-400 hover:text-red-500 border border-neutral-200 rounded-lg px-3 py-1.5 transition-colors"
+        >
+          Clear Draft
+        </button>
       </div>
 
       {error && (

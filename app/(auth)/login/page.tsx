@@ -20,7 +20,12 @@ function LoginContent() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => {
+    if (searchParams?.get("error") === "CredentialsSignin") {
+      return "Invalid or expired OTP. Please try again.";
+    }
+    return "";
+  });
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,8 +68,7 @@ function LoginContent() {
     setError("");
 
     try {
-      // Calling NextAuth React signIn directly. 
-      // Using redirect: false prevents full page reload on error.
+      // Using redirect: false prevents Next.js client router from caching the redirect loop
       const res = await signIn("credentials", {
         phone,
         otp,
@@ -72,16 +76,14 @@ function LoginContent() {
       });
 
       if (res?.error) {
-        setError("Invalid or expired OTP");
+        setError("Invalid or expired OTP. Please try again.");
         setLoading(false);
-      } else if (res?.url) {
-        // Success! Force a full page navigation to clear client cache
-        window.location.href = res.url;
       } else {
+        // Success! Force a full page hard-navigation to bypass Next.js cache
         window.location.href = callbackUrl;
       }
     } catch (err: any) {
-      setError("Failed to verify OTP");
+      setError("Failed to verify OTP. Please try again.");
       setLoading(false);
     }
   };

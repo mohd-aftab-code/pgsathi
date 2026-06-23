@@ -18,14 +18,15 @@ interface LocationPickerProps {
   latitude: number | null;
   longitude: number | null;
   onChange: (lat: number, lng: number) => void;
+  onAddressFound?: (address: string) => void;
 }
 
-export default function LocationPicker({ latitude, longitude, onChange }: LocationPickerProps) {
+export default function LocationPicker({ latitude, longitude, onChange, onAddressFound }: LocationPickerProps) {
   const position: [number, number] | null = latitude && longitude ? [latitude, longitude] : null;
 
   return (
-    <div className="w-full h-64 relative border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
-      <Map position={position} onChange={onChange} />
+    <div className="w-full h-80 relative border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
+      <Map position={position} onChange={onChange} onAddressFound={onAddressFound || (() => {})} />
     </div>
   );
 }

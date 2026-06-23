@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { MapPin, Phone, CheckCircle, ShieldCheck } from "lucide-react";
+import { MapPin, Phone, CheckCircle, ShieldCheck, Clock } from "lucide-react";
 import Link from "next/link";
 import { getThumbnailUrl } from "@/lib/cloudinary";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
+import { auth } from "@/lib/auth";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
@@ -17,16 +18,34 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function PGDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const pg = await db.listing.findFirst({
+  const session = await auth();
+  const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+  // First try to find active listing (for all users)
+  let pg = await db.listing.findFirst({
     where: { slug: params.slug, isActive: true, status: "ACTIVE" },
     include: {
       city: true,
       locality: true,
-      owner: { select: { name: true, phone: true } },
+      owner: { select: { name: true, phone: true, id: true } },
       photos: { orderBy: { sortOrder: "asc" } },
       amenities: { include: { amenity: true } },
     },
   });
+
+  // If not found, check if logged-in user is the owner (allow owner to preview)
+  if (!pg && userId) {
+    pg = await db.listing.findFirst({
+      where: { slug: params.slug, ownerId: userId },
+      include: {
+        city: true,
+        locality: true,
+        owner: { select: { name: true, phone: true, id: true } },
+        photos: { orderBy: { sortOrder: "asc" } },
+        amenities: { include: { amenity: true } },
+      },
+    });
+  }
 
   if (!pg) notFound();
 
@@ -38,6 +57,17 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
     <div className="bg-neutral-50 min-h-screen py-8">
       <div className="container-max section-padding">
         
+        {/* Preview Banner for PENDING listings */}
+        {pg.status !== "ACTIVE" && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-center gap-3">
+            <Clock size={20} className="text-amber-600 shrink-0" />
+            <div>
+              <p className="font-bold text-amber-800">This listing is under review (Preview Mode)</p>
+              <p className="text-amber-700 text-sm">Only you can see this. It will be visible to everyone once our team approves it.</p>
+            </div>
+          </div>
+        )}
+
         {/* Photo Gallery (Simplified for now) */}
         <div className="rounded-3xl overflow-hidden mb-8 h-[400px] md:h-[500px] relative">
           <img src={mainPhotoUrl} alt={pg.title} className="w-full h-full object-cover" />
