@@ -82,7 +82,7 @@ export default async function OwnerListingsPage() {
                         <Link href={`/dashboard/owner/listings/${listing.id}/edit`} className="text-neutral-400 hover:text-blue-600 transition-colors" title="Edit">
                           <Edit size={18} />
                         </Link>
-                        <button className="text-neutral-400 hover:text-red-600 transition-colors" title="Delete">
+                        <button className="text-neutral-400 hover:text-red-600 transition-colors cursor-pointer" title="Delete">
                           <Trash2 size={18} />
                         </button>
                       </div>

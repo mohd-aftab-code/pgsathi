@@ -148,7 +148,7 @@ export default async function PricingPage() {
           <p className="text-primary-100 mb-8 max-w-2xl mx-auto">
             If you have more than 10 properties or need API access, custom reports, and white-labeled solutions, we have an Enterprise plan for you.
           </p>
-          <button className="bg-white text-primary-900 hover:bg-neutral-50 px-8 py-3 rounded-xl font-bold transition-colors">
+          <button className="bg-white text-primary-900 hover:bg-neutral-50 px-8 py-3 rounded-xl font-bold transition-colors cursor-pointer">
             Contact Sales Team
           </button>
         </div>

@@ -20,34 +20,15 @@ export default function Navbar() {
       }}
     >
       <div className="container-max section-padding">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "64px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "80px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-            <div style={{
-              width: "36px", height: "36px",
-              background: "linear-gradient(135deg, #6d28d9, #ea580c)",
-              borderRadius: "10px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Home size={18} color="white" />
-            </div>
-            <div>
-              <span style={{
-                fontFamily: "var(--font-heading, sans-serif)",
-                fontWeight: 800,
-                fontSize: "1.25rem",
-                background: "linear-gradient(135deg, #6d28d9, #ea580c)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                PGSathi
-              </span>
-              <span style={{ display: "block", fontSize: "10px", color: "#94a3b8", marginTop: "-4px", letterSpacing: "0.05em" }}>
-                Apna PG, Apna Sathi
-              </span>
-            </div>
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+            <img 
+              src="/images/logo.jpeg" 
+              alt="PGSathi Logo" 
+              style={{ height: "72px", width: "auto", objectFit: "contain", mixBlendMode: "multiply" }} 
+            />
           </Link>
 
           {/* Desktop Nav */}

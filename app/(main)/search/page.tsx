@@ -89,7 +89,7 @@ export default async function SearchPage(props: {
                 </div>
               </div>
               
-              <button className="w-full mt-6 bg-primary-100 text-primary-700 font-semibold py-2 rounded-xl hover:bg-primary-200 transition-colors">
+              <button className="w-full mt-6 bg-primary-100 text-primary-700 font-semibold py-2 rounded-xl hover:bg-primary-200 transition-colors cursor-pointer">
                 Apply Filters
               </button>
             </div>
@@ -121,7 +121,7 @@ export default async function SearchPage(props: {
                 </div>
                 <h3 className="text-xl font-bold mb-2">No PGs found</h3>
                 <p className="text-neutral-500 mb-6">We couldn't find any listings matching your criteria. Try adjusting your filters.</p>
-                <button className="bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
+                <button className="bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors cursor-pointer">
                   Clear Filters
                 </button>
               </div>

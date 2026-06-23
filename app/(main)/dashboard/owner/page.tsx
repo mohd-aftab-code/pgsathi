@@ -31,7 +31,8 @@ export default async function OwnerDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-gradient-to-br from-white to-primary-50/30 rounded-2xl p-6 shadow-sm border border-primary-100 hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary-100/50 rounded-full blur-2xl"></div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-neutral-600">Total Listings</h3>
             <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
@@ -41,7 +42,8 @@ export default async function OwnerDashboardPage() {
           <p className="text-3xl font-extrabold text-neutral-900">{listingsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-gradient-to-br from-white to-purple-50/30 rounded-2xl p-6 shadow-sm border border-purple-100 hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-100/50 rounded-full blur-2xl"></div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-neutral-600">Total Views (30 days)</h3>
             <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
@@ -51,7 +53,8 @@ export default async function OwnerDashboardPage() {
           <p className="text-3xl font-extrabold text-neutral-900">0</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-gradient-to-br from-white to-green-50/30 rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-100/50 rounded-full blur-2xl"></div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-neutral-600">Total Leads</h3>
             <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
@@ -62,19 +65,22 @@ export default async function OwnerDashboardPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-neutral-200 text-center">
-        <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-800 rounded-3xl p-10 shadow-xl text-center text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary-500 opacity-20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 border border-white/20">
           <span className="text-3xl">🚀</span>
         </div>
         <h3 className="text-xl font-bold mb-2">Ready to grow?</h3>
-        <p className="text-neutral-500 mb-6 max-w-md mx-auto">
+        <p className="text-primary-100 mb-8 max-w-md mx-auto text-lg">
           Add your first PG listing to start receiving leads directly on your WhatsApp. It takes less than 2 minutes.
         </p>
         <Link 
           href="/dashboard/owner/listings/new" 
-          className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors inline-block"
+          className="bg-white text-primary-800 hover:bg-primary-50 px-8 py-3.5 rounded-xl font-extrabold transition-all inline-block shadow-lg hover:shadow-xl hover:-translate-y-1"
         >
-          Add Your First PG
+          Add Your First PG Now
         </Link>
       </div>
     </div>

@@ -15,8 +15,8 @@ export default function HeroSection() {
           Trusted by 50,000+ Students & Professionals
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight animate-slide-up" style={{ textWrap: "balance" }}>
-          Apna PG, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Apna Sathi</span>
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight animate-slide-up text-white drop-shadow-md" style={{ textWrap: "balance" }}>
+          Apna PG, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">Apna Sathi</span>
         </h1>
         
         <p className="text-lg md:text-xl text-primary-100 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "100ms" }}>

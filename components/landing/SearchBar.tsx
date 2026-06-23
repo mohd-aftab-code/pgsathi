@@ -49,7 +49,7 @@ export default function SearchBar({ initialCity = "", initialGender = "" }) {
         </select>
       </div>
 
-      <button type="submit" className="bg-secondary-600 hover:bg-secondary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
+      <button type="submit" className="bg-secondary-600 hover:bg-secondary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
         <Search size={20} /> Search
       </button>
     </form>

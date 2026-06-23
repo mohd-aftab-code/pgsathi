@@ -14,14 +14,12 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-              <div style={{ width: "40px", height: "40px", background: "linear-gradient(135deg, #6d28d9, #ea580c)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Home size={20} color="white" />
-              </div>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: "1.25rem", color: "white" }}>PGSathi</div>
-                <div style={{ fontSize: "11px", color: "#64748b" }}>Apna PG, Apna Sathi</div>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
+              <img 
+                src="/images/logo.jpeg" 
+                alt="PGSathi Logo" 
+                style={{ height: "80px", width: "auto", objectFit: "contain", borderRadius: "12px", background: "white", padding: "6px" }} 
+              />
             </div>
             <p style={{ fontSize: "0.875rem", lineHeight: 1.7, maxWidth: "260px" }}>
               India ka sabse trusted platform PG dhundne ke liye. Verified listings, no broker fees.
