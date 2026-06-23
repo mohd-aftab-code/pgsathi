@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { ShieldCheck, MapPin, Home as HomeIcon } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
+import { db } from "@/lib/db";
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  const cities = await db.city.findMany({
+    where: { isActive: true },
+    orderBy: { priority: "desc" },
+  });
   return (
     <section className="relative overflow-hidden bg-primary-950 text-white pt-20 pb-28">
       {/* Background Pattern */}
@@ -25,7 +30,7 @@ export default function HeroSection() {
 
         {/* Real Search Bar Component */}
         <div className="max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: "200ms" }}>
-          <SearchBar />
+          <SearchBar cities={cities} />
         </div>
 
         {/* Feature Highlights */}

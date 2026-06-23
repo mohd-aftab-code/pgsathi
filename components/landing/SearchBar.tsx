@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, MapPin } from "lucide-react";
 import { CITIES } from "@/constants/cities";
 
-export default function SearchBar({ initialCity = "", initialGender = "" }) {
+export default function SearchBar({ initialCity = "", initialGender = "", cities = CITIES as any[] }) {
   const router = useRouter();
   const [city, setCity] = useState(initialCity);
   const [gender, setGender] = useState(initialGender);
@@ -29,7 +29,7 @@ export default function SearchBar({ initialCity = "", initialGender = "" }) {
         >
           <option value="" disabled>Select City</option>
           <option value="all">All Cities</option>
-          {CITIES.map(c => (
+          {cities.map(c => (
             <option key={c.slug} value={c.slug}>{c.name}</option>
           ))}
         </select>

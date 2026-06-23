@@ -49,19 +49,25 @@ export default async function SearchPage(props: {
     if (amenities.includes("roomCleaning")) where.roomCleaning = true;
   }
 
-  // Fetch listings
-  const listings = await db.listing.findMany({
-    where,
-    include: {
-      city: true,
-      locality: true,
-      photos: { take: 1 },
-    },
-    orderBy: [
-      { isFeatured: "desc" },
-      { createdAt: "desc" },
-    ],
-  });
+  // Fetch listings and cities
+  const [listings, cities] = await Promise.all([
+    db.listing.findMany({
+      where,
+      include: {
+        city: true,
+        locality: true,
+        photos: { take: 1 },
+      },
+      orderBy: [
+        { isFeatured: "desc" },
+        { createdAt: "desc" },
+      ],
+    }),
+    db.city.findMany({
+      where: { isActive: true },
+      orderBy: { priority: "desc" }
+    })
+  ]);
 
   return (
     <div className="bg-neutral-50 min-h-screen py-8">
@@ -70,13 +76,13 @@ export default async function SearchPage(props: {
         {/* Search Header */}
         <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
           <h1 className="text-2xl md:text-3xl font-bold mb-6">Find Your Perfect PG</h1>
-          <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} />
+          <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} cities={cities} />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           
           <Suspense fallback={<div className="w-full lg:w-64 shrink-0 animate-pulse bg-white rounded-2xl h-[600px] border border-neutral-200"></div>}>
-            <SearchFilters />
+            <SearchFilters cities={cities} />
           </Suspense>
 
           {/* Results Grid */}

@@ -1,9 +1,13 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { MapPin, Phone, CheckCircle, ShieldCheck, Clock } from "lucide-react";
+import { 
+  MapPin, CheckCircle, ShieldCheck, Clock, BedDouble, 
+  DoorOpen, Users, Coffee, Car, ShieldAlert, BadgeCheck,
+  CalendarX, Ban, Maximize2, Zap
+} from "lucide-react";
 import Link from "next/link";
-import { getThumbnailUrl } from "@/lib/cloudinary";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
+import ImageGallery from "@/components/listings/ImageGallery";
 import { auth } from "@/lib/auth";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
@@ -21,26 +25,26 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
   const session = await auth();
   const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
-  // First try to find active listing (for all users)
+  // First try to find active listing
   let pg = await db.listing.findFirst({
     where: { slug: params.slug, isActive: true, status: "ACTIVE" },
     include: {
       city: true,
       locality: true,
-      owner: { select: { name: true, phone: true, id: true } },
+      owner: { select: { name: true, phone: true, id: true, avatar: true } },
       photos: { orderBy: { sortOrder: "asc" } },
       amenities: { include: { amenity: true } },
     },
   });
 
-  // If not found, check if logged-in user is the owner (allow owner to preview)
+  // Check preview mode
   if (!pg && userId) {
     pg = await db.listing.findFirst({
       where: { slug: params.slug, ownerId: userId },
       include: {
         city: true,
         locality: true,
-        owner: { select: { name: true, phone: true, id: true } },
+        owner: { select: { name: true, phone: true, id: true, avatar: true } },
         photos: { orderBy: { sortOrder: "asc" } },
         amenities: { include: { amenity: true } },
       },
@@ -49,115 +53,215 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
 
   if (!pg) notFound();
 
-  const mainPhotoUrl = pg.photos[0]?.url 
-    ? getThumbnailUrl(pg.photos[0].url, 1200, 800)
-    : "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80";
-
   return (
-    <div className="bg-neutral-50 min-h-screen py-8">
+    <div className="bg-[#f8f9fa] min-h-screen py-8">
       <div className="container-max section-padding">
         
-        {/* Preview Banner for PENDING listings */}
+        {/* Preview Banner */}
         {pg.status !== "ACTIVE" && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-center gap-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-center gap-3 shadow-sm">
             <Clock size={20} className="text-amber-600 shrink-0" />
             <div>
-              <p className="font-bold text-amber-800">This listing is under review (Preview Mode)</p>
-              <p className="text-amber-700 text-sm">Only you can see this. It will be visible to everyone once our team approves it.</p>
+              <p className="font-bold text-amber-800">Preview Mode</p>
+              <p className="text-amber-700 text-sm">This listing is currently {pg.status.toLowerCase()}. Only you can see this page until it is approved.</p>
             </div>
           </div>
         )}
 
-        {/* Photo Gallery (Simplified for now) */}
-        <div className="rounded-3xl overflow-hidden mb-8 h-[400px] md:h-[500px] relative">
-          <img src={mainPhotoUrl} alt={pg.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  {pg.genderAllowed} PG
-                </span>
-                {pg.isVerified && (
-                  <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                    <ShieldCheck size={14} /> Verified
-                  </span>
-                )}
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold mb-2">{pg.title}</h1>
-              <p className="flex items-center gap-2 opacity-90 text-sm md:text-base">
-                <MapPin size={18} className="text-orange-400" />
-                {pg.address}, {pg.locality?.name}, {pg.city?.name}
-              </p>
-            </div>
-            <div className="hidden md:block text-right">
-              <div className="text-sm opacity-90 mb-1">Starting from</div>
-              <div className="text-4xl font-extrabold">₹{pg.priceMin}<span className="text-lg font-normal opacity-80">/mo</span></div>
-            </div>
+        {/* Title Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="bg-orange-100 text-orange-700 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">
+              {pg.genderAllowed} PG
+            </span>
+            <span className="bg-neutral-200 text-neutral-700 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">
+              {pg.pgType.replace("_", " ")}
+            </span>
+            {pg.isVerified && (
+              <span className="bg-green-100 text-green-700 text-xs font-black px-3 py-1 rounded-md flex items-center gap-1 uppercase tracking-wider">
+                <BadgeCheck size={14} /> Verified
+              </span>
+            )}
           </div>
+          <h1 className="text-3xl md:text-5xl font-black text-neutral-900 mb-3 tracking-tight">{pg.title}</h1>
+          <p className="flex items-center gap-2 text-neutral-600 font-medium text-base">
+            <MapPin size={18} className="text-orange-500" />
+            {pg.address}, {pg.locality?.name}, {pg.city?.name}
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        {/* Image Gallery */}
+        <ImageGallery photos={pg.photos} title={pg.title} />
+
+        <div className="flex flex-col lg:flex-row gap-10">
           {/* Main Content */}
-          <div className="flex-1 space-y-8">
-            <section className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200">
-              <h2 className="text-xl font-bold mb-4">About this PG</h2>
-              <p className="text-neutral-600 whitespace-pre-wrap leading-relaxed">{pg.description}</p>
+          <div className="flex-1 space-y-10">
+            
+            {/* Quick Stats Bar */}
+            <div className="flex flex-wrap gap-4 py-6 border-y border-neutral-200">
+              <div className="flex items-center gap-3 pr-8 border-r border-neutral-200">
+                <DoorOpen size={28} className="text-neutral-400" />
+                <div>
+                  <div className="text-sm text-neutral-500 font-medium">Total Rooms</div>
+                  <div className="font-bold text-neutral-900">{pg.totalRooms || "Not specified"}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 pr-8 border-r border-neutral-200">
+                <BedDouble size={28} className="text-neutral-400" />
+                <div>
+                  <div className="text-sm text-neutral-500 font-medium">Available Beds</div>
+                  <div className="font-bold text-green-600">{pg.availableBeds || "Contact Owner"}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Users size={28} className="text-neutral-400" />
+                <div>
+                  <div className="text-sm text-neutral-500 font-medium">Tenant Type</div>
+                  <div className="font-bold text-neutral-900 capitalize">{pg.genderAllowed.toLowerCase()} Allowed</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <section>
+              <h2 className="text-2xl font-bold mb-4 text-neutral-900">About this PG</h2>
+              <div className="text-neutral-600 whitespace-pre-wrap leading-relaxed text-lg bg-white p-8 rounded-3xl shadow-sm border border-neutral-200/60">
+                {pg.description}
+              </div>
             </section>
 
-            <section className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200">
-              <h2 className="text-xl font-bold mb-4">Amenities</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Amenities Grid */}
+            <section>
+              <h2 className="text-2xl font-bold mb-6 text-neutral-900">Premium Amenities</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {pg.amenities.map(a => (
-                  <div key={a.amenityId} className="flex items-center gap-2 text-neutral-700">
-                    <CheckCircle size={18} className="text-green-500" />
-                    <span>{a.amenity.name}</span>
+                  <div key={a.amenityId} className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col items-center justify-center text-center gap-3 hover:border-orange-200 hover:shadow-md transition-all">
+                    <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-orange-500">
+                      <Zap size={24} />
+                    </div>
+                    <span className="font-semibold text-neutral-800 text-sm">{a.amenity.name}</span>
                   </div>
                 ))}
                 {pg.amenities.length === 0 && (
-                  <p className="text-neutral-500">Basic amenities included. Contact owner for details.</p>
+                  <p className="text-neutral-500 col-span-full">Standard amenities included. Contact owner for full list.</p>
                 )}
               </div>
             </section>
 
-            <section className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200">
-              <h2 className="text-xl font-bold mb-4">House Rules & Facilities</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Notice Period</span>
-                  <span className="font-semibold">{pg.noticePeriod ? "Required" : "No"}</span>
+            {/* House Rules & Facilities - Premium Do's and Don'ts Style */}
+            <section>
+              <h2 className="text-2xl font-bold mb-6 text-neutral-900">House Rules & Facilities</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                {/* Food */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Coffee className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Food / Meals</span>
+                  </div>
+                  {pg.foodIncluded ? (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Included</span>
+                  ) : (
+                    <span className="bg-neutral-100 text-neutral-500 text-xs font-bold px-3 py-1 rounded-full">Not Included</span>
+                  )}
                 </div>
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Gate Closing Time</span>
-                  <span className="font-semibold">{pg.gateClosingTime ? "Strict" : "Flexible"}</span>
+
+                {/* Parking */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Car className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Parking</span>
+                  </div>
+                  {pg.parking ? (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Available</span>
+                  ) : (
+                    <span className="bg-neutral-100 text-neutral-500 text-xs font-bold px-3 py-1 rounded-full">No Parking</span>
+                  )}
                 </div>
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Rent Lock-In</span>
-                  <span className="font-semibold">{pg.rentLockIn ? "Applicable" : "No"}</span>
+
+                {/* Gate Closing */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Clock className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Gate Closing</span>
+                  </div>
+                  {pg.gateClosingTime ? (
+                    <span className="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">Strict Rules</span>
+                  ) : (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Flexible</span>
+                  )}
                 </div>
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Guardians Stay</span>
-                  <span className="font-semibold">{pg.noGuardiansStay ? "Not Allowed" : "Allowed"}</span>
+
+                {/* Notice Period */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CalendarX className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Notice Period</span>
+                  </div>
+                  {pg.noticePeriod ? (
+                    <span className="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full">Required</span>
+                  ) : (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">No Notice</span>
+                  )}
                 </div>
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Laundry Service</span>
-                  <span className="font-semibold">{pg.laundryService ? "Available" : "No"}</span>
+
+                {/* Lock In */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <ShieldAlert className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Rent Lock-In</span>
+                  </div>
+                  {pg.rentLockIn ? (
+                    <span className="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full">Applicable</span>
+                  ) : (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Flexible</span>
+                  )}
                 </div>
-                <div className="flex justify-between border-b border-neutral-100 pb-2">
-                  <span className="text-neutral-500">Room Cleaning</span>
-                  <span className="font-semibold">{pg.roomCleaning ? "Included" : "Self"}</span>
+
+                {/* Guardians */}
+                <div className="bg-white p-5 rounded-2xl border border-neutral-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Users className="text-neutral-400" />
+                    <span className="font-semibold text-neutral-700">Guardians Stay</span>
+                  </div>
+                  {pg.noGuardiansStay ? (
+                    <span className="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"><Ban size={12}/> Not Allowed</span>
+                  ) : (
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Allowed</span>
+                  )}
                 </div>
               </div>
             </section>
           </div>
 
-          {/* Sticky Sidebar */}
-          <aside className="w-full lg:w-80 shrink-0">
-            <div className="bg-white rounded-3xl p-6 shadow-xl border border-neutral-200 sticky top-24">
-              <div className="text-center mb-6 border-b border-neutral-100 pb-6">
-                <div className="text-sm text-neutral-500 mb-1">Monthly Rent</div>
-                <div className="text-3xl font-extrabold text-primary-700">₹{pg.priceMin} - ₹{pg.priceMax}</div>
-                <div className="text-sm text-neutral-500 mt-2">Deposit: ₹{pg.securityDeposit || "1 Month"}</div>
+          {/* Sticky Sidebar (Glassmorphic Pricing Card) */}
+          <aside className="w-full lg:w-96 shrink-0 relative">
+            <div className="sticky top-28 bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-2xl border border-white">
+              
+              <div className="mb-6 pb-6 border-b border-neutral-200/60">
+                <div className="flex items-end gap-2">
+                  <span className="text-4xl font-black text-neutral-900">₹{pg.priceMin}</span>
+                  <span className="text-neutral-500 font-medium mb-1">/ month</span>
+                </div>
+                <div className="mt-2 text-sm text-neutral-500 font-medium flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-green-500" /> 
+                  Security Deposit: {pg.securityDeposit ? `₹${pg.securityDeposit}` : "1 Month Rent"}
+                </div>
+              </div>
+
+              {/* Owner Info Box inside Sidebar */}
+              <div className="bg-neutral-50 rounded-2xl p-4 mb-6 border border-neutral-100 flex items-center gap-4">
+                <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center font-bold text-neutral-600 overflow-hidden">
+                  {pg.owner.avatar ? (
+                    <img src={pg.owner.avatar} alt="Owner" className="w-full h-full object-cover" />
+                  ) : (
+                    pg.owner.name.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs text-neutral-500 font-bold uppercase tracking-wider mb-0.5">Listed By Owner</div>
+                  <div className="font-bold text-neutral-900">{pg.owner.name}</div>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -168,11 +272,11 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                 />
               </div>
 
-              <div className="mt-6 pt-6 border-t border-neutral-100 text-sm text-neutral-500 text-center flex flex-col gap-2">
-                <p>Zero brokerage. Deal directly with owner.</p>
-                <div className="flex items-center justify-center gap-1 text-green-600 font-medium">
-                  <ShieldCheck size={16} /> Verified by PGSathi
+              <div className="mt-6 pt-6 border-t border-neutral-200/60 text-sm text-neutral-500 text-center flex flex-col gap-3">
+                <div className="flex items-center justify-center gap-2 font-bold text-neutral-700">
+                  <Maximize2 size={16} /> Zero Brokerage
                 </div>
+                <p className="text-xs text-neutral-400">By contacting, you agree to PGSathi's Terms of Service.</p>
               </div>
             </div>
           </aside>
@@ -182,5 +286,3 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
     </div>
   );
 }
-
-

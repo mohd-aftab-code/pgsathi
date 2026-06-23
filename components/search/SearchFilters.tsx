@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Filter } from "lucide-react";
 
-export default function SearchFilters() {
+export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
+  const [city, setCity] = useState<string>(searchParams.get("city") || "all");
   const [budget, setBudget] = useState<string>(searchParams.get("budget") || "");
   const [amenities, setAmenities] = useState<string[]>(
     searchParams.get("amenities")?.split(",").filter(Boolean) || []
@@ -27,6 +28,9 @@ export default function SearchFilters() {
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
     
+    if (city && city !== "all") params.set("city", city);
+    else params.delete("city");
+
     if (budget) params.set("budget", budget);
     else params.delete("budget");
 
@@ -41,6 +45,21 @@ export default function SearchFilters() {
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-200 sticky top-24">
         <div className="flex items-center gap-2 font-bold text-lg mb-4 pb-4 border-b border-neutral-100">
           <Filter size={20} /> Filters
+        </div>
+
+        {/* CITY FILTER */}
+        <div className="mb-6">
+          <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">Location</h3>
+          <select 
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="w-full bg-neutral-50 border border-neutral-200 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none"
+          >
+            <option value="all">All Cities</option>
+            {cities.map(c => (
+              <option key={c.slug} value={c.slug}>{c.name}</option>
+            ))}
+          </select>
         </div>
         
         {/* BUDGET FILTER */}
