@@ -29,21 +29,21 @@ export default async function AdminUsersPage() {
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
-        <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
-          <div className="flex gap-4">
+        <div className="p-6 border-b border-neutral-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <input 
               type="text" 
               placeholder="Search by name, email, phone..." 
-              className="bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2 text-sm w-80 outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2 text-sm w-full sm:w-80 outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <select className="bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2 text-sm w-full sm:w-auto outline-none focus:ring-2 focus:ring-blue-500">
               <option value="all">All Roles</option>
               <option value="TENANT">Tenants</option>
               <option value="OWNER">Owners</option>
               <option value="ADMIN">Admins</option>
             </select>
           </div>
-          <div className="text-sm font-medium text-neutral-500">
+          <div className="text-sm font-medium text-neutral-500 shrink-0">
             Total Users: {users.length}
           </div>
         </div>

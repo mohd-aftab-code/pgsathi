@@ -40,9 +40,9 @@ export default async function AdminDashboardLayout({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="w-full lg:w-64 shrink-0">
-            <div className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-200">
-              <div className="flex items-center gap-3 p-3 mb-4 border-b border-neutral-100">
-                <div className="w-10 h-10 bg-red-100 text-red-700 rounded-full flex items-center justify-center font-bold">
+            <div className="bg-white lg:rounded-2xl lg:p-4 shadow-sm border-b lg:border border-neutral-200 -mx-4 lg:mx-0 px-4 lg:px-0 pb-2 lg:pb-0">
+              <div className="flex items-center gap-3 py-3 lg:p-3 mb-2 lg:mb-4 border-b border-neutral-100">
+                <div className="w-10 h-10 bg-red-100 text-red-700 rounded-full flex items-center justify-center font-bold shrink-0">
                   {session.user?.name?.charAt(0) || "A"}
                 </div>
                 <div>
@@ -51,14 +51,14 @@ export default async function AdminDashboardLayout({
                 </div>
               </div>
               
-              <nav className="space-y-1">
+              <nav className="flex overflow-x-auto lg:block lg:space-y-1 hide-scrollbar gap-2 lg:gap-0 pb-2 lg:pb-0">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-red-700 hover:bg-red-50 transition-colors"
+                      className="flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-red-700 hover:bg-red-50 transition-colors whitespace-nowrap shrink-0"
                     >
                       <Icon size={18} />
                       {item.name}
@@ -67,7 +67,7 @@ export default async function AdminDashboardLayout({
                 })}
               </nav>
 
-              <div className="mt-2">
+              <div className="mt-2 hidden lg:block">
                 <LogoutButton />
               </div>
             </div>
