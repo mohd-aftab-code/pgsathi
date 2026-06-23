@@ -22,7 +22,34 @@ export async function POST(req: NextRequest) {
 
     if (expectedSignature === razorpay_signature) {
       // Payment is verified
-      // TODO: Update subscription status in DB
+      const subscription = await db.subscription.findFirst({
+        where: { razorpayOrderId: razorpay_order_id }
+      });
+
+      if (subscription) {
+        await db.subscription.update({
+          where: { id: subscription.id },
+          data: { 
+            status: "ACTIVE",
+            razorpayPaymentId: razorpay_payment_id
+          }
+        });
+
+        const invoice = await db.invoice.findFirst({
+          where: { razorpayOrderId: razorpay_order_id }
+        });
+
+        if (invoice) {
+          await db.invoice.update({
+            where: { id: invoice.id },
+            data: {
+              status: "PAID",
+              razorpayPayId: razorpay_payment_id,
+              paidAt: new Date()
+            }
+          });
+        }
+      }
       
       return NextResponse.json({ 
         success: true, 

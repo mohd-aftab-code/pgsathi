@@ -35,8 +35,29 @@ export async function POST(req: NextRequest) {
 
     const order = await razorpay.orders.create(options);
 
-    // Save preliminary order in DB (mocked for now, in a real scenario we save it to Subscriptions/Invoices table with status PENDING)
-    
+    // Save preliminary order in DB with status PENDING
+    const subscription = await db.subscription.create({
+      data: {
+        userId: parseInt(session.user.id as string),
+        planId: parseInt(planId),
+        status: "PENDING",
+        billingCycle: "MONTHLY",
+        amount: parseInt(amount),
+        razorpayOrderId: order.id,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 days
+      }
+    });
+
+    await db.invoice.create({
+      data: {
+        subscriptionId: subscription.id,
+        amount: parseInt(amount),
+        status: "PENDING",
+        razorpayOrderId: order.id,
+      }
+    });
+
     return NextResponse.json({
       success: true,
       data: {

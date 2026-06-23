@@ -262,6 +262,7 @@ model Subscription {
 }
 
 enum SubStatus {
+  PENDING
   ACTIVE
   CANCELLED
   EXPIRED
