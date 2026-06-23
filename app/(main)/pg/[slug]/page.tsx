@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MapPin, Phone, CheckCircle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { getThumbnailUrl } from "@/lib/cloudinary";
+import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
@@ -16,7 +17,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function PGDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const pg = await db.listing.findUnique({
+  const pg = await db.listing.findFirst({
     where: { slug: params.slug, isActive: true, status: "ACTIVE" },
     include: {
       city: true,
@@ -88,6 +89,36 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                 )}
               </div>
             </section>
+
+            <section className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200">
+              <h2 className="text-xl font-bold mb-4">House Rules & Facilities</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Notice Period</span>
+                  <span className="font-semibold">{pg.noticePeriod ? "Required" : "No"}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Gate Closing Time</span>
+                  <span className="font-semibold">{pg.gateClosingTime ? "Strict" : "Flexible"}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Rent Lock-In</span>
+                  <span className="font-semibold">{pg.rentLockIn ? "Applicable" : "No"}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Guardians Stay</span>
+                  <span className="font-semibold">{pg.noGuardiansStay ? "Not Allowed" : "Allowed"}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Laundry Service</span>
+                  <span className="font-semibold">{pg.laundryService ? "Available" : "No"}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-100 pb-2">
+                  <span className="text-neutral-500">Room Cleaning</span>
+                  <span className="font-semibold">{pg.roomCleaning ? "Included" : "Self"}</span>
+                </div>
+              </div>
+            </section>
           </div>
 
           {/* Sticky Sidebar */}
@@ -100,19 +131,11 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
               </div>
 
               <div className="space-y-4">
-                <Link 
-                  href={`https://wa.me/91${pg.owner.phone}?text=Hi, I am interested in your PG: ${pg.title}`}
-                  target="_blank"
-                  className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
-                >
-                  <MessageSquare size={20} /> WhatsApp Owner
-                </Link>
-                <a 
-                  href={`tel:+91${pg.owner.phone}`}
-                  className="w-full bg-primary-100 text-primary-700 hover:bg-primary-200 py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
-                >
-                  <Phone size={20} /> Show Phone Number
-                </a>
+                <ContactOwnerButton 
+                  listingId={pg.id} 
+                  ownerPhone={pg.owner.phone || ""} 
+                  listingTitle={pg.title} 
+                />
               </div>
 
               <div className="mt-6 pt-6 border-t border-neutral-100 text-sm text-neutral-500 text-center flex flex-col gap-2">
@@ -130,5 +153,4 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
   );
 }
 
-// Temporary placeholder for MessageSquare since we forgot to import it
-import { MessageSquare } from "lucide-react";
+

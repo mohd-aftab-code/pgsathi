@@ -5,9 +5,10 @@ import { auth } from "@/lib/auth";
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    // In production, ensure session.user.role === "ADMIN"
-    if (!session?.user) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    
+    // Check if user is ADMIN
+    if (!session || !session.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
     }
 
     const { listingId, status, isVerified } = await req.json();
@@ -16,16 +17,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
     }
 
-    const updatedListing = await db.listing.update({
+    const listing = await db.listing.update({
       where: { id: parseInt(listingId) },
       data: {
-        status: status,
-        isVerified: isVerified
+        status,
+        isVerified: !!isVerified,
+        isActive: status === "ACTIVE"
       }
     });
 
-    return NextResponse.json({ success: true, data: updatedListing });
-  } catch (error: any) {
+    return NextResponse.json({ success: true, data: listing });
+  } catch (error) {
     console.error("Verify Listing Error:", error);
     return NextResponse.json({ success: false, message: "Failed to verify listing" }, { status: 500 });
   }

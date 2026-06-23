@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import PGCard from "@/components/listings/PGCard";
 import SearchBar from "@/components/landing/SearchBar";
-import { Filter } from "lucide-react";
+import SearchFilters from "@/components/search/SearchFilters";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Search PGs - PGSathi",
@@ -14,6 +15,8 @@ export default async function SearchPage(props: {
   const searchParams = await props.searchParams;
   const citySlug = searchParams.city as string | undefined;
   const gender = searchParams.gender as string | undefined;
+  const budget = searchParams.budget as string | undefined;
+  const amenitiesStr = searchParams.amenities as string | undefined;
 
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
@@ -24,6 +27,26 @@ export default async function SearchPage(props: {
   
   if (gender && gender !== "all") {
     where.genderAllowed = gender;
+  }
+
+  // Budget Filter
+  if (budget === "under5k") {
+    where.priceMin = { lte: 5000 };
+  } else if (budget === "5k-10k") {
+    where.priceMin = { gte: 5000 };
+    where.priceMax = { lte: 10000 };
+  } else if (budget === "above10k") {
+    where.priceMin = { gt: 10000 };
+  }
+
+  // Amenities / Rules Filter
+  if (amenitiesStr) {
+    const amenities = amenitiesStr.split(",");
+    if (amenities.includes("noticePeriod")) where.noticePeriod = false; // "No Notice Period" means noticePeriod=false
+    if (amenities.includes("gateClosingTime")) where.gateClosingTime = false; 
+    if (amenities.includes("foodIncluded")) where.foodIncluded = true;
+    if (amenities.includes("laundryService")) where.laundryService = true;
+    if (amenities.includes("roomCleaning")) where.roomCleaning = true;
   }
 
   // Fetch listings
@@ -52,48 +75,9 @@ export default async function SearchPage(props: {
 
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* Filters Sidebar (Mock for now) */}
-          <aside className="w-full lg:w-64 shrink-0">
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-200 sticky top-24">
-              <div className="flex items-center gap-2 font-bold text-lg mb-4 pb-4 border-b border-neutral-100">
-                <Filter size={20} /> Filters
-              </div>
-              
-              <div className="mb-6">
-                <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">Budget</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                    <input type="checkbox" className="rounded text-primary-600 focus:ring-primary-500" />
-                    Under ₹5,000
-                  </label>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                    <input type="checkbox" className="rounded text-primary-600 focus:ring-primary-500" />
-                    ₹5,000 - ₹10,000
-                  </label>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                    <input type="checkbox" className="rounded text-primary-600 focus:ring-primary-500" />
-                    Above ₹10,000
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">Amenities</h3>
-                <div className="space-y-2">
-                  {["WiFi", "AC", "Food Included", "Washing Machine"].map(amenity => (
-                    <label key={amenity} className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                      <input type="checkbox" className="rounded text-primary-600 focus:ring-primary-500" />
-                      {amenity}
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <button className="w-full mt-6 bg-primary-100 text-primary-700 font-semibold py-2 rounded-xl hover:bg-primary-200 transition-colors cursor-pointer">
-                Apply Filters
-              </button>
-            </div>
-          </aside>
+          <Suspense fallback={<div className="w-full lg:w-64 shrink-0 animate-pulse bg-white rounded-2xl h-[600px] border border-neutral-200"></div>}>
+            <SearchFilters />
+          </Suspense>
 
           {/* Results Grid */}
           <div className="flex-1">
