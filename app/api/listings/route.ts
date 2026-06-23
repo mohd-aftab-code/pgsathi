@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import slugify from "slugify";
 
 export async function GET(req: NextRequest) {
   try {
@@ -51,19 +52,28 @@ export async function POST(req: NextRequest) {
 
     const data = await req.json();
 
+    const generatedSlug = slugify(`${data.title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
+
     // Create listing
     const listing = await db.listing.create({
       data: {
         ownerId: parseInt(session.user.id),
         title: data.title,
-        slug: data.slug, // Should generate on frontend or utils
+        slug: generatedSlug,
         description: data.description,
         pgType: data.pgType || "SINGLE_ROOM",
         genderAllowed: data.genderAllowed || "BOYS",
         priceMin: data.priceMin || 0,
         priceMax: data.priceMax || 0,
         securityDeposit: data.securityDeposit,
-        // Notice period removed because it's not in schema
+        
+        noticePeriod: data.noticePeriod,
+        gateClosingTime: data.gateClosingTime,
+        rentLockIn: data.rentLockIn,
+        noGuardiansStay: data.noGuardiansStay,
+        laundryService: data.laundryService,
+        roomCleaning: data.roomCleaning,
+        parking: data.parking,
         
         address: data.address,
         landmark: data.landmark,
@@ -75,6 +85,10 @@ export async function POST(req: NextRequest) {
         localityId: data.localityId,
         
         status: "PENDING", // Admin will publish later
+        
+        photos: {
+          create: (data.photos || []).map((url: string) => ({ url }))
+        }
       },
     });
 

@@ -114,6 +114,13 @@ model Listing {
   availableRooms  Int?
   totalBeds       Int?
   availableBeds   Int?
+  noticePeriod    Boolean       @default(false)
+  gateClosingTime Boolean       @default(false)
+  rentLockIn      Boolean       @default(false)
+  noGuardiansStay Boolean       @default(false)
+  laundryService  Boolean       @default(false)
+  roomCleaning    Boolean       @default(false)
+  parking         Boolean       @default(false)
   status          ListingStatus @default(PENDING)
   isVerified      Boolean       @default(false)
   isFeatured      Boolean       @default(false)

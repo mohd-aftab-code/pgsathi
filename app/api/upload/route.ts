@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { v2 as cloudinary } from "cloudinary";
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,16 +23,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "No file uploaded" }, { status: 400 });
     }
 
-    // Since we don't have real Cloudinary credentials active, we will return a mock response
-    // In a real scenario, we would use Cloudinary SDK to upload the file buffer
-    
-    // MOCK RESPONSE
-    const mockUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80";
+    // Convert file to buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Upload to Cloudinary using a stream
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "pgsathi/listings" },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+      uploadStream.end(buffer);
+    });
+
+    const secureUrl = (uploadResult as any).secure_url;
+    const publicId = (uploadResult as any).public_id;
 
     return NextResponse.json({ 
       success: true, 
-      url: mockUrl,
-      publicId: `mock_${Date.now()}`
+      url: secureUrl,
+      publicId: publicId
     });
   } catch (error: any) {
     console.error("Upload Error:", error);

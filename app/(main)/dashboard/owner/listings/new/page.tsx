@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, MapPin, CheckCircle2, Upload, Plus } from "lucide-react";
 import Link from "next/link";
+import LocationPicker from "@/components/common/LocationPicker";
 
 // ════════════════════════════════════════════════════════
 // TYPES & CONSTANTS
@@ -44,6 +45,7 @@ const ROOM_AMENITIES_LIST = [
 export default function NewListingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [cities, setCities] = useState<any[]>([]);
   const [localities, setLocalities] = useState<any[]>([]);
@@ -62,6 +64,8 @@ export default function NewListingPage() {
     address: "",
     pincode: "",
     landmark: "",
+    latitude: null as number | null,
+    longitude: null as number | null,
 
     // Step 3: PG Details
     availableFrom: "",
@@ -83,6 +87,7 @@ export default function NewListingPage() {
     priceMin: "",
     priceMax: "",
     securityDeposit: "",
+    photos: [] as string[],
   });
 
   useEffect(() => {
@@ -101,7 +106,16 @@ export default function NewListingPage() {
   };
 
   const handleNext = () => {
-    // Basic validation could go here
+    setError(""); // Clear any previous errors
+    
+    // Step 2 Validation: Ensure location is selected
+    if (currentStep === 2) {
+      if (!formData.latitude || !formData.longitude) {
+        setError("Please mark the exact location on the map before proceeding.");
+        return;
+      }
+    }
+
     if (currentStep < 5) setCurrentStep((prev) => (prev + 1) as StepType);
   };
 
@@ -127,9 +141,62 @@ export default function NewListingPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setUploadingImage(true);
+    setError("");
+
+    try {
+      const files = Array.from(e.target.files);
+      const uploadedUrls: string[] = [];
+
+      for (const file of files) {
+        const fileData = new FormData();
+        fileData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: fileData,
+        });
+        const data = await res.json();
+        if (data.success) {
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        photos: [...prev.photos, ...uploadedUrls]
+      }));
+    } catch (error) {
+      setError("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
+
+    if (!formData.title || !formData.address || !formData.cityId || !formData.priceMin || !formData.priceMax) {
+      setError("Please fill all required fields (Name, Address, City, Price).");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.photos.length === 0) {
+      setError("Please upload at least one photo for your listing.");
+      setLoading(false);
+      return;
+    }
 
     try {
       // Create a clean payload mapping to our backend schema
@@ -139,15 +206,24 @@ export default function NewListingPage() {
         pgType: formData.pgType,
         genderAllowed: formData.genderAllowed,
         cityId: parseInt(formData.cityId),
-        localityId: parseInt(formData.localityId),
+        localityId: formData.localityId ? parseInt(formData.localityId) : null,
         address: formData.address,
         pincode: formData.pincode,
         landmark: formData.landmark,
-        priceMin: parseInt(formData.priceMin),
-        priceMax: parseInt(formData.priceMax),
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        priceMin: parseInt(formData.priceMin) || 0,
+        priceMax: parseInt(formData.priceMax) || 0,
         securityDeposit: formData.securityDeposit ? parseInt(formData.securityDeposit) : null,
         foodIncluded: formData.foodIncluded === "Yes",
-        // Extended attributes will be saved via meta/JSON or separate tables later
+        noticePeriod: formData.noticePeriod === "Yes",
+        gateClosingTime: formData.gateClosingTime === "Yes",
+        rentLockIn: formData.rentLockIn,
+        noGuardiansStay: formData.noGuardiansStay,
+        laundryService: formData.laundryService === "Yes",
+        roomCleaning: formData.roomCleaning === "Yes",
+        parking: formData.parking === "Yes",
+        photos: formData.photos,
       };
 
       const res = await fetch("/api/listings", {
@@ -323,19 +399,25 @@ export default function NewListingPage() {
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="text-primary-500" size={20} />
-            <h4 className="font-bold text-neutral-800">Mark Locality on Map</h4>
-          </div>
-          <p className="text-sm text-neutral-500 mb-4">Set property location by using search box and move the map</p>
-          <div className="w-full h-64 bg-neutral-100 rounded-2xl border border-neutral-200 flex items-center justify-center overflow-hidden relative">
-            {/* Fake Map UI for placeholder */}
-            <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #f97316 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
-            <div className="z-10 flex flex-col items-center">
-              <MapPin size={48} className="text-primary-500 drop-shadow-lg" />
-              <div className="bg-white px-4 py-2 rounded-full shadow-md mt-2 text-xs font-bold text-neutral-700">Map Integration Pending</div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <MapPin className="text-primary-500" size={20} />
+              <h4 className="font-bold text-neutral-800">Mark Locality on Map *</h4>
             </div>
+            {(formData.latitude && formData.longitude) && (
+              <div className="flex gap-4">
+                <input type="text" readOnly value={formData.latitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24" placeholder="Latitude" />
+                <input type="text" readOnly value={formData.longitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24" placeholder="Longitude" />
+              </div>
+            )}
           </div>
+          <p className="text-sm text-neutral-500 mb-4">Click anywhere on the map or drag the marker to pin your property's exact location.</p>
+          
+          <LocationPicker 
+            latitude={formData.latitude} 
+            longitude={formData.longitude} 
+            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))} 
+          />
         </div>
       </div>
     </div>
@@ -516,22 +598,43 @@ export default function NewListingPage() {
       {/* Gallery */}
       <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Gallery</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="border-2 border-dashed border-primary-200 bg-primary-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary-100 transition-colors">
-            <Upload className="text-primary-500 mb-4" size={32} />
-            <p className="font-bold text-neutral-800 mb-1">Add Photos to get more responses</p>
-            <p className="text-xs text-neutral-500 mb-6">90% tenants contact based on photos uploaded</p>
-            <div className="bg-white text-primary-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-primary-100">Add Photos</div>
-            <p className="text-[10px] text-neutral-400 mt-4">Max size of image is 5MB</p>
+        
+        {formData.photos.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {formData.photos.map((url, i) => (
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200 group shadow-sm">
+                <img src={url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+                <button 
+                  type="button"
+                  onClick={() => removePhoto(i)}
+                  className="absolute top-2 right-2 bg-red-500/90 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
           </div>
-          <div className="border-2 border-dashed border-neutral-200 bg-neutral-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-neutral-100 transition-colors">
-            <Upload className="text-neutral-400 mb-4" size={32} />
-            <p className="font-bold text-neutral-800 mb-1">Add Video to get more responses</p>
-            <p className="text-xs text-neutral-500 mb-6">90% tenants contact based on videos uploaded</p>
-            <div className="bg-white text-neutral-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-neutral-200">Add Video</div>
-            <p className="text-[10px] text-neutral-400 mt-4">Max size of video is 5MB</p>
-          </div>
-        </div>
+        )}
+
+        <label className="border-2 border-dashed border-primary-200 bg-primary-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary-100 transition-colors relative">
+          <input 
+            type="file" 
+            multiple 
+            accept="image/*" 
+            className="hidden" 
+            onChange={handleImageUpload} 
+            disabled={uploadingImage}
+          />
+          {uploadingImage ? (
+             <Loader2 className="text-primary-500 mb-4 animate-spin" size={32} />
+          ) : (
+             <Upload className="text-primary-500 mb-4" size={32} />
+          )}
+          <p className="font-bold text-neutral-800 mb-1">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
+          <p className="text-xs text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
+          <div className="bg-white text-primary-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-primary-100">Browse Files</div>
+          <p className="text-[10px] text-neutral-400 mt-4">Max size 5MB per image</p>
+        </label>
       </div>
 
       {/* Pricing */}
