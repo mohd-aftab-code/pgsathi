@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Users, Building2, ShieldAlert, BadgeIndianRupee, TrendingUp, Activity, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Users, Building2, ShieldAlert, BadgeIndianRupee, TrendingUp, Activity, ArrowRight, CheckCircle2, FileBarChart } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
@@ -9,7 +9,7 @@ export default async function AdminDashboardPage() {
     db.listing.count({ where: { status: "ACTIVE" } }),
     db.listing.count(),
     db.user.count(),
-    db.subscription.count({ where: { status: "ACTIVE" } }),
+    db.subscription.findMany({ where: { status: "ACTIVE" } }),
     db.listing.findMany({ 
       take: 5, 
       orderBy: { createdAt: "desc" },
@@ -17,14 +17,17 @@ export default async function AdminDashboardPage() {
     })
   ]);
 
+  // Calculate real revenue from active subscriptions
+  const totalRevenue = activeSubscriptions.reduce((acc, sub) => acc + sub.amount, 0);
+
   return (
     <div>
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Admin Overview</h1>
-          <p className="text-neutral-500 mt-1">Platform-wide statistics and pending actions.</p>
+          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Super Admin Overview</h1>
+          <p className="text-neutral-500 mt-1">Platform-wide statistics, revenue, and pending actions.</p>
         </div>
-        <div className="flex items-center gap-2 text-sm font-medium text-neutral-500 bg-white px-4 py-2 rounded-xl border border-neutral-200 shadow-sm">
+        <div className="flex items-center gap-2 text-sm font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200 shadow-sm">
           <Activity size={16} className="text-green-500" />
           System Status: Healthy
         </div>
@@ -47,9 +50,9 @@ export default async function AdminDashboardPage() {
             )}
           </div>
           <div className="text-4xl font-black text-red-950 relative z-10 mb-1">{pendingListings}</div>
-          <div className="text-sm font-semibold text-red-800/70 mb-4 relative z-10">Pending Approvals</div>
-          <Link href="/dashboard/admin/listings" className="flex items-center justify-between text-sm text-red-700 font-bold bg-white/60 hover:bg-white px-4 py-2 rounded-xl transition-colors relative z-10">
-            Review Now <ArrowRight size={16} />
+          <div className="text-sm font-bold text-red-800/70 mb-4 relative z-10">Pending Approvals</div>
+          <Link href="/dashboard/admin/verify" className="flex items-center justify-between text-sm text-red-700 font-bold bg-white/60 hover:bg-white px-4 py-2 rounded-xl transition-colors relative z-10">
+            Verify Now <ArrowRight size={16} />
           </Link>
         </div>
 
@@ -63,7 +66,7 @@ export default async function AdminDashboardPage() {
             <TrendingUp size={20} className="text-green-500" />
           </div>
           <div className="text-4xl font-black text-neutral-900 relative z-10 mb-1">{totalListings}</div>
-          <div className="text-sm font-medium text-neutral-500 relative z-10">{activeListings} currently active</div>
+          <div className="text-sm font-medium text-neutral-500 relative z-10">{activeListings} currently active PGs</div>
         </div>
 
         {/* Users */}
@@ -74,8 +77,8 @@ export default async function AdminDashboardPage() {
               <Users size={24} />
             </div>
           </div>
-          <div className="text-4xl font-black text-neutral-900 relative z-10 mb-1">{activeSubscriptions}</div>
-          <div className="text-sm font-medium text-neutral-500 relative z-10">Paid Owners</div>
+          <div className="text-4xl font-black text-neutral-900 relative z-10 mb-1">{totalUsers}</div>
+          <div className="text-sm font-medium text-neutral-500 relative z-10">Total Registered Users</div>
         </div>
 
         {/* Revenue */}
@@ -86,59 +89,60 @@ export default async function AdminDashboardPage() {
               <BadgeIndianRupee size={24} />
             </div>
           </div>
-          <div className="text-4xl font-black text-neutral-900 relative z-10 mb-1">{totalUsers}</div>
-          <div className="text-sm font-medium text-neutral-500 relative z-10">Total Registered Users</div>
+          <div className="text-4xl font-black text-neutral-900 relative z-10 mb-1">₹{totalRevenue.toLocaleString("en-IN")}</div>
+          <div className="text-sm font-medium text-neutral-500 relative z-10">Revenue from {activeSubscriptions.length} Pro Owners</div>
         </div>
       </div>
 
       {/* Recent Activity Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-neutral-200">
+        <div className="lg:col-span-2 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
-            <h2 className="text-xl font-bold text-neutral-900">Recent Listings</h2>
-            <Link href="/dashboard/admin/listings" className="text-sm font-bold text-primary-600 hover:text-primary-700">View All</Link>
+            <h2 className="text-xl font-bold text-neutral-900">Recently Added PGs</h2>
+            <Link href="/dashboard/admin/verify" className="text-sm font-bold text-primary-600 hover:text-primary-700">Verify Pending</Link>
           </div>
           
           <div className="space-y-4">
             {recentListings.map(listing => (
-              <div key={listing.id} className="flex items-center justify-between p-4 rounded-2xl border border-neutral-100 hover:bg-neutral-50 transition-colors">
+              <div key={listing.id} className="flex items-center justify-between p-4 rounded-2xl border border-neutral-100 hover:border-primary-100 hover:bg-primary-50/30 transition-colors group">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${listing.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${listing.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
                     {listing.status === 'ACTIVE' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
                   </div>
                   <div>
-                    <h3 className="font-bold text-neutral-900">{listing.title}</h3>
-                    <p className="text-sm text-neutral-500">by {listing.owner?.name} • {listing.city?.name}</p>
+                    <h3 className="font-extrabold text-neutral-900">{listing.title}</h3>
+                    <p className="text-sm font-medium text-neutral-500">by {listing.owner?.name} • <span className="text-primary-600">{listing.city?.name}</span></p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className={`text-xs font-bold px-3 py-1 rounded-full inline-block mb-1 ${listing.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                  <div className={`text-[10px] font-bold px-3 py-1 rounded-full inline-block mb-1 uppercase tracking-wider ${listing.status === 'ACTIVE' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
                     {listing.status}
                   </div>
-                  <div className="text-xs text-neutral-400 block">{formatDistanceToNow(listing.createdAt, { addSuffix: true })}</div>
+                  <div className="text-xs font-bold text-neutral-400 block">{formatDistanceToNow(listing.createdAt, { addSuffix: true })}</div>
                 </div>
               </div>
             ))}
             {recentListings.length === 0 && (
-              <div className="text-center py-8 text-neutral-500">No listings yet.</div>
+              <div className="text-center py-8 text-neutral-500 font-medium">No listings yet.</div>
             )}
           </div>
         </div>
         
         {/* Quick Actions */}
-        <div className="bg-gradient-to-br from-primary-900 to-primary-950 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="bg-gradient-to-br from-neutral-900 to-black rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-          <h2 className="text-xl font-bold mb-6">Quick Actions</h2>
-          <div className="space-y-3 relative z-10">
-            <button className="w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-between transition-colors">
-              Manage Cities <ArrowRight size={18} />
-            </button>
-            <button className="w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-between transition-colors">
-              View All Users <ArrowRight size={18} />
-            </button>
-            <button className="w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-between transition-colors">
-              Generate Report <ArrowRight size={18} />
-            </button>
+          <h2 className="text-2xl font-bold mb-8 relative z-10">Quick Actions</h2>
+          
+          <div className="space-y-4 relative z-10 flex-1">
+            <Link href="/dashboard/admin/users" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
+              <Users size={20} className="text-blue-400" /> Manage Users
+            </Link>
+            <Link href="/dashboard/admin/verify" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
+              <ShieldAlert size={20} className="text-red-400" /> Verify Listings
+            </Link>
+            <Link href="/dashboard/admin/reports" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
+              <FileBarChart size={20} className="text-purple-400" /> Financial Reports
+            </Link>
           </div>
         </div>
       </div>
