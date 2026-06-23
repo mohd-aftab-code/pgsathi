@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "send") {
-      // 1. Generate 6 digit random OTP
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      // 1. Hardcoded OTP for testing
+      const otp = "123456";
 
       // 2. Set expiry (5 minutes)
       const expiresAt = new Date();
