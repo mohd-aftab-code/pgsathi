@@ -68,7 +68,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
   if (!pg) notFound();
 
   // Structured Data (JSON-LD) for Rich Snippets
-  const jsonLd = {
+  const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": pg.title,
@@ -91,6 +91,39 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
       }
     }
   };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": pg.city?.name || "City",
+        "item": `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/search?city=${pg.city?.slug || ""}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": pg.locality?.name || "Locality",
+        "item": `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/search?locality=${pg.locality?.name || ""}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": pg.title,
+        "item": `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/pg/${pg.slug}`
+      }
+    ]
+  };
+
+  const jsonLd = [productLd, breadcrumbLd];
 
   return (
     <>

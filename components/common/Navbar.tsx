@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, Search, PlusCircle, LogIn } from "lucide-react";
 
@@ -14,9 +15,12 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center no-underline shrink-0">
-            <img 
+            <Image 
               src="/images/logo.jpeg" 
               alt="PGSathi Logo" 
+              width={180}
+              height={64}
+              priority
               className="h-12 md:h-16 w-auto object-contain mix-blend-multiply" 
             />
           </Link>

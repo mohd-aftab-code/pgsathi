@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
 
 interface Photo {
@@ -45,10 +46,13 @@ export default function ImageGallery({ photos, title }: { photos: Photo[], title
             className="relative cursor-pointer overflow-hidden h-full"
             onClick={() => openModal(0)}
           >
-            <img 
+            <Image 
               src={getThumbnailUrl(displayPhotos[0].url, 1200, 800)} 
               alt={`${title} - 1`} 
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover transition-transform duration-500 hover:scale-105" 
             />
           </div>
 
@@ -61,10 +65,12 @@ export default function ImageGallery({ photos, title }: { photos: Photo[], title
                   className="relative cursor-pointer overflow-hidden h-full hidden sm:block"
                   onClick={() => openModal(i + 1)}
                 >
-                  <img 
+                  <Image 
                     src={getThumbnailUrl(photo.url, 600, 400)} 
                     alt={`${title} - ${i + 2}`} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                    fill
+                    sizes="25vw"
+                    className="object-cover transition-transform duration-500 hover:scale-105" 
                   />
                   {/* Overlay for the 5th photo showing "+X more" */}
                   {i === 3 && displayPhotos.length > 5 && (

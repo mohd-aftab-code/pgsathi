@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Home, Phone, Mail, Camera, Share2, MessageCircle } from "lucide-react";
 
 export default function Footer() {
@@ -15,9 +16,11 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
-              <img 
+              <Image 
                 src="/images/logo.jpeg" 
                 alt="PGSathi Logo" 
+                width={180}
+                height={80}
                 style={{ height: "80px", width: "auto", objectFit: "contain", borderRadius: "12px", background: "white", padding: "6px" }} 
               />
             </div>

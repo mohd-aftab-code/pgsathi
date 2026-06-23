@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { MapPin, User, CheckCircle } from "lucide-react";
 import { getThumbnailUrl } from "@/lib/cloudinary";
@@ -14,11 +15,12 @@ export default function PGCard({ pg }: PGCardProps) {
   return (
     <Link href={`/pg/${pg.slug}`} className="group block bg-white rounded-2xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-hover transition-all duration-300">
       <div className="relative h-48 w-full overflow-hidden bg-neutral-100">
-        <img 
+        <Image 
           src={imageUrl} 
           alt={pg.title} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {pg.isFeatured && (
           <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-md flex items-center gap-1">
