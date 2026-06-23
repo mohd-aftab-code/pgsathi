@@ -84,9 +84,6 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   alternates: {
     canonical: "https://pgsathi.in",
-  },
-  verification: {
-    google: "ZaMEO4rMht0Z5dIPt2AeWfLWDCu25rMA8baxz77ON28",
   }
 };
 
@@ -126,7 +123,7 @@ export default function RootLayout({
       className={`${inter.variable} ${plusJakarta.variable} ${notoDevanagari.variable}`}
     >
       <head>
-        <meta name="google-site-verification" content="ZaMEO4rMht0Z5dIPt2AeWfLWDCu25rMA8baxz77ON28" />
+        <meta name="google-site-verification" content="ZaME04rMhtOZ5dlPt2AeWfLWDCu25rMA8baxz77ON28" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
