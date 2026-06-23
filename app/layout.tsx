@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -132,6 +133,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-neutral-50 antialiased">
         {children}
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
     </html>
   );
 }
