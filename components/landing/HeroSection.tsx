@@ -9,18 +9,18 @@ export default async function HeroSection() {
     orderBy: { priority: "desc" },
   });
   return (
-    <section className="relative overflow-hidden bg-primary-950 text-white pt-20 pb-28">
+    <section className="relative overflow-hidden bg-primary-950 text-white pt-12 pb-20 md:pt-20 md:pb-28">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-primary-950/90 pointer-events-none"></div>
 
-      <div className="container-max section-padding relative z-10 text-center">
+      <div className="container-max section-padding relative z-10 text-center px-4 md:px-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium mb-8 animate-fade-in">
           <span className="flex h-2 w-2 rounded-full bg-green-400"></span>
           Trusted by 50,000+ Students & Professionals in NCR
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight animate-slide-up text-white drop-shadow-md" style={{ textWrap: "balance" }}>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight animate-slide-up text-white drop-shadow-md leading-tight" style={{ textWrap: "balance" }}>
           Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">Zero Brokerage PG</span> in Delhi NCR
         </h1>
         

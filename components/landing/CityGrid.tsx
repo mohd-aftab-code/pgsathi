@@ -7,7 +7,7 @@ export default function CityGrid() {
   const topCities = CITIES.sort((a, b) => a.priority - b.priority).slice(0, 6);
 
   return (
-    <section className="bg-neutral-50 py-20">
+    <section className="bg-neutral-50 py-12 md:py-20">
       <div className="container-max section-padding">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
