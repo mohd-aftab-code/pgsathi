@@ -93,6 +93,11 @@ export async function POST(req: NextRequest) {
             sortOrder: index,
             isPrimary: index === 0,
           }))
+        },
+        amenities: {
+          create: (data.amenities || []).map((slug: string) => ({
+            amenity: { connect: { slug } }
+          }))
         }
       },
     });

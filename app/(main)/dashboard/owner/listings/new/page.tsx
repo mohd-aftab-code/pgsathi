@@ -263,6 +263,7 @@ export default function NewListingPage() {
         roomCleaning: formData.roomCleaning === "Yes",
         parking: formData.parking === "Yes",
         photos: formData.photos,
+        amenities: [...formData.selectedAmenities, ...formData.selectedRoomAmenities],
       };
 
       const res = await fetch("/api/listings", {
