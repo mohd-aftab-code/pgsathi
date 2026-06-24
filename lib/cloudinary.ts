@@ -41,6 +41,10 @@ export async function deleteImage(publicId: string): Promise<void> {
 
 // Generate thumbnail URL
 export function getThumbnailUrl(url: string, width = 400, height = 300): string {
+  if (!url) return "";
+  // Don't try to transform external URLs like Google Maps or Unsplash
+  if (!url.includes("cloudinary.com")) return url;
+
   return cloudinary.url(url, {
     width,
     height,

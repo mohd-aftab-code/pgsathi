@@ -19,9 +19,18 @@ export default async function SearchPage(props: {
   const budget = searchParams.budget as string | undefined;
   const amenitiesStr = searchParams.amenities as string | undefined;
   const sortBy = searchParams.sort as string | undefined;
+  const queryParam = searchParams.q as string | undefined;
 
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
+  
+  if (queryParam) {
+    where.OR = [
+      { title: { contains: queryParam, mode: "insensitive" } },
+      { address: { contains: queryParam, mode: "insensitive" } },
+      { locality: { name: { contains: queryParam, mode: "insensitive" } } },
+    ];
+  }
   
   if (citySlug && citySlug !== "all") {
     where.city = { slug: citySlug };
@@ -81,7 +90,7 @@ export default async function SearchPage(props: {
         {/* Search Header */}
         <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
           <h1 className="text-2xl md:text-3xl font-bold mb-6">Find Your Perfect PG</h1>
-          <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} cities={cities} />
+          <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} initialQuery={queryParam || ""} cities={cities} />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -114,9 +123,9 @@ export default async function SearchPage(props: {
                 </div>
                 <h3 className="text-xl font-bold mb-2">No PGs found</h3>
                 <p className="text-neutral-500 mb-6">We couldn't find any listings matching your criteria. Try adjusting your filters.</p>
-                <button className="bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors cursor-pointer">
+                <Link href="/search" className="inline-block bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
                   Clear Filters
-                </button>
+                </Link>
               </div>
             )}
           </div>
