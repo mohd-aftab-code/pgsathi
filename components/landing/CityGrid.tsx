@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CITIES } from "@/constants/cities";
 import { MapPin, ArrowRight } from "lucide-react";
 
@@ -20,14 +21,27 @@ export default function CityGrid() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {topCities.map((city) => (
+          {topCities.map((city: any) => (
             <Link 
               key={city.id} 
               href={`/search?city=${city.slug}`}
               className="group relative h-40 md:h-56 rounded-2xl overflow-hidden block shadow-sm hover:shadow-hover transition-all duration-300"
             >
-              {/* Fallback gradient if no image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-800 to-secondary-700 opacity-90 transition-opacity group-hover:opacity-100"></div>
+              {/* Background Image */}
+              {city.image ? (
+                <Image 
+                  src={city.image} 
+                  alt={city.name}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-neutral-200"></div>
+              )}
+              
+              {/* Gradient Overlay for Text Readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity group-hover:opacity-100"></div>
               
               <div className="absolute inset-0 p-5 flex flex-col justify-end text-white z-10 bg-gradient-to-t from-black/60 to-transparent">
                 <div className="flex items-center gap-2 mb-1">
