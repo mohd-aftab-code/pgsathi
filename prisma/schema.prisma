@@ -33,6 +33,8 @@ model User {
   leads         Lead[]           @relation("TenantLeads")
   reviews       Review[]
   savedListings SavedListing[]
+  beds          Bed[]            @relation("TenantBeds")
+  visits        VisitBooking[]   @relation("TenantVisits")
   otpCodes      OtpCode[]
 
   @@index([email])
@@ -109,6 +111,10 @@ model Listing {
   priceMin        Int
   priceMax        Int
   securityDeposit Int?
+  electricityCharge Int?
+  maintenanceCharge Int?
+  foodCharge        Int?
+  setupFee          Int?
   foodIncluded    Boolean       @default(false)
   totalRooms      Int?
   availableRooms  Int?
@@ -145,6 +151,8 @@ model Listing {
   saved      SavedListing[]
   boosts     ListingBoost[]
   analytics  ListingAnalytic[]
+  rooms      Room[]
+  visits     VisitBooking[]
 
   @@index([cityId, status, isActive])
   @@index([cityId, localityId, status])
@@ -413,6 +421,67 @@ model ListingAnalytic {
   @@unique([listingId, date])
   @@index([listingId, date])
   @@map("listing_analytics")
+}
+
+// ═══════════════════════════════════════
+// ROOMS & BEDS (OS LAYER)
+// ═══════════════════════════════════════
+model Room {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  name      String   @db.VarChar(100)
+  type      PGType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  beds      Bed[]
+
+  @@index([listingId])
+  @@map("rooms")
+}
+
+model Bed {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  name      String   @db.VarChar(50)
+  isOccupied Boolean @default(false)
+  tenantId  Int?
+
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  tenant    User?    @relation("TenantBeds", fields: [tenantId], references: [id])
+
+  @@index([roomId])
+  @@index([tenantId])
+  @@map("beds")
+}
+
+// ═══════════════════════════════════════
+// VISITS (TRUST LAYER)
+// ═══════════════════════════════════════
+model VisitBooking {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  tenantId  Int?
+  name      String   @db.VarChar(100)
+  phone     String   @db.VarChar(15)
+  visitDate DateTime
+  status    VisitStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tenant    User?    @relation("TenantVisits", fields: [tenantId], references: [id])
+
+  @@index([listingId])
+  @@index([visitDate])
+  @@map("visit_bookings")
+}
+
+enum VisitStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  CANCELLED
 }
 
 // ═══════════════════════════════════════

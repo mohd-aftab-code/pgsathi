@@ -81,6 +81,10 @@ const DEFAULT_FORM = {
   priceMin: "",
   priceMax: "",
   securityDeposit: "",
+  electricityCharge: "",
+  maintenanceCharge: "",
+  foodCharge: "",
+  setupFee: "",
   photos: [] as { url: string; publicId: string }[],
   
   // Internal: track auto-filled address from map
@@ -254,6 +258,10 @@ export default function NewListingPage() {
         priceMin: parseInt(formData.priceMin) || 0,
         priceMax: parseInt(formData.priceMax) || 0,
         securityDeposit: formData.securityDeposit ? parseInt(formData.securityDeposit) : null,
+        electricityCharge: formData.electricityCharge ? parseInt(formData.electricityCharge) : null,
+        maintenanceCharge: formData.maintenanceCharge ? parseInt(formData.maintenanceCharge) : null,
+        foodCharge: formData.foodCharge ? parseInt(formData.foodCharge) : null,
+        setupFee: formData.setupFee ? parseInt(formData.setupFee) : null,
         foodIncluded: formData.foodIncluded === "Yes",
         noticePeriod: formData.noticePeriod === "Yes",
         gateClosingTime: formData.gateClosingTime === "Yes",
@@ -693,7 +701,7 @@ export default function NewListingPage() {
       {/* Pricing */}
       <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Pricing Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Min Rent (₹/mo) *</label>
             <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
@@ -705,6 +713,25 @@ export default function NewListingPage() {
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Security Deposit (₹)</label>
             <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
+          </div>
+        </div>
+        <h3 className="text-md font-bold text-neutral-800 mb-4">Additional Charges (Optional)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">Maintenance (₹/mo)</label>
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">Electricity (₹/mo)</label>
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">Food / Mess (₹/mo)</label>
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">Setup Fee (One-time)</label>
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
           </div>
         </div>
       </div>

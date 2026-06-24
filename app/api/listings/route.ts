@@ -66,6 +66,10 @@ export async function POST(req: NextRequest) {
         priceMin: data.priceMin || 0,
         priceMax: data.priceMax || 0,
         securityDeposit: data.securityDeposit,
+        electricityCharge: data.electricityCharge,
+        maintenanceCharge: data.maintenanceCharge,
+        foodCharge: data.foodCharge,
+        setupFee: data.setupFee,
         
         noticePeriod: data.noticePeriod,
         gateClosingTime: data.gateClosingTime,

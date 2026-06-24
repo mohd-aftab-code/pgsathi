@@ -8,6 +8,8 @@ import {
 import Link from "next/link";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import ImageGallery from "@/components/listings/ImageGallery";
+import BookVisitModal from "@/components/listings/BookVisitModal";
+import CostCalculator from "@/components/listings/CostCalculator";
 import { auth } from "@/lib/auth";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
@@ -199,6 +201,16 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                 </div>
               </div>
 
+              {/* First-Month Cost Calculator */}
+              <CostCalculator 
+                rent={pg.priceMin}
+                deposit={pg.securityDeposit}
+                electricity={pg.electricityCharge}
+                maintenance={pg.maintenanceCharge}
+                food={pg.foodCharge}
+                setupFee={pg.setupFee}
+              />
+
               {/* Description */}
               <section>
                 <h2 className="text-2xl font-bold mb-4 text-neutral-900">About this PG</h2>
@@ -342,6 +354,10 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                 </div>
 
                 <div className="space-y-4">
+                  <BookVisitModal 
+                    listingId={pg.id} 
+                    ownerName={pg.owner.name} 
+                  />
                   <ContactOwnerButton 
                     listingId={pg.id} 
                     ownerPhone={pg.owner.phone || ""} 

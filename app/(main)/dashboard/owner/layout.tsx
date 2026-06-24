@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { LayoutDashboard, Building2, Star, CreditCard, MessageSquare, Settings } from "lucide-react";
+import { LayoutDashboard, Building2, Star, CreditCard, MessageSquare, Settings, Layers } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 
 export const metadata = {
@@ -29,7 +29,8 @@ export default async function OwnerDashboardLayout({
   const navItems = [
     { name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard },
     { name: "My Listings", href: "/dashboard/owner/listings", icon: Building2 },
-    { name: "Leads", href: "/dashboard/owner/leads", icon: MessageSquare },
+    { name: "Inventory", href: "/dashboard/owner/inventory", icon: Layers },
+    { name: "Visits", href: "/dashboard/owner/leads", icon: MessageSquare },
     { name: "Reviews", href: "/dashboard/owner/reviews", icon: Star },
     { name: "Subscription", href: "/dashboard/owner/subscription", icon: CreditCard },
     { name: "Settings", href: "/dashboard/owner/settings", icon: Settings },
