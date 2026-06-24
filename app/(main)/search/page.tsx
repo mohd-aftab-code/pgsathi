@@ -4,11 +4,39 @@ import SearchBar from "@/components/landing/SearchBar";
 import SearchFilters from "@/components/search/SearchFilters";
 import SearchSort from "@/components/search/SearchSort";
 import { Suspense } from "react";
+import Link from "next/link";
 
-export const metadata = {
-  title: "Search PGs - PGSathi",
-  description: "Find the best PGs and Hostels matching your requirements.",
-};
+export async function generateMetadata(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const city = searchParams.city as string | undefined;
+  const gender = searchParams.gender as string | undefined;
+
+  let title = "Search Best PGs & Hostels | PGSathi";
+  let description = "Find the best PGs, Hostels, and Room Rentals near you with zero brokerage. Search verified properties on PGSathi.";
+
+  if (city && city !== "all") {
+    const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace("-", " ");
+    let genderText = "";
+    if (gender === "BOYS") genderText = "Boys ";
+    if (gender === "GIRLS") genderText = "Girls ";
+    if (gender === "COED") genderText = "Co-ed ";
+    
+    title = `Best ${genderText}PGs & Hostels in ${cityName} - Zero Brokerage | PGSathi`;
+    description = `Looking for a ${genderText}PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    }
+  };
+}
 
 export default async function SearchPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

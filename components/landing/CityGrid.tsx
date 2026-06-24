@@ -34,7 +34,7 @@ export default function CityGrid() {
                   alt={city.name}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105 text-transparent"
                 />
               ) : (
                 <div className="absolute inset-0 bg-neutral-200"></div>
@@ -48,7 +48,7 @@ export default function CityGrid() {
                   <MapPin size={16} className="text-orange-400" />
                   <span className="text-sm font-medium text-neutral-200">{city.state}</span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold">{city.name}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-white">{city.name}</h3>
                 <p className="text-sm text-neutral-300 mt-1 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                   {city.localities.length} localities
                 </p>

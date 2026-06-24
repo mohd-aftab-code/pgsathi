@@ -42,7 +42,7 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
 
   return (
     <aside className="w-full lg:w-64 shrink-0">
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-200 sticky top-24">
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-200 lg:sticky lg:top-24">
         <div className="flex items-center gap-2 font-bold text-lg mb-4 pb-4 border-b border-neutral-100">
           <Filter size={20} /> Filters
         </div>

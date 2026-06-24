@@ -17,7 +17,7 @@ export const CITIES = [
     slug: "noida",
     state: "Uttar Pradesh (NCR)",
     priority: 2,
-    image: "https://images.unsplash.com/photo-1605626916568-12d9c0a6b5a3?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
     localities: [
       "Sector 62", "Sector 15", "Sector 22", "Sector 126",
       "Knowledge Park", "Sector 18", "Sector 44", "Sector 137",
@@ -29,7 +29,7 @@ export const CITIES = [
     slug: "gurgaon",
     state: "Haryana (NCR)",
     priority: 3,
-    image: "https://images.unsplash.com/photo-1616035987313-05b634ccb801?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=800&q=80",
     localities: [
       "DLF Phase 1", "DLF Phase 2", "DLF Phase 3", "Udyog Vihar",
       "Sector 14", "Sector 44", "Sushant Lok", "Sector 21",
@@ -41,7 +41,7 @@ export const CITIES = [
     slug: "kota",
     state: "Rajasthan",
     priority: 4,
-    image: "https://images.unsplash.com/photo-1561057160-ce80fe21eb93?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=800&q=80",
     localities: [
       "Talwandi", "Vigyan Nagar", "Mahaveer Nagar", "Dadabari",
       "Borkhera", "Kunhari", "Industrial Area", "Rangpur",
@@ -65,7 +65,7 @@ export const CITIES = [
     slug: "pune",
     state: "Maharashtra",
     priority: 6,
-    image: "https://images.unsplash.com/photo-1555503027-380d195f4625?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
     localities: [
       "Kothrud", "Hadapsar", "Baner", "Wakad",
       "Hinjawadi", "Viman Nagar", "Kalyani Nagar", "Shivajinagar",
