@@ -41,3 +41,15 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# ─── Data import files (never commit raw data) ───────────────
+*.xlsx
+*.xls
+*.csv
+pg_data_parsed.json
+pg_cleaned_import.json
+*_import*.json
+*_export*.json
+
+# PowerShell one-off scripts
+*.ps1
