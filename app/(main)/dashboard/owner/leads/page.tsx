@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Search, Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock } from "lucide-react";
+import { Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
+import MarkReadButton from "@/components/listings/MarkReadButton";
 
 export const metadata = {
   title: "Visits & Leads - Owner Dashboard",
@@ -143,13 +144,13 @@ export default async function VisitsInboxPage() {
                             </Link>
                             {lead.message && (
                               <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block">
-                                "{lead.message}"
+                                &ldquo;{lead.message}&rdquo;
                               </div>
                             )}
                           </div>
                         </td>
                         <td className="py-5 px-6 text-right">
-                          <div className="flex flex-col items-end gap-1">
+                          <div className="flex flex-col items-end gap-2">
                             <span className="font-bold text-neutral-900">
                               {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
                             </span>
@@ -157,6 +158,7 @@ export default async function VisitsInboxPage() {
                               <CalendarDays size={12} />
                               {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
                             </span>
+                            <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
                           </div>
                         </td>
                       </tr>

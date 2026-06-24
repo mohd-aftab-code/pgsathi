@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import PGCard from "@/components/listings/PGCard";
 import SearchBar from "@/components/landing/SearchBar";
 import SearchFilters from "@/components/search/SearchFilters";
+import SearchSort from "@/components/search/SearchSort";
 import { Suspense } from "react";
 
 export const metadata = {
@@ -17,6 +18,7 @@ export default async function SearchPage(props: {
   const gender = searchParams.gender as string | undefined;
   const budget = searchParams.budget as string | undefined;
   const amenitiesStr = searchParams.amenities as string | undefined;
+  const sortBy = searchParams.sort as string | undefined;
 
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
@@ -42,12 +44,18 @@ export default async function SearchPage(props: {
   // Amenities / Rules Filter
   if (amenitiesStr) {
     const amenities = amenitiesStr.split(",");
-    if (amenities.includes("noticePeriod")) where.noticePeriod = false; // "No Notice Period" means noticePeriod=false
+    if (amenities.includes("noticePeriod")) where.noticePeriod = false;
     if (amenities.includes("gateClosingTime")) where.gateClosingTime = false; 
     if (amenities.includes("foodIncluded")) where.foodIncluded = true;
     if (amenities.includes("laundryService")) where.laundryService = true;
     if (amenities.includes("roomCleaning")) where.roomCleaning = true;
   }
+
+  // Sort order
+  let orderBy: any[] = [{ isFeatured: "desc" }, { createdAt: "desc" }];
+  if (sortBy === "price_asc") orderBy = [{ priceMin: "asc" }];
+  else if (sortBy === "price_desc") orderBy = [{ priceMin: "desc" }];
+  else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
   // Fetch listings and cities
   const [listings, cities] = await Promise.all([
@@ -58,10 +66,7 @@ export default async function SearchPage(props: {
         locality: true,
         photos: { take: 1 },
       },
-      orderBy: [
-        { isFeatured: "desc" },
-        { createdAt: "desc" },
-      ],
+      orderBy,
     }),
     db.city.findMany({
       where: { isActive: true },
@@ -91,11 +96,9 @@ export default async function SearchPage(props: {
               <h2 className="text-xl font-bold">
                 {listings.length} PGs Found
               </h2>
-              <select className="bg-white border border-neutral-200 text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 outline-none">
-                <option>Sort by: Recommended</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-              </select>
+              <Suspense fallback={<div className="w-40 h-9 bg-white border border-neutral-200 rounded-lg animate-pulse" />}>
+                <SearchSort />
+              </Suspense>
             </div>
 
             {listings.length > 0 ? (

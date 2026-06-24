@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { PlusCircle, Edit, Eye, Trash2, Building2, MapPin, Zap, MessageSquare } from "lucide-react";
+import { PlusCircle, Building2, MapPin, MessageSquare, Eye } from "lucide-react";
 import { redirect } from "next/navigation";
+import ListingActions from "@/components/listings/ListingActions";
 
 export const metadata = {
   title: "My Listings - Owner Dashboard",
@@ -114,26 +115,11 @@ export default async function OwnerListingsPage() {
                       </div>
                     </td>
                     <td className="py-5 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {listing.status === "ACTIVE" && (
-                          <button className="bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 border border-orange-200">
-                            <Zap size={14} /> Boost
-                          </button>
-                        )}
-                        <Link href={`/dashboard/owner/listings/${listing.id}/edit`} className="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 p-2 rounded-lg transition-colors border border-neutral-200" title="Edit Listing">
-                          <Edit size={16} />
-                        </Link>
-                        <Link 
-                          href={`/pg/${listing.slug}`} 
-                          className="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 p-2 rounded-lg transition-colors border border-neutral-200" 
-                          title="View Listing"
-                        >
-                          <Eye size={16} />
-                        </Link>
-                        <button className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors cursor-pointer border border-red-100" title="Delete Listing">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                      <ListingActions
+                        listingId={listing.id}
+                        listingSlug={listing.slug}
+                        status={listing.status}
+                      />
                     </td>
                   </tr>
                 ))}
