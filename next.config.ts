@@ -30,9 +30,6 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
-  turbopack: {
-    root: "c:/Users/USER/Desktop/pgsathi",
-  },
   serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
