@@ -45,15 +45,15 @@ export default function Home() {
               Manage your PG, track views, and grow your business with zero commission.
             </p>
             
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-12 text-left">
+            <ul className="grid grid-cols-2 md:grid-cols-2 gap-x-4 md:gap-x-12 gap-y-4 md:gap-y-6 mb-12 text-left">
               {[
                 "100% Free Basic Listing",
                 "Direct WhatsApp Leads",
                 "No Brokerage / Commission",
                 "Easy Dashboard Management"
               ].map((benefit, idx) => (
-                <li key={idx} className="flex items-center gap-4 font-medium text-primary-50 bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm">
-                  <CheckCircle2 className="text-orange-400" size={24} />
+                <li key={idx} className="flex items-center gap-3 md:gap-4 font-medium text-primary-50 bg-white/5 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 shadow-sm text-xs md:text-base">
+                  <CheckCircle2 className="text-orange-400 shrink-0" size={20} />
                   {benefit}
                 </li>
               ))}
