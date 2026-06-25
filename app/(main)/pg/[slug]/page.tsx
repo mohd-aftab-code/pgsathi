@@ -50,6 +50,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
       owner: { select: { name: true, phone: true, id: true, avatar: true } },
       photos: { orderBy: { sortOrder: "asc" } },
       amenities: { include: { amenity: true } },
+      rooms: { include: { beds: true } },
     },
   });
 
@@ -63,11 +64,16 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
         owner: { select: { name: true, phone: true, id: true, avatar: true } },
         photos: { orderBy: { sortOrder: "asc" } },
         amenities: { include: { amenity: true } },
+        rooms: { include: { beds: true } },
       },
     });
   }
 
   if (!pg) notFound();
+
+  const totalRoomsCount = pg.totalRooms ?? pg.rooms?.length ?? 0;
+  const availableBedsCount = pg.availableBeds ?? 
+    (pg.rooms ? pg.rooms.reduce((acc, room) => acc + room.beds.filter(b => !b.isOccupied).length, 0) : 0);
 
   // Structured Data (JSON-LD) for Rich Snippets
   const productLd = {
@@ -182,14 +188,14 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                   <DoorOpen size={28} className="text-neutral-400" />
                   <div>
                     <div className="text-sm text-neutral-500 font-medium">Total Rooms</div>
-                    <div className="font-bold text-neutral-900">{pg.totalRooms || "Not specified"}</div>
+                    <div className="font-bold text-neutral-900">{totalRoomsCount || "Not specified"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 pr-8 border-r border-neutral-200">
                   <BedDouble size={28} className="text-neutral-400" />
                   <div>
                     <div className="text-sm text-neutral-500 font-medium">Available Beds</div>
-                    <div className="font-bold text-green-600">{pg.availableBeds || "Contact Owner"}</div>
+                    <div className="font-bold text-green-600">{availableBedsCount || "Contact Owner"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -236,6 +242,65 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                   )}
                 </div>
               </section>
+
+              {/* Rooms & Beds Availability */}
+              {pg.rooms && pg.rooms.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-6 text-neutral-900">Rooms & Beds</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {pg.rooms.map(room => {
+                      const availableBedsInRoom = room.beds.filter(b => !b.isOccupied).length;
+                      const isSoldOut = availableBedsInRoom === 0 && room.beds.length > 0;
+                      return (
+                        <div key={room.id} className="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-md transition-all">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <h3 className="font-bold text-lg text-neutral-900 leading-tight">{room.name}</h3>
+                                {room.floor && (
+                                  <span className="bg-neutral-100 text-neutral-600 text-xs font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-neutral-200 whitespace-nowrap">
+                                    {room.floor}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                                {room.type.replace('_', ' ')}
+                              </span>
+                            </div>
+                            {isSoldOut ? (
+                              <span className="bg-neutral-100 text-neutral-500 text-xs font-bold px-3 py-1 rounded-full">Sold Out</span>
+                            ) : (
+                              <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
+                                {availableBedsInRoom} Available
+                              </span>
+                            )}
+                          </div>
+                          
+                          {room.beds.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {room.beds.map(bed => (
+                                <div 
+                                  key={bed.id} 
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                                    bed.isOccupied 
+                                      ? "bg-neutral-50 border-neutral-200 text-neutral-400" 
+                                      : "bg-white border-green-200 text-green-700 hover:bg-green-50"
+                                  }`}
+                                >
+                                  <BedDouble size={14} />
+                                  {bed.name}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-sm text-neutral-400">No beds configured yet</div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
 
               {/* House Rules & Facilities - Premium Do's and Don'ts Style */}
               <section>

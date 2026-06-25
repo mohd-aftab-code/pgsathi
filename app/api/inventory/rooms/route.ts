@@ -9,7 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { listingId, name, type, bedCount } = await req.json();
+    const { listingId, name, type, bedCount, floor } = await req.json();
 
     // Verify owner
     const listing = await prisma.listing.findUnique({
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
         listingId: parseInt(listingId),
         name,
         type,
+        floor,
         beds: {
           create: bedsData
         }

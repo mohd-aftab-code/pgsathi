@@ -14,6 +14,7 @@ type Room = {
   id: number;
   name: string;
   type: string;
+  floor: string | null;
   beds: Bed[];
 };
 
@@ -22,6 +23,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
   const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomType, setNewRoomType] = useState("DOUBLE_SHARING");
+  const [newRoomFloor, setNewRoomFloor] = useState("");
   const [newBedCount, setNewBedCount] = useState(2);
   const [loading, setLoading] = useState(false);
 
@@ -37,6 +39,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
           listingId,
           name: newRoomName,
           type: newRoomType,
+          floor: newRoomFloor,
           bedCount: newBedCount
         })
       });
@@ -46,6 +49,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
       setRooms([...rooms, newRoom]);
       setIsAddingRoom(false);
       setNewRoomName("");
+      setNewRoomFloor("");
       toast.success("Room added successfully");
     } catch (error) {
       toast.error("Could not add room");
@@ -97,7 +101,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
       {isAddingRoom && (
         <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200 mb-6">
           <h3 className="font-semibold mb-4">Add New Room</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div>
               <label className="block text-xs text-neutral-500 mb-1">Room Name/Number</label>
               <input 
@@ -124,6 +128,16 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                 <option value="DOUBLE_SHARING">Double Sharing</option>
                 <option value="TRIPLE_SHARING">Triple Sharing</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-xs text-neutral-500 mb-1">Floor</label>
+              <input 
+                type="text" 
+                value={newRoomFloor} 
+                onChange={e => setNewRoomFloor(e.target.value)} 
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm" 
+                placeholder="e.g. 1st Floor" 
+              />
             </div>
             <div>
               <label className="block text-xs text-neutral-500 mb-1">Number of Beds</label>
@@ -166,7 +180,10 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
               <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex justify-between items-center">
                 <div>
                   <h4 className="font-bold text-neutral-900">{room.name}</h4>
-                  <span className="text-xs text-neutral-500 bg-white px-2 py-0.5 rounded border border-neutral-200">{room.type.replace('_', ' ')}</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-neutral-500 bg-white px-2 py-0.5 rounded border border-neutral-200">{room.type.replace('_', ' ')}</span>
+                    {room.floor && <span className="text-xs text-neutral-500 bg-white px-2 py-0.5 rounded border border-neutral-200">{room.floor}</span>}
+                  </div>
                 </div>
                 <div className="text-sm bg-white px-3 py-1 rounded-full border border-neutral-200">
                   <span className="font-semibold text-primary-700">{room.beds.filter(b => b.isOccupied).length}</span>
