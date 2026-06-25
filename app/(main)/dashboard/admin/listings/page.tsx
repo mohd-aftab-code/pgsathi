@@ -3,10 +3,21 @@ import { CheckCircle, XCircle, Eye } from "lucide-react";
 import Link from "next/link";
 import AdminListingActions from "./AdminListingActions";
 
-export default async function AdminListingsPage() {
-  // Fetch pending listings by default
-  const pendingListings = await db.listing.findMany({
-    where: { status: "PENDING" },
+export default async function AdminListingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const currentTab = resolvedSearchParams.tab || "pending";
+  
+  // Map tab to status
+  let statusFilter: any = "PENDING";
+  if (currentTab === "active") statusFilter = "ACTIVE";
+  if (currentTab === "inactive") statusFilter = "INACTIVE";
+
+  const listings = await db.listing.findMany({
+    where: { status: statusFilter },
     include: {
       owner: { select: { name: true, phone: true } },
       city: true,
@@ -19,12 +30,34 @@ export default async function AdminListingsPage() {
     <div>
       <div className="mb-8 bg-gradient-to-r from-primary-950 to-primary-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10">Verify Listings</h1>
-        <p className="text-primary-200 relative z-10">Review and approve newly submitted PGs to make them live.</p>
+        <h1 className="text-3xl font-extrabold mb-2 relative z-10">Manage Listings</h1>
+        <p className="text-primary-200 relative z-10">Review, approve, edit, and delete PGs across the platform.</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-4 mb-6 border-b border-neutral-200 pb-2">
+        <Link 
+          href="?tab=pending" 
+          className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "pending" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+        >
+          Pending Review
+        </Link>
+        <Link 
+          href="?tab=active" 
+          className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "active" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+        >
+          Active PGs
+        </Link>
+        <Link 
+          href="?tab=inactive" 
+          className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "inactive" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+        >
+          Inactive / Deleted
+        </Link>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
-        {pendingListings.length > 0 ? (
+        {listings.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -36,7 +69,7 @@ export default async function AdminListingsPage() {
                 </tr>
               </thead>
               <tbody className="text-sm">
-                {pendingListings.map((listing) => (
+                {listings.map((listing) => (
                   <tr key={listing.id} className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors group">
                     <td className="py-4 px-6">
                       <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
@@ -65,12 +98,12 @@ export default async function AdminListingsPage() {
                         <Link 
                           href={`/pg/${listing.slug}`} 
                           target="_blank"
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors" 
+                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
                           title="Preview"
                         >
                           <Eye size={18} />
                         </Link>
-                        <AdminListingActions listingId={listing.id} />
+                        <AdminListingActions listingId={listing.id} currentStatus={listing.status} />
                       </div>
                     </td>
                   </tr>
@@ -80,11 +113,11 @@ export default async function AdminListingsPage() {
           </div>
         ) : (
           <div className="p-16 flex flex-col items-center text-center">
-            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 text-green-500 shadow-inner">
+            <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mb-6 text-neutral-400 shadow-inner border border-neutral-100">
               <CheckCircle size={48} />
             </div>
-            <h3 className="text-2xl font-extrabold text-neutral-900 mb-2">All Caught Up!</h3>
-            <p className="text-neutral-500 max-w-sm">There are no pending listings to review right now. Great job keeping the platform clean.</p>
+            <h3 className="text-2xl font-extrabold text-neutral-900 mb-2">No Listings Found</h3>
+            <p className="text-neutral-500 max-w-sm">There are no listings in the '{currentTab}' category.</p>
           </div>
         )}
       </div>

@@ -24,7 +24,7 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 pointer-events-none grayscale">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-neutral-50 rounded-2xl p-6 border border-neutral-200">
             <h3 className="font-bold text-neutral-900 mb-2 flex items-center gap-2">
               <ShieldCheck size={18} className="text-blue-500" /> Platform Fees

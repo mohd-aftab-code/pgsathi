@@ -28,6 +28,7 @@ export default async function AdminDashboardLayout({
   const navItems = [
     { name: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
     { name: "Verify Listings", href: "/dashboard/admin/listings", icon: ShieldCheck },
+    { name: "Plans", href: "/dashboard/admin/plans", icon: PieChart },
     { name: "Users", href: "/dashboard/admin/users", icon: Users },
     { name: "Reports", href: "/dashboard/admin/reports", icon: PieChart },
     { name: "Settings", href: "/dashboard/admin/settings", icon: Settings },
