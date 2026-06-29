@@ -100,9 +100,9 @@ export default async function BlogPostPage(props: Props) {
         </div>
 
         {/* Article Content */}
-        <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-neutral-200 p-8 md:p-12">
+        <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-neutral-200 p-8 md:p-14">
           <div 
-            className="prose prose-lg prose-neutral max-w-none 
+            className="prose prose-lg md:prose-xl prose-neutral max-w-none 
               prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-neutral-900
               prose-a:text-primary-600 prose-a:font-medium hover:prose-a:text-primary-700
               prose-img:rounded-2xl prose-img:shadow-md
