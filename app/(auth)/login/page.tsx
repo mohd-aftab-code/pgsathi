@@ -11,11 +11,9 @@ function LoginContent() {
   let callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
   if (callbackUrl.includes("/login")) callbackUrl = "/dashboard";
 
-  // Tab: "otp" (users) or "email" (admin)
-  const [tab, setTab] = useState<"otp" | "email">("otp");
-  const [step, setStep] = useState<"PHONE" | "OTP">("PHONE");
+  // Tab: "user" (users) or "email" (admin)
+  const [tab, setTab] = useState<"user" | "email">("user");
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,34 +21,17 @@ function LoginContent() {
     searchParams?.get("error") === "CredentialsSignin" ? "Invalid credentials. Please try again." : ""
   );
 
-  // OTP: Send
-  const handleSendOtp = async (e: React.FormEvent) => {
+  // User Login (Phone + Password)
+  const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.length !== 10) { setError("Please enter a valid 10-digit phone number"); return; }
+    if (!password) { setError("Please enter your password"); return; }
     setLoading(true); setError("");
     try {
-      const res = await fetch("/api/auth/otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send", phone }),
-      });
-      const data = await res.json();
-      if (data.success) setStep("OTP");
-      else setError(data.message || "Failed to send OTP");
-    } catch { setError("Something went wrong"); }
-    finally { setLoading(false); }
-  };
-
-  // OTP: Verify
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length !== 6) { setError("Please enter a valid 6-digit OTP"); return; }
-    setLoading(true); setError("");
-    try {
-      const res = await signIn("credentials", { phone, otp, redirect: false });
-      if (res?.error) { setError("Invalid or expired OTP. Please try again."); setLoading(false); }
+      const res = await signIn("credentials", { phone, password, redirect: false });
+      if (res?.error) { setError("Invalid phone number or password."); setLoading(false); }
       else { window.location.href = callbackUrl; }
-    } catch { setError("Failed to verify OTP."); setLoading(false); }
+    } catch { setError("Failed to login."); setLoading(false); }
   };
 
   // Email + Password (Admin)
@@ -106,10 +87,10 @@ function LoginContent() {
           {/* Tabs */}
           <div className="flex bg-neutral-100 rounded-xl p-1 mb-8">
             <button
-              onClick={() => { setTab("otp"); setError(""); setStep("PHONE"); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${tab === "otp" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
+              onClick={() => { setTab("user"); setError(""); }}
+              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${tab === "user" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
             >
-              User Login (OTP)
+              User Login
             </button>
             <button
               onClick={() => { setTab("email"); setError(""); }}
@@ -121,13 +102,11 @@ function LoginContent() {
 
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-neutral-900 mb-1">
-              {tab === "otp"
-                ? step === "PHONE" ? "Log in or Sign up" : "Verify OTP"
-                : "Admin Login"}
+              {tab === "user" ? "Log in" : "Admin Login"}
             </h2>
             <p className="text-neutral-500 text-sm">
-              {tab === "otp"
-                ? step === "PHONE" ? "Enter your phone number to receive a secure OTP." : `We sent a 6-digit code to +91 ${phone}`
+              {tab === "user"
+                ? "Enter your phone number and password."
                 : "Enter your admin email and password."}
             </p>
           </div>
@@ -136,43 +115,31 @@ function LoginContent() {
             <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 font-medium">{error}</div>
           )}
 
-          {/* OTP Form */}
-          {tab === "otp" && (
-            <>
-              {step === "PHONE" ? (
-                <form onSubmit={handleSendOtp} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">Phone Number</label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">+91</span>
-                      <input type="tel" maxLength={10} value={phone}
-                        onChange={e => setPhone(e.target.value.replace(/\D/g, ""))}
-                        className={`${inputCls} pl-12`} placeholder="Enter 10 digit number" required />
-                    </div>
-                  </div>
-                  <button type="submit" disabled={loading} className={btnCls}>
-                    {loading ? "Sending..." : "Send OTP"}
-                  </button>
-                </form>
-              ) : (
-                <form onSubmit={handleVerifyOtp} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">Enter OTP</label>
-                    <input type="text" maxLength={6} value={otp}
-                      onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
-                      className={`${inputCls} text-center tracking-[0.5em] font-bold text-lg`}
-                      placeholder="------" required />
-                  </div>
-                  <button type="submit" disabled={loading} className={btnCls}>
-                    {loading ? "Verifying..." : "Verify & Login"}
-                  </button>
-                  <button type="button" onClick={() => setStep("PHONE")}
-                    className="w-full h-12 bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 font-bold rounded-xl transition-colors">
-                    Change Phone Number
-                  </button>
-                </form>
-              )}
-            </>
+          {/* User Form */}
+          {tab === "user" && (
+            <form onSubmit={handleUserLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Phone Number</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">+91</span>
+                  <input type="tel" maxLength={10} value={phone}
+                    onChange={e => setPhone(e.target.value.replace(/\D/g, ""))}
+                    className={`${inputCls} pl-12`} placeholder="Enter 10 digit number" required />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Password</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  className={inputCls} placeholder="Enter password" required />
+              </div>
+              <button type="submit" disabled={loading} className={btnCls}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
+              
+              <div className="mt-6 text-center text-sm text-neutral-600">
+                Don't have an account? <Link href="/register" className="text-primary-600 font-bold hover:underline">Register here</Link>
+              </div>
+            </form>
           )}
 
           {/* Email Form (Admin) */}

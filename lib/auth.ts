@@ -18,23 +18,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-        // For OTP
         phone: { label: "Phone", type: "text" },
-        otp: { label: "OTP", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("[DEBUG] authorize() called with:", credentials);
+        console.log("[DEBUG] authorize() called with:", { email: credentials?.email, phone: credentials?.phone });
         try {
           if (!credentials) return null;
 
           const email = credentials.email as string | undefined;
-          const password = credentials.password as string | undefined;
           const phone = credentials.phone as string | undefined;
-          const otp = credentials.otp as string | undefined;
+          const password = credentials.password as string | undefined;
 
-          // Login with Email & Password
-          if (email && password) {
+          if (!password) {
+             throw new Error("Password is required");
+          }
+
+          // Login with Email & Password (Admin)
+          if (email) {
             const user = await db.user.findUnique({
               where: { email: email },
             });
@@ -59,50 +60,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             };
           }
 
-          // Login with OTP (Phone)
-          if (phone && otp) {
-            // Find valid OTP
-            const otpRecord = await db.otpCode.findFirst({
-              where: {
-                phone: phone,
-                code: otp,
-                purpose: "login",
-                isUsed: false,
-                expiresAt: { gt: new Date() },
-              },
-            });
-
-            if (!otpRecord) {
-              console.log("[DEBUG] Invalid or expired OTP for phone:", phone);
-              throw new Error("Invalid or expired OTP");
-            }
-
-            // Find User
-            let user = await db.user.findUnique({
+          // Login with Phone & Password (User)
+          if (phone) {
+            const user = await db.user.findUnique({
               where: { phone: phone },
             });
 
-            if (!user) {
-              // Auto-signup the user since OTP is verified
-              user = await db.user.create({
-                data: {
-                  phone: phone,
-                  name: `User_${phone.slice(-4)}`, // Default name
-                  email: `user_${phone}@pgsathi.in`, // Placeholder email
-                  role: "TENANT", // Default role
-                  isVerified: true,
-                }
-              });
-              console.log("[DEBUG] New user created:", user);
-            } else {
-              console.log("[DEBUG] Existing user found:", user);
+            if (!user || !user.passwordHash) {
+              throw new Error("Invalid phone number or password");
             }
 
-            // Mark OTP as used
-            await db.otpCode.update({
-              where: { id: otpRecord.id },
-              data: { isUsed: true },
-            });
+            const isValid = await compare(password, user.passwordHash);
+
+            if (!isValid) {
+              throw new Error("Invalid phone number or password");
+            }
 
             return {
               id: user.id.toString(),
