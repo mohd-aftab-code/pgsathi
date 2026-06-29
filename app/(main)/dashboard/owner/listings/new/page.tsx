@@ -302,7 +302,7 @@ export default function NewListingPage() {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="flex w-full mb-8 rounded-xl overflow-hidden shadow-sm border border-neutral-200">
+    <div className="flex w-full mb-8 rounded-xl overflow-x-auto whitespace-nowrap shadow-sm border border-neutral-200 snap-x hide-scrollbar">
       {STEPS.map((step, index) => {
         const isActive = currentStep === step.id;
         const isCompleted = currentStep > step.id;
@@ -310,7 +310,7 @@ export default function NewListingPage() {
         return (
           <div 
             key={step.id} 
-            className={`flex-1 flex items-center justify-between px-4 py-3 border-r border-white/20 last:border-r-0 transition-colors
+            className={`flex-1 flex items-center justify-between px-4 py-3 min-w-[180px] md:min-w-0 border-r border-white/20 last:border-r-0 transition-colors snap-start
               ${isActive ? 'bg-primary-500 text-white font-bold' : 
                 isCompleted ? 'bg-primary-100 text-primary-800 font-medium' : 
                 'bg-white text-neutral-400 font-medium'}`}
@@ -390,6 +390,72 @@ export default function NewListingPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Location Details</h3>
+
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <MapPin className="text-primary-500" size={20} />
+              <h4 className="font-bold text-neutral-800">Search & Pin Location *</h4>
+            </div>
+            {(formData.latitude && formData.longitude) && (
+              <div className="flex gap-4">
+                <input type="text" readOnly value={formData.latitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24 hidden md:block" placeholder="Latitude" />
+                <input type="text" readOnly value={formData.longitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24 hidden md:block" placeholder="Longitude" />
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-neutral-500 mb-4">Search your property address on the map below. Once selected, we will automatically fill in the city, locality, and complete address for you!</p>
+          
+          <LocationPicker 
+            latitude={formData.latitude} 
+            longitude={formData.longitude} 
+            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))}
+            onAddressFound={(data) => {
+              const addressStr = data.display_name;
+              const addressDetails = data.address || {};
+              
+              setFormData(prev => {
+                let matchedCityId = prev.cityId;
+                let newLocalities = localities;
+                
+                if (addressDetails.city || addressDetails.state_district) {
+                  const cityName = (addressDetails.city || addressDetails.state_district).toLowerCase();
+                  const foundCity = cities.find(c => cityName.includes(c.name.toLowerCase()));
+                  if (foundCity) {
+                    matchedCityId = foundCity.id.toString();
+                    newLocalities = foundCity.localities || [];
+                    setLocalities(newLocalities);
+                  }
+                }
+                
+                let matchedLocalityId = prev.localityId;
+                if (matchedCityId) {
+                  const searchStr = addressStr.toLowerCase();
+                  const suburb = addressDetails.suburb?.toLowerCase() || '';
+                  const neighbourhood = addressDetails.neighbourhood?.toLowerCase() || '';
+                  const foundLocality = newLocalities.find(l => 
+                    searchStr.includes(l.name.toLowerCase()) || 
+                    (suburb && suburb.includes(l.name.toLowerCase())) ||
+                    (neighbourhood && neighbourhood.includes(l.name.toLowerCase()))
+                  );
+                  if (foundLocality) matchedLocalityId = foundLocality.id.toString();
+                }
+
+                let pincode = prev.pincode;
+                if (addressDetails.postcode) pincode = addressDetails.postcode;
+
+                return {
+                  ...prev,
+                  address: !prev.address || prev.address === prev._autoAddress ? addressStr : prev.address,
+                  _autoAddress: addressStr,
+                  cityId: matchedCityId,
+                  localityId: matchedLocalityId,
+                  pincode: pincode
+                };
+              });
+            }}
+          />
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div>
@@ -425,7 +491,7 @@ export default function NewListingPage() {
             <textarea 
               rows={2}
               className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none resize-none"
-              placeholder="Will auto-fill when you click/search on map below, or type manually..."
+              placeholder="Will auto-fill when you click/search on map above, or type manually..."
               value={formData.address}
               onChange={e => setFormData({...formData, address: e.target.value})}
             />
@@ -452,34 +518,6 @@ export default function NewListingPage() {
               />
             </div>
           </div>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <MapPin className="text-primary-500" size={20} />
-              <h4 className="font-bold text-neutral-800">Mark Locality on Map *</h4>
-            </div>
-            {(formData.latitude && formData.longitude) && (
-              <div className="flex gap-4">
-                <input type="text" readOnly value={formData.latitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24" placeholder="Latitude" />
-                <input type="text" readOnly value={formData.longitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24" placeholder="Longitude" />
-              </div>
-            )}
-          </div>
-          <p className="text-sm text-neutral-500 mb-4">Click anywhere on the map or drag the marker to pin your property's exact location.</p>
-          
-          <LocationPicker 
-            latitude={formData.latitude} 
-            longitude={formData.longitude} 
-            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))}
-            onAddressFound={(address) => setFormData(prev => ({
-              ...prev,
-              // Only auto-fill if user hasn't typed their own address yet
-              address: !prev.address || prev.address === prev._autoAddress ? address : prev.address,
-              _autoAddress: address,
-            }))}
-          />
         </div>
       </div>
     </div>

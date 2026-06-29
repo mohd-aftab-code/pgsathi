@@ -57,7 +57,7 @@ function MapEvents({
         { headers: { "Accept-Language": "en" } }
       )
         .then((r) => r.json())
-        .then((data) => { if (data.display_name) onAddressFound(data.display_name); })
+        .then((data) => { if (data.display_name) onAddressFound(data); })
         .catch(() => {});
     },
   });
@@ -94,7 +94,7 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
             { headers: { "Accept-Language": "en" } }
           )
             .then((r) => r.json())
-            .then((data) => { if (data.display_name) onAddressFound(data.display_name); })
+            .then((data) => { if (data.display_name) onAddressFound(data); })
             .catch(() => {});
         }
       },
@@ -140,7 +140,7 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
     setSearchResults([]);
     // Call onChange immediately for lat/lng, then address
     onChange(lat, lng);
-    onAddressFound(result.display_name);
+    onAddressFound(result);
   };
 
   return (

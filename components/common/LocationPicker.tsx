@@ -18,7 +18,7 @@ interface LocationPickerProps {
   latitude: number | null;
   longitude: number | null;
   onChange: (lat: number, lng: number) => void;
-  onAddressFound?: (address: string) => void;
+  onAddressFound?: (addressData: any) => void;
 }
 
 export default function LocationPicker({ latitude, longitude, onChange, onAddressFound }: LocationPickerProps) {
