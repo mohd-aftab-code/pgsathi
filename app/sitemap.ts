@@ -18,12 +18,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Generate City URLs
-  const cityUrls = CITY_SLUGS.map((slug) => ({
-    url: `${baseUrl}/search?city=${slug}`,
+  // Generate Advanced Programmatic City URLs
+  const programmaticUrls: any[] = [];
+  
+  CITY_SLUGS.forEach((slug) => {
+    // Base city PG page
+    programmaticUrls.push({
+      url: `${baseUrl}/pg-in-${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    });
+
+    // Gender specific pages for each city
+    ['boys', 'girls', 'coed'].forEach((gender) => {
+      programmaticUrls.push({
+        url: `${baseUrl}/${gender}-pg-in-${slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 0.8,
+      });
+    });
+  });
+
+  // Blog Posts URLs
+  const blogPosts = [
+    'ncr-zero-brokerage-pg-guide',
+    '5-things-check-before-renting',
+    'how-to-avoid-broker-scams'
+  ];
+  
+  const blogUrls = blogPosts.map((slug) => ({
+    url: `${baseUrl}/blog/${slug}`,
     lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: 0.9,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
   }));
 
   // Static core routes
@@ -41,5 +70,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.8,
   }));
 
-  return [...staticRoutes, ...cityUrls, ...listingUrls];
+  return [...staticRoutes, ...programmaticUrls, ...blogUrls, ...listingUrls];
 }
