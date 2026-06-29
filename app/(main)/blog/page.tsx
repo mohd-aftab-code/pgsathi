@@ -6,38 +6,7 @@ export const metadata = {
   description: "Read the latest tips, guides, and news about finding PGs and living away from home.",
 };
 
-const BLOG_POSTS = [
-  {
-    id: 1,
-    title: "5 Things to Check Before Renting a PG in Delhi NCR",
-    excerpt: "Moving to Delhi for college or a job? Here are the top 5 things you absolutely must verify before paying any deposit for a PG.",
-    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=800",
-    category: "Guides",
-    date: "June 20, 2026",
-    author: "Rahul Sharma",
-    readTime: "5 min read"
-  },
-  {
-    id: 2,
-    title: "How to Avoid Broker Scams When Hunting for Rooms",
-    excerpt: "Learn the common tactics used by fake brokers to extract 'visiting fees' and how PGSathi protects you from these scams.",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800",
-    category: "Safety",
-    date: "June 15, 2026",
-    author: "Priya Patel",
-    readTime: "4 min read"
-  },
-  {
-    id: 3,
-    title: "The Ultimate Packing List for College Students Moving to a PG",
-    excerpt: "Not sure what to pack? We have compiled the ultimate checklist of essentials you'll need for a comfortable stay in your new PG.",
-    image: "https://images.unsplash.com/photo-1490430657723-4d607c1503fc?auto=format&fit=crop&q=80&w=800",
-    category: "Lifestyle",
-    date: "June 10, 2026",
-    author: "Ananya Singh",
-    readTime: "7 min read"
-  }
-];
+import { BLOG_POSTS } from "@/lib/data/blogs";
 
 export default function BlogPage() {
   return (
