@@ -100,7 +100,17 @@ export async function POST(req: NextRequest) {
         },
         amenities: {
           create: (data.amenities || []).map((slug: string) => ({
-            amenity: { connect: { slug } }
+            amenity: { 
+              connectOrCreate: {
+                where: { slug },
+                create: {
+                  slug,
+                  name: slug.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+                  icon: "check",
+                  category: "GENERAL"
+                }
+              } 
+            }
           }))
         }
       },
