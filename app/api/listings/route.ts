@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     }
     
     if (gender) {
-      where.gender = gender;
+      where.genderAllowed = gender;
     }
 
     const listings = await db.listing.findMany({
