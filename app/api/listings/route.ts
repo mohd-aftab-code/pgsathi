@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: listings });
   } catch (error: any) {
     console.error("Fetch Listings Error:", error);
-    return NextResponse.json({ success: false, message: "Failed to fetch listings" }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message || "Failed to fetch listings", stack: error.stack, errorObj: String(error) }, { status: 500 });
   }
 }
 
@@ -109,6 +109,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: listing });
   } catch (error: any) {
     console.error("Create Listing Error:", error);
-    return NextResponse.json({ success: false, message: "Failed to create listing" }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message || "Failed to create listing", stack: error.stack, errorObj: String(error) }, { status: 500 });
   }
 }

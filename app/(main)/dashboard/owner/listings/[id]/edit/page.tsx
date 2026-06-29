@@ -154,9 +154,10 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       const data = await res.json();
       if (data.success) {
         setSuccess(true);
-        setTimeout(() => router.push("/dashboard/owner/listings"), 1500);
+        router.push("/dashboard/owner/listings");
       } else {
-        setError(data.message || "Update karne mein problem aayi.");
+        console.error("Listing Update Error:", data);
+        setError(data.message || "Failed to update listing");
       }
     } catch {
       setError("Network error. Please try again.");

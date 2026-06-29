@@ -287,6 +287,7 @@ export default function NewListingPage() {
         localStorage.removeItem(DRAFT_KEY);
         router.push("/dashboard/owner/listings");
       } else {
+        console.error("Listing Creation Error:", data);
         setError(data.message || "Failed to create listing");
       }
     } catch (err) {
