@@ -91,7 +91,7 @@ export default async function AdminListingsPage({
                       </div>
                     </td>
                     <td className="py-4 px-6 text-neutral-600 font-medium">
-                      {listing.locality?.name}, {listing.city?.name}
+                      {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">

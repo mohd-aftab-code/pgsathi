@@ -75,7 +75,7 @@ export default async function OwnerListingsPage() {
                             {listing.title}
                           </Link>
                           <div className="text-xs text-neutral-500 mt-1 flex items-center gap-1">
-                            <MapPin size={12} /> {listing.locality?.name}, {listing.city?.name}
+                            <MapPin size={12} /> {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
                           </div>
                           <div className="text-xs font-bold text-neutral-900 mt-1.5">
                             ₹{listing.priceMin.toLocaleString("en-IN")} - ₹{listing.priceMax.toLocaleString("en-IN")} <span className="text-neutral-500 font-medium">/mo</span>

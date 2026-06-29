@@ -171,7 +171,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
             <h1 className="text-3xl md:text-5xl font-black text-neutral-900 mb-3 tracking-tight">{pg.title}</h1>
             <p className="flex items-center gap-2 text-neutral-600 font-medium text-base">
               <MapPin size={18} className="text-orange-500" />
-              {pg.address}, {pg.locality?.name}, {pg.city?.name}
+              {[pg.address, pg.locality?.name, pg.city?.name].filter(Boolean).join(", ")}
             </p>
           </div>
 
