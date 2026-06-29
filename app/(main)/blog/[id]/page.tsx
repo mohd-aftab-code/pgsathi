@@ -5,13 +5,14 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Generate dynamic metadata for SEO
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const post = BLOG_POSTS.find((p) => p.id.toString() === params.id);
   
   if (!post) {
@@ -45,7 +46,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage(props: Props) {
+  const params = await props.params;
   const post = BLOG_POSTS.find((p) => p.id.toString() === params.id);
 
   if (!post) {
