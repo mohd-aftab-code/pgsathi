@@ -58,7 +58,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1">Visit Us</h3>
-                    <p className="text-neutral-500 text-sm mb-2">Come say hello at our NCR office HQ.</p>
+                    <p className="text-neutral-500 text-sm mb-2">Come say hello at our India HQ.</p>
                     <p className="text-neutral-900 font-medium">
                       Sector 62, Noida<br />
                       Uttar Pradesh, India 201309

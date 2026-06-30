@@ -49,7 +49,7 @@ export default function AboutPage() {
                   <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Verified PGs</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm text-center">
-                  <div className="text-3xl font-black text-primary-600 mb-1">NCR</div>
+                  <div className="text-3xl font-black text-primary-600 mb-1">India</div>
                   <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Primary Focus</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm text-center">

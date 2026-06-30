@@ -28,7 +28,7 @@ export default async function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
           </span>
-          <span className="text-neutral-200 tracking-wide">Trusted by <strong className="text-white">50,000+</strong> Students & Professionals in NCR</span>
+          <span className="text-neutral-200 tracking-wide">Trusted by <strong className="text-white">50,000+</strong> Students & Professionals in India</span>
         </div>
 
         {/* Heading with better typography & gradient */}
@@ -40,7 +40,7 @@ export default async function HeroSection() {
               Zero Brokerage PG
             </span>
           </span> 
-          <br className="hidden md:block" /> in Delhi NCR
+          <br className="hidden md:block" /> in India
         </h1>
         
         <h2 className="text-lg md:text-2xl font-light text-neutral-300 mb-12 mr-auto md:mx-auto max-w-3xl animate-slide-up leading-relaxed" style={{ animationDelay: "100ms", textWrap: "balance" }}>

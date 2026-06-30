@@ -115,8 +115,73 @@ export const CITIES = [
       "Ashok Raj Path", "Anisabad", "Danapur", "Khagaul",
     ],
   },
+  {
+    id: 11,
+    name: "Mumbai",
+    slug: "mumbai",
+    state: "Maharashtra",
+    priority: 11,
+    localities: [
+      "Andheri", "Bandra", "Powai", "Navi Mumbai",
+      "Thane", "Goregaon", "Malad", "Borivali",
+    ],
+  },
+  {
+    id: 12,
+    name: "Bangalore",
+    slug: "bangalore",
+    state: "Karnataka",
+    priority: 12,
+    localities: [
+      "Koramangala", "Indiranagar", "HSR Layout", "Whitefield",
+      "Electronic City", "BTM Layout", "Marathahalli", "Jayanagar",
+    ],
+  },
+  {
+    id: 13,
+    name: "Hyderabad",
+    slug: "hyderabad",
+    state: "Telangana",
+    priority: 13,
+    localities: [
+      "Gachibowli", "Madhapur", "Kukatpally", "Banjara Hills",
+      "Jubilee Hills", "Kondapur", "Ameerpet", "Hitec City",
+    ],
+  },
+  {
+    id: 14,
+    name: "Chennai",
+    slug: "chennai",
+    state: "Tamil Nadu",
+    priority: 14,
+    localities: [
+      "OMR", "Velachery", "Adyar", "Anna Nagar",
+      "T Nagar", "Guindy", "Tambaram", "Thiruvanmiyur",
+    ],
+  },
+  {
+    id: 15,
+    name: "Kolkata",
+    slug: "kolkata",
+    state: "West Bengal",
+    priority: 15,
+    localities: [
+      "Salt Lake", "New Town", "Ballygunge", "Jadavpur",
+      "Park Street", "Dum Dum", "Rajarhat", "Behala",
+    ],
+  },
+  {
+    id: 16,
+    name: "Ahmedabad",
+    slug: "ahmedabad",
+    state: "Gujarat",
+    priority: 16,
+    localities: [
+      "Navrangpura", "Satellite", "SG Highway", "Bopal",
+      "Vastrapur", "Prahlad Nagar", "Maninagar", "Thaltej",
+    ],
+  }
 ];
-
 export const CITY_SLUGS = CITIES.map((c) => c.slug);
 
 export function getCityBySlug(slug: string) {

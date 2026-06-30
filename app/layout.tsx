@@ -25,14 +25,14 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi — Zero Brokerage PG in Delhi NCR, Noida & Gurgaon",
+    default: "PGSathi — Zero Brokerage PG in Metro, Tier 2 & Tier 3 Cities",
     template: "%s | PGSathi",
   },
   description:
-    "India's #1 verified platform for finding zero brokerage PGs, hostels, and rooms for rent directly from owners. Discover premium Boys, Girls, and Co-ed PGs in Delhi, Noida, and Gurgaon.",
+    "India's #1 verified platform for finding zero brokerage PGs, hostels, and rooms for rent directly from owners. Discover premium Boys, Girls, and Co-ed PGs across India's Metros and Tier 2/Tier 3 cities.",
   keywords: [
     "Zero Brokerage PG in Noida",
-    "Direct Owner Boys PG in Delhi NCR",
+    "Direct Owner Boys PG in India",
     "Verified Girls PG in Gurgaon without broker",
     "Premium PG with Food in Knowledge Park Noida",
     "Affordable PG in Mukherjee Nagar",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi — Zero Brokerage PGs in NCR",
+    title: "PGSathi — Zero Brokerage PGs in India",
     description:
       "Find 100% verified PGs in Delhi, Noida, and Gurgaon without paying 1 month's rent as brokerage. Connect directly with owners.",
     images: [
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PGSathi — Verified PGs in Delhi NCR",
+    title: "PGSathi — Verified PGs in India",
     description: "Connect directly with owners. No brokers. No hidden fees.",
     images: ["/og-image.jpg"],
   },
@@ -100,7 +100,7 @@ export default function RootLayout({
     "@type": "LocalBusiness",
     "name": "PGSathi",
     "image": "https://pgsathi.in/images/logo.jpeg",
-    "description": "India's #1 verified platform for finding zero brokerage PGs directly from owners. Operating primarily in Delhi NCR.",
+    "description": "India's #1 verified platform for finding zero brokerage PGs directly from owners. Operating across Metros, Tier 2, and Tier 3 cities in India.",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Sector 62",

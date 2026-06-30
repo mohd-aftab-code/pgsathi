@@ -25,7 +25,7 @@ export default function Footer() {
               />
             </div>
             <p style={{ fontSize: "0.875rem", lineHeight: 1.7, maxWidth: "260px" }}>
-              India ka sabse trusted platform PG dhundne ke liye. Verified listings, no broker fees.
+              India ka sabse trusted platform PG dhundne ke liye. Verified listings in Metro, Tier 2, and Tier 3 cities, all with no broker fees.
             </p>
             <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
               {[
@@ -70,11 +70,11 @@ export default function Footer() {
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
                 { label: "PG ढूंढें", href: "/search" },
-                { label: "Delhi में PG", href: "/search?city=delhi" },
-                { label: "Noida में PG", href: "/search?city=noida" },
-                { label: "Gurgaon में PG", href: "/search?city=gurgaon" },
-                { label: "Boys PG", href: "/search?gender=BOYS" },
-                { label: "Girls PG", href: "/search?gender=GIRLS" },
+                { label: "Bangalore में PG", href: "/search?city=bangalore" },
+                { label: "Mumbai में PG", href: "/search?city=mumbai" },
+                { label: "Kota में PG", href: "/search?city=kota" },
+                { label: "Indore में PG", href: "/search?city=indore" },
+                { label: "Lucknow में PG", href: "/search?city=lucknow" },
               ].map(({ label, href }) => (
                 <li key={href}>
                   <Link href={href} style={{ color: "#94a3b8", fontSize: "0.875rem", textDecoration: "none", transition: "color 0.15s" }}
