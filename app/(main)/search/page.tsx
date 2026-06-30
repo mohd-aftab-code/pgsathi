@@ -3,6 +3,7 @@ import PGCard from "@/components/listings/PGCard";
 import SearchBar from "@/components/landing/SearchBar";
 import SearchFilters from "@/components/search/SearchFilters";
 import SearchSort from "@/components/search/SearchSort";
+import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
 
@@ -48,6 +49,10 @@ export default async function SearchPage(props: {
   const amenitiesStr = searchParams.amenities as string | undefined;
   const sortBy = searchParams.sort as string | undefined;
   const queryParam = searchParams.q as string | undefined;
+  const pageParam = searchParams.page as string | undefined;
+  
+  const currentPage = pageParam ? parseInt(pageParam) : 1;
+  const ITEMS_PER_PAGE = 18;
 
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
@@ -94,8 +99,8 @@ export default async function SearchPage(props: {
   else if (sortBy === "price_desc") orderBy = [{ priceMin: "desc" }];
   else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
-  // Fetch listings and cities
-  const [listings, cities] = await Promise.all([
+  // Fetch listings, total count and cities
+  const [listings, totalCount, cities] = await Promise.all([
     db.listing.findMany({
       where,
       include: {
@@ -104,12 +109,17 @@ export default async function SearchPage(props: {
         photos: { take: 1 },
       },
       orderBy,
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     }),
+    db.listing.count({ where }),
     db.city.findMany({
       where: { isActive: true },
       orderBy: { priority: "desc" }
     })
   ]);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
     <div className="bg-neutral-50 min-h-screen py-8">
@@ -117,7 +127,7 @@ export default async function SearchPage(props: {
         
         {/* Search Header */}
         <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6">Find Your Perfect PG</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">Find Your Perfect PG</h1>
           <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} initialQuery={queryParam || ""} cities={cities} />
         </div>
 
@@ -131,7 +141,7 @@ export default async function SearchPage(props: {
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-bold">
-                {listings.length} PGs Found
+                {totalCount} PGs Found
               </h2>
               <Suspense fallback={<div className="w-40 h-9 bg-white border border-neutral-200 rounded-lg animate-pulse" />}>
                 <SearchSort />
@@ -139,11 +149,14 @@ export default async function SearchPage(props: {
             </div>
 
             {listings.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {listings.map(pg => (
-                  <PGCard key={pg.id} pg={pg} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {listings.map(pg => (
+                    <PGCard key={pg.id} pg={pg} />
+                  ))}
+                </div>
+                <Pagination totalPages={totalPages} currentPage={currentPage} />
+              </>
             ) : (
               <div className="bg-white rounded-3xl p-12 text-center border border-neutral-200 shadow-sm">
                 <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
