@@ -10,6 +10,7 @@ import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import ImageGallery from "@/components/listings/ImageGallery";
 import BookVisitModal from "@/components/listings/BookVisitModal";
 import CostCalculator from "@/components/listings/CostCalculator";
+import PGCard from "@/components/listings/PGCard";
 import { auth } from "@/lib/auth";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
@@ -70,6 +71,44 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
   }
 
   if (!pg) notFound();
+
+  // Fetch Similar PGs
+  let similarPgs: any[] = [];
+  if (pg.localityId) {
+    similarPgs = await db.listing.findMany({
+      where: {
+        id: { not: pg.id },
+        localityId: pg.localityId,
+        status: "ACTIVE",
+        isActive: true,
+      },
+      include: {
+        city: true,
+        locality: true,
+        photos: { take: 1, orderBy: { sortOrder: "asc" } }
+      },
+      take: 3
+    });
+  }
+
+  if (similarPgs.length < 3) {
+    const existingIds = similarPgs.map(p => p.id);
+    const cityPgs = await db.listing.findMany({
+      where: {
+        id: { notIn: [pg.id, ...existingIds] },
+        cityId: pg.cityId,
+        status: "ACTIVE",
+        isActive: true,
+      },
+      include: {
+        city: true,
+        locality: true,
+        photos: { take: 1, orderBy: { sortOrder: "asc" } }
+      },
+      take: 3 - similarPgs.length
+    });
+    similarPgs = [...similarPgs, ...cityPgs];
+  }
 
   const totalRoomsCount = pg.totalRooms ?? pg.rooms?.length ?? 0;
   const availableBedsCount = pg.availableBeds ?? 
@@ -439,6 +478,20 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
               </div>
             </aside>
           </div>
+
+          {/* Similar PGs Section */}
+          {similarPgs.length > 0 && (
+            <div className="mt-16 pt-10 border-t border-neutral-200">
+              <h2 className="text-2xl font-bold mb-6 text-neutral-900">
+                Similar PGs in {pg.locality?.name || pg.city?.name}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {similarPgs.map((similarPg) => (
+                  <PGCard key={similarPg.id} pg={similarPg} />
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
