@@ -64,7 +64,7 @@ function LoginContent() {
             </div>
             <span className="font-extrabold text-2xl tracking-tight">PGSathi</span>
           </Link>
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
             Welcome to India's most trusted PG platform.
           </h1>
           <p className="text-primary-200 text-lg">
@@ -128,7 +128,10 @@ function LoginContent() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Password</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-neutral-700">Password</label>
+                  <Link href="/forgot-password" className="text-xs text-primary-600 hover:underline font-medium">Forgot password?</Link>
+                </div>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)}
                   className={inputCls} placeholder="Enter password" required />
               </div>

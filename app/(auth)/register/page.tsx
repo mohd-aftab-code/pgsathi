@@ -61,7 +61,7 @@ function RegisterContent() {
             </div>
             <span className="font-extrabold text-2xl tracking-tight">PGSathi</span>
           </Link>
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
             Welcome to India's most trusted PG platform.
           </h1>
           <p className="text-primary-200 text-lg">
