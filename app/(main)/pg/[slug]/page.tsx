@@ -76,7 +76,21 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
     include: {
       city: true,
       locality: true,
-      owner: { select: { name: true, phone: true, id: true, avatar: true } },
+      owner: { 
+        select: { 
+          name: true, 
+          phone: true, 
+          id: true, 
+          avatar: true,
+          subscriptions: {
+            where: {
+              status: "ACTIVE",
+              endDate: { gt: new Date() }
+            },
+            select: { id: true }
+          }
+        } 
+      },
       photos: { orderBy: { sortOrder: "asc" } },
       amenities: { include: { amenity: true } },
       rooms: { include: { beds: true } },
@@ -90,7 +104,21 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
       include: {
         city: true,
         locality: true,
-        owner: { select: { name: true, phone: true, id: true, avatar: true } },
+        owner: { 
+          select: { 
+            name: true, 
+            phone: true, 
+            id: true, 
+            avatar: true,
+            subscriptions: {
+              where: {
+                status: "ACTIVE",
+                endDate: { gt: new Date() }
+              },
+              select: { id: true }
+            }
+          } 
+        },
         photos: { orderBy: { sortOrder: "asc" } },
         amenities: { include: { amenity: true } },
         rooms: { include: { beds: true } },
@@ -501,6 +529,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
                     listingId={pg.id} 
                     ownerPhone={pg.owner.phone || ""} 
                     listingTitle={pg.title} 
+                    hasActiveSubscription={pg.owner.subscriptions && pg.owner.subscriptions.length > 0}
                   />
                 </div>
 
