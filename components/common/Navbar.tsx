@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, Search, PlusCircle, LogIn } from "lucide-react";
 
+import logoImg from "@/app/assets/logo/logo.png";
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -16,7 +18,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center no-underline shrink-0">
             <Image 
-              src="/images/logo.jpeg" 
+              src={logoImg} 
               alt="PGSathi Logo" 
               width={180}
               height={64}
