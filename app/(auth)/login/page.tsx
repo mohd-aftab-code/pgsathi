@@ -88,13 +88,13 @@ function LoginContent() {
           <div className="flex bg-neutral-100 rounded-xl p-1 mb-8">
             <button
               onClick={() => { setTab("user"); setError(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${tab === "user" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all cursor-pointer ${tab === "user" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
             >
               User Login
             </button>
             <button
               onClick={() => { setTab("email"); setError(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${tab === "email" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === "email" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
             >
               <Lock size={13} /> Admin Login
             </button>
