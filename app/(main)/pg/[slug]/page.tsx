@@ -5,9 +5,11 @@ import {
   DoorOpen, Users, Coffee, Car, ShieldAlert, BadgeCheck,
   CalendarX, Ban, Maximize2, Zap
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import Link from "next/link";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import ImageGallery from "@/components/listings/ImageGallery";
+import PageNavigation from "@/components/listings/PageNavigation";
 import BookVisitModal from "@/components/listings/BookVisitModal";
 import CostCalculator from "@/components/listings/CostCalculator";
 import PGCard from "@/components/listings/PGCard";
@@ -35,6 +37,32 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
       images: pg.photos?.[0] ? [{ url: pg.photos[0].url }] : [],
     }
   };
+}
+
+function getAmenityIcon(iconName: string, amenityName: string) {
+  if (iconName && (LucideIcons as any)[iconName]) {
+    return (LucideIcons as any)[iconName];
+  }
+  
+  const lower = amenityName.toLowerCase();
+  if (lower.includes('power') || lower.includes('backup')) return LucideIcons.BatteryCharging;
+  if (lower.includes('mattress') || lower.includes('bed')) return LucideIcons.BedDouble;
+  if (lower.includes('ac') || lower.includes('air')) return LucideIcons.Snowflake;
+  if (lower.includes('table') || lower.includes('desk')) return LucideIcons.Monitor;
+  if (lower.includes('warden')) return LucideIcons.UserCheck;
+  if (lower.includes('gym') || lower.includes('fitness')) return LucideIcons.Dumbbell;
+  if (lower.includes('securit') || lower.includes('cctv')) return LucideIcons.ShieldCheck;
+  if (lower.includes('microwave') || lower.includes('oven')) return LucideIcons.Microwave;
+  if (lower.includes('first aid') || lower.includes('medical')) return LucideIcons.BriefcaseMedical;
+  if (lower.includes('water') || lower.includes('ro')) return LucideIcons.Droplet;
+  if (lower.includes('wifi') || lower.includes('internet')) return LucideIcons.Wifi;
+  if (lower.includes('lift') || lower.includes('elevator')) return LucideIcons.ArrowUpDown;
+  if (lower.includes('fridge') || lower.includes('refriger')) return LucideIcons.Refrigerator;
+  if (lower.includes('wash') || lower.includes('laundry')) return LucideIcons.WashingMachine;
+  if (lower.includes('tv') || lower.includes('television')) return LucideIcons.Tv;
+  if (lower.includes('clean') || lower.includes('sweep')) return LucideIcons.Sparkles;
+  
+  return LucideIcons.Zap;
 }
 
 export default async function PGDetailPage(props: { params: Promise<{ slug: string }> }) {
@@ -217,12 +245,14 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
           {/* Image Gallery */}
           <ImageGallery photos={pg.photos} title={pg.title} />
 
-          <div className="flex flex-col lg:flex-row gap-10">
+          <PageNavigation />
+
+          <div className="flex flex-col lg:flex-row gap-10 mt-2">
             {/* Main Content */}
             <div className="flex-1 space-y-10">
               
               {/* Quick Stats Bar */}
-              <div className="flex flex-wrap gap-4 py-6 border-y border-neutral-200">
+              <div id="overview" className="flex flex-wrap gap-4 py-6 border-y border-neutral-200 scroll-mt-32">
                 <div className="flex items-center gap-3 pr-8 border-r border-neutral-200">
                   <DoorOpen size={28} className="text-neutral-400" />
                   <div>
@@ -247,17 +277,19 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
               </div>
 
               {/* First-Month Cost Calculator */}
-              <CostCalculator 
-                rent={pg.priceMin}
-                deposit={pg.securityDeposit}
-                electricity={pg.electricityCharge}
-                maintenance={pg.maintenanceCharge}
-                food={pg.foodCharge}
-                setupFee={pg.setupFee}
-              />
+              <div id="charges" className="scroll-mt-32">
+                <CostCalculator 
+                  rent={pg.priceMin}
+                  deposit={pg.securityDeposit}
+                  electricity={pg.electricityCharge}
+                  maintenance={pg.maintenanceCharge}
+                  food={pg.foodCharge}
+                  setupFee={pg.setupFee}
+                />
+              </div>
 
               {/* Description */}
-              <section>
+              <section id="about" className="scroll-mt-32">
                 <h2 className="text-2xl font-bold mb-4 text-neutral-900">About this PG</h2>
                 <div className="text-neutral-600 whitespace-pre-wrap leading-relaxed text-lg bg-white p-8 rounded-3xl shadow-sm border border-neutral-200/60">
                   {pg.description}
@@ -265,13 +297,16 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
               </section>
 
               {/* Amenities Grid */}
-              <section>
+              <section id="amenities" className="scroll-mt-32">
                 <h2 className="text-2xl font-bold mb-6 text-neutral-900">Premium Amenities</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {pg.amenities.map(a => (
                     <div key={a.amenityId} className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col items-center justify-center text-center gap-3 hover:border-orange-200 hover:shadow-md transition-all">
                       <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-orange-500">
-                        <Zap size={24} />
+                        {(() => {
+                           const IconComp = getAmenityIcon(a.amenity.icon, a.amenity.name);
+                           return <IconComp size={24} />;
+                        })()}
                       </div>
                       <span className="font-semibold text-neutral-800 text-sm">{a.amenity.name}</span>
                     </div>
@@ -284,7 +319,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
 
               {/* Rooms & Beds Availability */}
               {pg.rooms && pg.rooms.length > 0 && (
-                <section>
+                <section id="rooms" className="scroll-mt-32">
                   <h2 className="text-2xl font-bold mb-6 text-neutral-900">Rooms & Beds</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {pg.rooms.map(room => {
@@ -342,7 +377,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
               )}
 
               {/* House Rules & Facilities - Premium Do's and Don'ts Style */}
-              <section>
+              <section id="rules" className="scroll-mt-32">
                 <h2 className="text-2xl font-bold mb-6 text-neutral-900">House Rules & Facilities</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   
@@ -481,7 +516,7 @@ export default async function PGDetailPage(props: { params: Promise<{ slug: stri
 
           {/* Similar PGs Section */}
           {similarPgs.length > 0 && (
-            <div className="mt-16 pt-10 border-t border-neutral-200">
+            <div id="similar" className="mt-16 pt-10 border-t border-neutral-200 scroll-mt-32">
               <h2 className="text-2xl font-bold mb-6 text-neutral-900">
                 Similar PGs in {pg.locality?.name || pg.city?.name}
               </h2>
