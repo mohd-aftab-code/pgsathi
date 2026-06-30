@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/:category(boys|girls|coed)-pg-in-:city',
+        destination: '/category-pg-in-city?category=:category&city=:city',
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

@@ -3,14 +3,13 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: {
-  params: Promise<{ category: string; city: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  const city = params.city;
-  const category = params.category; // boys, girls, coed
+  const searchParams = await props.searchParams;
+  const city = searchParams.city as string;
+  const category = searchParams.category as string; // boys, girls, coed
 
-  if (!["boys", "girls", "coed"].includes(category)) {
+  if (!city || !category || !["boys", "girls", "coed"].includes(category)) {
     return { title: "Not Found" };
   }
 
@@ -36,21 +35,21 @@ export async function generateMetadata(props: {
 }
 
 export default async function CategoryPgInCityPage(props: {
-  params: Promise<{ category: string; city: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = await props.params;
   const searchParams = await props.searchParams;
+  const city = searchParams.city as string;
+  const category = searchParams.category as string;
   
-  if (!["boys", "girls", "coed"].includes(params.category)) {
+  if (!city || !category || !["boys", "girls", "coed"].includes(category)) {
     notFound();
   }
 
   // Inject the city and gender from the URL path into the searchParams
   const updatedSearchParams = Promise.resolve({
     ...searchParams,
-    city: params.city,
-    gender: params.category.toUpperCase(), // BOYS, GIRLS, COED
+    city: city,
+    gender: category.toUpperCase(), // BOYS, GIRLS, COED
   });
 
   return <SearchPage searchParams={updatedSearchParams} />;
