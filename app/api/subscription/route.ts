@@ -36,11 +36,11 @@ export async function POST(req: NextRequest) {
       // Create it if it doesn't exist for the simulation
       plan = await db.plan.create({
         data: {
-          name: planId === "pro" ? "Pro Owner" : "Growth",
+          name: planId === "pro" ? "Pro Owner" : (planId === "free" ? "Starter" : "Growth"),
           slug: planId,
           price: amount,
-          maxListings: planId === "pro" ? 999 : 5,
-          maxPhotos: planId === "pro" ? 99 : 10,
+          maxListings: planId === "pro" ? 999 : (planId === "free" ? 1 : 5),
+          maxPhotos: planId === "pro" ? 99 : (planId === "free" ? 5 : 10),
           features: [],
         }
       });

@@ -50,7 +50,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
+    if (session.user.role !== "OWNER" && session.user.role !== "ADMIN") {
+      return NextResponse.json({ success: false, message: "Forbidden: Only Owners can create listings" }, { status: 403 });
+    }
+
     const data = await req.json();
+
+    // 1. Subscription & Limits Enforcement
+    const activeSub = await db.subscription.findFirst({
+      where: {
+        userId: parseInt(session.user.id),
+        status: "ACTIVE",
+        endDate: { gt: new Date() }
+      },
+      include: { plan: true }
+    });
+
+    if (!activeSub) {
+      return NextResponse.json({ success: false, message: "Forbidden: Active subscription required" }, { status: 403 });
+    }
+
+    // 2. Listing Count Limit Check
+    const userListingsCount = await db.listing.count({
+      where: { ownerId: parseInt(session.user.id) } // Count all listings (or you could filter by active)
+    });
+
+    if (userListingsCount >= activeSub.plan.maxListings) {
+      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxListings} listings.` }, { status: 403 });
+    }
+
+    // 3. Photo Limit Check
+    if (data.photos && data.photos.length > activeSub.plan.maxPhotos) {
+      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxPhotos} photos per listing.` }, { status: 400 });
+    }
 
     const generatedSlug = slugify(`${data.title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
 
