@@ -79,9 +79,6 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/manifest.json",
-  alternates: {
-    canonical: "https://pgsathi.in",
-  }
 };
 
 export const viewport: Viewport = {

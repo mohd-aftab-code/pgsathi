@@ -31,6 +31,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   return {
     title: `${pg.title} - Zero Brokerage ${gender} PG in ${locality}, ${city} | PGSathi`,
     description: `Looking for a PG in ${locality}, ${city}? Check out ${pg.title}. ₹${pg.priceMin}/month. Direct Owner. Zero Brokerage. Verified Listing.`,
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/pg/${pg.slug}`
+    },
     openGraph: {
       title: `${pg.title} | Zero Brokerage PG in ${city}`,
       description: `₹${pg.priceMin}/month. Direct Owner. Zero Brokerage. Verified Listing in ${locality}, ${city}.`,
