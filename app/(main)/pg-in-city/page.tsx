@@ -2,11 +2,10 @@ import SearchPage from "@/app/(main)/search/page";
 import { Metadata } from "next";
 
 export async function generateMetadata(props: {
-  params: Promise<{ city: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  const city = params.city;
+  const searchParams = await props.searchParams;
+  const city = (searchParams.city as string) || "city";
   const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, " ");
 
   const title = `Best PGs & Hostels in ${cityName} - Zero Brokerage | PGSathi`;
@@ -27,18 +26,16 @@ export async function generateMetadata(props: {
 }
 
 export default async function PgInCityPage(props: {
-  params: Promise<{ city: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = await props.params;
   const searchParams = await props.searchParams;
-  const city = params.city;
+  const city = (searchParams.city as string) || "city";
   const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, " ");
   
   // Inject the city from the URL path into the searchParams for the SearchPage component
   const updatedSearchParams = Promise.resolve({
     ...searchParams,
-    city: params.city,
+    city: city,
   });
 
   return (

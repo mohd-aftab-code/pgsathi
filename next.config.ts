@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: '/pg-in-:city',
+        destination: '/pg-in-city?city=:city',
+      },
+      {
         source: '/:category(boys|girls|coed)-pg-in-:city',
         destination: '/category-pg-in-city?category=:category&city=:city',
       },
