@@ -13,7 +13,7 @@ export default function PGCard({ pg }: PGCardProps) {
     : "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&q=80"; // Fallback placeholder
 
   return (
-    <Link href={`/pg/${pg.slug}`} className="group block bg-white rounded-2xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-hover transition-all duration-300">
+    <Link href={`/pg/${pg.city?.slug || 'unknown'}/${pg.locality?.slug || 'all'}/${pg.slug}`} className="group block bg-white rounded-2xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-hover transition-all duration-300">
       <div className="relative h-48 w-full overflow-hidden bg-neutral-100">
         <Image 
           src={imageUrl} 

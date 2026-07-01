@@ -8,11 +8,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get all active PG listings
   const activeListings = await db.listing.findMany({
     where: { status: 'ACTIVE' },
-    select: { slug: true, updatedAt: true },
+    select: { slug: true, updatedAt: true, city: { select: { slug: true } }, locality: { select: { slug: true } } },
   });
 
   const listingUrls = activeListings.map((listing) => ({
-    url: `${baseUrl}/pg/${listing.slug}`,
+    url: `${baseUrl}/pg/${listing.city?.slug || 'unknown'}/${listing.locality?.slug || 'all'}/${listing.slug}`,
     lastModified: listing.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.8,

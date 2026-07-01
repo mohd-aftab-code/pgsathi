@@ -54,14 +54,33 @@ export default async function BlogPostPage(props: Props) {
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "image": [post.image],
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": [{
+        "@type": "Person",
+        "name": post.author,
+        "url": "https://pgsathi.in/about"
+      }]
+  };
+
   return (
-    <div className="bg-neutral-50 min-h-screen py-10 md:py-16">
-      <div className="container-max section-padding">
-        
-        {/* Back Button */}
-        <Link href="/blog" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 font-medium mb-8 transition-colors">
-          <ArrowLeft size={16} /> Back to Blog
-        </Link>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="bg-neutral-50 min-h-screen py-10 md:py-16">
+        <div className="container-max section-padding">
+          
+          {/* Back Button */}
+          <Link href="/blog" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 font-medium mb-8 transition-colors">
+            <ArrowLeft size={16} /> Back to Blog
+          </Link>
 
         {/* Article Header */}
         <div className="max-w-4xl mx-auto mb-10">
@@ -111,7 +130,8 @@ export default async function BlogPostPage(props: Props) {
           />
         </div>
 
+        </div>
       </div>
-    </div>
+    </>
   );
 }
