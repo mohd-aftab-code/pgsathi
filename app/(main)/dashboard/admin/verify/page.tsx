@@ -61,7 +61,7 @@ export default async function AdminListingsPage({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-500">
+                <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-700">
                   <th className="py-5 px-6">PG Details</th>
                   <th className="py-5 px-6">Owner Info</th>
                   <th className="py-5 px-6">Location</th>
@@ -73,9 +73,9 @@ export default async function AdminListingsPage({
                   <tr key={listing.id} className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors group">
                     <td className="py-4 px-6">
                       <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
-                      <div className="flex items-center gap-2 text-xs font-medium text-neutral-500">
-                        <span className="bg-neutral-100 px-2 py-1 rounded-md">{listing.pgType?.replace("_", " ")}</span>
-                        <span className="bg-neutral-100 px-2 py-1 rounded-md">{listing.genderAllowed}</span>
+                      <div className="flex items-center gap-2 text-xs font-bold text-neutral-700">
+                        <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.pgType?.replace("_", " ")}</span>
+                        <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
                         <span className="text-primary-700 font-bold">₹{listing.priceMin}</span>
                       </div>
                     </td>
