@@ -70,11 +70,14 @@ export default function Footer() {
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
                 { label: "PG ढूंढें", href: "/search" },
-                { label: "Bangalore में PG", href: "/search?city=bangalore" },
-                { label: "Mumbai में PG", href: "/search?city=mumbai" },
-                { label: "Kota में PG", href: "/search?city=kota" },
-                { label: "Indore में PG", href: "/search?city=indore" },
-                { label: "Lucknow में PG", href: "/search?city=lucknow" },
+                { label: "Delhi में PG", href: "/pg-in-delhi" },
+                { label: "Noida में PG", href: "/pg-in-noida" },
+                { label: "Gurgaon में PG", href: "/pg-in-gurgaon" },
+                { label: "Bangalore में PG", href: "/pg-in-bangalore" },
+                { label: "Mumbai में PG", href: "/pg-in-mumbai" },
+                { label: "Kota में PG", href: "/pg-in-kota" },
+                { label: "Jaipur में PG", href: "/pg-in-jaipur" },
+                { label: "Pune में PG", href: "/pg-in-pune" },
               ].map(({ label, href }) => (
                 <li key={href}>
                   <Link href={href} style={{ color: "#94a3b8", fontSize: "0.875rem", textDecoration: "none", transition: "color 0.15s" }}

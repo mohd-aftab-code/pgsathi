@@ -24,7 +24,7 @@ export default function CityGrid() {
           {topCities.map((city: any) => (
             <Link 
               key={city.id} 
-              href={`/search?city=${city.slug}`}
+              href={`/pg-in-${city.slug}`}
               className="group relative h-40 md:h-56 rounded-2xl overflow-hidden block shadow-sm hover:shadow-hover transition-all duration-300"
             >
               {/* Background Image */}
