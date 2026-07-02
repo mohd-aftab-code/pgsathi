@@ -28,9 +28,21 @@ export async function generateMetadata(props: {
     description = `Looking for a ${genderText}PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
   }
 
+  // Canonical: point Google to the clean SEO URL instead of /search?city=noida
+  const canonicalUrl = (city && city !== "all")
+    ? `https://pgsathi.in/pg-in-${city}`
+    : `https://pgsathi.in/search`;
+
   return {
     title,
     description,
+    robots: {
+      index: false,   // Do NOT index /search?city=noida — use /pg-in-noida instead
+      follow: true,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
