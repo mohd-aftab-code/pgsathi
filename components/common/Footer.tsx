@@ -133,6 +133,9 @@ export default function Footer() {
               ))}
             </ul>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <a href="mailto:pgsathi.support@gmail.com" style={{ display: "flex", alignItems: "center", gap: "8px", color: "#94a3b8", fontSize: "0.875rem", textDecoration: "none" }}>
+                <Mail size={14} /> pgsathi.support@gmail.com
+              </a>
               <a href="mailto:pgsathi@gmail.com" style={{ display: "flex", alignItems: "center", gap: "8px", color: "#94a3b8", fontSize: "0.875rem", textDecoration: "none" }}>
                 <Mail size={14} /> pgsathi@gmail.com
               </a>

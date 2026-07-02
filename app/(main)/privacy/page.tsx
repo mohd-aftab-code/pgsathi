@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-2xl font-bold text-neutral-900 mt-10 mb-4">5. Contact Us</h2>
             <p>If you have any questions about this privacy policy or our privacy practices, please contact us in the following ways:</p>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Email address: pgsathi@gmail.com</li>
+              <li>Email address: pgsathi.support@gmail.com</li>
               <li>Phone number: +91 9696110243</li>
             </ul>
           </div>

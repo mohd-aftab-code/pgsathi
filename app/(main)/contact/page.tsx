@@ -46,8 +46,8 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1">Email Us</h3>
                     <p className="text-neutral-500 text-sm mb-2">Our friendly team is here to help.</p>
-                    <a href="mailto:pgsathi@gmail.com" className="text-primary-600 font-bold hover:underline text-lg">
-                      pgsathi@gmail.com
+                    <a href="mailto:pgsathi.support@gmail.com" className="text-primary-600 font-bold hover:underline text-lg">
+                      pgsathi.support@gmail.com
                     </a>
                   </div>
                 </div>

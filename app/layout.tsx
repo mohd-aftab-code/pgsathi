@@ -107,7 +107,7 @@ export default function RootLayout({
       "addressCountry": "IN"
     },
     "telephone": "+919696110243",
-    "email": "pgsathi@gmail.com",
+    "email": "pgsathi.support@gmail.com",
     "url": "https://pgsathi.in"
   };
 
