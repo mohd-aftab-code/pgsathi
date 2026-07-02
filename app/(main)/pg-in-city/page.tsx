@@ -40,36 +40,6 @@ export default async function PgInCityPage(props: {
 
   return (
     <>
-      <div className="bg-white border-b border-neutral-200">
-        <div className="container-max section-padding py-12 md:py-16">
-          <h1 className="text-3xl md:text-5xl font-black text-neutral-900 mb-4">
-            Zero Brokerage Verified PGs in {cityName}
-          </h1>
-          <p className="text-lg text-neutral-600 max-w-3xl mb-8 leading-relaxed">
-            Whether you are a student or a working professional, finding a safe, affordable PG in {cityName} shouldn't cost you an extra month's rent in brokerage. PGSathi brings you 100% physically verified properties with direct owner contact.
-          </p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Zero Hidden Fees</h3>
-              <p className="text-sm text-neutral-500">Pay rent directly to owners</p>
-            </div>
-            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Verified Properties</h3>
-              <p className="text-sm text-neutral-500">Physical verification done</p>
-            </div>
-            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Direct Contact</h3>
-              <p className="text-sm text-neutral-500">Chat directly on WhatsApp</p>
-            </div>
-            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Premium Amenities</h3>
-              <p className="text-sm text-neutral-500">AC, WiFi, Food & more</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <SearchPage searchParams={updatedSearchParams} />
       
       <div className="bg-white border-t border-neutral-200 py-16">
