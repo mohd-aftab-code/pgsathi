@@ -307,12 +307,12 @@ export default async function PGDetailPage(props: {
               </div>
             </div>
 
-            {/* RIGHT — Sticky Contact Box */}
-            <div className="w-full lg:w-80 shrink-0">
-              <div className="sticky top-6 space-y-4">
+              {/* RIGHT — Sticky Contact Box */}
+            <div className="w-full lg:w-80 shrink-0 mt-6 lg:mt-0">
+              <div className="sticky top-24 space-y-4">
 
-                {/* Contact Card */}
-                <div className="bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
+                {/* Contact Card (Desktop only, hidden on mobile to rely on sticky footer) */}
+                <div className="hidden lg:block bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
                   <div className="text-center mb-5">
                     <p className="text-3xl font-black text-primary-700">₹{pg.priceMin.toLocaleString()}</p>
                     <p className="text-sm text-neutral-500">per month onwards</p>
@@ -377,6 +377,22 @@ export default async function PGDetailPage(props: {
             </div>
 
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky Footer */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-4 shadow-[0_-8px_20px_rgba(0,0,0,0.08)] z-50 flex items-center justify-between pb-safe">
+        <div className="flex flex-col">
+          <span className="text-xs text-neutral-500 font-medium">Rent starts from</span>
+          <span className="text-xl font-black text-primary-700 leading-none">₹{pg.priceMin.toLocaleString()}</span>
+        </div>
+        <div className="w-[55%]">
+          <ContactOwnerButton
+            listingId={pg.id}
+            ownerPhone={pg.owner?.phone || ""}
+            listingTitle={pg.title}
+            hasActiveSubscription={true}
+          />
         </div>
       </div>
     </>
