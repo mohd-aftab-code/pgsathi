@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/db";
+import { db as prisma } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { sendOwnerInviteEmail } from "@/lib/email";
 
