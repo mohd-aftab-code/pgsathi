@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -116,6 +116,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${plusJakarta.variable} ${notoDevanagari.variable}`}
     >
+      <GoogleTagManager gtmId="GTM-PF5NWQMS" />
       <head>
         <meta name="google-site-verification" content="ZaMEO4rMht0Z5dlPt2AeWfLWDCu25rMA8baxz770N28" />
         <script
