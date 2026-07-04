@@ -57,3 +57,41 @@ export async function sendLeadNotification(
     `,
   });
 }
+
+// Send owner invite with credentials
+export async function sendOwnerInviteEmail(
+  to: string,
+  name: string,
+  pgTitle: string,
+  loginId: string,
+  tempPass: string
+) {
+  await resend.emails.send({
+    from: FROM,
+    to,
+    subject: `Claim your PG Listing "${pgTitle}" on PGSathi`,
+    html: `
+      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2 style="color: #6d28d9;">Welcome to PGSathi!</h2>
+        <p>Hi ${name},</p>
+        <p>Your PG <strong>"${pgTitle}"</strong> has been pre-listed on India's fastest growing zero-brokerage platform.</p>
+        <p>You can now log in to your Owner Dashboard to manage photos, pricing, and view tenant leads.</p>
+        
+        <div style="background: #f5f3ff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; margin: 24px 0;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #475569;">Your Login Credentials:</p>
+          <p style="margin: 0 0 8px;"><strong>Email (Login ID):</strong> ${loginId}</p>
+          <p style="margin: 0;"><strong>Password:</strong> ${tempPass}</p>
+        </div>
+
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/login" style="display: inline-block; background: #6d28d9; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 24px; text-align: center; width: 100%; box-sizing: border-box;">
+          Log In to Dashboard
+        </a>
+        
+        <p style="color: #64748b; font-size: 14px;">For security reasons, we recommend changing your password after your first login.</p>
+        
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+        <p style="color: #94a3b8; font-size: 12px;">PGSathi Support Team<br/>Apna PG, Apna Sathi</p>
+      </div>
+    `,
+  });
+}
