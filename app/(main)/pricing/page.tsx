@@ -27,7 +27,9 @@ export default async function PricingPage() {
         "WhatsApp Direct Leads",
         "Featured Badge",
         "Analytics Dashboard",
-        "Priority Support"
+        "Priority Support",
+        "PG Manager App (Tenants, Rent, Bills)",
+        "Staff & Expense Tracking"
       ],
       cta: "Get Started Free",
       popular: false
@@ -44,11 +46,13 @@ export default async function PricingPage() {
         "WhatsApp Direct Leads",
         "Basic Analytics Dashboard",
         "Email Support",
+        "PG Manager App (Tenants, Rent)",
         "Valid for 1 Month"
       ],
       notIncluded: [
         "Featured Badge",
-        "Top of Search Results"
+        "Top of Search Results",
+        "Staff & Expense Tracking"
       ],
       cta: "Choose Growth",
       popular: true
@@ -66,6 +70,8 @@ export default async function PricingPage() {
         "Advanced Analytics",
         "Featured Badge (1 Property)",
         "Priority 24/7 Support",
+        "Full PG Manager App (All features)",
+        "Staff, Expenses & Reports",
         "Valid for 1 Month"
       ],
       notIncluded: [],

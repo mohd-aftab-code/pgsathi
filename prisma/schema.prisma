@@ -37,6 +37,22 @@ model User {
   visits        VisitBooking[]   @relation("TenantVisits")
   otpCodes      OtpCode[]
 
+  // PG Manager relations
+  pgTenantsOwned    PgTenant[]         @relation("PgTenantOwner")
+  pgPaymentsOwned   PgPayment[]        @relation("PgPaymentOwner")
+  pgRentBillsOwned  PgRentBill[]       @relation("PgRentBillOwner")
+  pgMeterOwned      PgMeterReading[]   @relation("PgMeterOwner")
+  pgComplaintsOwned PgComplaint[]      @relation("PgComplaintOwner")
+  pgExpensesOwned   PgExpense[]        @relation("PgExpenseOwner")
+  pgStaffOwned      PgStaff[]          @relation("PgStaffOwner")
+  pgSalaryOwned     PgSalaryPayout[]   @relation("PgSalaryOwner")
+  pgMessOwned       PgMessMenu[]       @relation("PgMessOwner")
+  pgTeamOwned       PgTeamMember[]     @relation("PgTeamOwner")
+  pgDocsOwned       PgTenantDocument[] @relation("PgDocOwner")
+  pgAgreementsOwned PgAgreement[]      @relation("PgAgreementOwner")
+  pgAuditOwned      PgAuditLog[]       @relation("PgAuditOwner")
+  pgAnnouncements   PgAnnouncement[]   @relation("PgAnnouncementOwner")
+
   @@index([email])
   @@index([phone])
   @@index([role])
@@ -153,6 +169,15 @@ model Listing {
   analytics  ListingAnalytic[]
   rooms      Room[]
   visits     VisitBooking[]
+
+  // PG Manager relations
+  pgTenants       PgTenant[]
+  pgMeterReadings PgMeterReading[]
+  pgComplaints    PgComplaint[]
+  pgExpenses      PgExpense[]
+  pgStaff         PgStaff[]
+  pgMessMenus     PgMessMenu[]
+  pgAnnouncements PgAnnouncement[]
 
   @@index([cityId, status, isActive])
   @@index([cityId, localityId, status])
@@ -435,8 +460,12 @@ model Room {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  beds      Bed[]
+  listing       Listing          @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  beds          Bed[]
+
+  // PG Manager relations
+  pgTenants       PgTenant[]
+  pgMeterReadings PgMeterReading[]
 
   @@index([listingId])
   @@map("rooms")
@@ -451,6 +480,9 @@ model Bed {
 
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   tenant    User?    @relation("TenantBeds", fields: [tenantId], references: [id])
+
+  // PG Manager relations
+  pgTenants PgTenant[]
 
   @@index([roomId])
   @@index([tenantId])
@@ -502,4 +534,374 @@ model OtpCode {
 
   @@index([phone, expiresAt])
   @@map("otp_codes")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — TENANT (Actual paying guest,
+// different from Lead. Owner records them manually.)
+// ═══════════════════════════════════════
+model PgTenant {
+  id               Int       @id @default(autoincrement())
+  ownerId          Int
+  listingId        Int
+  roomId           Int?
+  bedId            Int?
+
+  name             String    @db.VarChar(100)
+  phone            String    @db.VarChar(15)
+  email            String?   @db.VarChar(255)
+  gender           String    @default("MALE") @db.VarChar(10)
+
+  // KYC
+  idType           String?   @db.VarChar(30)
+  idNumber         String?   @db.VarChar(50)
+  photoUrl         String?   @db.Text
+
+  // Guardian
+  guardianName     String?   @db.VarChar(100)
+  guardianPhone    String?   @db.VarChar(15)
+  permanentAddress String?   @db.Text
+
+  // Stay & money
+  monthlyRent      Int       @default(0)
+  securityDeposit  Int       @default(0)
+  rentDueDay       Int       @default(5)
+  checkInDate      DateTime  @default(now())
+  checkOutDate     DateTime?
+  noticeDate       DateTime?
+  expectedVacate   DateTime?
+  status           String    @default("ACTIVE") @db.VarChar(20) // ACTIVE | NOTICE | VACATED
+  depositRefunded  Int?
+  notes            String?   @db.Text
+
+  deletedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  owner        User              @relation("PgTenantOwner", fields: [ownerId], references: [id])
+  listing      Listing           @relation(fields: [listingId], references: [id])
+  room         Room?             @relation(fields: [roomId], references: [id])
+  bed          Bed?              @relation(fields: [bedId], references: [id])
+  payments     PgPayment[]
+  rentBills    PgRentBill[]
+  documents    PgTenantDocument[]
+  agreements   PgAgreement[]
+  complaints   PgComplaint[]
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@index([status])
+  @@map("pg_tenants")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — PAYMENT (Rent/deposit/misc recorded by owner)
+// ═══════════════════════════════════════
+model PgPayment {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  tenantId    Int
+  rentBillId  Int?
+
+  amount      Int
+  type        String    @default("RENT") @db.VarChar(30) // RENT | DEPOSIT | ELECTRICITY | LATE_FEE | OTHER
+  forMonth    String?   @db.VarChar(7)                   // "2026-07"
+  method      String    @default("CASH") @db.VarChar(20) // CASH | UPI | BANK | CHEQUE
+  status      String    @default("PAID") @db.VarChar(20) // PAID | PARTIAL | PENDING
+  paidOn      DateTime  @default(now())
+  note        String?   @db.Text
+  receiptNo   String?   @db.VarChar(30)
+  voided      Boolean   @default(false)
+
+  createdAt   DateTime  @default(now())
+
+  owner    User       @relation("PgPaymentOwner", fields: [ownerId], references: [id])
+  tenant   PgTenant   @relation(fields: [tenantId], references: [id])
+  rentBill PgRentBill? @relation(fields: [rentBillId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId])
+  @@index([tenantId])
+  @@index([forMonth])
+  @@map("pg_payments")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — RENT BILL (Monthly invoice auto-generated)
+// ═══════════════════════════════════════
+model PgRentBill {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  tenantId    Int
+
+  forMonth    String    @db.VarChar(7) // "2026-07"
+  rentAmount  Int
+  electricity Int       @default(0)
+  otherAmount Int       @default(0)
+  lateFee     Int       @default(0)
+  dueDate     DateTime
+  billNo      String?   @db.VarChar(30)
+  note        String?   @db.Text
+  createdAt   DateTime  @default(now())
+
+  owner    User       @relation("PgRentBillOwner", fields: [ownerId], references: [id])
+  tenant   PgTenant   @relation(fields: [tenantId], references: [id])
+  payments PgPayment[]
+
+  @@unique([tenantId, forMonth])
+  @@index([ownerId])
+  @@map("pg_rent_bills")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — METER READING (Electricity per room)
+// ═══════════════════════════════════════
+model PgMeterReading {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int
+  roomId      Int
+
+  forMonth    String    @db.VarChar(7)
+  prevReading Int
+  currReading Int
+  ratePerUnit Int
+  createdAt   DateTime  @default(now())
+
+  owner   User    @relation("PgMeterOwner", fields: [ownerId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+  room    Room    @relation(fields: [roomId], references: [id])
+
+  @@unique([roomId, forMonth])
+  @@index([ownerId])
+  @@index([listingId])
+  @@map("pg_meter_readings")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — COMPLAINT / MAINTENANCE
+// ═══════════════════════════════════════
+model PgComplaint {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int
+  tenantId    Int?
+
+  title       String    @db.VarChar(200)
+  description String?   @db.Text
+  category    String    @default("OTHER") @db.VarChar(50) // PLUMBING | ELECTRICAL | CLEANING | OTHER
+  priority    String    @default("MEDIUM") @db.VarChar(20) // LOW | MEDIUM | HIGH | URGENT
+  status      String    @default("OPEN") @db.VarChar(20)   // OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  owner   User      @relation("PgComplaintOwner", fields: [ownerId], references: [id])
+  listing Listing   @relation(fields: [listingId], references: [id])
+  tenant  PgTenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@index([status])
+  @@map("pg_complaints")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — EXPENSE
+// ═══════════════════════════════════════
+model PgExpense {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int?
+
+  category    String    @default("OTHER") @db.VarChar(50) // MAINTENANCE | SALARY | GROCERY | UTILITY | OTHER
+  amount      Int
+  title       String    @db.VarChar(200)
+  spentOn     DateTime  @default(now())
+  note        String?   @db.Text
+  createdAt   DateTime  @default(now())
+
+  owner   User     @relation("PgExpenseOwner", fields: [ownerId], references: [id])
+  listing Listing? @relation(fields: [listingId], references: [id])
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@map("pg_expenses")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — STAFF MEMBER
+// ═══════════════════════════════════════
+model PgStaff {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int?
+
+  name        String    @db.VarChar(100)
+  role        String    @default("OTHER") @db.VarChar(50) // COOK | CLEANER | WARDEN | GUARD | OTHER
+  phone       String?   @db.VarChar(15)
+  salary      Int       @default(0)
+  joinDate    DateTime  @default(now())
+  active      Boolean   @default(true)
+  note        String?   @db.Text
+  createdAt   DateTime  @default(now())
+
+  owner   User     @relation("PgStaffOwner", fields: [ownerId], references: [id])
+  listing Listing? @relation(fields: [listingId], references: [id])
+  payouts PgSalaryPayout[]
+
+  @@index([ownerId])
+  @@map("pg_staff")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — SALARY PAYOUT
+// ═══════════════════════════════════════
+model PgSalaryPayout {
+  id        Int       @id @default(autoincrement())
+  ownerId   Int
+  staffId   Int
+
+  forMonth  String    @db.VarChar(7)
+  amount    Int
+  paidOn    DateTime  @default(now())
+  method    String    @default("CASH") @db.VarChar(20)
+  note      String?   @db.Text
+
+  owner User    @relation("PgSalaryOwner", fields: [ownerId], references: [id])
+  staff PgStaff @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, forMonth])
+  @@index([ownerId])
+  @@map("pg_salary_payouts")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — MESS MENU (Weekly per PG)
+// ═══════════════════════════════════════
+model PgMessMenu {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int
+
+  dayOfWeek   Int       // 0=Sun, 1=Mon ... 6=Sat
+  breakfast   String?   @db.Text
+  lunch       String?   @db.Text
+  snacks      String?   @db.Text
+  dinner      String?   @db.Text
+  updatedAt   DateTime  @updatedAt
+
+  owner   User    @relation("PgMessOwner", fields: [ownerId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@unique([listingId, dayOfWeek])
+  @@index([ownerId])
+  @@map("pg_mess_menus")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — TEAM MEMBER (Manager/Warden sub-login)
+// ═══════════════════════════════════════
+model PgTeamMember {
+  id           Int       @id @default(autoincrement())
+  ownerId      Int
+  name         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(255)
+  passwordHash String    @db.Text
+  role         String    @default("MANAGER") @db.VarChar(20) // MANAGER | WARDEN | ACCOUNTANT
+  active       Boolean   @default(true)
+  listingIds   String?   @db.Text // JSON array of listing IDs they can access ("[]" = all)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  owner User @relation("PgTeamOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_team_members")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — TENANT DOCUMENT (KYC)
+// ═══════════════════════════════════════
+model PgTenantDocument {
+  id         Int       @id @default(autoincrement())
+  ownerId    Int
+  tenantId   Int
+
+  type       String    @db.VarChar(40) // AADHAAR_FRONT | AADHAAR_BACK | PAN | PHOTO | POLICE_VERIFICATION | AGREEMENT | OTHER
+  fileName   String    @db.VarChar(255)
+  url        String    @db.Text
+  publicId   String?   @db.VarChar(255)
+  mimeType   String?   @db.VarChar(50)
+  status     String    @default("PENDING") @db.VarChar(20) // PENDING | VERIFIED | REJECTED
+  uploadedAt DateTime  @default(now())
+
+  owner  User     @relation("PgDocOwner", fields: [ownerId], references: [id])
+  tenant PgTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([ownerId])
+  @@map("pg_tenant_documents")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — RENT AGREEMENT
+// ═══════════════════════════════════════
+model PgAgreement {
+  id             Int       @id @default(autoincrement())
+  ownerId        Int
+  tenantId       Int
+
+  startDate      DateTime
+  endDate        DateTime?
+  monthlyRent    Int
+  deposit        Int
+  noticeDays     Int       @default(30)
+  terms          String?   @db.Text
+  status         String    @default("DRAFT") @db.VarChar(20) // DRAFT | ACTIVE | EXPIRED
+  signedDate     DateTime?
+  createdAt      DateTime  @default(now())
+
+  owner  User     @relation("PgAgreementOwner", fields: [ownerId], references: [id])
+  tenant PgTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([ownerId])
+  @@map("pg_agreements")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — AUDIT LOG
+// ═══════════════════════════════════════
+model PgAuditLog {
+  id        Int       @id @default(autoincrement())
+  ownerId   Int
+  actor     String    @db.VarChar(150)
+  action    String    @db.Text
+  entity    String?   @db.VarChar(100)
+  createdAt DateTime  @default(now())
+
+  owner User @relation("PgAuditOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_audit_logs")
+}
+
+// ═══════════════════════════════════════
+// PG MANAGER — ANNOUNCEMENT / NOTICE BOARD
+// ═══════════════════════════════════════
+model PgAnnouncement {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int?
+
+  title       String    @db.VarChar(200)
+  message     String    @db.Text
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  owner   User     @relation("PgAnnouncementOwner", fields: [ownerId], references: [id])
+  listing Listing? @relation(fields: [listingId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_announcements")
 }

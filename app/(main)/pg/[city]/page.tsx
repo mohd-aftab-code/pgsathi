@@ -1,11 +1,11 @@
 import { db } from "@/lib/db";
 import { notFound, redirect } from "next/navigation";
 
-export default async function LegacyPGDetailPage(props: { params: Promise<{ slug: string }> }) {
+export default async function LegacyPGDetailPage(props: { params: Promise<{ city: string }> }) {
   const params = await props.params;
   
   const pg = await db.listing.findUnique({
-    where: { slug: params.slug },
+    where: { slug: params.city },
     include: { city: true, locality: true },
   });
 
