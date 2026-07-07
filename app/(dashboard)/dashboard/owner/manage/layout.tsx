@@ -2,12 +2,10 @@
  * app/(main)/dashboard/owner/manage/layout.tsx
  * Layout for all /dashboard/owner/manage/* pages.
  * - Checks auth + plan access
- * - Wraps content with ManageSidebar
  */
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPlanTier } from "@/lib/manage-auth";
-import { ManageSidebarWrapper } from "@/components/manage/ManageSidebarWrapper";
 import { PlanGate } from "@/components/manage/PlanGate";
 
 export const dynamic = "force-dynamic";
@@ -41,14 +39,5 @@ export default async function ManageLayout({ children }: { children: React.React
     );
   }
 
-  return (
-    <div className="bg-neutral-50 min-h-screen">
-      <ManageSidebarWrapper
-        ownerName={session.user.name ?? "Owner"}
-        planTier={tier}
-      >
-        {children}
-      </ManageSidebarWrapper>
-    </div>
-  );
+  return <>{children}</>;
 }
