@@ -21,10 +21,10 @@ export async function generateMetadata(props: {
   const title = `Best ${genderText} PGs & Hostels in ${cityName} - Zero Brokerage`;
   const description = `Looking for a ${genderText} PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
 
-  const genderMap: Record<string, "MALE" | "FEMALE" | "UNISEX"> = {
-    boys: "MALE",
-    girls: "FEMALE",
-    coed: "UNISEX"
+  const genderMap: Record<string, "BOYS" | "GIRLS" | "COED"> = {
+    boys: "BOYS",
+    girls: "GIRLS",
+    coed: "COED"
   };
 
   const listingCount = await db.listing.count({
