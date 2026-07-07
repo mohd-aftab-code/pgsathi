@@ -72,7 +72,7 @@ export function OwnerSidebar() {
             {isManagerMode ? (
               <Link 
                 href="/dashboard/owner" 
-                className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-500 hover:text-orange-600 transition-colors uppercase tracking-wider"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-500 hover:text-primary-600 transition-colors uppercase tracking-wider"
               >
                 <ArrowLeft size={14} />
                 Back to Dashboard
@@ -96,11 +96,11 @@ export function OwnerSidebar() {
                     href={item.href}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       active
-                        ? "bg-orange-50 text-orange-600 shadow-sm border border-orange-100"
-                        : "text-neutral-600 hover:text-orange-600 hover:bg-orange-50/50 border border-transparent"
+                        ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
+                        : "text-neutral-600 hover:text-primary-600 hover:bg-primary-50/50 border border-transparent"
                     }`}
                   >
-                    <Icon size={18} className={active ? "text-orange-600" : "text-neutral-400"} />
+                    <Icon size={18} className={active ? "text-primary-600" : "text-neutral-400"} />
                     {item.name}
                   </Link>
                 );
@@ -116,7 +116,7 @@ export function OwnerSidebar() {
           {isManagerMode && (
              <Link
                 href="/dashboard/owner"
-                className="flex flex-col items-center justify-center w-full h-full text-neutral-500 hover:text-orange-600 hover:bg-neutral-50 rounded-xl transition-colors gap-1"
+                className="flex flex-col items-center justify-center w-full h-full text-neutral-500 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-colors gap-1"
              >
                 <ArrowLeft size={20} />
                 <span className="text-[10px] font-medium">Back</span>
@@ -132,7 +132,7 @@ export function OwnerSidebar() {
                 key={item.name}
                 href={item.href}
                 className={`flex flex-col items-center justify-center w-full h-full rounded-xl transition-colors gap-1 ${
-                  active ? "text-orange-600" : "text-neutral-500 hover:text-orange-600 hover:bg-neutral-50"
+                  active ? "text-primary-600" : "text-neutral-500 hover:text-primary-600 hover:bg-neutral-50"
                 }`}
               >
                 <Icon size={20} />

@@ -23,34 +23,37 @@ export default async function OwnerDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50/50">
       {/* ── Top Header ──────────────────────────────────────── */}
-      <header className="bg-white border-b border-neutral-200 sticky top-0 z-40">
+      <header className="bg-white/80 backdrop-blur-md border-b border-neutral-200/60 sticky top-0 z-40 shadow-sm">
         <div className="container-max section-padding h-16 flex items-center justify-between">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-sm">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
               <Building2 size={16} className="text-white" />
             </div>
-            <div>
-              <span className="font-extrabold text-sm text-neutral-900">PGSathi</span>
-              <span className="text-neutral-400 text-xs ml-1">/ Owner</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-extrabold text-[15px] tracking-tight text-neutral-900">PGSathi</span>
+              <span className="text-neutral-400 text-xs font-medium">/ Owner</span>
             </div>
           </Link>
 
           {/* User info */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-bold text-neutral-800 line-clamp-1 max-w-[150px]">
-                {session.user.name || "Owner"}
-              </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 uppercase">
-                {session.user.role || "OWNER"}
-              </span>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-semibold text-neutral-800 line-clamp-1 max-w-[150px]">
+                  {session.user.name || "Owner"}
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary-50 text-primary-600 uppercase tracking-wider">
+                  {session.user.role || "OWNER"}
+                </span>
+              </div>
+              <div className="w-9 h-9 bg-gradient-to-br from-primary-100 to-primary-50 border border-primary-200 text-primary-700 rounded-full flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                {session.user.name?.charAt(0).toUpperCase() || "O"}
+              </div>
             </div>
-            <div className="w-9 h-9 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
-              {session.user.name?.charAt(0).toUpperCase() || "O"}
-            </div>
+            <div className="w-px h-6 bg-neutral-200 hidden sm:block"></div>
             <LogoutButton />
           </div>
         </div>

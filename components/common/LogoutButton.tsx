@@ -7,10 +7,11 @@ export default function LogoutButton({ className }: { className?: string }) {
   return (
     <button
       onClick={() => signOut({ callbackUrl: "/" })}
-      className={className || "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full text-left mt-2 border-t border-neutral-100 cursor-pointer"}
+      className={className || "w-9 h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-transparent hover:border-red-100 cursor-pointer"}
+      title="Log out"
+      aria-label="Log out"
     >
       <LogOut size={18} />
-      Log out
     </button>
   );
 }

@@ -5,21 +5,21 @@
    DESIGN TOKENS — Tailwind v4 Theme
    ═══════════════════════════════════════════ */
 @theme {
-  /* Primary — Deep Violet */
-  --color-primary:       #6d28d9;
-  --color-primary-light: #7c3aed;
-  --color-primary-dark:  #4c1d95;
-  --color-primary-50:    #f5f3ff;
-  --color-primary-100:   #ede9fe;
-  --color-primary-200:   #ddd6fe;
-  --color-primary-300:   #c4b5fd;
-  --color-primary-400:   #a78bfa;
-  --color-primary-500:   #8b5cf6;
-  --color-primary-600:   #7c3aed;
-  --color-primary-700:   #6d28d9;
-  --color-primary-800:   #5b21b6;
-  --color-primary-900:   #4c1d95;
-  --color-primary-950:   #2e1065;
+  /* Primary — Premium Orange (Brand) */
+  --color-primary:       #f97316;
+  --color-primary-light: #fb923c;
+  --color-primary-dark:  #c2410c;
+  --color-primary-50:    #fff7ed;
+  --color-primary-100:   #ffedd5;
+  --color-primary-200:   #fed7aa;
+  --color-primary-300:   #fdba74;
+  --color-primary-400:   #fb923c;
+  --color-primary-500:   #f97316;
+  --color-primary-600:   #ea580c;
+  --color-primary-700:   #c2410c;
+  --color-primary-800:   #9a3412;
+  --color-primary-900:   #7c2d12;
+  --color-primary-950:   #431407;
 
   /* Secondary — Warm Orange */
   --color-secondary:     #ea580c;
