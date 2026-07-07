@@ -126,7 +126,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
           <button 
             onClick={() => handleStatusChange("REJECTED")}
             disabled={loading !== null}
-            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
             title="Reject Listing"
           >
             {loading === "REJECTED" ? <Loader2 size={18} className="animate-spin" /> : <XCircle size={18} />}
@@ -163,7 +163,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={handleDelete}
           disabled={loading !== null}
-          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+          className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
           title="Soft Delete Listing"
         >
           {loading === "DELETE" ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}

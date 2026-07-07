@@ -41,7 +41,7 @@ export default async function AdminDashboardLayout({
         <div className="container-max section-padding h-16 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-500 rounded-xl flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-sm">
               <ShieldCheck size={16} className="text-white" />
             </div>
             <div>
@@ -56,11 +56,11 @@ export default async function AdminDashboardLayout({
               <span className="text-sm font-bold text-neutral-800 line-clamp-1 max-w-[150px]">
                 {session.user.name || "Admin User"}
               </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700 uppercase">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 uppercase">
                 {session.user.role || "ADMIN"}
               </span>
             </div>
-            <div className="w-9 h-9 bg-red-100 text-red-700 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-9 h-9 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
               {session.user.name?.charAt(0).toUpperCase() || "A"}
             </div>
             <LogoutButton />
@@ -84,7 +84,7 @@ export default async function AdminDashboardLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-red-700 hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-primary-700 hover:bg-primary-50 transition-colors"
                 >
                   <Icon size={16} />
                   {item.name}
@@ -109,7 +109,7 @@ export default async function AdminDashboardLayout({
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex flex-col items-center justify-center w-full h-full text-neutral-500 hover:text-red-700 hover:bg-neutral-50 rounded-xl transition-colors gap-1"
+                className="flex flex-col items-center justify-center w-full h-full text-neutral-500 hover:text-primary-700 hover:bg-neutral-50 rounded-xl transition-colors gap-1"
               >
                 <Icon size={20} />
                 <span className="text-[9px] font-medium">{item.name}</span>

@@ -36,22 +36,22 @@ export default async function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {/* Pending Approvals Card - Highlighted */}
-        <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-6 shadow-sm border border-red-100 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-red-200/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
+        <div className="bg-gradient-to-br from-primary-50 to-orange-50 rounded-3xl p-6 shadow-sm border border-primary-100 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-primary-200/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="bg-red-100 text-red-600 p-3 rounded-2xl">
+            <div className="bg-primary-100 text-primary-600 p-3 rounded-2xl">
               <ShieldAlert size={24} />
             </div>
             {pendingListings > 0 && (
               <span className="flex h-3 w-3 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
               </span>
             )}
           </div>
-          <div className="text-4xl font-black text-red-950 relative z-10 mb-1">{pendingListings}</div>
-          <div className="text-sm font-bold text-red-800/70 mb-4 relative z-10">Pending Approvals</div>
-          <Link href="/dashboard/admin/verify" className="flex items-center justify-between text-sm text-red-700 font-bold bg-white/60 hover:bg-white px-4 py-2 rounded-xl transition-colors relative z-10">
+          <div className="text-4xl font-black text-primary-950 relative z-10 mb-1">{pendingListings}</div>
+          <div className="text-sm font-bold text-primary-800/70 mb-4 relative z-10">Pending Approvals</div>
+          <Link href="/dashboard/admin/verify" className="flex items-center justify-between text-sm text-primary-700 font-bold bg-white/60 hover:bg-white px-4 py-2 rounded-xl transition-colors relative z-10">
             Verify Now <ArrowRight size={16} />
           </Link>
         </div>
@@ -138,7 +138,7 @@ export default async function AdminDashboardPage() {
               <Users size={20} className="text-blue-400" /> Manage Users
             </Link>
             <Link href="/dashboard/admin/verify" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
-              <ShieldAlert size={20} className="text-red-400" /> Verify Listings
+              <ShieldAlert size={20} className="text-primary-400" /> Verify Listings
             </Link>
             <Link href="/dashboard/admin/reports" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
               <FileBarChart size={20} className="text-purple-400" /> Financial Reports

@@ -138,7 +138,7 @@ export default function AdminPlansPage() {
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
             </div>
             <div className="md:col-span-2 flex items-center gap-4 mt-4">
-              <button type="submit" className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold">Save Plan</button>
+              <button type="submit" className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer">Save Plan</button>
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2.5 rounded-xl font-bold text-neutral-500 bg-neutral-100 hover:bg-neutral-200">Cancel</button>
             </div>
           </form>
@@ -170,7 +170,7 @@ export default function AdminPlansPage() {
                 <button onClick={() => toggleStatus(plan)} className={`flex-1 p-2 rounded-lg font-semibold flex justify-center ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
                   {plan.isActive ? <PowerOff size={18} /> : <Power size={18} />}
                 </button>
-                <button onClick={() => handleDelete(plan.id)} className="flex-1 p-2 bg-red-50 text-red-600 rounded-lg font-semibold hover:bg-red-100 flex justify-center"><Trash2 size={18} /></button>
+                <button onClick={() => handleDelete(plan.id)} className="flex-1 p-2 bg-primary-50 text-primary-600 rounded-lg font-semibold hover:bg-primary-100 flex justify-center"><Trash2 size={18} /></button>
               </div>
             </div>
           ))}
