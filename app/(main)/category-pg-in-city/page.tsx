@@ -28,7 +28,7 @@ export async function generateMetadata(props: {
   };
 
   const listingCount = await db.listing.count({
-    where: { city: { slug: city }, genderAllowed: genderMap[category], status: "ACTIVE", deletedAt: null }
+    where: { city: { slug: city }, genderAllowed: genderMap[category], status: "ACTIVE" }
   });
 
   return {
