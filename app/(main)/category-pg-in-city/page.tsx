@@ -1,6 +1,7 @@
 import SearchPage from "@/app/(main)/search/page";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -17,8 +18,18 @@ export async function generateMetadata(props: {
   const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
   const genderText = category === "coed" ? "Co-ed" : categoryName;
 
-  const title = `Best ${genderText} PGs & Hostels in ${cityName} - Zero Brokerage | PGSathi`;
+  const title = `Best ${genderText} PGs & Hostels in ${cityName} - Zero Brokerage`;
   const description = `Looking for a ${genderText} PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
+
+  const genderMap: Record<string, "MALE" | "FEMALE" | "UNISEX"> = {
+    boys: "MALE",
+    girls: "FEMALE",
+    coed: "UNISEX"
+  };
+
+  const listingCount = await db.listing.count({
+    where: { city: { slug: city }, gender: genderMap[category], status: "APPROVED", deletedAt: null }
+  });
 
   return {
     title,
@@ -30,7 +41,8 @@ export async function generateMetadata(props: {
     },
     alternates: {
       canonical: `https://pgsathi.in/${category}-pg-in-${city}`,
-    }
+    },
+    ...(listingCount === 0 && { robots: { index: false, follow: true } }),
   };
 }
 

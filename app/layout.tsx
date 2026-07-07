@@ -30,18 +30,9 @@ export const metadata: Metadata = {
   },
   description:
     "India's #1 verified platform for finding zero brokerage PGs, hostels, and rooms for rent directly from owners. Discover premium Boys, Girls, and Co-ed PGs across India's Metros and Tier 2/Tier 3 cities.",
-  keywords: [
-    "Zero Brokerage PG in Noida",
-    "Direct Owner Boys PG in India",
-    "Verified Girls PG in Gurgaon without broker",
-    "Premium PG with Food in Knowledge Park Noida",
-    "Affordable PG in Mukherjee Nagar",
-    "Best PG in Sector 62 Noida",
-    "Paying Guest in South Delhi",
-    "Rooms for rent in Gurgaon DLF",
-    "PG for students in North Campus",
-    "PGSathi",
-  ],
+  alternates: {
+    canonical: "https://pgsathi.in",
+  },
   authors: [{ name: "PGSathi" }],
   creator: "PGSathi",
   openGraph: {

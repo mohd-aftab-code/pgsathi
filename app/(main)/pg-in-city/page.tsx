@@ -1,6 +1,8 @@
 import SearchPage from "@/app/(main)/search/page";
 import { Metadata } from "next";
 
+import { db } from "@/lib/db";
+
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
@@ -8,14 +10,19 @@ export async function generateMetadata(props: {
   const city = (searchParams.city as string) || "city";
   const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, " ");
 
-  const title = `Best PGs & Hostels in ${cityName} - Zero Brokerage | PGSathi`;
+  const title = `Best PGs & Hostels in ${cityName} - Zero Brokerage`;
   const description = `Looking for a PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
+
+  const listingCount = await db.listing.count({
+    where: { city: { slug: city }, status: "APPROVED", deletedAt: null }
+  });
 
   return {
     title,
     description,
     openGraph: { title, description, type: "website" },
     alternates: { canonical: `https://pgsathi.in/pg-in-${city}` },
+    ...(listingCount === 0 && { robots: { index: false, follow: true } }),
   };
 }
 

@@ -15,11 +15,11 @@ export async function generateMetadata(props: {
     include: { city: true, locality: true, photos: { take: 1 } },
   });
 
-  if (!pg) return { title: "PG Not Found | PGSathi" };
+  if (!pg) return { title: "PG Not Found" };
 
   const cityName = pg.city?.name || "";
   const localityName = pg.locality?.name || "";
-  const title = pg.metaTitle || `${pg.title} - PG in ${localityName}, ${cityName} | PGSathi`;
+  const title = pg.metaTitle || `${pg.title} - PG in ${localityName}, ${cityName}`;
   const description = pg.metaDesc || `${pg.genderAllowed} PG in ${localityName}, ${cityName}. Starting from ₹${pg.priceMin}/month. Zero brokerage, verified property. Contact owner directly on PGSathi.`;
   const image = pg.photos?.[0]?.url || "https://pgsathi.in/og-image.jpg";
 
