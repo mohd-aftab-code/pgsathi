@@ -14,7 +14,7 @@ export async function generateMetadata(props: {
   const description = `Looking for a PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
 
   const listingCount = await db.listing.count({
-    where: { city: { slug: city }, status: "APPROVED", deletedAt: null }
+    where: { city: { slug: city }, status: "ACTIVE", deletedAt: null }
   });
 
   return {
