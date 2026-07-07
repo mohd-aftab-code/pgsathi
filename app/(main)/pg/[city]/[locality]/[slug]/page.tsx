@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 import ImageGallery from "@/components/listings/ImageGallery";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import { MapPin, CheckCircle, Star, Wifi, Car, Utensils, Shirt, Brush, Clock, Shield, Users, Home, ArrowLeft, Share2 } from "lucide-react";
@@ -124,13 +125,12 @@ export default async function PGDetailPage(props: {
         <div className="container-max section-padding py-6 md:py-8">
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-4 flex-wrap">
-            <Link href="/" className="hover:text-primary-600 transition-colors">Home</Link>
-            <span>/</span>
-            <Link href={`/pg-in-${pg.city?.slug}`} className="hover:text-primary-600 transition-colors">PGs in {cityName}</Link>
-            <span>/</span>
-            <span className="text-neutral-800 font-medium line-clamp-1">{pg.title}</span>
-          </nav>
+          <Breadcrumbs 
+            items={[
+              { label: `PGs in ${cityName}`, href: `/pg-in-${pg.city?.slug}` },
+              { label: pg.title }
+            ]} 
+          />
 
           {/* Image Gallery */}
           <ImageGallery photos={pg.photos} title={pg.title} />

@@ -3,6 +3,7 @@ import PGCard from "@/components/listings/PGCard";
 import SearchBar from "@/components/landing/SearchBar";
 import SearchFilters from "@/components/search/SearchFilters";
 import SearchSort from "@/components/search/SearchSort";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -137,6 +138,14 @@ export default async function SearchPage(props: {
     <div className="bg-neutral-50 min-h-screen py-8">
       <div className="container-max section-padding">
         
+        {/* Breadcrumb */}
+        <Breadcrumbs 
+          items={[
+            ...(citySlug && citySlug !== "all" ? [{ label: `PGs in ${citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")}`, href: `/pg-in-${citySlug}` }] : []),
+            { label: "Search Results" }
+          ]} 
+        />
+
         {/* Search Header */}
         <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
           <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">Find Your Perfect PG</h1>
