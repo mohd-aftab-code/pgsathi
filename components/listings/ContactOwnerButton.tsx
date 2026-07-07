@@ -8,9 +8,10 @@ interface Props {
   ownerPhone: string;
   listingTitle: string;
   hasActiveSubscription?: boolean;
+  layout?: "row" | "column";
 }
 
-export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle, hasActiveSubscription = true }: Props) {
+export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle, hasActiveSubscription = true, layout = "column" }: Props) {
   const [loading, setLoading] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   
@@ -76,21 +77,27 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
 
   return (
     <>
-      <div className="space-y-4">
+      <div className={layout === "row" ? "flex gap-2 w-full" : "space-y-4"}>
         <button 
           onClick={() => handleActionClick("WHATSAPP")}
           disabled={loading && !showPopup}
-          className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+          className={`w-full bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2 px-1 text-xs sm:text-sm" : "py-3 text-base"}`}
         >
-          <MessageSquare size={20} /> {loading && leadAction === "WHATSAPP" && !showPopup ? "Connecting..." : "WhatsApp Owner"}
+          <MessageSquare size={layout === "row" ? 16 : 20} /> 
+          <span>
+            {loading && leadAction === "WHATSAPP" && !showPopup ? "Wait..." : "WhatsApp"}
+          </span>
         </button>
         
         <button 
           onClick={() => handleActionClick("PHONE")}
           disabled={loading && !showPopup}
-          className="w-full bg-primary-100 text-primary-700 hover:bg-primary-200 py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+          className={`w-full bg-primary-100 text-primary-700 hover:bg-primary-200 rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2 px-1 text-xs sm:text-sm" : "py-3 text-base"}`}
         >
-          <Phone size={20} /> {showPhone ? `+91 ${ownerPhone}` : "Show Phone Number"}
+          <Phone size={layout === "row" ? 16 : 20} /> 
+          <span>
+            {showPhone ? ownerPhone : "Call"}
+          </span>
         </button>
       </div>
 

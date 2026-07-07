@@ -386,12 +386,13 @@ export default async function PGDetailPage(props: {
           <span className="text-xs text-neutral-500 font-medium">Rent starts from</span>
           <span className="text-xl font-black text-primary-700 leading-none">₹{pg.priceMin.toLocaleString()}</span>
         </div>
-        <div className="w-[55%]">
+        <div className="w-[65%]">
           <ContactOwnerButton
             listingId={pg.id}
             ownerPhone={pg.owner?.phone || ""}
             listingTitle={pg.title}
             hasActiveSubscription={true}
+            layout="row"
           />
         </div>
       </div>
