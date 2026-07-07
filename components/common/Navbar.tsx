@@ -3,11 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, Search, PlusCircle, LogIn } from "lucide-react";
+import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard } from "lucide-react";
 
 import logoImg from "@/app/assets/logo/logo.png";
 
-export default function Navbar() {
+export default function Navbar({ user }: { user?: any }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -38,9 +38,16 @@ export default function Navbar() {
             <Link href="/dashboard/owner/listings/new" className="btn-outline flex items-center gap-1.5 px-4 py-2 text-sm ml-2">
               <PlusCircle size={15} /> List PG
             </Link>
-            <Link href="/login" className="btn-primary flex items-center gap-1.5 px-4 py-2 text-sm">
-              <LogIn size={15} /> Login
-            </Link>
+            
+            {user ? (
+              <Link href="/dashboard" className="btn-primary flex items-center gap-1.5 px-4 py-2 text-sm">
+                <LayoutDashboard size={15} /> Dashboard
+              </Link>
+            ) : (
+              <Link href="/login" className="btn-primary flex items-center gap-1.5 px-4 py-2 text-sm">
+                <LogIn size={15} /> Login
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Hamburger */}
@@ -67,9 +74,16 @@ export default function Navbar() {
           <Link href="/dashboard/owner/listings/new" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-50 text-primary-700 font-bold active:bg-primary-100 transition-colors">
             <PlusCircle size={18} /> List PG For Free
           </Link>
-          <Link href="/login" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-bold active:scale-[0.98] transition-transform">
-            <LogIn size={18} /> Login / Register
-          </Link>
+          
+          {user ? (
+            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-bold active:scale-[0.98] transition-transform">
+              <LayoutDashboard size={18} /> Go to Dashboard
+            </Link>
+          ) : (
+            <Link href="/login" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-bold active:scale-[0.98] transition-transform">
+              <LogIn size={18} /> Login / Register
+            </Link>
+          )}
         </div>
       )}
     </header>

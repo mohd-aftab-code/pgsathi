@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
   },
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
   pages: {
     signIn: "/login",
   },
@@ -17,78 +17,97 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        phone: { label: "Phone", type: "text" },
-        password: { label: "Password", type: "password" },
+        email:     { label: "Email",     type: "email" },
+        phone:     { label: "Phone",     type: "text" },
+        password:  { label: "Password",  type: "password" },
+        isManager: { label: "Manager",   type: "text" },
       },
       async authorize(credentials) {
-        console.log("[DEBUG] authorize() called with:", { email: credentials?.email, phone: credentials?.phone });
         try {
           if (!credentials) return null;
 
-          const email = credentials.email as string | undefined;
-          const phone = credentials.phone as string | undefined;
-          const password = credentials.password as string | undefined;
+          const email     = credentials.email     as string | undefined;
+          const phone     = credentials.phone     as string | undefined;
+          const password  = credentials.password  as string | undefined;
+          const isManager = credentials.isManager as string | undefined;
 
-          if (!password) {
-             throw new Error("Password is required");
+          if (!password) throw new Error("Password is required");
+
+          // ── MANAGER LOGIN ─────────────────────────────────────────
+          if (isManager === "true" && email) {
+            const member = await db.pgTeamMember.findUnique({
+              where: { email: email.toLowerCase().trim() },
+              include: {
+                owner: { select: { id: true, name: true, isActive: true } },
+              },
+            });
+
+            if (!member || !member.active) {
+              throw new Error("Manager account not found or deactivated");
+            }
+
+            const isValid = await compare(password, member.passwordHash);
+            if (!isValid) throw new Error("Invalid manager credentials");
+
+            return {
+              id:        `manager:${member.id}`,
+              uuid:      `mgr-${member.id}`,
+              name:      member.name,
+              email:     member.email,
+              role:      "MANAGER" as any,
+              avatar:    null,
+              // extra fields stored in token
+              ownerId:   member.ownerId,
+              managerRole: member.role,
+              listingIds:  member.listingIds ?? "[]",
+            };
           }
 
-          // Login with Email & Password (Admin)
-          if (email) {
-            const user = await db.user.findUnique({
-              where: { email: email },
-            });
+          // ── EMAIL LOGIN (Admin / Owner by email) ──────────────────
+          if (email && !isManager) {
+            const user = await db.user.findUnique({ where: { email } });
 
             if (!user || !user.passwordHash) {
               throw new Error("Invalid email or password");
             }
 
             const isValid = await compare(password, user.passwordHash);
-
-            if (!isValid) {
-              throw new Error("Invalid email or password");
-            }
+            if (!isValid) throw new Error("Invalid email or password");
 
             return {
-              id: user.id.toString(),
-              uuid: user.uuid,
-              name: user.name,
-              email: user.email,
-              role: user.role,
+              id:     user.id.toString(),
+              uuid:   user.uuid,
+              name:   user.name,
+              email:  user.email,
+              role:   user.role,
               avatar: user.avatar,
             };
           }
 
-          // Login with Phone & Password (User)
+          // ── PHONE LOGIN (User / Tenant / Owner by phone) ──────────
           if (phone) {
-            const user = await db.user.findUnique({
-              where: { phone: phone },
-            });
+            const user = await db.user.findUnique({ where: { phone } });
 
             if (!user || !user.passwordHash) {
               throw new Error("Invalid phone number or password");
             }
 
             const isValid = await compare(password, user.passwordHash);
-
-            if (!isValid) {
-              throw new Error("Invalid phone number or password");
-            }
+            if (!isValid) throw new Error("Invalid phone number or password");
 
             return {
-              id: user.id.toString(),
-              uuid: user.uuid,
-              name: user.name,
-              email: user.email,
-              role: user.role,
+              id:     user.id.toString(),
+              uuid:   user.uuid,
+              name:   user.name,
+              email:  user.email,
+              role:   user.role,
               avatar: user.avatar,
             };
           }
 
           return null;
         } catch (error) {
-          console.error("[DEBUG] authorize() Error:", error);
+          console.error("[AUTH] authorize() Error:", error);
           throw error;
         }
       },
@@ -97,17 +116,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.uuid = user.uuid;
-        token.role = user.role;
+        token.id         = user.id;
+        token.uuid       = (user as any).uuid;
+        token.role       = (user as any).role;
+        // Manager-specific
+        if ((user as any).ownerId) {
+          token.ownerId      = (user as any).ownerId;
+          token.managerRole  = (user as any).managerRole;
+          token.listingIds   = (user as any).listingIds;
+          token.isManager    = true;
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
+        session.user.id   = token.id as string;
         session.user.uuid = token.uuid as string;
         session.user.role = token.role as any;
+        if (token.isManager) {
+          (session.user as any).ownerId     = token.ownerId;
+          (session.user as any).managerRole = token.managerRole;
+          (session.user as any).listingIds  = token.listingIds;
+          (session.user as any).isManager   = true;
+        }
       }
       return session;
     },

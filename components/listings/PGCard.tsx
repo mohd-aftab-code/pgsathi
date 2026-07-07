@@ -36,16 +36,16 @@ export default function PGCard({ pg }: PGCardProps) {
         </div>
       </div>
       
-      <div className="p-4 flex-1 flex flex-col">
-        <div className="flex items-start justify-between gap-3 mb-1">
-          <h3 className="font-bold text-lg md:text-xl text-neutral-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-tight">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col">
+        <div className="flex items-start justify-between gap-2 sm:gap-3 mb-1">
+          <h3 className="font-bold text-base sm:text-lg md:text-xl text-neutral-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-tight">
             {pg.title}
           </h3>
           <div className="text-right shrink-0">
-            <div className="font-black text-xl md:text-2xl text-primary-700 whitespace-nowrap leading-none">
+            <div className="font-black text-lg sm:text-xl md:text-2xl text-primary-700 whitespace-nowrap leading-none">
               ₹{pg.priceMin}
             </div>
-            <div className="text-[10px] md:text-xs text-neutral-500 font-medium">/month</div>
+            <div className="text-[9px] sm:text-[10px] md:text-xs text-neutral-500 font-medium">/month</div>
           </div>
         </div>
 

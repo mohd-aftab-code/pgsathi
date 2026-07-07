@@ -3,170 +3,543 @@
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Home, Lock } from "lucide-react";
 import { signIn } from "next-auth/react";
+import {
+  Home,
+  Phone,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Building2,
+  ShieldCheck,
+  User,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
+
+type Tab = "user" | "manager" | "admin";
 
 function LoginContent() {
   const searchParams = useSearchParams();
   let callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
   if (callbackUrl.includes("/login")) callbackUrl = "/dashboard";
 
-  // Tab: "user" (users) or "email" (admin)
-  const [tab, setTab] = useState<"user" | "email">("user");
+  const [tab, setTab] = useState<Tab>("user");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [managerEmail, setManagerEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [managerPassword, setManagerPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [showManagerPass, setShowManagerPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(() =>
-    searchParams?.get("error") === "CredentialsSignin" ? "Invalid credentials. Please try again." : ""
+    searchParams?.get("error") === "CredentialsSignin"
+      ? "Invalid credentials. Please try again."
+      : ""
   );
 
-  // User Login (Phone + Password)
+  const resetError = () => setError("");
+
+  // ── Tab 1: User (Phone + Password) ──────────────────────────────
   const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length !== 10) { setError("Please enter a valid 10-digit phone number"); return; }
-    if (!password) { setError("Please enter your password"); return; }
-    setLoading(true); setError("");
+    if (phone.length !== 10) {
+      setError("Please enter a valid 10-digit phone number");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password");
+      return;
+    }
+    setLoading(true);
+    setError("");
     try {
-      const res = await signIn("credentials", { phone, password, redirect: false });
-      if (res?.error) { setError("Invalid phone number or password."); setLoading(false); }
-      else { window.location.href = callbackUrl; }
-    } catch { setError("Failed to login."); setLoading(false); }
+      const res = await signIn("credentials", {
+        phone,
+        password,
+        redirect: false,
+      });
+      if (res?.error) {
+        setError("Invalid phone number or password. Please try again.");
+        setLoading(false);
+      } else {
+        window.location.href = callbackUrl;
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
-  // Email + Password (Admin)
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  // ── Tab 2: Manager Login (Email from PgTeamMember) ───────────────
+  const handleManagerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) { setError("Please enter email and password"); return; }
-    setLoading(true); setError("");
+    if (!managerEmail || !managerPassword) {
+      setError("Please enter your manager email and password");
+      return;
+    }
+    setLoading(true);
+    setError("");
     try {
-      const res = await signIn("credentials", { email, password, redirect: false });
-      if (res?.error) { setError("Invalid email or password."); setLoading(false); }
-      else {
-        // Always redirect admin to admin dashboard
+      const res = await fetch("/api/auth/manager-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: managerEmail, password: managerPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.message || "Invalid manager credentials.");
+        setLoading(false);
+        return;
+      }
+      // Sign in using next-auth with manager token
+      const signInRes = await signIn("credentials", {
+        email: managerEmail,
+        password: managerPassword,
+        isManager: "true",
+        redirect: false,
+      });
+      if (signInRes?.error) {
+        setError("Manager login failed. Please try again.");
+        setLoading(false);
+      } else {
+        window.location.href = "/dashboard/manager";
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  // ── Tab 3: Admin Login (Email from User table) ───────────────────
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError("Please enter email and password");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      if (res?.error) {
+        setError("Invalid admin credentials. Please try again.");
+        setLoading(false);
+      } else {
         window.location.href = "/dashboard/admin";
       }
-    } catch { setError("Login failed."); setLoading(false); }
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
-  const inputCls = "w-full h-12 px-4 bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all";
-  const btnCls = "w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors disabled:opacity-70";
+  const tabs: { id: Tab; label: string; icon: React.ElementType; desc: string }[] = [
+    { id: "user", label: "User / Owner", icon: User, desc: "Login with phone number" },
+    { id: "manager", label: "Manager", icon: Building2, desc: "PG manager sub-login" },
+    { id: "admin", label: "Admin", icon: ShieldCheck, desc: "Super admin access" },
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      {/* Left - Branding */}
-      <div className="hidden md:flex flex-col justify-center w-1/2 bg-primary-950 text-white p-12 lg:p-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
+    <div className="min-h-screen flex bg-neutral-50">
+      {/* ── Left Panel (Branding) ─────────────────────────────────── */}
+      <div className="hidden lg:flex flex-col justify-between w-[45%] xl:w-[42%] bg-[#1e0a3c] relative overflow-hidden p-10 xl:p-14">
+        {/* Animated background blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-20"
+            style={{ background: "radial-gradient(circle, #7c3aed, transparent)" }}
+          />
+          <div
+            className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-15"
+            style={{ background: "radial-gradient(circle, #ea580c, transparent)" }}
+          />
+          <div
+            className="absolute top-1/2 left-1/3 w-64 h-64 rounded-full opacity-10"
+            style={{ background: "radial-gradient(circle, #8b5cf6, transparent)" }}
+          />
+          {/* Dot grid */}
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 1.5px 1.5px, white 1.5px, transparent 0)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+        </div>
+
+        {/* Logo */}
+        <Link href="/" className="relative z-10 flex items-center gap-3 group">
+          <div className="w-11 h-11 bg-gradient-to-br from-violet-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <Home size={22} color="white" />
+          </div>
+          <span className="font-extrabold text-2xl text-white tracking-tight">
+            PGSathi
+          </span>
+        </Link>
+
+        {/* Center content */}
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2 mb-12">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
-              <Home size={24} color="white" />
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight">PGSathi</span>
-          </Link>
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
-            Welcome to India's most trusted PG platform.
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-violet-200 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            India's #1 PG Management Platform
+          </div>
+
+          <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-[1.15] mb-5 tracking-tight">
+            Manage your PG{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-orange-400">
+              smarter
+            </span>
+            , not harder.
           </h1>
-          <p className="text-primary-200 text-lg">
-            Manage your listings, connect with tenants directly via WhatsApp, and grow your PG business with zero commission.
+
+          <p className="text-violet-200/80 text-lg leading-relaxed mb-10 max-w-sm">
+            List properties, track tenants, collect rent — all in one
+            beautifully simple platform.
           </p>
+
+          {/* Feature pills */}
+          <div className="flex flex-col gap-3">
+            {[
+              { emoji: "🏠", text: "Zero-commission listings" },
+              { emoji: "💬", text: "Direct WhatsApp leads" },
+              { emoji: "📊", text: "Real-time rent tracking" },
+            ].map((f) => (
+              <div
+                key={f.text}
+                className="flex items-center gap-3 bg-white/8 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3"
+              >
+                <span className="text-xl">{f.emoji}</span>
+                <span className="text-sm font-medium text-white/80">{f.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="relative z-10 text-xs text-white/30 font-medium">
+          © 2026 PGSathi. Trusted by 10,000+ PG owners.
         </div>
       </div>
 
-      {/* Right - Form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 md:px-12 lg:px-24">
-        <div className="w-full max-w-md mx-auto">
-          {/* Mobile Logo */}
-          <Link href="/" className="flex md:hidden items-center gap-2 mb-8 justify-center">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-              <Home size={20} color="white" />
-            </div>
-            <span className="font-extrabold text-xl text-primary-950">PGSathi</span>
-          </Link>
-
-          {/* Tabs */}
-          <div className="flex bg-neutral-100 rounded-xl p-1 mb-8">
-            <button
-              onClick={() => { setTab("user"); setError(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all cursor-pointer ${tab === "user" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
-            >
-              User Login
-            </button>
-            <button
-              onClick={() => { setTab("email"); setError(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === "email" ? "bg-white shadow text-primary-700" : "text-neutral-500 hover:text-neutral-700"}`}
-            >
-              <Lock size={13} /> Admin Login
-            </button>
+      {/* ── Right Panel (Form) ───────────────────────────────────── */}
+      <div className="flex-1 flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16">
+        {/* Mobile Logo */}
+        <Link
+          href="/"
+          className="lg:hidden flex items-center gap-2.5 mb-8 group"
+        >
+          <div className="w-9 h-9 bg-gradient-to-br from-violet-600 to-orange-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <Home size={18} color="white" />
           </div>
+          <span className="font-extrabold text-xl text-neutral-900">PGSathi</span>
+        </Link>
 
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-1">
-              {tab === "user" ? "Log in" : "Admin Login"}
+        <div className="w-full max-w-[420px]">
+          {/* Heading */}
+          <div className="mb-7">
+            <h2 className="text-3xl font-extrabold text-neutral-900 tracking-tight mb-1.5">
+              Welcome back 👋
             </h2>
             <p className="text-neutral-500 text-sm">
-              {tab === "user"
-                ? "Enter your phone number and password."
-                : "Enter your admin email and password."}
+              Sign in to your PGSathi account to continue.
             </p>
           </div>
 
+          {/* Tabs */}
+          <div className="flex gap-1 bg-neutral-100 rounded-2xl p-1 mb-7">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    setTab(t.id);
+                    resetError();
+                  }}
+                  className={`flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    active
+                      ? "bg-white shadow-md text-violet-700 shadow-violet-100"
+                      : "text-neutral-500 hover:text-neutral-700"
+                  }`}
+                >
+                  <Icon size={15} />
+                  <span className="hidden sm:block">{t.label}</span>
+                  <span className="sm:hidden">{t.label.split(" ")[0]}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab description */}
+          <div className="flex items-center gap-2 bg-violet-50 border border-violet-100 rounded-xl px-4 py-2.5 mb-6">
+            {tab === "user" && <User size={14} className="text-violet-600 shrink-0" />}
+            {tab === "manager" && <Building2 size={14} className="text-violet-600 shrink-0" />}
+            {tab === "admin" && <ShieldCheck size={14} className="text-violet-600 shrink-0" />}
+            <p className="text-xs text-violet-700 font-medium">
+              {tab === "user" && "For tenants & PG owners. Login with your registered phone number."}
+              {tab === "manager" && "For PG managers & wardens. Use your manager email provided by your PG owner."}
+              {tab === "admin" && "Restricted to super administrators only."}
+            </p>
+          </div>
+
+          {/* Error */}
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 font-medium">{error}</div>
+            <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm mb-5 font-medium animate-slide-down">
+              <span className="text-lg leading-none mt-0.5">⚠️</span>
+              <span>{error}</span>
+            </div>
           )}
 
-          {/* User Form */}
+          {/* ══ FORM: User Login ══════════════════════════════════ */}
           {tab === "user" && (
             <form onSubmit={handleUserLogin} className="space-y-4">
+              {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Phone Number</label>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Phone Number
+                </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">+91</span>
-                  <input type="tel" maxLength={10} value={phone}
-                    onChange={e => setPhone(e.target.value.replace(/\D/g, ""))}
-                    className={`${inputCls} pl-12`} placeholder="Enter 10 digit number" required />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    <Phone size={15} className="text-neutral-400" />
+                    <span className="text-neutral-500 text-sm font-semibold border-r border-neutral-300 pr-2.5">+91</span>
+                  </div>
+                  <input
+                    type="tel"
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                    className="w-full h-12 pl-24 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="Enter 10-digit number"
+                    required
+                    autoFocus
+                  />
                 </div>
               </div>
+
+              {/* Password */}
               <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium text-neutral-700">Password</label>
-                  <Link href="/forgot-password" className="text-xs text-primary-600 hover:underline font-medium">Forgot password?</Link>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-sm font-semibold text-neutral-700">
+                    Password
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-violet-600 hover:text-violet-700 font-semibold hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  className={inputCls} placeholder="Enter password" required />
+                <div className="relative">
+                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type={showPass ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="Enter password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  >
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-              <button type="submit" disabled={loading} className={btnCls}>
-                {loading ? "Logging in..." : "Login"}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
+              >
+                {loading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Signing in...</>
+                ) : (
+                  <><span>Sign In</span><ArrowRight size={16} /></>
+                )}
               </button>
-              
-              <div className="mt-6 text-center text-sm text-neutral-600">
-                Don't have an account? <Link href="/register" className="text-primary-600 font-bold hover:underline">Register here</Link>
-              </div>
+
+              <p className="text-center text-sm text-neutral-500">
+                Don&apos;t have an account?{" "}
+                <Link href="/register" className="text-violet-600 font-bold hover:underline">
+                  Register here
+                </Link>
+              </p>
             </form>
           )}
 
-          {/* Email Form (Admin) */}
-          {tab === "email" && (
-            <form onSubmit={handleEmailLogin} className="space-y-4">
+          {/* ══ FORM: Manager Login ════════════════════════════════ */}
+          {tab === "manager" && (
+            <form onSubmit={handleManagerLogin} className="space-y-4">
+              {/* Manager Email */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  className={inputCls} placeholder="admin@pgsathi.in" required />
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Manager Email
+                </label>
+                <div className="relative">
+                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type="email"
+                    value={managerEmail}
+                    onChange={(e) => setManagerEmail(e.target.value)}
+                    className="w-full h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="manager@yourpg.in"
+                    required
+                    autoFocus
+                  />
+                </div>
               </div>
+
+              {/* Manager Password */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Password</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  className={inputCls} placeholder="Enter password" required />
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type={showManagerPass ? "text" : "password"}
+                    value={managerPassword}
+                    onChange={(e) => setManagerPassword(e.target.value)}
+                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="Enter your manager password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowManagerPass(!showManagerPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  >
+                    {showManagerPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-              <button type="submit" disabled={loading} className={btnCls}>
-                {loading ? "Logging in..." : "Login as Admin"}
+
+              {/* Manager Role Badge */}
+              <div className="flex gap-2 flex-wrap">
+                {["MANAGER", "WARDEN", "ACCOUNTANT"].map((role) => (
+                  <span
+                    key={role}
+                    className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-xs font-semibold px-3 py-1.5 rounded-full"
+                  >
+                    <Building2 size={10} />
+                    {role}
+                  </span>
+                ))}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25"
+              >
+                {loading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Signing in...</>
+                ) : (
+                  <><Building2 size={16} /><span>Sign In as Manager</span></>
+                )}
+              </button>
+
+              <p className="text-center text-xs text-neutral-400">
+                Your login credentials are provided by your PG Owner.
+                <br />
+                Contact your owner if you&apos;ve forgotten your password.
+              </p>
+            </form>
+          )}
+
+          {/* ══ FORM: Admin Login ══════════════════════════════════ */}
+          {tab === "admin" && (
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              {/* Admin note */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">🔐</span>
+                <p className="text-xs text-amber-700 font-medium leading-relaxed">
+                  This area is restricted. Unauthorized access attempts are
+                  logged and monitored.
+                </p>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Admin Email
+                </label>
+                <div className="relative">
+                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="admin@pgsathi.in"
+                    required
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type={showPass ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                    placeholder="Enter admin password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  >
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-slate-500/20"
+              >
+                {loading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Verifying...</>
+                ) : (
+                  <><ShieldCheck size={16} /><span>Sign In as Admin</span></>
+                )}
               </button>
             </form>
           )}
 
-          <p className="mt-8 text-center text-xs text-neutral-400">
-            By continuing, you agree to PGSathi's <br />
-            <Link href="/terms" className="underline hover:text-primary-600">Terms of Service</Link> and <Link href="/privacy" className="underline hover:text-primary-600">Privacy Policy</Link>.
+          {/* Footer */}
+          <p className="mt-8 text-center text-xs text-neutral-400 leading-relaxed">
+            By continuing, you agree to PGSathi&apos;s{" "}
+            <Link href="/terms" className="underline hover:text-violet-600 transition-colors">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="underline hover:text-violet-600 transition-colors">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </div>
       </div>
@@ -176,7 +549,18 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-orange-500 rounded-2xl flex items-center justify-center">
+              <Home size={20} color="white" />
+            </div>
+            <Loader2 size={24} className="animate-spin text-violet-600" />
+          </div>
+        </div>
+      }
+    >
       <LoginContent />
     </Suspense>
   );

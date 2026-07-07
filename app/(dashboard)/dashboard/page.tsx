@@ -13,9 +13,10 @@ export default async function DashboardPage() {
     redirect("/dashboard/admin");
   } else if (session.user.role === "OWNER") {
     redirect("/dashboard/owner");
+  } else if ((session.user as any).isManager) {
+    redirect("/dashboard/manager");
   } else {
-    // Default fallback to owner dashboard for now, 
-    // we can change this later if there's a specific tenant dashboard
-    redirect("/dashboard/owner");
+    // Default to tenant dashboard
+    redirect("/dashboard/tenant");
   }
 }
