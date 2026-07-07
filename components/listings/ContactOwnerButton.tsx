@@ -81,10 +81,10 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
         <button 
           onClick={() => handleActionClick("WHATSAPP")}
           disabled={loading && !showPopup}
-          className={`w-full bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2 px-1 text-xs sm:text-sm" : "py-3 text-base"}`}
+          className={`w-full bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2.5 px-2 text-xs sm:text-sm" : "py-3 text-base"}`}
         >
-          <MessageSquare size={layout === "row" ? 16 : 20} /> 
-          <span>
+          <MessageSquare size={layout === "row" ? 16 : 20} className="shrink-0" /> 
+          <span className={layout === "row" ? "hidden sm:inline" : ""}>
             {loading && leadAction === "WHATSAPP" && !showPopup ? "Wait..." : "WhatsApp"}
           </span>
         </button>
@@ -92,10 +92,10 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
         <button 
           onClick={() => handleActionClick("PHONE")}
           disabled={loading && !showPopup}
-          className={`w-full bg-primary-100 text-primary-700 hover:bg-primary-200 rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2 px-1 text-xs sm:text-sm" : "py-3 text-base"}`}
+          className={`w-full bg-primary-100 text-primary-700 hover:bg-primary-200 rounded-xl font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70 ${layout === "row" ? "py-2.5 px-2 text-xs sm:text-sm" : "py-3 text-base"}`}
         >
-          <Phone size={layout === "row" ? 16 : 20} /> 
-          <span>
+          <Phone size={layout === "row" ? 16 : 20} className="shrink-0" /> 
+          <span className={layout === "row" && showPhone ? "text-[10px] sm:text-xs" : (layout === "row" ? "hidden sm:inline" : "")}>
             {showPhone ? ownerPhone : "Call"}
           </span>
         </button>
