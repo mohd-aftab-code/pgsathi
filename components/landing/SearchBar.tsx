@@ -59,9 +59,9 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         >
           <option value="" disabled>Looking for</option>
           <option value="all">Any</option>
-          <option value="MALE">Boys PG</option>
-          <option value="FEMALE">Girls PG</option>
-          <option value="UNISEX">Coliving</option>
+          <option value="BOYS">Boys PG</option>
+          <option value="GIRLS">Girls PG</option>
+          <option value="COED">Coliving</option>
         </select>
       </div>
 
