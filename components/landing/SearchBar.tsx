@@ -24,7 +24,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
     <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-2 w-full">
       
       {/* Free Text Search */}
-      <div className="flex-[2] relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+      <div className="flex-[2] relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
         <Search className="absolute left-4 text-neutral-400" size={20} />
         <input 
           type="text"
@@ -35,7 +35,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         />
       </div>
 
-      <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+      <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
         <MapPin className="absolute left-4 text-neutral-400" size={20} />
         <select 
           value={city}
@@ -50,7 +50,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         </select>
       </div>
       
-      <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+      <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
         <Building className="absolute left-4 text-neutral-400" size={20} />
         <select 
           value={gender}
@@ -58,15 +58,19 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
           className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 appearance-none cursor-pointer outline-none"
         >
           <option value="" disabled>Looking for</option>
-          <option value="all">Anyone</option>
-          <option value="BOYS">Boys PG</option>
-          <option value="GIRLS">Girls PG</option>
-          <option value="COED">Co-ed PG</option>
+          <option value="all">Any</option>
+          <option value="MALE">Boys PG</option>
+          <option value="FEMALE">Girls PG</option>
+          <option value="UNISEX">Coliving</option>
         </select>
       </div>
 
-      <button type="submit" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-xl font-bold transition-transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer shadow-md">
-        <Search size={20} /> Search
+      <button 
+        type="submit"
+        className="h-12 px-8 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-300 flex items-center justify-center gap-2 lg:w-auto w-full group cursor-pointer"
+      >
+        <Search size={18} className="group-hover:scale-110 transition-transform" />
+        Search
       </button>
     </form>
   );

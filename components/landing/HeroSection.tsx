@@ -13,7 +13,7 @@ export default async function HeroSection() {
       {/* Premium Deep Background with Mesh Glow */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary-500/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-orange-500/10 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary-500/10 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
       </div>
 
       {/* Original Background Pattern but with a premium fade */}
@@ -35,8 +35,8 @@ export default async function HeroSection() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight animate-slide-up text-white leading-[1.15]" style={{ textWrap: "balance" }}>
           Find Your{" "}
           <span className="relative inline-block">
-            <span className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 blur-lg opacity-30"></span>
-            <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">
+            <span className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-primary-600 blur-lg opacity-30"></span>
+            <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-primary-400 to-primary-500">
               Zero Brokerage PG
             </span>
           </span>{" "}
@@ -51,7 +51,7 @@ export default async function HeroSection() {
         {/* Search Bar Container with Glassmorphism */}
         <div className="max-w-4xl mr-auto md:mx-auto animate-slide-up relative" style={{ animationDelay: "200ms" }}>
           {/* Subtle glow behind the search bar */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-purple-500/20 to-orange-500/20 blur-2xl opacity-50 rounded-[3rem] -z-10"></div>
+          <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-primary-400/20 to-primary-500/20 blur-2xl opacity-50 rounded-[3rem] -z-10"></div>
           
           <div className="p-2 md:p-3 bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl md:rounded-[2.5rem] shadow-2xl">
             <SearchBar cities={cities} />
@@ -66,12 +66,12 @@ export default async function HeroSection() {
             { icon: MapPin, title: "Prime Locations", desc: "Near hubs & colleges" },
           ].map((item, idx) => (
             <div key={idx} className="group flex items-center gap-4 text-left p-3 sm:p-4 rounded-2xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 hover:shadow-2xl">
-              <div className="bg-gradient-to-br from-orange-400/20 to-orange-600/10 p-3 sm:p-3.5 rounded-xl border border-orange-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
-                <item.icon size={24} className="text-orange-400 sm:w-6 sm:h-6" strokeWidth={1.5} />
+              <div className="bg-gradient-to-br from-primary-400/20 to-primary-600/10 p-3 sm:p-3.5 rounded-xl border border-primary-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(109,40,217,0.1)]">
+                <item.icon size={24} className="text-primary-400 sm:w-6 sm:h-6" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="font-semibold text-white text-base sm:text-lg tracking-tight group-hover:text-orange-300 transition-colors">{item.title}</div>
-                <div className="text-xs sm:text-sm text-neutral-400 font-medium">{item.desc}</div>
+                <h3 className="font-bold text-white text-sm sm:text-base tracking-wide">{item.title}</h3>
+                <p className="text-xs sm:text-sm text-neutral-400 font-medium mt-0.5">{item.desc}</p>
               </div>
             </div>
           ))}
