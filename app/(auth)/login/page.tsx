@@ -18,7 +18,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-type Tab = "user" | "manager" | "admin";
+type Tab = "user" | "manager";
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -113,37 +113,9 @@ function LoginContent() {
     }
   };
 
-  // ── Tab 3: Admin Login (Email from User table) ───────────────────
-  const handleAdminLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError("Please enter email and password");
-      return;
-    }
-    setLoading(true);
-    setError("");
-    try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-      if (res?.error) {
-        setError("Invalid admin credentials. Please try again.");
-        setLoading(false);
-      } else {
-        window.location.href = "/dashboard/admin";
-      }
-    } catch {
-      setError("Something went wrong. Please try again.");
-      setLoading(false);
-    }
-  };
-
   const tabs: { id: Tab; label: string; icon: React.ElementType; desc: string }[] = [
     { id: "user", label: "User / Owner", icon: User, desc: "Login with phone number" },
-    { id: "manager", label: "Manager", icon: Building2, desc: "PG manager sub-login" },
-    { id: "admin", label: "Admin", icon: ShieldCheck, desc: "Super admin access" },
+    { id: "manager", label: "Manager / Staff", icon: Building2, desc: "PG staff sub-login" },
   ];
 
   return (
@@ -283,11 +255,9 @@ function LoginContent() {
           <div className="flex items-center gap-2 bg-violet-50 border border-violet-100 rounded-xl px-4 py-2.5 mb-6">
             {tab === "user" && <User size={14} className="text-violet-600 shrink-0" />}
             {tab === "manager" && <Building2 size={14} className="text-violet-600 shrink-0" />}
-            {tab === "admin" && <ShieldCheck size={14} className="text-violet-600 shrink-0" />}
             <p className="text-xs text-violet-700 font-medium">
               {tab === "user" && "For tenants & PG owners. Login with your registered phone number."}
-              {tab === "manager" && "For PG managers & wardens. Use your manager email provided by your PG owner."}
-              {tab === "admin" && "Restricted to super administrators only."}
+              {tab === "manager" && "For PG staff. Use your manager email provided by your PG owner."}
             </p>
           </div>
 
@@ -459,75 +429,7 @@ function LoginContent() {
             </form>
           )}
 
-          {/* ══ FORM: Admin Login ══════════════════════════════════ */}
-          {tab === "admin" && (
-            <form onSubmit={handleAdminLogin} className="space-y-4">
-              {/* Admin note */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🔐</span>
-                <p className="text-xs text-amber-700 font-medium leading-relaxed">
-                  This area is restricted. Unauthorized access attempts are
-                  logged and monitored.
-                </p>
-              </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                  Admin Email
-                </label>
-                <div className="relative">
-                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="admin@pgsathi.in"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-                  <input
-                    type={showPass ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="Enter admin password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
-                  >
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-slate-500/20"
-              >
-                {loading ? (
-                  <><Loader2 size={18} className="animate-spin" /> Verifying...</>
-                ) : (
-                  <><ShieldCheck size={16} /><span>Sign In as Admin</span></>
-                )}
-              </button>
-            </form>
-          )}
 
           {/* Footer */}
           <p className="mt-8 text-center text-xs text-neutral-400 leading-relaxed">

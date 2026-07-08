@@ -21,7 +21,7 @@ export default function StaffPage() {
   const [saving, setSaving]     = useState(false);
 
   // New staff form
-  const [form, setForm] = useState({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today() });
+  const [form, setForm] = useState({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "" });
   
   // Payout form
   const [payForm, setPayForm] = useState({ amount: "", forMonth: currentMonth(), method: "CASH", note: "" });
@@ -48,7 +48,7 @@ export default function StaffPage() {
       if (!d.success) throw new Error(d.message);
       toast.success("Staff member added!");
       setShowModal(false);
-      setForm({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today() });
+      setForm({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "" });
       fetchStaff();
     } catch (err: any) { toast.error(err.message); } finally { setSaving(false); }
   }
@@ -149,6 +149,18 @@ export default function StaffPage() {
                 <label className="block text-xs font-semibold mb-1">Phone</label>
                 <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="input-base" />
               </div>
+              {form.role === "MANAGER" && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1">Email (Login) *</label>
+                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="input-base" required />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1">Password *</label>
+                    <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="input-base" required />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="mt-5 flex gap-3">
               <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1 text-sm">Cancel</button>
