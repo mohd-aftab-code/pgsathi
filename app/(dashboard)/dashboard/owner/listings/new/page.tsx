@@ -389,136 +389,197 @@ export default function NewListingPage() {
   const renderStep2 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Location Details</h3>
+        <h3 className="text-lg font-bold text-neutral-800 mb-2 pb-4 border-b">Location Details</h3>
 
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-4">
+        {/* ── Tip banner ─────────────────────────────────────── */}
+        <div className="flex items-start gap-3 bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 mt-4 mb-6">
+          <MapPin className="text-primary-500 shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-primary-700">
+            <strong>Map pe search karein ya click karein</strong> — pincode, address aur city sab automatically set ho jayenge.
+            Ya neeche sirf <strong>Pincode</strong> daalein to bhi address aa jayega.
+          </p>
+        </div>
+
+        {/* ── Map ──────────────────────────────────────────────── */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <MapPin className="text-primary-500" size={20} />
-              <h4 className="font-bold text-neutral-800">Search & Pin Location *</h4>
+              <MapPin className="text-primary-500" size={18} />
+              <h4 className="font-bold text-neutral-800 text-sm">Map pe Pin karo *</h4>
             </div>
             {(formData.latitude && formData.longitude) && (
-              <div className="flex gap-4">
-                <input type="text" readOnly value={formData.latitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24 hidden md:block" placeholder="Latitude" />
-                <input type="text" readOnly value={formData.longitude.toFixed(6)} className="text-xs bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-lg border border-neutral-200 outline-none w-24 hidden md:block" placeholder="Longitude" />
-              </div>
+              <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                <CheckCircle2 size={12} /> Location set hai
+              </span>
             )}
           </div>
-          <p className="text-sm text-neutral-500 mb-4">Search your property address on the map below. Once selected, we will automatically fill in the city, locality, and complete address for you!</p>
-          
-          <LocationPicker 
-            latitude={formData.latitude} 
-            longitude={formData.longitude} 
+
+          <LocationPicker
+            latitude={formData.latitude}
+            longitude={formData.longitude}
             onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))}
             onAddressFound={(data) => {
-              const addressStr = data.display_name;
               const addressDetails = data.address || {};
-              
-              setFormData(prev => {
-                let matchedCityId = prev.cityId;
-                let newLocalities = localities;
-                
-                if (addressDetails.city || addressDetails.state_district) {
-                  const cityName = (addressDetails.city || addressDetails.state_district).toLowerCase();
-                  const foundCity = cities.find(c => cityName.includes(c.name.toLowerCase()));
-                  if (foundCity) {
-                    matchedCityId = foundCity.id.toString();
-                    newLocalities = foundCity.localities || [];
-                    setLocalities(newLocalities);
-                  }
-                }
-                
-                let matchedLocalityId = prev.localityId;
-                if (matchedCityId) {
-                  const searchStr = addressStr.toLowerCase();
-                  const suburb = addressDetails.suburb?.toLowerCase() || '';
-                  const neighbourhood = addressDetails.neighbourhood?.toLowerCase() || '';
-                  const foundLocality = newLocalities.find(l => 
-                    searchStr.includes(l.name.toLowerCase()) || 
-                    (suburb && suburb.includes(l.name.toLowerCase())) ||
-                    (neighbourhood && neighbourhood.includes(l.name.toLowerCase()))
-                  );
-                  if (foundLocality) matchedLocalityId = foundLocality.id.toString();
-                }
+              const displayName   = data.display_name || "";
 
-                let pincode = prev.pincode;
-                if (addressDetails.postcode) pincode = addressDetails.postcode;
+              // ── Auto-fill city from map result ─────────────────
+              let matchedCityId = formData.cityId;
+              let newLocalities  = localities;
+              const cityName = (
+                addressDetails.city ||
+                addressDetails.state_district ||
+                addressDetails.county || ""
+              ).toLowerCase();
+              if (cityName) {
+                const found = cities.find(c => cityName.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cityName));
+                if (found) {
+                  matchedCityId = found.id.toString();
+                  newLocalities = found.localities || [];
+                  setLocalities(newLocalities);
+                }
+              }
 
-                return {
-                  ...prev,
-                  address: !prev.address || prev.address === prev._autoAddress ? addressStr : prev.address,
-                  _autoAddress: addressStr,
-                  cityId: matchedCityId,
-                  localityId: matchedLocalityId,
-                  pincode: pincode
-                };
-              });
+              // ── Auto-fill locality from map result ─────────────
+              let matchedLocalityId = formData.localityId;
+              if (matchedCityId && newLocalities.length) {
+                const search = displayName.toLowerCase();
+                const suburb = (addressDetails.suburb || addressDetails.neighbourhood || "").toLowerCase();
+                const found  = newLocalities.find(l =>
+                  search.includes(l.name.toLowerCase()) ||
+                  (suburb && suburb.includes(l.name.toLowerCase()))
+                );
+                if (found) matchedLocalityId = found.id.toString();
+              }
+
+              // ── Build clean short address (no long nominatim string) ─
+              const parts = [
+                addressDetails.road,
+                addressDetails.suburb || addressDetails.neighbourhood,
+                addressDetails.city || addressDetails.state_district,
+                addressDetails.state,
+              ].filter(Boolean);
+              const cleanAddress = parts.join(", ") || displayName;
+
+              setFormData(prev => ({
+                ...prev,
+                address:    !prev.address || prev.address === prev._autoAddress ? cleanAddress : prev.address,
+                _autoAddress: cleanAddress,
+                pincode:    addressDetails.postcode || prev.pincode,
+                cityId:     matchedCityId,
+                localityId: matchedLocalityId,
+              }));
             }}
           />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+
+        {/* ── Fields row ───────────────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+          {/* Pincode — triggers auto-fetch */}
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">City *</label>
-            <select 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              value={formData.cityId}
-              onChange={handleCityChange}
-            >
-              <option value="">Select City</option>
-              {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              Pincode *
+              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+                Auto-fills address
+              </span>
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none text-base tracking-widest"
+              placeholder="e.g. 302001"
+              value={formData.pincode}
+              onChange={e => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                setFormData(prev => ({ ...prev, pincode: val }));
+              }}
+              onBlur={async (e) => {
+                const pin = e.target.value.trim();
+                if (pin.length !== 6) return;
+                // Fetch address from pincode using Nominatim
+                try {
+                  const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?postalcode=${pin}&country=India&format=json&limit=1&addressdetails=1`,
+                    { headers: { "Accept-Language": "en" } }
+                  );
+                  const data = await res.json();
+                  if (!data || !data[0]) return;
+                  const result = data[0];
+                  const addr   = result.address || {};
+                  const lat    = parseFloat(result.lat);
+                  const lng    = parseFloat(result.lon);
+
+                  // Match city
+                  let matchedCityId = formData.cityId;
+                  let newLocalities  = localities;
+                  const cn = (addr.city || addr.state_district || addr.county || "").toLowerCase();
+                  if (cn) {
+                    const found = cities.find(c => cn.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cn));
+                    if (found) {
+                      matchedCityId = found.id.toString();
+                      newLocalities = found.localities || [];
+                      setLocalities(newLocalities);
+                    }
+                  }
+
+                  // Build clean address
+                  const parts = [
+                    addr.suburb || addr.neighbourhood,
+                    addr.city || addr.state_district,
+                    addr.state,
+                  ].filter(Boolean);
+                  const cleanAddress = parts.join(", ") || result.display_name;
+
+                  setFormData(prev => ({
+                    ...prev,
+                    latitude:  !prev.latitude  ? lat : prev.latitude,
+                    longitude: !prev.longitude ? lng : prev.longitude,
+                    cityId:    matchedCityId,
+                    address:   !prev.address || prev.address === prev._autoAddress ? cleanAddress : prev.address,
+                    _autoAddress: cleanAddress,
+                  }));
+                } catch {}
+              }}
+            />
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Locality *</label>
-            <select 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              value={formData.localityId}
-              onChange={e => setFormData({...formData, localityId: e.target.value})}
-              disabled={!formData.cityId}
-            >
-              <option value="">Select Locality</option>
-              {localities.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-            </select>
-          </div>
+
+          {/* Landmark */}
           <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              Landmark / Street <span className="text-neutral-400 font-normal">(Optional)</span>
+            </label>
+            <input
+              type="text"
+              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              placeholder="e.g. Near Apollo Hospital, Main Road"
+              value={formData.landmark}
+              onChange={e => setFormData({ ...formData, landmark: e.target.value })}
+            />
+          </div>
+
+          {/* Address — auto-filled, editable */}
+          <div className="md:col-span-3">
             <label className="block text-sm font-semibold text-neutral-700 mb-2">
               Complete Address *
               <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-                Auto-fills when you select on map
+                Map se auto-fill hoga
               </span>
             </label>
-            <textarea 
+            <textarea
               rows={2}
               className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none resize-none"
-              placeholder="Will auto-fill when you click/search on map above, or type manually..."
+              placeholder="Map pe click karo ya pincode daalo — address auto-fill ho jayega..."
               value={formData.address}
-              onChange={e => setFormData({...formData, address: e.target.value})}
+              onChange={e => setFormData({ ...formData, address: e.target.value })}
             />
           </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">Landmark / Street</label>
-              <input 
-                type="text" 
-                className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-                placeholder="Near Apollo Hospital"
-                value={formData.landmark}
-                onChange={e => setFormData({...formData, landmark: e.target.value})}
-              />
-            </div>
-            <div className="w-1/3">
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">Pincode *</label>
-              <input 
-                type="text" 
-                className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-                placeholder="110001"
-                value={formData.pincode}
-                onChange={e => setFormData({...formData, pincode: e.target.value})}
-              />
-            </div>
-          </div>
         </div>
+
+        {/* Hidden city/locality — still submitted but not shown as dropdowns */}
+        <input type="hidden" value={formData.cityId} />
+        <input type="hidden" value={formData.localityId} />
+
       </div>
     </div>
   );
