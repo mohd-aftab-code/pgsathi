@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
-import ListingCard from "@/components/listings/ListingCard";
+import PGCard from "@/components/listings/PGCard";
 import { Search, MapPin, Filter } from "lucide-react";
 import Link from "next/link";
 
@@ -91,7 +91,7 @@ export default async function LocalityPage(props: {
         {listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {listings.map((pg) => (
-              <ListingCard key={pg.id} listing={pg as any} />
+              <PGCard key={pg.id} listing={pg as any} />
             ))}
           </div>
         ) : (
