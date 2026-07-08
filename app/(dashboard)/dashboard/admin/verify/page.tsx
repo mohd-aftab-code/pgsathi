@@ -28,10 +28,11 @@ export default async function AdminListingsPage({
 
   return (
     <div>
-      <div className="mb-8 bg-gradient-to-r from-primary-950 to-primary-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10">Manage Listings</h1>
-        <p className="text-primary-200 relative z-10">Review, approve, edit, and delete PGs across the platform.</p>
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Manage Listings</h1>
+          <p className="text-neutral-500 mt-1">Review, approve, edit, and delete PGs across the platform.</p>
+        </div>
       </div>
 
       {/* Tabs */}

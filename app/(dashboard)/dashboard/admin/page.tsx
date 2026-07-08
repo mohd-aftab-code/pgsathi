@@ -104,7 +104,7 @@ export default async function AdminDashboardPage() {
           
           <div className="space-y-4">
             {recentListings.map(listing => (
-              <div key={listing.id} className="flex items-center justify-between p-4 rounded-2xl border border-neutral-100 hover:border-primary-100 hover:bg-primary-50/30 transition-colors group">
+              <div key={listing.id} className="flex items-center justify-between p-4 rounded-2xl border border-neutral-100 hover:border-primary-100 hover:bg-primary-50/30 transition-colors group cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${listing.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
                     {listing.status === 'ACTIVE' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
@@ -129,19 +129,32 @@ export default async function AdminDashboardPage() {
         </div>
         
         {/* Quick Actions */}
-        <div className="bg-gradient-to-br from-neutral-900 to-black rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-          <h2 className="text-2xl font-bold mb-8 relative z-10">Quick Actions</h2>
+        <div className="bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col">
+          <h2 className="text-xl font-bold text-neutral-900 mb-6 pb-4 border-b border-neutral-100">Quick Actions</h2>
           
-          <div className="space-y-4 relative z-10 flex-1">
-            <Link href="/dashboard/admin/users" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
-              <Users size={20} className="text-blue-400" /> Manage Users
+          <div className="space-y-3 flex-1">
+            <Link href="/dashboard/admin/users" className="w-full bg-neutral-50 hover:bg-primary-50 hover:border-primary-200 border border-neutral-200 text-neutral-800 font-semibold py-3.5 px-5 rounded-2xl flex items-center gap-3 transition-colors group cursor-pointer">
+              <div className="bg-white p-2 rounded-xl border border-neutral-200 group-hover:border-primary-200 transition-colors">
+                <Users size={18} className="text-blue-600" />
+              </div>
+              <span className="flex-1">Manage Users</span>
+              <ArrowRight size={16} className="text-neutral-400 group-hover:text-primary-600 transition-colors" />
             </Link>
-            <Link href="/dashboard/admin/verify" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
-              <ShieldAlert size={20} className="text-primary-400" /> Verify Listings
+            
+            <Link href="/dashboard/admin/verify" className="w-full bg-neutral-50 hover:bg-primary-50 hover:border-primary-200 border border-neutral-200 text-neutral-800 font-semibold py-3.5 px-5 rounded-2xl flex items-center gap-3 transition-colors group cursor-pointer">
+              <div className="bg-white p-2 rounded-xl border border-neutral-200 group-hover:border-primary-200 transition-colors">
+                <ShieldAlert size={18} className="text-primary-600" />
+              </div>
+              <span className="flex-1">Verify Listings</span>
+              <ArrowRight size={16} className="text-neutral-400 group-hover:text-primary-600 transition-colors" />
             </Link>
-            <Link href="/dashboard/admin/reports" className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-colors">
-              <FileBarChart size={20} className="text-purple-400" /> Financial Reports
+            
+            <Link href="/dashboard/admin/reports" className="w-full bg-neutral-50 hover:bg-primary-50 hover:border-primary-200 border border-neutral-200 text-neutral-800 font-semibold py-3.5 px-5 rounded-2xl flex items-center gap-3 transition-colors group cursor-pointer">
+              <div className="bg-white p-2 rounded-xl border border-neutral-200 group-hover:border-primary-200 transition-colors">
+                <FileBarChart size={18} className="text-purple-600" />
+              </div>
+              <span className="flex-1">Financial Reports</span>
+              <ArrowRight size={16} className="text-neutral-400 group-hover:text-primary-600 transition-colors" />
             </Link>
           </div>
         </div>
