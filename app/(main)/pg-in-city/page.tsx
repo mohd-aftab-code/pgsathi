@@ -1,5 +1,6 @@
 import SearchPage from "@/app/(main)/search/page";
 import { Metadata } from "next";
+import { PopularLocalitiesWidget } from "@/components/common/PopularLocalitiesWidget";
 
 import { db } from "@/lib/db";
 
@@ -126,6 +127,8 @@ export default async function PgInCityPage(props: {
           </div>
         </div>
       </div>
+      
+      <PopularLocalitiesWidget citySlug={citySlug} cityName={cityName} />
     </>
   );
 }

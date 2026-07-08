@@ -41,6 +41,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
+  // Fetch all active localities to generate micro-location pages
+  const activeLocalities = await db.locality.findMany({
+    where: { isActive: true },
+    include: { city: true }
+  });
+
+  activeLocalities.forEach((loc) => {
+    if (loc.city?.slug) {
+      programmaticUrls.push({
+        url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 0.8,
+      });
+    }
+  });
+
   // Blog Posts URLs
   const blogPosts = [
     'ncr-zero-brokerage-pg-guide',
