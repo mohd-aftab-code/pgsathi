@@ -57,17 +57,45 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
 
     // 1. Subscription & Limits Enforcement
-    const activeSub = await db.subscription.findFirst({
+    let activeSub = await db.subscription.findFirst({
       where: {
         userId: parseInt(session.user.id),
-        status: "ACTIVE",
+        status: { in: ["ACTIVE", "TRIAL"] },
         endDate: { gt: new Date() }
       },
       include: { plan: true }
     });
 
+    // Auto-start 14-day trial if they've never had any subscription
     if (!activeSub) {
-      return NextResponse.json({ success: false, message: "Forbidden: Active subscription required" }, { status: 403 });
+      const pastSubCount = await db.subscription.count({
+        where: { userId: parseInt(session.user.id) }
+      });
+      
+      if (pastSubCount === 0) {
+        const basicPlan = await db.plan.findFirst({ orderBy: { price: "asc" } });
+        if (basicPlan) {
+          const endDate = new Date();
+          endDate.setDate(endDate.getDate() + 14); // 14 Days Free Trial
+          
+          activeSub = await db.subscription.create({
+            data: {
+              userId: parseInt(session.user.id),
+              planId: basicPlan.id,
+              status: "TRIAL",
+              amount: 0,
+              startDate: new Date(),
+              endDate,
+              billingCycle: "MONTHLY",
+            },
+            include: { plan: true }
+          });
+        }
+      }
+    }
+
+    if (!activeSub) {
+      return NextResponse.json({ success: false, message: "Forbidden: Active subscription or trial required to add listings." }, { status: 403 });
     }
 
     // 2. Listing Count Limit Check
