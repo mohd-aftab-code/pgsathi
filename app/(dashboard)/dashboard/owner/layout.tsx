@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Building2 } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
+import Image from "next/image";
+import logoImg from "@/app/assets/logo/logo.png";
 
 export const metadata = {
   title: "Owner Dashboard - PGSathi",
@@ -34,11 +36,15 @@ export default async function OwnerDashboardLayout({
         <div className="container-max section-padding h-16 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-              <Building2 size={16} className="text-white" />
-            </div>
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={100}
+              height={36}
+              priority
+              className="h-8 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
+            />
             <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-[15px] tracking-tight text-neutral-900">PGSathi</span>
               <span className="text-neutral-400 text-xs font-medium">/ Owner</span>
             </div>
           </Link>

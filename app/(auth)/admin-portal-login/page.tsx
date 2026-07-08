@@ -3,6 +3,8 @@
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import logoImg from "@/app/assets/logo/logo.png";
 import { signIn } from "next-auth/react";
 import {
   Home,
@@ -58,12 +60,14 @@ function AdminLoginContent() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Home size={20} color="white" />
-            </div>
-            <span className="font-extrabold text-2xl text-white tracking-tight">
-              PGSathi
-            </span>
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={160}
+              height={56}
+              priority
+              className="h-14 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform" 
+            />
           </Link>
         </div>
 

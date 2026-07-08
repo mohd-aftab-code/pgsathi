@@ -2,6 +2,8 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import logoImg from "@/app/assets/logo/logo.png";
 import { signIn } from "next-auth/react";
 import {
   Home,
@@ -106,12 +108,14 @@ function RegisterContent() {
 
         {/* Logo */}
         <Link href="/" className="relative z-10 flex items-center gap-3 group">
-          <div className="w-11 h-11 bg-gradient-to-br from-violet-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-            <Home size={22} color="white" />
-          </div>
-          <span className="font-extrabold text-2xl text-white tracking-tight">
-            PGSathi
-          </span>
+          <Image 
+            src={logoImg} 
+            alt="PGSathi Logo" 
+            width={160}
+            height={56}
+            priority
+            className="h-14 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform" 
+          />
         </Link>
 
         {/* Center */}
@@ -160,11 +164,18 @@ function RegisterContent() {
       {/* ── Right Panel ─────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16">
         {/* Mobile Logo */}
-        <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 group">
-          <div className="w-9 h-9 bg-gradient-to-br from-violet-600 to-orange-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <Home size={18} color="white" />
-          </div>
-          <span className="font-extrabold text-xl text-neutral-900">PGSathi</span>
+        <Link
+          href="/"
+          className="lg:hidden flex items-center gap-2.5 mb-8 group"
+        >
+          <Image 
+            src={logoImg} 
+            alt="PGSathi Logo" 
+            width={140}
+            height={48}
+            priority
+            className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
+          />
         </Link>
 
         <div className="w-full max-w-[420px]">
@@ -460,9 +471,14 @@ export default function RegisterPage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-neutral-50">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-orange-500 rounded-2xl flex items-center justify-center">
-              <Home size={20} color="white" />
-            </div>
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={140}
+              height={48}
+              priority
+              className="h-10 w-auto object-contain mix-blend-multiply" 
+            />
             <Loader2 size={24} className="animate-spin text-violet-600" />
           </div>
         </div>

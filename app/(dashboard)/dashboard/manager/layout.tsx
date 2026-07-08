@@ -14,7 +14,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
-
+import Image from "next/image";
+import logoImg from "@/app/assets/logo/logo.png";
 export const metadata = {
   title: "Manager Dashboard — PGSathi",
 };
@@ -68,12 +69,16 @@ export default async function ManagerDashboardLayout({
         <div className="container-max section-padding h-16 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-orange-500 rounded-xl flex items-center justify-center">
-              <Building2 size={16} className="text-white" />
-            </div>
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={100}
+              height={36}
+              priority
+              className="h-8 w-auto object-contain mix-blend-multiply" 
+            />
             <div>
-              <span className="font-extrabold text-sm text-neutral-900">PGSathi</span>
-              <span className="text-neutral-400 text-xs ml-1">/ Manager</span>
+              <span className="text-neutral-400 text-xs ml-1 font-medium">/ Manager</span>
             </div>
           </Link>
 

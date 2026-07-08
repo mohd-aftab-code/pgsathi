@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import logoImg from "@/app/assets/logo/logo.png";
 import { Home, ArrowRight, Lock, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -93,11 +95,15 @@ export default function ForgotPasswordPage() {
       <div className="hidden md:flex flex-col justify-center w-1/2 bg-primary-950 text-white p-12 lg:p-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2 mb-12">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
-              <Home size={24} color="white" />
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight">PGSathi</span>
+          <Link href="/" className="flex items-center gap-2 mb-12 group">
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={160}
+              height={56}
+              priority
+              className="h-14 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform" 
+            />
           </Link>
           <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
             Securely reset your password.
@@ -113,11 +119,15 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md mx-auto">
           
           {/* Mobile Logo */}
-          <Link href="/" className="flex md:hidden items-center gap-2 mb-8 justify-center">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-              <Home size={20} color="white" />
-            </div>
-            <span className="font-extrabold text-xl text-primary-950">PGSathi</span>
+          <Link href="/" className="flex md:hidden items-center gap-2 mb-8 justify-center group">
+            <Image 
+              src={logoImg} 
+              alt="PGSathi Logo" 
+              width={140}
+              height={48}
+              priority
+              className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
+            />
           </Link>
 
           {step === "PHONE" && (
