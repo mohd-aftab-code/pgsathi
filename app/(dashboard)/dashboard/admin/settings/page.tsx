@@ -9,7 +9,7 @@ export default function AdminSettingsPage() {
     <div>
       <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10">Global Settings</h1>
+        <h1 className="text-3xl font-extrabold mb-2 relative z-10 text-white">Global Settings</h1>
         <p className="text-neutral-300 relative z-10">Manage platform configurations and administrator preferences.</p>
       </div>
 

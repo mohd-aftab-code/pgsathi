@@ -14,7 +14,7 @@ export default async function AdminReportsPage() {
   return (
     <div>
       <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10">Analytics & Reports</h1>
+        <h1 className="text-3xl font-extrabold mb-2 relative z-10 text-white">Analytics & Reports</h1>
         <p className="text-neutral-300 relative z-10">High-level platform metrics and insights.</p>
       </div>
 

@@ -36,7 +36,7 @@ export default async function AdminListingsPage({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-neutral-200 pb-2">
+      <div className="flex gap-4 mb-6 border-b border-neutral-200 pb-2 overflow-x-auto whitespace-nowrap hide-scrollbar">
         <Link 
           href="?tab=pending" 
           className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "pending" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
