@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { notifyGoogleIndexingAPI } from "@/lib/google-indexing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,8 +24,21 @@ export async function POST(req: NextRequest) {
         status,
         isVerified: !!isVerified,
         isActive: status === "ACTIVE"
+      },
+      include: {
+        city: true,
+        locality: true
       }
     });
+
+    // If listing is activated, notify Google Indexing API
+    if (status === "ACTIVE" && listing.city && listing.locality) {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in";
+      const fullUrl = `${baseUrl}/pg/${listing.city.slug}/${listing.locality.slug}/${listing.slug}`;
+      
+      // Ping Google in the background (no need to await and block the API response)
+      notifyGoogleIndexingAPI(fullUrl, "URL_UPDATED").catch(console.error);
+    }
 
     return NextResponse.json({ success: true, data: listing });
   } catch (error) {
