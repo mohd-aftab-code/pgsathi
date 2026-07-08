@@ -15,7 +15,7 @@ export async function getPlanTier(userId: number): Promise<PlanTier> {
   const sub = await db.subscription.findFirst({
     where: {
       userId,
-      status: "ACTIVE",
+      status: { in: ["ACTIVE", "TRIAL"] },
       endDate: { gt: new Date() },
     },
     include: { plan: true },
@@ -50,7 +50,7 @@ export async function requireManageAccess() {
   const tier = await getPlanTier(userId);
 
   if (tier === "NONE" || tier === "STARTER") {
-    redirect("/dashboard/owner/manage/upgrade");
+    redirect("/dashboard/owner/subscription");
   }
 
   return {
