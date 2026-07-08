@@ -128,7 +128,7 @@ export default async function PgInCityPage(props: {
         </div>
       </div>
       
-      <PopularLocalitiesWidget citySlug={citySlug} cityName={cityName} />
+      <PopularLocalitiesWidget citySlug={city} cityName={cityName} />
     </>
   );
 }
