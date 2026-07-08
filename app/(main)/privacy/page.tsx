@@ -41,11 +41,20 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-2xl font-bold text-neutral-900 mt-10 mb-4">4. Data Security</h2>
             <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorised way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know.</p>
 
-            <h2 className="text-2xl font-bold text-neutral-900 mt-10 mb-4">5. Contact Us</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 mt-10 mb-4">5. Contact Us & Grievance Officer</h2>
             <p>If you have any questions about this privacy policy or our privacy practices, please contact us in the following ways:</p>
-            <ul className="list-disc pl-5 space-y-2">
+            <ul className="list-disc pl-5 space-y-2 mb-6">
               <li>Email address: pgsathi.support@gmail.com</li>
               <li>Phone number: +91 9696110243</li>
+            </ul>
+
+            <p><strong>Grievance Officer</strong></p>
+            <p>In accordance with the Information Technology Act, 2000 and rules made there under, the name and contact details of the Grievance Officer are provided below:</p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>Name:</strong> Grievance Officer, PGSathi</li>
+              <li><strong>Email:</strong> grievances@pgsathi.in</li>
+              <li><strong>Phone:</strong> +91 9696110243</li>
+              <li><strong>Time:</strong> Mon - Fri (9:00 AM to 6:00 PM)</li>
             </ul>
           </div>
         </div>
