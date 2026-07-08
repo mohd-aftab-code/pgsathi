@@ -22,6 +22,11 @@ export default async function OwnerDashboardLayout({
     redirect("/login?callbackUrl=/dashboard/owner");
   }
 
+  // ✅ SECURE: Only OWNER role can access this dashboard
+  if (session.user?.role !== "OWNER") {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50/50">
       {/* ── Top Header ──────────────────────────────────────── */}

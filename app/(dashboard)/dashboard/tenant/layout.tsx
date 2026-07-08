@@ -19,6 +19,14 @@ export default async function TenantDashboardLayout({
     redirect("/login?callbackUrl=/dashboard/tenant");
   }
 
+  // ✅ SECURE: Only TENANT role can access this dashboard
+  // Admins, Owners, Managers should be on their own dashboards
+  const role = session.user?.role;
+  const isManager = (session.user as any)?.isManager;
+  if (isManager || role !== "TENANT") {
+    redirect("/dashboard");
+  }
+
   const navItems = [
     { name: "My Profile", href: "/dashboard/tenant", icon: User },
     { name: "Saved PGs", href: "/dashboard/tenant/saved", icon: Heart },

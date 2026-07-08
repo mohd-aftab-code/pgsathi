@@ -19,10 +19,9 @@ export default async function AdminDashboardLayout({
     redirect("/login?callbackUrl=/dashboard/admin");
   }
 
-  // Ensure user is an admin
+  // ✅ SECURE: Only ADMIN role can access this dashboard
   if (session.user?.role !== "ADMIN") {
-    // For local development, if you want to bypass this check, comment it out.
-    // redirect("/dashboard/owner");
+    redirect("/dashboard");
   }
 
   const navItems = [
