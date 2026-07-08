@@ -91,7 +91,7 @@ export default async function LocalityPage(props: {
         {listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {listings.map((pg) => (
-              <PGCard key={pg.id} listing={pg as any} />
+              <PGCard key={pg.id} pg={pg as any} />
             ))}
           </div>
         ) : (
