@@ -2,6 +2,10 @@ import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { CITY_SLUGS } from '@/constants/cities';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // cache for 24 hours
+
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in';
 
