@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
             <p>In accordance with the Information Technology Act, 2000 and rules made there under, the name and contact details of the Grievance Officer are provided below:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong>Name:</strong> Grievance Officer, PGSathi</li>
-              <li><strong>Email:</strong> grievances@pgsathi.in</li>
+              <li><strong>Email:</strong> pgsathi.support@gmail.com</li>
               <li><strong>Phone:</strong> +91 9696110243</li>
               <li><strong>Time:</strong> Mon - Fri (9:00 AM to 6:00 PM)</li>
             </ul>
