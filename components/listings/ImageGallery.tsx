@@ -40,7 +40,7 @@ export default function ImageGallery({ photos, title }: { photos: Photo[], title
     <>
       {/* Grid Layout */}
       <div className="relative rounded-3xl overflow-hidden mb-8 h-[300px] sm:h-[400px] md:h-[500px] group">
-        <div className={`grid h-full gap-2 ${displayPhotos.length >= 5 ? "grid-cols-2" : displayPhotos.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+        <div className={`grid h-full gap-2 ${displayPhotos.length > 1 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
           {/* Main big image on left */}
           <div 
             className="relative cursor-pointer overflow-hidden h-full"
@@ -58,11 +58,11 @@ export default function ImageGallery({ photos, title }: { photos: Photo[], title
 
           {/* Right side grid */}
           {displayPhotos.length > 1 && (
-            <div className={`grid gap-2 ${displayPhotos.length >= 5 ? "grid-cols-2 grid-rows-2" : displayPhotos.length === 2 ? "grid-cols-1 grid-rows-1" : "grid-cols-1 grid-rows-2"}`}>
+            <div className={`hidden sm:grid gap-2 ${displayPhotos.length >= 5 ? "grid-cols-2 grid-rows-2" : displayPhotos.length === 2 ? "grid-cols-1 grid-rows-1" : "grid-cols-1 grid-rows-2"}`}>
               {displayPhotos.slice(1, 5).map((photo, i) => (
                 <div 
                   key={i} 
-                  className="relative cursor-pointer overflow-hidden h-full hidden sm:block"
+                  className="relative cursor-pointer overflow-hidden h-full"
                   onClick={() => openModal(i + 1)}
                 >
                   <Image 

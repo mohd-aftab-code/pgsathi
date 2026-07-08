@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, CheckCircle, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, ArrowRight, Utensils, Shirt, Brush, Car } from "lucide-react";
 import { getThumbnailUrl } from "@/lib/cloudinary";
 
 interface PGCardProps {
@@ -49,11 +49,18 @@ export default function PGCard({ pg }: PGCardProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-neutral-500 text-xs md:text-sm mb-4 mt-1">
+        <div className="flex items-center gap-1.5 text-neutral-500 text-xs md:text-sm mb-3 mt-1">
           <MapPin size={14} className="text-orange-500 shrink-0" />
           <span className="line-clamp-1">
             {[pg.locality?.name, pg.city?.name].filter(Boolean).join(", ")}
           </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 mb-4">
+          {pg.foodIncluded && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Utensils size={10} /> Food</span>}
+          {pg.laundryService && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Shirt size={10} /> Laundry</span>}
+          {pg.roomCleaning && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Brush size={10} /> Cleaning</span>}
+          {pg.parking && !pg.roomCleaning && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Car size={10} /> Parking</span>}
         </div>
 
         <div className="mt-auto pt-3 border-t border-neutral-100 flex items-center justify-between">
