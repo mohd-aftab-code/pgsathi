@@ -19,16 +19,17 @@ const ROLE_HOME: Record<string, string> = {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Check which cookie actually exists (handles misconfigured AUTH_URL on Vercel)
+  const isSecureCookie = request.cookies.has("__Secure-authjs.session-token");
+  const cookieName = isSecureCookie ? "__Secure-authjs.session-token" : "authjs.session-token";
+
   // Decode JWT token from the session cookie (no DB call needed at edge)
-  // NextAuth v5 / @auth/core uses "authjs.session-token" cookie name
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === "production",
-    cookieName:
-      process.env.NODE_ENV === "production"
-        ? "__Secure-authjs.session-token"
-        : "authjs.session-token",
+    secureCookie: isSecureCookie,
+    salt: cookieName,
+    cookieName: cookieName,
   });
 
   const isAuthenticated = !!token;
