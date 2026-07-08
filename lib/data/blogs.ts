@@ -196,7 +196,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "July 1, 2026",
     author: "PGSathi Team",
     readTime: "4 min read"
-  }
+  },
   {
     id: "girls-pg-safety-guide",
     title: "Top 5 Safety Features to Look for in a Girls PG in Delhi NCR",
