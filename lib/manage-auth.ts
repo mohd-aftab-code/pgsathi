@@ -69,13 +69,28 @@ export async function getManageContext() {
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  const userId = parseInt(session.user.id);
+  const isManager = (session.user as any).isManager;
+  let userId: number;
+  let name: string;
+  let role: string;
+
+  if (isManager) {
+    userId = (session.user as any).ownerId as number;
+    name = session.user.name ?? "Manager";
+    role = "MANAGER";
+  } else {
+    userId = parseInt(session.user.id);
+    name = session.user.name ?? "Owner";
+    role = session.user.role ?? "OWNER";
+  }
+
   const tier = await getPlanTier(userId);
 
   return {
     userId,
     tier,
-    name: session.user.name ?? "Owner",
+    name,
+    role,
     email: session.user.email ?? "",
     hasPaidPlan: tier === "GROWTH" || tier === "PRO",
   };
