@@ -45,7 +45,6 @@ const navGroups: NavGroup[] = [
     category: "People",
     items: [
       { name: "Tenants", href: "/dashboard/manager/tenants", icon: Users },
-      { name: "Staff", href: "/dashboard/manager/staff", icon: UsersRound, ownerOnly: true },
     ]
   },
   {

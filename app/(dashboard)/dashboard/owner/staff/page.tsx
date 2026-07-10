@@ -95,6 +95,11 @@ export default function StaffPage() {
                 <div>
                   <h3 className="font-bold text-neutral-900">{s.name}</h3>
                   <div className="text-sm text-neutral-500 mt-0.5">{s.role} · {s.phone || "No phone"}</div>
+                  {s.loginEmail && (
+                    <div className="text-xs font-semibold text-violet-600 mt-1.5 bg-violet-50 inline-block px-2 py-1 rounded-md">
+                      Login ID: {s.loginEmail}
+                    </div>
+                  )}
                 </div>
                 <StatusBadge status={s.active ? "ACTIVE" : "INACTIVE"} />
               </div>

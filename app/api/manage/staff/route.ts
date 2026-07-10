@@ -26,7 +26,19 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, data: staff });
+    const teamMembers = await db.pgTeamMember.findMany({
+      where: { ownerId: ctx.userId }
+    });
+
+    const enrichedStaff = staff.map(s => {
+      if (s.role === "MANAGER") {
+        const team = teamMembers.find(t => t.name === s.name);
+        if (team) return { ...s, loginEmail: team.email };
+      }
+      return s;
+    });
+
+    return NextResponse.json({ success: true, data: enrichedStaff });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
