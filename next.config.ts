@@ -12,6 +12,20 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/dashboard/owner/manage',
+        destination: '/dashboard/manager',
+        permanent: true,
+      },
+      {
+        source: '/dashboard/owner/manage/:path*',
+        destination: '/dashboard/manager/:path*',
+        permanent: true,
+      },
+    ];
+  },
 
   images: {
     remotePatterns: [
