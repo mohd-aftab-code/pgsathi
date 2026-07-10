@@ -59,7 +59,7 @@ export default async function SavedPGsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {savedListings.map((saved) => (
-            <PGCard key={saved.listingId} listing={saved.listing as any} />
+            <PGCard key={saved.listingId} pg={saved.listing} />
           ))}
         </div>
       )}

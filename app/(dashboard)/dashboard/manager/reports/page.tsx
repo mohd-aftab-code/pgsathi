@@ -1,5 +1,5 @@
 /**
- * app/(main)/dashboard/owner/manage/reports/page.tsx
+ * app/(main)/dashboard/manager/reports/page.tsx
  * Analytics & Reports dashboard.
  */
 "use client";

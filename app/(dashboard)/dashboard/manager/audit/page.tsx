@@ -1,10 +1,10 @@
 /**
- * app/(main)/dashboard/owner/manage/audit/page.tsx
+ * app/(main)/dashboard/manager/audit/page.tsx
  * PG Manager Audit Log
  */
 import { ShieldAlert, Activity } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManageAccess } from "@/lib/manage-auth";
+import { requireManagerAccess } from "@/lib/manager-auth";
 import { EmptyState } from "@/components/manage/EmptyState";
 
 export const metadata = { title: "Audit Log — PG Manager" };
@@ -18,7 +18,7 @@ function formatDateTime(d: Date) {
 
 export default async function AuditPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const sp = await searchParams;
-  const { userId } = await requireManageAccess();
+  const { userId } = await requireManagerAccess();
   const page  = parseInt(sp.page ?? "1");
   const limit = 50;
 

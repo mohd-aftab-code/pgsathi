@@ -19,20 +19,39 @@ export async function requireManagerAccess() {
   }
 
   const isManager = (session.user as any).isManager;
-  if (!isManager) {
+  const isOwner = session.user.role === "OWNER" || session.user.role === "ADMIN";
+
+  if (!isManager && !isOwner) {
     redirect("/dashboard");
   }
 
-  const ownerId = (session.user as any).ownerId as number;
-  const managerRole = (session.user as any).managerRole as string;
+  let ownerId: number;
+  let managerRole = "OWNER";
+  let name = session.user.name ?? "Owner";
+
+  if (isManager) {
+    ownerId = (session.user as any).ownerId as number;
+    managerRole = (session.user as any).managerRole as string;
+    name = session.user.name ?? "Manager";
+  } else {
+    ownerId = parseInt(session.user.id);
+  }
+
   const tier = await getPlanTier(ownerId);
+
+  // Optional: Gate features based on tier for owners
+  if (isOwner && (tier === "NONE" || tier === "STARTER")) {
+    redirect("/dashboard/owner/subscription");
+  }
 
   return {
     userId: ownerId,
     tier,
-    name: session.user.name ?? "Manager",
+    name,
     email: session.user.email ?? "",
     managerRole,
+    isOwner,
+    isManager
   };
 }
 

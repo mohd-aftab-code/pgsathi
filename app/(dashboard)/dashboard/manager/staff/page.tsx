@@ -1,5 +1,5 @@
 /**
- * app/(main)/dashboard/owner/manage/staff/page.tsx
+ * app/(main)/dashboard/manager/staff/page.tsx
  */
 "use client";
 import { useState, useEffect } from "react";

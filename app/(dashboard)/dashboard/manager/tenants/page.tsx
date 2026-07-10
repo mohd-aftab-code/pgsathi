@@ -52,38 +52,43 @@ export default async function TenantsPage({
   return (
     <div>
       {/* Header */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-neutral-200">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Tenants</h1>
-          <p className="text-sm text-neutral-500 mt-1">{total} total tenants</p>
+          <h1 className="text-xl font-bold text-neutral-900 tracking-tight flex items-center gap-2">
+            <Users className="text-violet-600" size={20} />
+            Tenant Directory
+          </h1>
+          <p className="text-xs text-neutral-500 mt-1 font-medium">{total} total tenants across all properties</p>
         </div>
-        <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary text-sm">
-          <Plus className="h-4 w-4" /> Add Tenant
-        </Link>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          {/* Filters moved to the right side of header for a cleaner CRM look */}
+          <form className="flex-1 md:flex-none flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
+              <input
+                name="q" defaultValue={q}
+                placeholder="Search name or phone…"
+                className="pl-8 pr-3 py-1.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 w-full md:w-48 bg-white shadow-sm"
+              />
+            </div>
+            <select name="status" defaultValue={status} className="py-1.5 px-2.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white shadow-sm">
+              <option value="">All Status</option>
+              <option value="ACTIVE">Active</option>
+              <option value="NOTICE">Notice</option>
+              <option value="VACATED">Vacated</option>
+            </select>
+            <select name="listingId" defaultValue={listingId ?? ""} className="py-1.5 px-2.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white shadow-sm max-w-[150px] truncate hidden sm:block">
+              <option value="">All Properties</option>
+              {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
+            </select>
+            <button type="submit" className="hidden" aria-label="Submit filters"></button>
+          </form>
+          <div className="w-px h-6 bg-neutral-200 hidden md:block"></div>
+          <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1">
+            <Plus className="h-4 w-4" /> Add Tenant
+          </Link>
+        </div>
       </div>
-
-      {/* Filters */}
-      <form className="mb-5 flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
-          <input
-            name="q" defaultValue={q}
-            placeholder="Search by name or phone…"
-            className="input-base pl-9"
-          />
-        </div>
-        <select name="status" defaultValue={status} className="input-base max-w-[150px]">
-          <option value="">All Status</option>
-          <option value="ACTIVE">Active</option>
-          <option value="NOTICE">Notice</option>
-          <option value="VACATED">Vacated</option>
-        </select>
-        <select name="listingId" defaultValue={listingId ?? ""} className="input-base max-w-[200px]">
-          <option value="">All Properties</option>
-          {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
-        </select>
-        <button type="submit" className="btn-primary text-sm px-5">Filter</button>
-      </form>
 
       {/* Table */}
       {tenants.length === 0 ? (

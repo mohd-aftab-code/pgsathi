@@ -29,7 +29,7 @@ import {
 const OWNER_NAV = [
   { name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard },
   { name: "My PGs", href: "/dashboard/owner/listings", icon: Building2 },
-  { name: "PG Manager", href: "/dashboard/owner/manage", icon: Layers, hideMobile: false },
+  { name: "PG Manager", href: "/dashboard/manager", icon: Layers, hideMobile: false },
   { name: "Inventory", href: "/dashboard/owner/inventory", icon: Layers, hideMobile: true },
   { name: "Leads", href: "/dashboard/owner/leads", icon: MessageSquare },
   { name: "Reviews", href: "/dashboard/owner/reviews", icon: Star, hideMobile: true },

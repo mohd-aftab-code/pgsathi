@@ -1,10 +1,10 @@
 /**
- * app/(main)/dashboard/owner/manage/rooms/page.tsx
+ * app/(main)/dashboard/manager/rooms/page.tsx
  * View room occupancy and bed status across PG properties.
  */
 import { BedDouble, AlertCircle } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManageAccess } from "@/lib/manage-auth";
+import { requireManagerAccess } from "@/lib/manager-auth";
 import { EmptyState } from "@/components/manage/EmptyState";
 import Link from "next/link";
 
@@ -12,7 +12,7 @@ export const metadata = { title: "Rooms & Beds — PG Manager" };
 
 export default async function RoomsPage({ searchParams }: { searchParams: Promise<{ listingId?: string }> }) {
   const sp = await searchParams;
-  const { userId } = await requireManageAccess();
+  const { userId } = await requireManagerAccess();
   const listingId = sp.listingId ? parseInt(sp.listingId) : undefined;
 
   const where: any = { ownerId: userId };
@@ -103,7 +103,7 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
                               >
                                 <div className="font-bold mb-1">Bed {bed.name}</div>
                                 {bed.isOccupied ? (
-                                  <Link href={`/dashboard/owner/manage/tenants/${tenant?.id}`} className="hover:underline line-clamp-1" title={tenant?.name}>
+                                  <Link href={`/dashboard/manager/tenants/${tenant?.id}`} className="hover:underline line-clamp-1" title={tenant?.name}>
                                     {tenant?.name || "Occupied"}
                                   </Link>
                                 ) : (
