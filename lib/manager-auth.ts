@@ -40,9 +40,9 @@ export async function requireManagerAccess() {
   const tier = await getPlanTier(ownerId);
 
   // Optional: Gate features based on tier for owners
-  if (isOwner && (tier === "NONE" || tier === "STARTER")) {
-    redirect("/dashboard/owner/subscription");
-  }
+  // if (isOwner && (tier === "NONE" || tier === "STARTER")) {
+  //   redirect("/dashboard/owner/subscription");
+  // }
 
   return {
     userId: ownerId,
