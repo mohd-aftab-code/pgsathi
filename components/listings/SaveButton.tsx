@@ -62,7 +62,7 @@ export default function SaveButton({ listingId }: SaveButtonProps) {
   return (
     <button 
       onClick={toggleSave}
-      className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all shadow-sm z-10 
+      className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all shadow-sm z-10 cursor-pointer
         ${isSaved 
           ? "bg-red-50 text-red-500 hover:bg-red-100" 
           : "bg-white/70 text-neutral-500 hover:bg-white hover:text-red-500 hover:scale-110"
