@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, CheckCircle, ArrowRight, Utensils, Shirt, Brush, Car } from "lucide-react";
 import { getThumbnailUrl } from "@/lib/cloudinary";
+import SaveButton from "./SaveButton";
 
 interface PGCardProps {
   pg: any; // Ideally we use proper Prisma type here
@@ -31,9 +32,12 @@ export default function PGCard({ pg }: PGCardProps) {
             Featured
           </div>
         )}
-        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-primary-900 text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-1 rounded-md shadow-sm">
+        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-primary-900 text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-1 rounded-md shadow-sm">
           {genderLabel} PG
         </div>
+        
+        {/* Heart / Save Button */}
+        <SaveButton listingId={pg.id} />
       </div>
       
       <div className="p-3 sm:p-4 flex-1 flex flex-col">
