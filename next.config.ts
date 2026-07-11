@@ -56,9 +56,6 @@ const nextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
