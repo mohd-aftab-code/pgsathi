@@ -10,6 +10,24 @@ import { auth } from "@/lib/auth";
 
 export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO";
 
+export async function isTrialActive(userId: number): Promise<{ active: boolean; daysLeft: number; endDate: Date }> {
+  const user = await db.user.findUnique({ where: { id: userId }, select: { createdAt: true } });
+  if (!user) return { active: false, daysLeft: 0, endDate: new Date() };
+
+  const trialEndDate = new Date(user.createdAt);
+  trialEndDate.setDate(trialEndDate.getDate() + 15);
+  
+  const now = new Date();
+  const diffTime = trialEndDate.getTime() - now.getTime();
+  const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return {
+    active: daysLeft > 0,
+    daysLeft: daysLeft > 0 ? daysLeft : 0,
+    endDate: trialEndDate
+  };
+}
+
 /** Returns the active plan tier for a given userId. "NONE" if no active sub. */
 export async function getPlanTier(userId: number): Promise<PlanTier> {
   const sub = await db.subscription.findFirst({

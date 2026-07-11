@@ -5,6 +5,7 @@ import { Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock }
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import MarkReadButton from "@/components/listings/MarkReadButton";
+import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 
 export const metadata = {
   title: "Visits & Leads - Owner Dashboard",
@@ -15,6 +16,11 @@ export default async function VisitsInboxPage() {
   if (!session?.user) redirect("/login");
 
   const ownerId = parseInt(session.user.id!);
+
+  const tier = await getPlanTier(ownerId);
+  const trial = await isTrialActive(ownerId);
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
+  const hasAccess = hasPaidPlan || trial.active;
 
   // Fetch leads
   const leads = await db.lead.findMany({
@@ -63,14 +69,23 @@ export default async function VisitsInboxPage() {
                     <Link href={`/pg/${visit.listing.slug}`} className="text-xs text-neutral-500 font-medium hover:text-primary-600 flex items-center gap-1 line-clamp-1">
                       <ExternalLink size={12} /> {visit.listing.title}
                     </Link>
-                    <a 
-                      href={`https://wa.me/91${visit.phone}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="text-green-600 bg-green-50 p-1.5 rounded-lg hover:bg-green-100 transition"
-                    >
-                      <MessageCircle size={16} />
-                    </a>
+                    {hasAccess ? (
+                      <a 
+                        href={`https://wa.me/91${visit.phone}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-green-600 bg-green-50 p-1.5 rounded-lg hover:bg-green-100 transition"
+                      >
+                        <MessageCircle size={16} />
+                      </a>
+                    ) : (
+                      <Link
+                        href="/dashboard/owner/subscription/upgrade"
+                        className="text-white bg-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-[10px] font-bold shadow-sm"
+                      >
+                        Unlock WA
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))}
@@ -118,22 +133,35 @@ export default async function VisitsInboxPage() {
                         </td>
                         <td className="py-5 px-6">
                           <div className="flex flex-col gap-2">
-                            <div className="font-bold text-neutral-800 tracking-wide">{lead.phone}</div>
+                            <div className="font-bold text-neutral-800 tracking-wide">
+                              {hasAccess ? lead.phone : "98XXXXXX" + lead.phone.slice(-2)}
+                            </div>
                             <div className="flex items-center gap-2">
-                              <a 
-                                href={`tel:${lead.phone}`} 
-                                className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                              >
-                                <Phone size={12} /> Call
-                              </a>
-                              <a 
-                                href={`https://wa.me/91${lead.phone}?text=Hi%20${lead.name},%20I%20am%20reaching%20out%20regarding%20your%20inquiry%20for%20${lead.listing.title}`} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                              >
-                                <MessageCircle size={12} /> WhatsApp
-                              </a>
+                              {hasAccess ? (
+                                <>
+                                  <a 
+                                    href={`tel:${lead.phone}`} 
+                                    className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                  >
+                                    <Phone size={12} /> Call
+                                  </a>
+                                  <a 
+                                    href={`https://wa.me/91${lead.phone}?text=Hi%20${lead.name},%20I%20am%20reaching%20out%20regarding%20your%20inquiry%20for%20${lead.listing.title}`} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                  >
+                                    <MessageCircle size={12} /> WhatsApp
+                                  </a>
+                                </>
+                              ) : (
+                                <Link
+                                  href="/dashboard/owner/subscription/upgrade"
+                                  className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                                >
+                                  Unlock Number
+                                </Link>
+                              )}
                             </div>
                           </div>
                         </td>

@@ -5,7 +5,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPlanTier } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 
 /**
  * Checks that the current user is a logged-in MANAGER.
@@ -38,15 +38,21 @@ export async function requireManagerAccess() {
   }
 
   const tier = await getPlanTier(ownerId);
+  const trial = await isTrialActive(ownerId);
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
+  const hasAccess = hasPaidPlan || trial.active;
 
   // Optional: Gate features based on tier for owners
-  // if (isOwner && (tier === "NONE" || tier === "STARTER")) {
-  //   redirect("/dashboard/owner/subscription");
-  // }
+  if (isOwner && !hasAccess) {
+    redirect("/dashboard/owner/subscription/upgrade");
+  }
 
   return {
     userId: ownerId,
     tier,
+    trial,
+    hasPaidPlan,
+    hasAccess,
     name,
     email: session.user.email ?? "",
     managerRole,

@@ -17,7 +17,7 @@ export default async function ManagerDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { name, managerRole, isOwner } = await requireManagerAccess();
+  const { name, managerRole, isOwner, trial, hasPaidPlan } = await requireManagerAccess();
 
   const roleColors: Record<string, string> = {
     MANAGER:    "bg-violet-100 text-violet-700",
@@ -74,6 +74,19 @@ export default async function ManagerDashboardLayout({
 
         {/* ── Main Content Area ──────────────────────────────── */}
         <main className="flex-1 w-full min-w-0">
+          {isOwner && !hasPaidPlan && trial?.active && (
+            <div className="mb-6 rounded-xl bg-indigo-50 border border-indigo-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+              <div>
+                <h3 className="font-bold text-indigo-900">CRM Premium Trial Active</h3>
+                <p className="text-sm text-indigo-700">
+                  You have <strong>{trial.daysLeft} days left</strong> in your free trial. Upgrade now to avoid losing access to rent tracking and lead contacts.
+                </p>
+              </div>
+              <Link href="/dashboard/owner/subscription/upgrade" className="btn-primary shrink-0 text-sm py-2 bg-indigo-600 hover:bg-indigo-700 border-none">
+                Upgrade Now
+              </Link>
+            </div>
+          )}
           {children}
         </main>
       </div>
