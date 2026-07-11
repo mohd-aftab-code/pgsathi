@@ -57,10 +57,11 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
           </p>
         </div>
         <form className="flex gap-2">
-          <select name="listingId" defaultValue={listingId ?? ""} className="input-base w-48" onChange={e => e.currentTarget.form?.requestSubmit()}>
+          <select name="listingId" defaultValue={listingId ?? ""} className="input-base w-48">
             <option value="">All Properties</option>
             {allOwnerListings.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
           </select>
+          <button type="submit" className="btn-primary text-sm px-4 py-2">Filter</button>
         </form>
       </div>
 
