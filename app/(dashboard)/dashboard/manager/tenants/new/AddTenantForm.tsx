@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface Listing { id: number; title: string }
+interface Prefill { name?: string; phone?: string; email?: string }
 
-export function AddTenantForm({ listings }: { listings: Listing[] }) {
+export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[]; prefill?: Prefill }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [rooms, setRooms] = useState<{ id: number; name: string; listingId: number }[]>([]);
@@ -68,15 +69,15 @@ export function AddTenantForm({ listings }: { listings: Listing[] }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Full Name *</label>
-              <input name="name" required className="input-base" placeholder="Rahul Sharma" />
+              <input name="name" required className="input-base" placeholder="Rahul Sharma" defaultValue={prefill.name ?? ""} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Phone *</label>
-              <input name="phone" required type="tel" className="input-base" placeholder="9876543210" />
+              <input name="phone" required type="tel" className="input-base" placeholder="9876543210" defaultValue={prefill.phone ?? ""} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Email</label>
-              <input name="email" type="email" className="input-base" placeholder="rahul@email.com" />
+              <input name="email" type="email" className="input-base" placeholder="rahul@email.com" defaultValue={prefill.email ?? ""} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Gender</label>

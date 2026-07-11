@@ -11,19 +11,14 @@ import { AddTenantForm } from "./AddTenantForm";
 
 export const metadata = { title: "Add Tenant — PG Manager" };
 
-export default async function AddTenantPage() {
+export default async function AddTenantPage({ searchParams }: { searchParams: Promise<{ name?: string; phone?: string; email?: string }> }) {
   const { userId } = await requireManagerAccess();
+  const sp = await searchParams;
 
-  const [listings, rooms] = await Promise.all([
-    db.listing.findMany({
-      where: { ownerId: userId },
-      select: { id: true, title: true },
-    }),
-    db.room.findMany({
-      where: { listingId: { in: [] } },  // loaded dynamically per listing
-      select: { id: true, name: true, listingId: true },
-    }),
-  ]);
+  const listings = await db.listing.findMany({
+    where: { ownerId: userId },
+    select: { id: true, title: true },
+  });
 
   return (
     <div>
@@ -33,11 +28,16 @@ export default async function AddTenantPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-extrabold text-neutral-900">Add New Tenant</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">Tenant ka poora profile banaiye</p>
+          <p className="text-sm text-neutral-500 mt-0.5">
+            {sp.name ? `Pre-filled from Lead: ${sp.name}` : "Tenant ka poora profile banaiye"}
+          </p>
         </div>
       </div>
 
-      <AddTenantForm listings={listings} />
+      <AddTenantForm
+        listings={listings}
+        prefill={{ name: sp.name, phone: sp.phone, email: sp.email }}
+      />
     </div>
   );
 }

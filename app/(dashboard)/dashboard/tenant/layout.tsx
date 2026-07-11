@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { LayoutDashboard, Heart, CalendarClock, Receipt, Settings, User } from "lucide-react";
+import { Heart, CalendarClock, Receipt, Settings, User, Wrench } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
@@ -31,8 +31,8 @@ export default async function TenantDashboardLayout({
   const navItems = [
     { name: "My Profile", href: "/dashboard/tenant", icon: User },
     { name: "Saved PGs", href: "/dashboard/tenant/saved", icon: Heart },
-    { name: "My Bookings", href: "/dashboard/tenant/bookings", icon: CalendarClock },
     { name: "Rent Receipts", href: "/dashboard/tenant/receipts", icon: Receipt },
+    { name: "My Complaints", href: "/dashboard/tenant/complaints", icon: Wrench },
     { name: "Settings", href: "/dashboard/tenant/settings", icon: Settings },
   ];
 

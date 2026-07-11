@@ -159,6 +159,12 @@ export default async function VisitsInboxPage() {
                               {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
                             </span>
                             <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
+                            <Link
+                              href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
+                              className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              ➜ Convert to Tenant
+                            </Link>
                           </div>
                         </td>
                       </tr>

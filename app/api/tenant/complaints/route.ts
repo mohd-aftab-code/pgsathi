@@ -1,0 +1,103 @@
+/**
+ * app/api/tenant/complaints/route.ts
+ * Allow tenants to file complaints directly via their portal.
+ */
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, message: "Not authenticated" }, { status: 401 });
+    }
+
+    const phone = (session.user as any).phone || "";
+    const email = session.user.email || "";
+
+    const whereTenant: any = [];
+    if (phone) whereTenant.push({ phone });
+    if (email) whereTenant.push({ email });
+
+    if (whereTenant.length === 0) {
+      return NextResponse.json({ success: false, message: "No matching tenant found" }, { status: 400 });
+    }
+
+    // Find active tenant record
+    const tenant = await db.pgTenant.findFirst({
+      where: { OR: whereTenant, status: { in: ["ACTIVE", "NOTICE"] } },
+      select: { id: true, ownerId: true, listingId: true },
+    });
+
+    if (!tenant) {
+      return NextResponse.json({ success: false, message: "No active PG tenancy found for your account." }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const { title, description, category } = body;
+
+    if (!title?.trim()) {
+      return NextResponse.json({ success: false, message: "Title is required" }, { status: 400 });
+    }
+
+    const complaint = await db.pgComplaint.create({
+      data: {
+        ownerId: tenant.ownerId,
+        listingId: tenant.listingId,
+        tenantId: tenant.id,
+        title: title.trim(),
+        description: description?.trim() || null,
+        category: category || "OTHER",
+        priority: "MEDIUM",
+        status: "OPEN",
+      },
+    });
+
+    return NextResponse.json({ success: true, data: complaint }, { status: 201 });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, message: "Not authenticated" }, { status: 401 });
+    }
+
+    const phone = (session.user as any).phone || "";
+    const email = session.user.email || "";
+
+    const whereTenant: any = [];
+    if (phone) whereTenant.push({ phone });
+    if (email) whereTenant.push({ email });
+
+    if (whereTenant.length === 0) {
+      return NextResponse.json({ success: true, data: [] });
+    }
+
+    const tenants = await db.pgTenant.findMany({
+      where: { OR: whereTenant },
+      select: { id: true },
+    });
+
+    if (tenants.length === 0) {
+      return NextResponse.json({ success: true, data: [] });
+    }
+
+    const tenantIds = tenants.map(t => t.id);
+    const complaints = await db.pgComplaint.findMany({
+      where: { tenantId: { in: tenantIds } },
+      orderBy: { createdAt: "desc" },
+      include: {
+        listing: { select: { title: true } },
+      },
+    });
+
+    return NextResponse.json({ success: true, data: complaints });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+  }
+}

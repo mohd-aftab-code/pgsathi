@@ -42,13 +42,15 @@ export async function GET(req: NextRequest) {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const [activeTenants, totalBeds, occupiedBeds, totalIncome, totalExpense,
-           openComplaints, pendingRent] = await Promise.all([
+           openComplaints, resolvedComplaints, pendingBills, pendingRent] = await Promise.all([
       db.pgTenant.count({ where: { ownerId: ctx.userId, status: "ACTIVE", deletedAt: null } }),
       db.bed.count({ where: { room: { listing: { ownerId: ctx.userId } } } }),
       db.bed.count({ where: { room: { listing: { ownerId: ctx.userId } }, isOccupied: true } }),
       db.pgPayment.aggregate({ where: { ownerId: ctx.userId, voided: false, paidOn: { gte: monthStart } }, _sum: { amount: true } }),
       db.pgExpense.aggregate({ where: { ownerId: ctx.userId, spentOn: { gte: monthStart } }, _sum: { amount: true } }),
       db.pgComplaint.count({ where: { ownerId: ctx.userId, status: { in: ["OPEN", "IN_PROGRESS"] } } }),
+      db.pgComplaint.count({ where: { ownerId: ctx.userId, status: "RESOLVED" } }),
+      db.pgRentBill.count({ where: { ownerId: ctx.userId, forMonth: curMonth, payments: { none: {} } } }),
       db.pgRentBill.findMany({
         where: { ownerId: ctx.userId, forMonth: curMonth },
         include: { payments: { where: { type: "RENT", forMonth: curMonth, voided: false }, select: { amount: true } }, tenant: { select: { monthlyRent: true } } },
@@ -64,18 +66,20 @@ export async function GET(req: NextRequest) {
       data: {
         monthly: monthlyData,
         current: {
-          month:         curMonth,
+          month:              curMonth,
           activeTenants,
           totalBeds,
           occupiedBeds,
-          occupancyPct:  totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 0,
-          income:        totalIncome._sum.amount  ?? 0,
-          expense:       totalExpense._sum.amount ?? 0,
-          net:           (totalIncome._sum.amount ?? 0) - (totalExpense._sum.amount ?? 0),
+          occupancyPct:       totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 0,
+          income:             totalIncome._sum.amount  ?? 0,
+          expense:            totalExpense._sum.amount ?? 0,
+          net:                (totalIncome._sum.amount ?? 0) - (totalExpense._sum.amount ?? 0),
           expectedRent,
           collectedRent,
-          pendingRent:   pendingRentAmt,
+          pendingRent:        pendingRentAmt,
           openComplaints,
+          resolvedComplaints,
+          pendingBills,
         },
       },
     });
