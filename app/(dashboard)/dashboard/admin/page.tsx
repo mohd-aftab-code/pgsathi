@@ -4,23 +4,24 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
 export default async function AdminDashboardPage() {
-  const [pendingListings, activeListings, totalListings, totalUsers, activeSubscriptions, recentListings] = await Promise.all([
-    db.listing.count({ where: { status: "PENDING" } }),
-    db.listing.count({ where: { status: "ACTIVE" } }),
-    db.listing.count(),
-    db.user.count(),
-    db.subscription.findMany({ where: { status: "ACTIVE" } }),
-    db.listing.findMany({ 
-      take: 5, 
-      orderBy: { createdAt: "desc" },
-      include: { owner: { select: { name: true } }, city: true }
-    })
-  ]);
+  try {
+    const [pendingListings, activeListings, totalListings, totalUsers, activeSubscriptions, recentListings] = await Promise.all([
+      db.listing.count({ where: { status: "PENDING" } }),
+      db.listing.count({ where: { status: "ACTIVE" } }),
+      db.listing.count(),
+      db.user.count(),
+      db.subscription.findMany({ where: { status: "ACTIVE" } }),
+      db.listing.findMany({ 
+        take: 5, 
+        orderBy: { createdAt: "desc" },
+        include: { owner: { select: { name: true } }, city: true }
+      })
+    ]);
 
-  // Calculate real revenue from active subscriptions
-  const totalRevenue = activeSubscriptions.reduce((acc, sub) => acc + sub.amount, 0);
+    // Calculate real revenue from active subscriptions
+    const totalRevenue = activeSubscriptions.reduce((acc, sub) => acc + sub.amount, 0);
 
-  return (
+    return (
     <div>
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -161,4 +162,15 @@ export default async function AdminDashboardPage() {
       </div>
     </div>
   );
+  } catch (error: any) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700">
+        <h2 className="text-xl font-bold mb-2">Dashboard Error</h2>
+        <p>Could not load the admin dashboard. This is likely due to a database connection issue or missing table.</p>
+        <div className="mt-4 text-xs font-mono bg-red-100 p-4 rounded-lg text-left overflow-auto">
+          {error.message || String(error)}
+        </div>
+      </div>
+    );
+  }
 }
