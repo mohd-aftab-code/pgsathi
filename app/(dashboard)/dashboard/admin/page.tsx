@@ -13,6 +13,7 @@ export default async function AdminDashboardPage() {
       db.subscription.findMany({ where: { status: "ACTIVE" } }),
       db.listing.findMany({ 
         take: 5, 
+        where: { cityId: { gt: 0 } }, // Ignore corrupted rows with null cityId
         orderBy: { createdAt: "desc" },
         include: { owner: { select: { name: true } }, city: true }
       })
