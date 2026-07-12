@@ -3,8 +3,16 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import { compare } from "bcryptjs";
 
+// NextAuth v5 expects AUTH_SECRET, but this project's Vercel env still has the
+// v4-era NEXTAUTH_SECRET name (see proxy.ts, which already falls back the same way).
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+
+if (!authSecret) {
+  throw new Error("AUTH_SECRET (or NEXTAUTH_SECRET) environment variable is not set");
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET || "this-is-a-super-secret-key-for-next-auth-pgsathi-2026",
+  secret: authSecret,
   trustHost: true,
   session: {
     strategy: "jwt",

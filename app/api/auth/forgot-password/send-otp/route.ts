@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOTP } from "@/lib/sms";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,6 +9,16 @@ export async function POST(req: NextRequest) {
 
     if (!phone || phone.length !== 10) {
       return NextResponse.json({ success: false, message: "Invalid phone number" }, { status: 400 });
+    }
+
+    // Cooldown: max 1 OTP per 60s, and 5 per hour, per phone number
+    const cooldown = await checkRateLimit(`otp:send:cooldown:${phone}`, 1, 60);
+    if (!cooldown.allowed) {
+      return NextResponse.json({ success: false, message: "Please wait a minute before requesting another OTP" }, { status: 429 });
+    }
+    const hourly = await checkRateLimit(`otp:send:hourly:${phone}`, 5, 3600);
+    if (!hourly.allowed) {
+      return NextResponse.json({ success: false, message: "Too many OTP requests. Please try again later" }, { status: 429 });
     }
 
     // 1. Check if user exists

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Razorpay from "razorpay";
+import { razorpay } from "@/lib/razorpay";
 import { auth } from "@/lib/auth";
+import { isValidPlanId, getPlanTotalAmount } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,21 +10,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const { amount } = await req.json();
+    const { planId } = await req.json();
 
-    if (!amount) {
-      return NextResponse.json({ success: false, message: "Amount is required" }, { status: 400 });
+    if (!planId || !isValidPlanId(planId)) {
+      return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
     }
 
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID as string,
-      key_secret: process.env.RAZORPAY_KEY_SECRET as string,
-    });
+    const amount = getPlanTotalAmount(planId);
+    if (amount <= 0) {
+      return NextResponse.json({ success: false, message: "This plan does not require payment" }, { status: 400 });
+    }
+
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("Razorpay keys are not configured");
+      return NextResponse.json({ success: false, message: "Payments are not configured" }, { status: 500 });
+    }
 
     const options = {
       amount: amount * 100, // Razorpay works in paise
       currency: "INR",
       receipt: `receipt_${Date.now()}_${session.user.id}`,
+      notes: { userId: session.user.id, planId },
     };
 
     const order = await razorpay.orders.create(options);
@@ -32,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Failed to create order" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, orderId: order.id });
+    return NextResponse.json({ success: true, orderId: order.id, amount });
   } catch (error: any) {
     console.error("Create Order Error:", error);
     return NextResponse.json({ success: false, message: error.message || "Internal server error" }, { status: 500 });

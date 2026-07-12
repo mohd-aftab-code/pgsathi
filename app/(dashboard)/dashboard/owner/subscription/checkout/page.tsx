@@ -34,11 +34,11 @@ export default function CheckoutPage() {
     setPaymentStep("PROCESSING");
 
     try {
-      // 1. Create order on backend
+      // 1. Create order on backend (server derives the amount from planId)
       const res = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: totalAmount }),
+        body: JSON.stringify({ planId }),
       });
 
       const data = await res.json();
@@ -101,10 +101,9 @@ export default function CheckoutPage() {
       const res = await fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          planId, 
-          amount: selectedPlan.price,
-          ...paymentDetails 
+        body: JSON.stringify({
+          planId,
+          ...paymentDetails
         }),
       });
 

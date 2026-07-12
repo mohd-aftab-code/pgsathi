@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { v2 as cloudinary } from "cloudinary";
+import { uploadImage } from "@/lib/cloudinary";
 
 export async function POST(req: NextRequest) {
   try {
-    // Configure Cloudinary inside the handler to ensure env variables are loaded at runtime
-    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-      });
-    }
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
@@ -24,29 +16,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "No file uploaded" }, { status: 400 });
     }
 
-    // Convert file to buffer
+    const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+    const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json({ success: false, message: "Only JPEG, PNG, WEBP, or AVIF images are allowed" }, { status: 400 });
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      return NextResponse.json({ success: false, message: "File must be smaller than 8MB" }, { status: 400 });
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Cloudinary using a stream
-    const uploadResult = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "pgsathi/listings" },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
-      uploadStream.end(buffer);
-    });
+    const { url, publicId } = await uploadImage(buffer);
 
-    const secureUrl = (uploadResult as any).secure_url;
-    const publicId = (uploadResult as any).public_id;
-
-    return NextResponse.json({ 
-      success: true, 
-      url: secureUrl,
-      publicId: publicId
+    return NextResponse.json({
+      success: true,
+      url,
+      publicId
     });
   } catch (error: any) {
     console.error("Upload Error:", error);

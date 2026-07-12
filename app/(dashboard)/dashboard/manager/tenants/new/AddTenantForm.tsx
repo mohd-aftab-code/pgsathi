@@ -214,7 +214,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
 
         <button
           type="submit"
-          disabled={loading || !selectedListing || (selectedListing && rooms.length === 0) || (selectedRoom && beds.length === 0)}
+          disabled={loading || !selectedListing || (!!selectedListing && rooms.length === 0) || (!!selectedRoom && beds.length === 0)}
           id="submit-add-tenant"
           className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >

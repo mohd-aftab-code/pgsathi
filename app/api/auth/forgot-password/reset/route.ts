@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,12 @@ export async function POST(req: NextRequest) {
 
     if (newPassword.length < 6) {
       return NextResponse.json({ success: false, message: "Password must be at least 6 characters" }, { status: 400 });
+    }
+
+    // Max 5 verification attempts per phone per 10-minute window (OTP validity window)
+    const attempts = await checkRateLimit(`otp:verify:${phone}`, 5, 600);
+    if (!attempts.allowed) {
+      return NextResponse.json({ success: false, message: "Too many attempts. Please request a new OTP" }, { status: 429 });
     }
 
     // 1. Find valid OTP

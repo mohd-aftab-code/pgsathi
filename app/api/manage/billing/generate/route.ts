@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     await Promise.all(
       tenants.map(async (t) => {
         const dueDate = new Date(yr, mo - 1, t.rentDueDay);
-        const billCount = await db.pgRentBill.count({ where: { ownerId: ctx.userId } });
-        const billNo = `BILL-${forMonth.replace("-", "")}-${String(billCount + 1).padStart(4, "0")}`;
+        // Derived from tenantId (not a running count) so concurrent generation can't collide.
+        const billNo = `BILL-${forMonth.replace("-", "")}-${String(t.id).padStart(4, "0")}`;
 
         try {
           await db.pgRentBill.upsert({
