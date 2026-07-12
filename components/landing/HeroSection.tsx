@@ -1,82 +1,158 @@
 import Link from "next/link";
-import { ShieldCheck, MapPin, Home as HomeIcon } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, MapPin, MessageCircle, Star } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
+import { unstable_cache } from "next/cache";
+
+const getHeroData = unstable_cache(
+  async () => {
+    const [cities, showcase] = await Promise.all([
+      db.city.findMany({
+        where: { isActive: true },
+        orderBy: { priority: "desc" },
+      }),
+      db.listing.findMany({
+        where: { isActive: true, status: "ACTIVE", photos: { some: {} } },
+        take: 2,
+        include: {
+          city: true,
+          locality: true,
+          photos: { take: 1, orderBy: { sortOrder: "asc" } },
+        },
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      }),
+    ]);
+    return { cities, showcase };
+  },
+  ["hero-data"],
+  { revalidate: 300 }
+);
 
 export default async function HeroSection() {
-  const cities = await db.city.findMany({
-    where: { isActive: true },
-    orderBy: { priority: "desc" },
-  });
+  const { cities, showcase } = await getHeroData();
+
   return (
-    <section className="relative overflow-hidden bg-primary-950 text-white pt-16 pb-24 md:pt-28 md:pb-32">
-      {/* Premium Deep Background with Mesh Glow */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary-500/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary-500/10 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-      </div>
+    <section className="relative bg-neutral-50 pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden">
+      {/* Faint grid texture, kept subtle — this is the only decorative element */}
+      <div
+        className="absolute inset-0 opacity-[0.035] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(#171717 1px, transparent 1px), linear-gradient(90deg, #171717 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-      {/* Original Background Pattern but with a premium fade */}
-      <div className="absolute inset-0 opacity-[0.07] mix-blend-overlay" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-primary-950/90 pointer-events-none"></div>
-
-      <div className="container-max section-padding relative z-10 text-left md:text-center px-4 md:px-8">
-        
-        {/* Premium Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-xs md:text-sm font-medium mb-8 animate-fade-in shadow-[0_4px_24px_-8px_rgba(255,255,255,0.1)] transition-all hover:bg-white/10 cursor-default">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-          </span>
-          <span className="text-neutral-200 tracking-wide">Trusted by <strong className="text-white">50,000+</strong> Students & Professionals in India</span>
-        </div>
-
-        {/* Heading with better typography & gradient */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight animate-slide-up text-white leading-[1.15]" style={{ textWrap: "balance" }}>
-          Find Your{" "}
-          <span className="relative inline-block">
-            <span className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-primary-600 blur-lg opacity-30"></span>
-            <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-primary-400 to-primary-500">
-              Zero Brokerage PG
-            </span>
-          </span>{" "}
-          in India
-        </h1>
-        
-        <h2 className="text-base sm:text-lg md:text-2xl font-light text-neutral-300 mb-12 mr-auto md:mx-auto max-w-3xl animate-slide-up leading-relaxed" style={{ animationDelay: "100ms", textWrap: "balance" }}>
-          India's most trusted platform for verified Boys & Girls PGs. 
-          <span className="block mt-1 sm:mt-2 font-medium text-white/80">Direct owner contact. No hidden fees.</span>
-        </h2>
-
-        {/* Search Bar Container with Glassmorphism */}
-        <div className="max-w-4xl mr-auto md:mx-auto animate-slide-up relative" style={{ animationDelay: "200ms" }}>
-          {/* Subtle glow behind the search bar */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-primary-400/20 to-primary-500/20 blur-2xl opacity-50 rounded-[3rem] -z-10"></div>
-          
-          <div className="p-2 md:p-3 bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl md:rounded-[2.5rem] shadow-2xl">
-            <SearchBar cities={cities} />
-          </div>
-        </div>
-
-        {/* Feature Highlights - Premium styling */}
-        <div className="mt-16 sm:mt-20 flex flex-col sm:flex-row flex-wrap justify-start md:justify-center gap-4 sm:gap-6 md:gap-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
-          {[
-            { icon: ShieldCheck, title: "100% Verified", desc: "Physical verification" },
-            { icon: HomeIcon, title: "No Brokerage", desc: "Direct owner contact" },
-            { icon: MapPin, title: "Prime Locations", desc: "Near hubs & colleges" },
-          ].map((item, idx) => (
-            <div key={idx} className="group flex items-center gap-4 text-left p-3 sm:p-4 rounded-2xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 hover:shadow-2xl">
-              <div className="bg-gradient-to-br from-primary-400/20 to-primary-600/10 p-3 sm:p-3.5 rounded-xl border border-primary-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(109,40,217,0.1)]">
-                <item.icon size={24} className="text-primary-400 sm:w-6 sm:h-6" strokeWidth={1.5} />
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-sm sm:text-base tracking-wide">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-neutral-400 font-medium mt-0.5">{item.desc}</p>
-              </div>
+      <div className="container-max section-padding relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-8 items-center">
+          {/* ── Left: Copy + Search ─────────────────────────────── */}
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-5">
+              <span className="w-6 h-px bg-primary-600" />
+              Zero Brokerage · Direct Owner Contact
             </div>
-          ))}
+
+            <h1
+              className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-neutral-900 leading-[1.08] mb-5"
+              style={{ textWrap: "balance" }}
+            >
+              Find your next PG —{" "}
+              <span className="text-primary-700">straight from the owner.</span>
+            </h1>
+
+            <p className="text-base md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
+              Verified Boys, Girls &amp; Co-living PGs across India. No brokers,
+              no hidden fees — just a phone number that actually picks up.
+            </p>
+
+            <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-900/5 mb-8">
+              <SearchBar cities={cities} />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+              <span className="font-bold text-neutral-900">500+ <span className="font-medium text-neutral-500">Verified PGs</span></span>
+              <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
+              <span className="font-bold text-neutral-900">12+ <span className="font-medium text-neutral-500">Cities</span></span>
+              <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
+              <span className="font-bold text-neutral-900">50,000+ <span className="font-medium text-neutral-500">Tenants Helped</span></span>
+            </div>
+          </div>
+
+          {/* ── Right: Real listing showcase ────────────────────── */}
+          <div className="hidden lg:block relative h-[440px]">
+            {showcase[0] && (
+              <ShowcaseCard
+                listing={showcase[0]}
+                className="absolute top-0 right-0 w-[280px] -rotate-2 z-10"
+              />
+            )}
+            {showcase[1] && (
+              <ShowcaseCard
+                listing={showcase[1]}
+                className="absolute bottom-0 left-0 w-[280px] rotate-2"
+              />
+            )}
+            {!showcase[0] && !showcase[1] && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center bg-white rounded-3xl border border-neutral-200 p-10 shadow-lg shadow-neutral-900/5">
+                  <ShieldCheck className="mx-auto text-primary-600 mb-3" size={40} />
+                  <p className="font-bold text-neutral-900">100% Verified Listings</p>
+                  <p className="text-sm text-neutral-500 mt-1">Every PG physically checked before it goes live.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Floating review chip, anchored between the two cards */}
+            {showcase[0] && showcase[1] && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-white rounded-2xl border border-neutral-200 shadow-xl px-4 py-3 flex items-center gap-2.5">
+                <div className="flex text-amber-400">
+                  {[...Array(5)].map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
+                </div>
+                <span className="text-xs font-bold text-neutral-700 whitespace-nowrap">Rated by real tenants</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function ShowcaseCard({ listing, className }: { listing: any; className: string }) {
+  const photo = listing.photos?.[0]?.url;
+  return (
+    <Link
+      href={`/pg/${listing.city?.slug}/${listing.locality?.slug || "all"}/${listing.slug}`}
+      className={`block bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden hover:-translate-y-1 hover:rotate-0 transition-all duration-300 ${className}`}
+    >
+      <div className="relative h-36 bg-neutral-100">
+        {photo && (
+          <Image
+            src={photo}
+            alt={listing.title}
+            fill
+            sizes="280px"
+            className="object-cover"
+          />
+        )}
+        <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur text-[10px] font-bold text-primary-700 px-2 py-1 rounded-lg flex items-center gap-1">
+          <ShieldCheck size={11} /> VERIFIED
+        </div>
+      </div>
+      <div className="p-3.5">
+        <p className="font-bold text-neutral-900 text-sm line-clamp-1">{listing.title}</p>
+        <p className="text-xs text-neutral-500 mt-0.5 flex items-center gap-1">
+          <MapPin size={11} className="shrink-0" />
+          <span className="line-clamp-1">{listing.locality?.name || listing.city?.name}</span>
+        </p>
+        <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-neutral-100">
+          <span className="font-extrabold text-neutral-900 text-sm">₹{listing.priceMin.toLocaleString("en-IN")}<span className="font-medium text-neutral-400 text-xs">/mo</span></span>
+          <span className="flex items-center gap-1 text-[11px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">
+            <MessageCircle size={11} /> Contact
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

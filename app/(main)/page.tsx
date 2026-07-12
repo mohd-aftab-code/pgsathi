@@ -3,27 +3,39 @@ import CityGrid from "@/components/landing/CityGrid";
 import HowItWorks from "@/components/landing/HowItWorks";
 import FeaturedListings from "@/components/landing/FeaturedListings";
 import Testimonials from "@/components/landing/Testimonials";
+import FAQ from "@/components/landing/FAQ";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Kya PGSathi par PG dhoondhna sach mein zero brokerage hai?", "acceptedAnswer": { "@type": "Answer", "text": "Haan. Tenants se hum kabhi koi fees nahi lete — search se le kar owner ka number lene tak, sab free hai." } },
+    { "@type": "Question", "name": "Listings verify kaise hoti hain?", "acceptedAnswer": { "@type": "Answer", "text": "Har naya PG hamari team review karti hai listing live hone se pehle — address, photos, aur owner details check hoti hain." } },
+    { "@type": "Question", "name": "PG owner se contact kaise karu?", "acceptedAnswer": { "@type": "Answer", "text": "Kisi bhi listing pe Contact Owner ya WhatsApp button milega — direct owner ke phone number pe connect hote ho, koi bichauliya nahi." } },
+  ],
+};
+
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
       <HeroSection />
-      
-      {/* Search Bar Overflow Offset */}
-      <div className="bg-neutral-50 h-8 -mt-8 relative z-0"></div>
-      
       <CityGrid />
       <HowItWorks />
-      
+
       {/* Featured PGs Section */}
       <Suspense fallback={<div className="h-96 bg-neutral-100 flex items-center justify-center animate-pulse">Loading featured PGs...</div>}>
         <FeaturedListings />
       </Suspense>
 
       <Testimonials />
+      <FAQ />
 
       {/* CTA Section for Owners */}
       <section className="py-28 bg-gradient-to-br from-primary-950 via-primary-900 to-primary-950 text-white relative overflow-hidden">

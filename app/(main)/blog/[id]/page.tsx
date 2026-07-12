@@ -39,13 +39,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-// Generate static params so these pages can be prerendered
-export function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({
-    id: post.id.toString(),
-  }));
-}
-
 export default async function BlogPostPage(props: Props) {
   const params = await props.params;
   const post = BLOG_POSTS.find((p) => p.id.toString() === params.id);
