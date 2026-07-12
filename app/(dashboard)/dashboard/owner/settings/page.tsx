@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { User, Phone, Mail, Settings } from "lucide-react";
+import EditEmailButton from "@/components/dashboard/EditEmailButton";
 
 export default async function OwnerSettingsPage() {
   const session = await auth();
@@ -51,9 +53,7 @@ export default async function OwnerSettingsPage() {
                   <div className="text-sm font-bold text-neutral-900">{user?.email || "Not provided"}</div>
                 </div>
               </div>
-              <button className="text-sm font-bold text-primary-600 hover:underline cursor-pointer">
-                {user?.email ? "Edit" : "Add"}
-              </button>
+              <EditEmailButton currentEmail={user?.email ?? ""} />
             </div>
           </div>
         </div>
@@ -61,11 +61,14 @@ export default async function OwnerSettingsPage() {
         <div className="bg-white border border-red-100 rounded-xl p-6">
           <h3 className="text-lg font-bold text-red-600 mb-2">Danger Zone</h3>
           <p className="text-sm text-neutral-500 mb-4">
-            Once you delete your account, there is no going back. Please be certain.
+            Account deletion involves your listings, tenants, and billing history — our team handles this manually to make sure nothing is lost by mistake.
           </p>
-          <button className="px-4 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
-            Delete Account
-          </button>
+          <Link
+            href="/contact"
+            className="inline-block px-4 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors"
+          >
+            Request Account Deletion
+          </Link>
         </div>
       </div>
     </div>
