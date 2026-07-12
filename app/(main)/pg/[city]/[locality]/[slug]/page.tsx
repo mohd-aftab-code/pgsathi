@@ -5,16 +5,38 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import ImageGallery from "@/components/listings/ImageGallery";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
+import ViewTracker from "@/components/listings/ViewTracker";
 import { MapPin, CheckCircle, Star, Wifi, Car, Utensils, Shirt, Brush, Clock, Shield, Users, Home, ArrowLeft, Share2 } from "lucide-react";
+import { unstable_cache } from "next/cache";
+
+const getListingBySlug = unstable_cache(
+  async (slug: string) => {
+    return db.listing.findUnique({
+      where: { slug, status: "ACTIVE", isActive: true },
+      include: {
+        city: true,
+        locality: true,
+        photos: { orderBy: { sortOrder: "asc" } },
+        amenities: { include: { amenity: true } },
+        reviews: {
+          where: { isApproved: true },
+          include: { user: { select: { name: true, avatar: true } } },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+        owner: { select: { name: true, phone: true, avatar: true } },
+      },
+    });
+  },
+  ["pg-detail"],
+  { revalidate: 300 } // 5 minutes — listing details rarely change minute-to-minute
+);
 
 export async function generateMetadata(props: {
   params: Promise<{ city: string; locality: string; slug: string }>;
 }) {
   const params = await props.params;
-  const pg = await db.listing.findUnique({
-    where: { slug: params.slug },
-    include: { city: true, locality: true, photos: { take: 1 } },
-  });
+  const pg = await getListingBySlug(params.slug);
 
   if (!pg) return { title: "PG Not Found" };
 
@@ -44,27 +66,9 @@ export default async function PGDetailPage(props: {
 }) {
   const params = await props.params;
 
-  const pg = await db.listing.findUnique({
-    where: { slug: params.slug, status: "ACTIVE", isActive: true },
-    include: {
-      city: true,
-      locality: true,
-      photos: { orderBy: { sortOrder: "asc" } },
-      amenities: { include: { amenity: true } },
-      reviews: {
-        where: { isApproved: true },
-        include: { user: { select: { name: true, avatar: true } } },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      },
-      owner: { select: { name: true, phone: true, avatar: true } },
-    },
-  });
+  const pg = await getListingBySlug(params.slug);
 
   if (!pg) notFound();
-
-  // Increment view count (fire & forget)
-  db.listing.update({ where: { id: pg.id }, data: { totalViews: { increment: 1 } } }).catch(() => {});
 
   const cityName = pg.city?.name || "";
   const localityName = pg.locality?.name || "";
@@ -120,6 +124,7 @@ export default async function PGDetailPage(props: {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
+      <ViewTracker listingId={pg.id} />
 
       <div className="bg-neutral-50 min-h-screen">
         <div className="container-max section-padding py-6 md:py-8">

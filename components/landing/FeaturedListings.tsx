@@ -2,26 +2,13 @@ import PGCard from "@/components/listings/PGCard";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { unstable_cache } from "next/cache";
 
-export default async function FeaturedListings() {
-  // Fetch featured listings first
-  let listings = await db.listing.findMany({
-    where: { isActive: true, status: "ACTIVE", isFeatured: true },
-    take: 6,
-    include: {
-      city: true,
-      locality: true,
-      photos: { take: 1 },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  const isFeatured = listings.length > 0;
-
-  // Fallback: show latest listings if no featured ones
-  if (!isFeatured) {
-    listings = await db.listing.findMany({
-      where: { isActive: true, status: "ACTIVE" },
+const getHomepageListings = unstable_cache(
+  async () => {
+    // Fetch featured listings first
+    let listings = await db.listing.findMany({
+      where: { isActive: true, status: "ACTIVE", isFeatured: true },
       take: 6,
       include: {
         city: true,
@@ -30,7 +17,31 @@ export default async function FeaturedListings() {
       },
       orderBy: { createdAt: "desc" },
     });
-  }
+
+    const isFeatured = listings.length > 0;
+
+    // Fallback: show latest listings if no featured ones
+    if (!isFeatured) {
+      listings = await db.listing.findMany({
+        where: { isActive: true, status: "ACTIVE" },
+        take: 6,
+        include: {
+          city: true,
+          locality: true,
+          photos: { take: 1 },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    return { listings, isFeatured };
+  },
+  ["homepage-featured-listings"],
+  { revalidate: 300 } // 5 minutes — homepage is the highest-traffic page, doesn't need second-fresh data
+);
+
+export default async function FeaturedListings() {
+  const { listings, isFeatured } = await getHomepageListings();
 
   if (listings.length === 0) return null;
 

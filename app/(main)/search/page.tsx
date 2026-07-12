@@ -7,6 +7,33 @@ import Breadcrumbs from "@/components/common/Breadcrumbs";
 import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
+
+const getSearchResults = unstable_cache(
+  async (where: any, orderBy: any, page: number, itemsPerPage: number) => {
+    const [listings, totalCount, cities] = await Promise.all([
+      db.listing.findMany({
+        where,
+        include: {
+          city: true,
+          locality: true,
+          photos: { take: 1 },
+        },
+        orderBy,
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+      }),
+      db.listing.count({ where }),
+      db.city.findMany({
+        where: { isActive: true },
+        orderBy: { priority: "desc" },
+      }),
+    ]);
+    return { listings, totalCount, cities };
+  },
+  ["search-results"],
+  { revalidate: 60 } // 1 minute — balances DB load against new listings showing up promptly
+);
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -112,25 +139,8 @@ export default async function SearchPage(props: {
   else if (sortBy === "price_desc") orderBy = [{ priceMin: "desc" }];
   else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
-  // Fetch listings, total count and cities
-  const [listings, totalCount, cities] = await Promise.all([
-    db.listing.findMany({
-      where,
-      include: {
-        city: true,
-        locality: true,
-        photos: { take: 1 },
-      },
-      orderBy,
-      skip: (currentPage - 1) * ITEMS_PER_PAGE,
-      take: ITEMS_PER_PAGE,
-    }),
-    db.listing.count({ where }),
-    db.city.findMany({
-      where: { isActive: true },
-      orderBy: { priority: "desc" }
-    })
-  ]);
+  // Fetch listings, total count and cities (cached — see getSearchResults above)
+  const { listings, totalCount, cities } = await getSearchResults(where, orderBy, currentPage, ITEMS_PER_PAGE);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
