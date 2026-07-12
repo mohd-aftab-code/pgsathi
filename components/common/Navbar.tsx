@@ -7,7 +7,7 @@ import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard } from "lucide-reac
 
 import logoImg from "@/app/assets/logo/logo.png";
 
-export default function Navbar({ user }: { user?: any }) {
+export default function Navbar({ user, showPricing = true }: { user?: any; showPricing?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -32,9 +32,11 @@ export default function Navbar({ user }: { user?: any }) {
             <Link href="/search" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Search size={16} /> Search PGs
             </Link>
-            <Link href="/pricing" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
-              Pricing
-            </Link>
+            {showPricing && (
+              <Link href="/pricing" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
+                Pricing
+              </Link>
+            )}
             <Link href="/dashboard/owner/listings/new" className="btn-outline flex items-center gap-1.5 px-4 py-2 text-sm ml-2">
               <PlusCircle size={15} /> List PG
             </Link>
@@ -67,9 +69,11 @@ export default function Navbar({ user }: { user?: any }) {
           <Link href="/search" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Search size={18} className="text-primary-600" /> Search PGs
           </Link>
-          <Link href="/pricing" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
-            Pricing Plans
-          </Link>
+          {showPricing && (
+            <Link href="/pricing" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
+              Pricing Plans
+            </Link>
+          )}
           <div className="h-px bg-slate-100 my-1"></div>
           <Link href="/dashboard/owner/listings/new" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-50 text-primary-700 font-bold active:bg-primary-100 transition-colors">
             <PlusCircle size={18} /> List PG For Free
