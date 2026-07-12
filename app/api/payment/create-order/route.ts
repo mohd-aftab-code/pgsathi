@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { razorpay } from "@/lib/razorpay";
+import { getRazorpayClient } from "@/lib/razorpay";
 import { auth } from "@/lib/auth";
 import { isValidPlanId, getPlanTotalAmount } from "@/lib/plans";
 
@@ -21,7 +21,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "This plan does not require payment" }, { status: 400 });
     }
 
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    let razorpay;
+    try {
+      razorpay = getRazorpayClient();
+    } catch {
       console.error("Razorpay keys are not configured");
       return NextResponse.json({ success: false, message: "Payments are not configured" }, { status: 500 });
     }
