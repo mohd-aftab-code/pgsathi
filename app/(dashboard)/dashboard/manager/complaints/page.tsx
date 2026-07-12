@@ -1,14 +1,13 @@
 /**
  * app/(main)/dashboard/manager/complaints/page.tsx
  */
-import Link from "next/link";
-import { Wrench, Plus } from "lucide-react";
+import { Wrench } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { formatDate } from "@/lib/manage-utils";
-import { ComplaintActions } from "./ComplaintActions";
+import { ComplaintActions, ComplaintStatusSelect } from "./ComplaintActions";
 
 export const metadata = { title: "Complaints — PG Manager" };
 
@@ -81,23 +80,11 @@ export default async function ComplaintsPage({
                   {c.resolvedAt && ` · Resolved: ${formatDate(c.resolvedAt)}`}
                 </div>
               </div>
-              <ComplaintStatusUpdate complaintId={c.id} currentStatus={c.status} />
+              <ComplaintStatusSelect complaintId={c.id} currentStatus={c.status} />
             </div>
           ))}
         </div>
       )}
     </div>
-  );
-}
-
-function ComplaintStatusUpdate({ complaintId, currentStatus }: { complaintId: number; currentStatus: string }) {
-  // This is a server component placeholder — actual updates done via ComplaintActions
-  return (
-    <Link
-      href={`?action=update&id=${complaintId}`}
-      className="shrink-0"
-    >
-      {/* Quick update done via ComplaintActions client component */}
-    </Link>
   );
 }

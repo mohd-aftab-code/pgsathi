@@ -155,8 +155,12 @@ export default async function TenantReceiptsPage({
                       <Calendar size={14} /> Due: {format(new Date(bill.dueDate), 'dd MMM yyyy')}
                     </span>
                     
-                    {/* Placeholder for future download/view functionality */}
-                    <button className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 transition-colors">
+                    {/* PDF download isn't built yet — disabled instead of a silent dead click */}
+                    <button
+                      disabled
+                      title="Receipt download is coming soon"
+                      className="text-neutral-400 cursor-not-allowed font-medium flex items-center gap-1"
+                    >
                       <Download size={14} /> Receipt
                     </button>
                   </div>

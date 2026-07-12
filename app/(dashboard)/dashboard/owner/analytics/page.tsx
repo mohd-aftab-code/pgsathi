@@ -59,8 +59,8 @@ export default function AnalyticsPage() {
             <MousePointerClick size={18} className="text-blue-500" />
             Total Profile Views
           </div>
-          <div className="text-3xl font-extrabold text-neutral-900">{data.stats.views30}</div>
-          <div className="text-xs text-neutral-400 mt-2">Last 30 days</div>
+          <div className="text-3xl font-extrabold text-neutral-900">{data.stats.views}</div>
+          <div className="text-xs text-neutral-400 mt-2">All time</div>
         </div>
         
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
@@ -86,7 +86,7 @@ export default function AnalyticsPage() {
             <TrendingUp size={18} className="text-orange-500" />
             Active Properties
           </div>
-          <div className="text-3xl font-extrabold text-neutral-900">Total</div>
+          <div className="text-3xl font-extrabold text-neutral-900">{data.stats.totalListings}</div>
           <div className="text-xs text-neutral-400 mt-2">Currently published</div>
         </div>
       </div>

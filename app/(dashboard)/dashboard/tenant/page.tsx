@@ -149,7 +149,7 @@ export default async function TenantDashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Saved PGs",       value: savedCount,      icon: Heart,         color: "text-pink-600",   bg: "bg-pink-50",   href: "/dashboard/tenant/saved" },
-          { label: "Active Booking",  value: activeTenancy ? 1 : 0, icon: CalendarClock, color: "text-blue-600",  bg: "bg-blue-50",  href: "#" },
+          { label: "Active Booking",  value: activeTenancy ? 1 : 0, icon: CalendarClock, color: "text-blue-600",  bg: "bg-blue-50",  href: "/dashboard/tenant/bookings" },
           { label: "Rent Bills",      value: receiptsCount,   icon: Receipt,       color: "text-green-600",  bg: "bg-green-50",  href: "/dashboard/tenant/receipts" },
           { label: "Open Complaints", value: openComplaints,  icon: AlertCircle,   color: "text-orange-600", bg: "bg-orange-50", href: "/dashboard/tenant/complaints" },
         ].map(s => {

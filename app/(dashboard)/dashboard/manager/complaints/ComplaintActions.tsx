@@ -10,6 +10,49 @@ import { Plus } from "lucide-react";
 
 interface Listing { id: number; title: string }
 
+const STATUS_OPTIONS = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+
+export function ComplaintStatusSelect({ complaintId, currentStatus }: { complaintId: number; currentStatus: string }) {
+  const router = useRouter();
+  const [status, setStatus] = useState(currentStatus);
+  const [updating, setUpdating] = useState(false);
+
+  async function handleChange(newStatus: string) {
+    const prev = status;
+    setStatus(newStatus);
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/manage/complaints/${complaintId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const d = await res.json();
+      if (!d.success) throw new Error(d.message);
+      toast.success("Status update ho gaya");
+      router.refresh();
+    } catch (err: any) {
+      setStatus(prev);
+      toast.error(err.message ?? "Update fail ho gaya");
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  return (
+    <select
+      value={status}
+      disabled={updating}
+      onChange={(e) => handleChange(e.target.value)}
+      className="input-base text-xs py-1.5 px-2.5 w-auto shrink-0"
+    >
+      {STATUS_OPTIONS.map((s) => (
+        <option key={s} value={s}>{s.replace("_", " ")}</option>
+      ))}
+    </select>
+  );
+}
+
 export function ComplaintActions({ listings }: { listings: Listing[] }) {
   const router = useRouter();
   const [open, setOpen]       = useState(false);

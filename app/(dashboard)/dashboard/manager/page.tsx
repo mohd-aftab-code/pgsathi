@@ -15,9 +15,12 @@ import {
 import { formatDistanceToNow } from "date-fns";
 
 import { requireManagerAccess } from "@/lib/manager-auth";
+import { currentMonth } from "@/lib/manage-utils";
 
 export default async function ManagerDashboardPage() {
   const { userId: ownerId, name: managerName, managerRole, isOwner } = await requireManagerAccess();
+
+  const forMonth = currentMonth();
 
   // Fetch relevant data for manager
   const [
@@ -26,6 +29,7 @@ export default async function ManagerDashboardPage() {
     pendingPayments,
     recentTenants,
     openComplaints,
+    tenantsWithDues,
   ] = await Promise.all([
     db.pgTenant.count({
       where: { ownerId, status: "ACTIVE" },
@@ -56,7 +60,18 @@ export default async function ManagerDashboardPage() {
         listing: { select: { title: true } },
       },
     }),
+    db.pgTenant.findMany({
+      where: { ownerId, status: "ACTIVE", deletedAt: null, monthlyRent: { gt: 0 } },
+      select: {
+        monthlyRent: true,
+        payments: { where: { type: "RENT", forMonth, voided: false }, select: { amount: true } },
+      },
+    }),
   ]);
+
+  const pendingRemindersCount = tenantsWithDues.filter(
+    (t) => t.monthlyRent - t.payments.reduce((s, p) => s + p.amount, 0) > 0
+  ).length;
 
   const hour = new Date().getHours();
   const greeting =
@@ -91,7 +106,7 @@ export default async function ManagerDashboardPage() {
           { label: "Active Tenants", value: activeTenants, icon: Users, color: "text-violet-600", bg: "bg-violet-50", link: "/dashboard/manager/tenants" },
           { label: "Open Issues", value: pendingComplaints, icon: Wrench, color: "text-orange-600", bg: "bg-orange-50", link: "/dashboard/manager/complaints" },
           { label: "Pending Bills", value: pendingPayments, icon: Wallet, color: "text-red-600", bg: "bg-red-50", link: "/dashboard/manager/billing" },
-          { label: "Reminders", value: "0", icon: BellRing, color: "text-blue-600", bg: "bg-blue-50", link: "/dashboard/manager/reminders" },
+          { label: "Reminders", value: pendingRemindersCount, icon: BellRing, color: "text-blue-600", bg: "bg-blue-50", link: "/dashboard/manager/reminders" },
         ].map((stat, i) => (
           <Link key={i} href={stat.link} className="bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:border-violet-300 hover:shadow-md transition-all group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">

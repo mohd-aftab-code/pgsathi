@@ -106,9 +106,9 @@ export default async function OwnerListingsPage() {
                           <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Leads</span>
                         </div>
                         <div className="w-px h-8 bg-neutral-200"></div>
-                        <div className="flex flex-col items-center opacity-50">
+                        <div className="flex flex-col items-center">
                           <span className="text-lg font-black text-neutral-900 flex items-center gap-1">
-                            -- <Eye size={14} className="text-purple-500" />
+                            {listing.totalViews} <Eye size={14} className="text-purple-500" />
                           </span>
                           <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Views</span>
                         </div>

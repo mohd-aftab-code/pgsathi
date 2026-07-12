@@ -40,9 +40,14 @@ export async function GET(req: NextRequest) {
       where: { listing: { ownerId }, createdAt: { gte: thirtyDaysAgo } }
     });
 
-    // Mock views for demonstration if not tracked, assuming 1 lead = 15 views roughly
-    // In production, aggregate from `ListingAnalytic` table.
-    const mockViews30 = totalLeadsLast30 * 15 + Math.floor(Math.random() * 50) + 100; 
+    // Real lifetime view count and listing count (Listing.totalViews is incremented
+    // on every PG detail page load — see app/(main)/pg/[city]/[locality]/[slug]/page.tsx)
+    const [viewAgg, totalListings, totalLeadsAllTime] = await Promise.all([
+      db.listing.aggregate({ where: { ownerId }, _sum: { totalViews: true } }),
+      db.listing.count({ where: { ownerId } }),
+      db.lead.count({ where: { listing: { ownerId } } }),
+    ]);
+    const totalViews = viewAgg._sum.totalViews ?? 0;
 
     // Aggregate leads by source
     const sources = await db.lead.groupBy({
@@ -57,9 +62,10 @@ export async function GET(req: NextRequest) {
         trend: monthlyLeads,
         sources: sources.map(s => ({ name: s.source, count: s._count.source })),
         stats: {
-          views30: mockViews30,
+          views: totalViews,
           leads30: totalLeadsLast30,
-          conversion: Math.round((totalLeadsLast30 / mockViews30) * 100)
+          totalListings,
+          conversion: totalViews > 0 ? Math.round((totalLeadsAllTime / totalViews) * 100) : 0
         }
       }
     });

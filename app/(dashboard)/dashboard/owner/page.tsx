@@ -12,7 +12,7 @@ export default async function OwnerDashboardPage() {
   const ownerId = parseInt(session?.user?.id || "0");
   
   // Fetch stats and recent leads
-  const [listingsCount, leadsCount, recentLeads] = await Promise.all([
+  const [listingsCount, leadsCount, recentLeads, viewAgg] = await Promise.all([
     db.listing.count({ where: { ownerId } }),
     db.lead.count({ where: { listing: { ownerId } } }),
     db.lead.findMany({
@@ -22,8 +22,10 @@ export default async function OwnerDashboardPage() {
       include: {
         listing: { select: { title: true, slug: true } }
       }
-    })
+    }),
+    db.listing.aggregate({ where: { ownerId }, _sum: { totalViews: true } })
   ]);
+  const viewsCount = viewAgg._sum.totalViews ?? 0;
 
   return (
     <div>
@@ -60,7 +62,7 @@ export default async function OwnerDashboardPage() {
               <Eye size={20} className="md:w-6 md:h-6" />
             </div>
           </div>
-          <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">0</p>
+          <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{viewsCount}</p>
         </div>
 
         <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
