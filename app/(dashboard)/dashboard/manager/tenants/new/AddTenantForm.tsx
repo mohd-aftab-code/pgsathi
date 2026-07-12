@@ -168,24 +168,37 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
                 {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
               </select>
             </div>
+            {selectedListing && rooms.length === 0 && (
+              <div className="text-sm font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
+                Is PG mein koi Room add nahi kiya gaya hai. Pehle <strong>Rooms & Beds</strong> section mein jaakar naya room add karein.
+              </div>
+            )}
+            
             {rooms.length > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Room</label>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1">Room *</label>
                 <select
-                  name="roomId" value={selectedRoom}
+                  name="roomId" required value={selectedRoom}
                   onChange={(e) => loadBeds(e.target.value)}
                   className="input-base"
                 >
-                  <option value="">No room selected</option>
+                  <option value="">Select Room...</option>
                   {rooms.map((r) => <option key={r.id} value={r.id}>Room {r.name}</option>)}
                 </select>
               </div>
             )}
+            
+            {selectedRoom && beds.length === 0 && (
+              <div className="text-sm font-medium text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                Is Room me koi Bed khali nahi hai. Kripya dusra room chunein.
+              </div>
+            )}
+
             {beds.length > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Bed (available only)</label>
-                <select name="bedId" className="input-base">
-                  <option value="">No specific bed</option>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1">Available Bed *</label>
+                <select name="bedId" required className="input-base">
+                  <option value="">Select Bed...</option>
                   {beds.map((b) => <option key={b.id} value={b.id}>Bed {b.name}</option>)}
                 </select>
               </div>
@@ -201,9 +214,9 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !selectedListing || (selectedListing && rooms.length === 0) || (selectedRoom && beds.length === 0)}
           id="submit-add-tenant"
-          className="btn-primary w-full"
+          className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Saving…" : "Add Tenant"}
         </button>
