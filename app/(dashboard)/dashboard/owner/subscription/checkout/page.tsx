@@ -5,23 +5,19 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-
-const PLANS = {
-  free: { name: "Starter", price: 0, duration: "30 Days" },
-  basic: { name: "Growth", price: 349, duration: "1 Month" },
-  pro: { name: "Pro Owner", price: 1799, duration: "1 Month" },
-};
+import { PLANS, isValidPlanId, getPlanTotalAmount } from "@/lib/plans";
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const planId = searchParams?.get("plan") as keyof typeof PLANS || "basic";
-  const selectedPlan = PLANS[planId] || PLANS.basic;
+  const rawPlanId = searchParams?.get("plan") ?? "basic";
+  const planId = isValidPlanId(rawPlanId) ? rawPlanId : "basic";
+  const selectedPlan = PLANS[planId];
 
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
 
-  const totalAmount = selectedPlan.price + Math.round(selectedPlan.price * 0.18);
+  const totalAmount = getPlanTotalAmount(planId);
 
   const handlePayment = async () => {
     if (selectedPlan.price === 0) {
@@ -132,7 +128,9 @@ export default function CheckoutPage() {
         <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-100">
           <Check size={48} />
         </div>
-        <h2 className="text-3xl font-extrabold text-neutral-900 mb-2">Payment Successful!</h2>
+        <h2 className="text-3xl font-extrabold text-neutral-900 mb-2">
+          {selectedPlan.price === 0 ? "Plan Activated!" : "Payment Successful!"}
+        </h2>
         <p className="text-neutral-500 text-lg">Your {selectedPlan.name} plan is now active.</p>
         <p className="text-neutral-400 text-sm mt-4">Redirecting to your dashboard...</p>
       </div>
@@ -167,57 +165,76 @@ export default function CheckoutPage() {
             </div>
             <div className="text-sm text-neutral-500 flex justify-between">
               <span>Duration: {selectedPlan.duration}</span>
-              <span>Billed once</span>
+              <span>{selectedPlan.price === 0 ? "No charges" : "Billed once"}</span>
             </div>
           </div>
 
-          <div className="space-y-3 text-sm text-neutral-600 border-t border-neutral-100 pt-6">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span className="font-medium text-neutral-800">₹{selectedPlan.price}</span>
+          {selectedPlan.price > 0 && (
+            <div className="space-y-3 text-sm text-neutral-600 border-t border-neutral-100 pt-6">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span className="font-medium text-neutral-800">₹{selectedPlan.price}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>GST (18%)</span>
+                <span className="font-medium text-neutral-800">₹{Math.round(selectedPlan.price * 0.18)}</span>
+              </div>
+              <div className="flex justify-between pt-3 border-t border-neutral-100 text-lg font-bold text-neutral-900">
+                <span>Total Amount</span>
+                <span>₹{totalAmount}</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>GST (18%)</span>
-              <span className="font-medium text-neutral-800">₹{Math.round(selectedPlan.price * 0.18)}</span>
-            </div>
-            <div className="flex justify-between pt-3 border-t border-neutral-100 text-lg font-bold text-neutral-900">
-              <span>Total Amount</span>
-              <span>₹{totalAmount}</span>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Right: Payment Gateway */}
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">Complete Payment</h2>
-          
+          <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+            {selectedPlan.price === 0 ? "Activate Your Plan" : "Complete Payment"}
+          </h2>
+
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200 relative overflow-hidden">
             {paymentStep === "PROCESSING" && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in">
                 <Loader2 size={40} className="animate-spin text-primary-600 mb-4" />
-                <p className="font-bold text-neutral-800">Opening Secure Payment...</p>
-                <p className="text-sm text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
+                <p className="font-bold text-neutral-800">
+                  {selectedPlan.price === 0 ? "Activating your plan..." : "Opening Secure Payment..."}
+                </p>
+                {selectedPlan.price > 0 && (
+                  <p className="text-sm text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
+                )}
               </div>
             )}
 
-            <div className="mb-6 bg-green-50 p-4 rounded-xl border border-green-100 flex items-start gap-3">
-              <CreditCard className="text-green-600 shrink-0 mt-0.5" size={20} />
-              <div>
-                <strong className="text-green-800 block mb-1">UPI & Cards Accepted</strong>
-                <p className="text-green-700 text-sm">Pay securely via Google Pay, PhonePe, Paytm, or Credit/Debit cards.</p>
+            {selectedPlan.price === 0 ? (
+              <div className="mb-6 bg-primary-50 p-4 rounded-xl border border-primary-100 flex items-start gap-3">
+                <ShieldCheck className="text-primary-600 shrink-0 mt-0.5" size={20} />
+                <div>
+                  <strong className="text-primary-800 block mb-1">No Payment Required</strong>
+                  <p className="text-primary-700 text-sm">This plan is free — click below to activate it instantly.</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="mb-6 bg-green-50 p-4 rounded-xl border border-green-100 flex items-start gap-3">
+                <CreditCard className="text-green-600 shrink-0 mt-0.5" size={20} />
+                <div>
+                  <strong className="text-green-800 block mb-1">UPI & Cards Accepted</strong>
+                  <p className="text-green-700 text-sm">Pay securely via Google Pay, PhonePe, Paytm, or Credit/Debit cards.</p>
+                </div>
+              </div>
+            )}
 
             <button
               onClick={handlePayment}
               disabled={loading}
               className="w-full h-14 bg-neutral-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
-              Pay ₹{totalAmount} via Razorpay
+              {selectedPlan.price === 0 ? "Activate Free Plan" : `Pay ₹${totalAmount} via Razorpay`}
             </button>
-            
+
             <div className="flex items-center justify-center gap-2 mt-6 text-xs text-neutral-400 font-medium">
-              <ShieldCheck size={14} /> 100% Secure Encrypted Payment
+              <ShieldCheck size={14} />
+              {selectedPlan.price === 0 ? "No card or payment details needed" : "100% Secure Encrypted Payment"}
             </div>
           </div>
         </div>

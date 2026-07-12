@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import { Building2, Sparkles } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
 import Image from "next/image";
@@ -82,6 +82,31 @@ export default async function OwnerDashboardLayout({
 
         {/* ── Main Content Area ──────────────────────────────── */}
         <main className="flex-1 w-full min-w-0">
+          {/* Mobile-only trial/upgrade reminder (desktop version lives in the sidebar) */}
+          {!hasPaidPlan && (
+            <div className="lg:hidden mb-5">
+              {trial.active ? (
+                <Link
+                  href="/dashboard/owner/subscription/upgrade"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-primary-50 to-primary-100/50 border border-primary-100 px-4 py-3"
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold text-primary-900">
+                    <Sparkles size={16} className="text-primary-600 shrink-0" />
+                    {trial.daysLeft} {trial.daysLeft === 1 ? "day" : "days"} left in free trial
+                  </span>
+                  <span className="text-xs font-bold text-primary-700 shrink-0">Upgrade →</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/dashboard/owner/subscription/upgrade"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-red-50 border border-red-100 px-4 py-3"
+                >
+                  <span className="text-sm font-semibold text-red-900">Trial expired — upgrade to continue</span>
+                  <span className="text-xs font-bold text-red-700 shrink-0">Upgrade →</span>
+                </Link>
+              )}
+            </div>
+          )}
           {children}
         </main>
       </div>
