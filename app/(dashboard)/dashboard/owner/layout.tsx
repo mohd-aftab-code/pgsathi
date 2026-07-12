@@ -6,6 +6,7 @@ import LogoutButton from "@/components/common/LogoutButton";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
+import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 
 export const metadata = {
   title: "Owner Dashboard - PGSathi",
@@ -28,6 +29,10 @@ export default async function OwnerDashboardLayout({
   if (session.user?.role !== "OWNER") {
     redirect("/dashboard");
   }
+
+  const userId = parseInt(session.user.id);
+  const [tier, trial] = await Promise.all([getPlanTier(userId), isTrialActive(userId)]);
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
 
   return (
     <div className="min-h-screen bg-neutral-50/50">
@@ -73,7 +78,7 @@ export default async function OwnerDashboardLayout({
       <div className="container-max section-padding py-6 flex flex-col lg:flex-row gap-8 pb-24 lg:pb-16">
         
         {/* ── Sidebar ─────────────────────────────────────────── */}
-        <OwnerSidebar />
+        <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} />
 
         {/* ── Main Content Area ──────────────────────────────── */}
         <main className="flex-1 w-full min-w-0">

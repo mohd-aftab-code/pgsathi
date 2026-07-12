@@ -23,7 +23,8 @@ import {
   ChefHat,
   BarChart3,
   ShieldCheck,
-  Megaphone
+  Megaphone,
+  Sparkles
 } from "lucide-react";
 
 const OWNER_NAV = [
@@ -37,7 +38,13 @@ const OWNER_NAV = [
   { name: "Settings", href: "/dashboard/owner/settings", icon: Settings },
 ];
 
-export function OwnerSidebar() {
+export function OwnerSidebar({
+  hasPaidPlan = false,
+  trialDaysLeft = 0,
+}: {
+  hasPaidPlan?: boolean;
+  trialDaysLeft?: number;
+}) {
   const pathname = usePathname();
 
   const isActive = (item: any) =>
@@ -78,6 +85,39 @@ export function OwnerSidebar() {
               })}
             </div>
           </div>
+
+          {!hasPaidPlan && (
+            <div className="p-3 border-t border-neutral-100 shrink-0">
+              {trialDaysLeft > 0 ? (
+                <div className="rounded-xl bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-100 p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Sparkles size={14} className="text-primary-600" />
+                    <p className="text-xs font-bold text-primary-900">Free Trial Active</p>
+                  </div>
+                  <p className="text-[11px] text-primary-700 mb-3">
+                    {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left before it ends
+                  </p>
+                  <Link
+                    href="/dashboard/owner/subscription/upgrade"
+                    className="block text-center text-xs font-bold bg-primary-600 text-white rounded-lg py-2 hover:bg-primary-700 transition-colors"
+                  >
+                    Upgrade Your Plan
+                  </Link>
+                </div>
+              ) : (
+                <div className="rounded-xl bg-red-50 border border-red-100 p-3.5">
+                  <p className="text-xs font-bold text-red-900 mb-1">Trial Expired</p>
+                  <p className="text-[11px] text-red-700 mb-3">Upgrade to keep full access.</p>
+                  <Link
+                    href="/dashboard/owner/subscription/upgrade"
+                    className="block text-center text-xs font-bold bg-red-600 text-white rounded-lg py-2 hover:bg-red-700 transition-colors"
+                  >
+                    Upgrade Now
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </nav>
       </aside>
 
