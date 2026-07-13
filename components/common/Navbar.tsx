@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard } from "lucide-react";
+import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Info, Phone } from "lucide-react";
 
 import logoImg from "@/app/assets/logo/logo.png";
 
@@ -31,6 +31,12 @@ export default function Navbar({ user, showPricing = true }: { user?: any; showP
           <nav className="hidden md:flex items-center gap-2">
             <Link href="/search" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Search size={16} /> Search PGs
+            </Link>
+            <Link href="/about" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
+              <Info size={16} /> About Us
+            </Link>
+            <Link href="/contact" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
+              <Phone size={16} /> Contact
             </Link>
             {showPricing && (
               <Link href="/pricing" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
@@ -68,6 +74,12 @@ export default function Navbar({ user, showPricing = true }: { user?: any; showP
         <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-lg px-4 py-4 flex flex-col gap-3 animate-fade-in">
           <Link href="/search" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Search size={18} className="text-primary-600" /> Search PGs
+          </Link>
+          <Link href="/about" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
+            <Info size={18} className="text-primary-600" /> About Us
+          </Link>
+          <Link href="/contact" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
+            <Phone size={18} className="text-primary-600" /> Contact
           </Link>
           {showPricing && (
             <Link href="/pricing" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
