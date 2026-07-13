@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock,
+  Lock,
+  TrendingUp,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
@@ -118,6 +120,48 @@ export default async function ManagerDashboardPage() {
             <div className="text-2xl font-bold text-neutral-900">{stat.value}</div>
           </Link>
         ))}
+      </div>
+
+      {/* ── Role-Based Blur UI: Revenue (Owner-Only) ───────────────── */}
+      <div className="relative rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={18} className="text-violet-600" />
+            <h2 className="font-bold text-neutral-900 text-sm">Revenue & Analytics</h2>
+          </div>
+          {!isOwner && (
+            <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <Lock size={10} /> Owner Only
+            </span>
+          )}
+        </div>
+        {/* Content (always rendered — just blurred for non-owners) */}
+        <div className={`p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
+          {[
+            { label: "Rent Collected", value: "₹1,24,500", trend: "+12%", color: "text-green-600", bg: "bg-green-50" },
+            { label: "Pending Dues", value: "₹18,000", trend: "-3%", color: "text-red-600", bg: "bg-red-50" },
+            { label: "Expenses", value: "₹32,800", trend: "+8%", color: "text-orange-600", bg: "bg-orange-50" },
+            { label: "Net Profit", value: "₹72,700", trend: "+15%", color: "text-violet-600", bg: "bg-violet-50" },
+          ].map((item, i) => (
+            <div key={i} className={`p-4 rounded-xl ${item.bg}`}>
+              <div className="text-xs font-semibold text-neutral-500 mb-1">{item.label}</div>
+              <div className={`text-xl font-extrabold ${item.color}`}>{item.value}</div>
+              <div className={`text-xs font-bold mt-1 ${item.trend.startsWith("+") ? "text-green-600" : "text-red-600"}`}>{item.trend} vs last month</div>
+            </div>
+          ))}
+        </div>
+        {/* Blur overlay with unlock CTA for non-owners */}
+        {!isOwner && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+            <div className="text-center px-6">
+              <div className="w-12 h-12 bg-amber-100 border-2 border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Lock size={22} className="text-amber-600" />
+              </div>
+              <p className="font-bold text-neutral-800 mb-1">Owner Access Required</p>
+              <p className="text-xs text-neutral-500">Revenue data is only visible to the PG Owner. Contact your owner for financial reports.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

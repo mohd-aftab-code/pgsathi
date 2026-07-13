@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
+import { WhatsAppReminderBtn } from "@/components/manage/WhatsAppReminderBtn";
 import { formatINR, formatDate, currentMonth } from "@/lib/manage-utils";
 
 export const metadata = { title: "Payments — PG Manager" };
@@ -78,6 +79,7 @@ export default async function PaymentsPage({
                   <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase hidden md:table-cell">Receipt</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Date</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-500 uppercase">Amount</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-500 uppercase">Remind</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
@@ -97,6 +99,15 @@ export default async function PaymentsPage({
                     <td className="px-4 py-3 hidden md:table-cell text-xs text-neutral-400">{p.receiptNo ?? "—"}</td>
                     <td className="px-4 py-3 text-neutral-600">{formatDate(p.paidOn)}</td>
                     <td className="px-4 py-3 text-right font-bold text-green-700">{formatINR(p.amount)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <WhatsAppReminderBtn
+                        phone={p.tenant.phone || ""}
+                        tenantName={p.tenant.name}
+                        amount={p.amount}
+                        month={p.forMonth || month}
+                        type={p.type}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>

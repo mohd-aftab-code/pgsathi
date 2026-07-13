@@ -5,6 +5,7 @@ import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { ManagerSidebar } from "@/components/dashboard/ManagerSidebar";
+import { ManagerFAB } from "@/components/dashboard/ManagerFAB";
 
 export const metadata = {
   title: "CRM Workspace — PGSathi",
@@ -88,6 +89,8 @@ export default async function ManagerDashboardLayout({
             </div>
           )}
           {children}
+          {/* Global Quick-Action FAB */}
+          <ManagerFAB />
         </main>
       </div>
     </div>
