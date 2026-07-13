@@ -96,7 +96,7 @@ export default function AdminUsersPage() {
           </h1>
           <p className="text-sm text-neutral-500 mt-1">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
         </div>
-        <button onClick={fetchData} className="cursor-pointer btn-outline text-sm flex items-center gap-2">
+        <button onClick={() => fetchData()} className="cursor-pointer btn-outline text-sm flex items-center gap-2">
           <RefreshCcw size={14} /> Refresh
         </button>
       </div>
