@@ -33,7 +33,7 @@ export default async function HeroSection() {
   const { cities, showcase } = await getHeroData();
 
   return (
-    <section className="relative bg-neutral-50 pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden">
+    <section className="relative bg-neutral-50 pt-8 pb-12 sm:pt-12 sm:pb-16 md:pt-16 md:pb-24 overflow-hidden">
       {/* Faint grid texture, kept subtle — this is the only decorative element */}
       <div
         className="absolute inset-0 opacity-[0.035] pointer-events-none"
@@ -54,7 +54,7 @@ export default async function HeroSection() {
             </div>
 
             <h1
-              className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-neutral-900 leading-[1.08] mb-5"
+              className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold text-neutral-900 leading-[1.1] mb-4 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
               Find your next PG —{" "}

@@ -113,7 +113,7 @@ function RegisterContent() {
       )}
 
       {/* ── Right Panel ─────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:px-10 lg:px-16">
         {/* Mobile Logo */}
         <Link
           href="/"
