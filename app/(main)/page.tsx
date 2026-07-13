@@ -38,46 +38,56 @@ export default function Home() {
       <FAQ />
 
       {/* CTA Section for Owners */}
-      <section className="py-28 bg-gradient-to-br from-primary-950 via-primary-900 to-primary-950 text-white relative overflow-hidden">
-        {/* Premium Abstract shapes */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] rounded-full bg-primary-600/20 blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] rounded-full bg-primary-600/20 blur-[100px] pointer-events-none"></div>
-        
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }}></div>
+      <section className="py-20 md:py-24 bg-primary-950 text-white">
+        <div className="container-max section-padding">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
+            {/* Left: copy + benefits */}
+            <div>
+              <div className="inline-flex items-center gap-2.5 text-xs font-bold text-primary-300 uppercase tracking-widest mb-5">
+                <span className="w-6 h-px bg-primary-400" />
+                For PG Owners
+              </div>
 
-        <div className="container-max section-padding relative z-10">
-          <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-2xl border border-white/10 p-10 md:p-16 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center">
-            <h2 className="text-4xl md:text-6xl font-extrabold mb-6 text-white tracking-tight">
-              PG Owner हैं? <br className="hidden md:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-500">PGSathi पर List करें!</span>
-            </h2>
-            <p className="text-lg md:text-xl text-primary-200 mb-10 max-w-2xl leading-relaxed">
-              Join 10,000+ PG owners who are getting verified leads directly on WhatsApp. 
-              Manage your PG, track views, and grow your business with zero commission.
-            </p>
-            
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 md:gap-x-12 gap-y-4 md:gap-y-6 mb-12 text-left w-full">
-              {[
-                "100% Free Basic Listing",
-                "Direct WhatsApp Leads",
-                "No Brokerage / Commission",
-                "Easy Dashboard Management"
-              ].map((benefit, idx) => (
-                <li key={idx} className="flex items-center gap-3 md:gap-4 font-medium text-primary-50 bg-white/5 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 shadow-sm text-sm md:text-base">
-                  <CheckCircle2 className="text-primary-400 shrink-0" size={20} />
-                  {benefit}
-                </li>
-              ))}
-            </ul>
+              <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold mb-5 text-white tracking-tight leading-[1.15]" style={{ textWrap: "balance" }}>
+                PG Owner hain? PGSathi par list karein.
+              </h2>
+              <p className="text-primary-200/70 text-base md:text-lg mb-9 max-w-xl leading-relaxed">
+                Join 10,000+ owners getting verified leads directly on WhatsApp — manage tenants and rent from one dashboard, zero commission.
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-5 w-full md:w-auto">
-              <Link href="/dashboard/owner/listings/new" className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-xl shadow-primary-500/25 px-10 py-5 rounded-2xl font-bold transition-all hover:scale-105 flex items-center justify-center gap-3 text-lg">
-                List Your PG Now <ArrowRight size={22} />
-              </Link>
-              <Link href="/pricing" className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-10 py-5 rounded-2xl font-bold transition-all flex items-center justify-center text-lg backdrop-blur-md">
-                View Pricing Plans
-              </Link>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                {[
+                  "100% Free Basic Listing",
+                  "Direct WhatsApp Leads",
+                  "No Brokerage / Commission",
+                  "Easy Dashboard Management",
+                ].map((benefit) => (
+                  <li key={benefit} className="flex items-center gap-2.5 font-medium text-primary-50 text-sm">
+                    <CheckCircle2 className="text-primary-400 shrink-0" size={17} />
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Right: action card */}
+            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl">
+              <p className="text-xs font-bold text-primary-700 uppercase tracking-widest mb-2">Get started free</p>
+              <h3 className="text-2xl font-extrabold text-neutral-900 mb-6">List your first PG in under 5 minutes</h3>
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/dashboard/owner/listings/new"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2.5"
+                >
+                  List Your PG Now <ArrowRight size={18} />
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center"
+                >
+                  View Pricing Plans
+                </Link>
+              </div>
             </div>
           </div>
         </div>

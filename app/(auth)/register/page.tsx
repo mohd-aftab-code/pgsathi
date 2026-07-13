@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
 import { signIn } from "next-auth/react";
+import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 import {
-  Home,
   Phone,
   Lock,
   Eye,
@@ -84,82 +84,33 @@ function RegisterContent() {
 
   return (
     <div className="min-h-screen flex bg-neutral-50">
-      {/* ── Left Panel ─────────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-col justify-between w-[45%] xl:w-[42%] bg-[#1e0a3c] relative overflow-hidden p-10 xl:p-14">
-        {/* Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div
-            className="absolute -top-32 -right-16 w-96 h-96 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, #7c3aed, transparent)" }}
-          />
-          <div
-            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full opacity-15"
-            style={{ background: "radial-gradient(circle, #ea580c, transparent)" }}
-          />
-          <div
-            className="absolute inset-0 opacity-[0.06]"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 1.5px 1.5px, white 1.5px, transparent 0)",
-              backgroundSize: "28px 28px",
-            }}
-          />
-        </div>
-
-        {/* Logo */}
-        <Link href="/" className="relative z-10 flex items-center gap-3 group">
-          <Image 
-            src={logoImg} 
-            alt="PGSathi Logo" 
-            width={160}
-            height={56}
-            priority
-            className="h-14 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform" 
-          />
-        </Link>
-
-        {/* Center */}
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-violet-200 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            Join 50,000+ users on PGSathi
-          </div>
-
-          <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-[1.15] mb-5 tracking-tight">
-            Your PG journey{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-orange-400">
-              starts here.
-            </span>
-          </h1>
-
-          <p className="text-violet-200/80 text-lg leading-relaxed mb-10 max-w-sm">
-            Whether you're looking for a PG or managing one — we have everything
-            you need.
-          </p>
-
-          {/* Benefits */}
-          <div className="flex flex-col gap-3">
-            {(role === "TENANT" ? [
-              { emoji: "🔍", text: "Browse 10,000+ verified PG listings" },
-              { emoji: "💬", text: "Connect directly via WhatsApp" },
-              { emoji: "🏠", text: "Book site visits in one tap" },
-            ] : [
-              { emoji: "📋", text: "List unlimited PG properties" },
-              { emoji: "📊", text: "Track rent, expenses & tenants" },
-              { emoji: "🔔", text: "Get instant leads with zero commission" },
-            ]).map((f, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white/8 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3">
-                <span className="text-xl">{f.emoji}</span>
-                <span className="text-sm font-medium text-white/80">{f.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative z-10 text-xs text-white/30 font-medium">
-          © 2026 PGSathi. Your data is safe with us. 🔒
-        </div>
-      </div>
+      {role === "TENANT" ? (
+        <AuthBrandPanel
+          eyebrow="For Tenants"
+          headline="Your next PG"
+          accentWord="starts here."
+          subtext="Browse verified listings, message owners directly, and book a visit — no broker in the middle."
+          stats={[
+            { value: "10,000+", label: "Verified listings" },
+            { value: "12+", label: "Cities covered" },
+            { value: "0%", label: "Brokerage" },
+          ]}
+          footer="© 2026 PGSathi. Your data stays private."
+        />
+      ) : (
+        <AuthBrandPanel
+          eyebrow="For PG Owners"
+          headline="Fill your PG"
+          accentWord="faster."
+          subtext="List your property free, get leads straight on WhatsApp, and manage tenants & rent from one dashboard."
+          stats={[
+            { value: "10,000+", label: "PG owners onboard" },
+            { value: "0%", label: "Commission on leads" },
+            { value: "15 days", label: "Free CRM trial" },
+          ]}
+          footer="© 2026 PGSathi. Your data stays private."
+        />
+      )}
 
       {/* ── Right Panel ─────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16">
@@ -182,7 +133,7 @@ function RegisterContent() {
           {/* Heading */}
           <div className="mb-7">
             <h2 className="text-3xl font-extrabold text-neutral-900 tracking-tight mb-1.5">
-              Create account ✨
+              Create your account
             </h2>
             <p className="text-neutral-500 text-sm">
               Fill in the details below to get started for free.
@@ -427,10 +378,10 @@ function RegisterContent() {
             <button
               type="submit"
               disabled={loading || success}
-              className={`w-full h-12 font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg mt-2 ${
+              className={`w-full h-12 font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2 text-white ${
                 role === "OWNER"
-                  ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-orange-500/25"
-                  : "bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white shadow-violet-500/25"
+                  ? "bg-orange-600 hover:bg-orange-700"
+                  : "bg-primary-600 hover:bg-primary-700"
               }`}
             >
               {loading ? (

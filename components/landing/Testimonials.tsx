@@ -30,42 +30,38 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-24 bg-gradient-to-b from-primary-950 via-primary-900 to-primary-950 text-white relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-primary-600 blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-secondary-600 blur-[100px] opacity-50"></div>
-      </div>
-
-      <div className="container-max section-padding relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium mb-6 text-primary-100">
-            <span className="flex h-2 w-2 rounded-full bg-orange-400"></span>
-            Real Stories, Real Trust
+    <section className="py-20 md:py-24 bg-primary-950 text-white">
+      <div className="container-max section-padding">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
+          <div>
+            <div className="inline-flex items-center gap-2.5 text-xs font-bold text-primary-300 uppercase tracking-widest mb-4">
+              <span className="w-6 h-px bg-primary-400" />
+              Real Stories
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight" style={{ textWrap: "balance" }}>
+              Loved by tenants and owners
+            </h2>
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white tracking-tight">Loved by Tenants and Owners</h2>
-          <p className="text-primary-200 text-lg md:text-xl">
-            Join thousands of users who have found their perfect home or grown their PG business with PGSathi.
+          <p className="text-primary-200/70 text-base max-w-sm">
+            Thousands have found a home or grown their PG business with PGSathi.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden">
           {testimonials.map((t) => (
-            <div key={t.id} className="bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-8 relative transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-2 group">
-              <div className="absolute -top-5 -right-5 text-9xl text-white/5 font-serif group-hover:text-white/10 transition-colors">"</div>
-              
-              <div className="flex gap-1 text-orange-400 mb-8 relative z-10">
+            <div key={t.id} className="bg-primary-950 p-8">
+              <div className="flex gap-0.5 text-orange-400 mb-6">
                 {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} size={20} fill="currentColor" />
+                  <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p className="text-lg leading-relaxed mb-10 text-primary-50 relative z-10">"{t.text}"</p>
-              
-              <div className="flex items-center gap-4 mt-auto border-t border-white/10 pt-6 relative z-10">
-                <Image src={t.image} alt={t.name} width={56} height={56} className="w-14 h-14 rounded-full border-2 border-primary-400 object-cover" />
+              <p className="text-[1.05rem] leading-relaxed mb-8 text-primary-50">{t.text}</p>
+
+              <div className="flex items-center gap-3 pt-6 border-t border-white/10">
+                <Image src={t.image} alt={t.name} width={44} height={44} className="w-11 h-11 rounded-full object-cover" />
                 <div>
-                  <h4 className="font-bold text-white text-lg">{t.name}</h4>
-                  <p className="text-sm text-primary-300 font-medium">{t.role}</p>
+                  <h4 className="font-bold text-white text-sm">{t.name}</h4>
+                  <p className="text-xs text-primary-300 font-medium">{t.role}</p>
                 </div>
               </div>
             </div>
