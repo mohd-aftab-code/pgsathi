@@ -46,7 +46,7 @@ export default async function InventoryPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-lg">{listing.title}</h3>
-                  <p className="text-sm text-neutral-500 mb-3">{listing.city.name}</p>
+                  <p className="text-sm text-neutral-500 mb-3">{listing.city?.name}</p>
                   <div className="flex gap-4 text-sm bg-neutral-50 px-3 py-2 rounded-lg inline-flex border border-neutral-100">
                     <span className="flex items-center gap-1"><strong className="text-primary-700">{listing.rooms.length}</strong> Rooms</span>
                     <span className="w-px h-4 bg-neutral-200"></span>
