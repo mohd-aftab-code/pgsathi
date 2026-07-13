@@ -23,18 +23,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
   return (
     <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-2 w-full">
       
-      {/* Free Text Search */}
-      <div className="flex-[2] relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
-        <Search className="absolute left-4 text-neutral-400" size={20} />
-        <input 
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by PG name or locality..."
-          className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none"
-        />
-      </div>
-
+      {/* City Dropdown */}
       <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
         <MapPin className="absolute left-4 text-neutral-400" size={20} />
         <select 
@@ -49,7 +38,20 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
           ))}
         </select>
       </div>
+
+      {/* Free Text Search (Area/Location) */}
+      <div className="flex-[2] relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
+        <Search className="absolute left-4 text-neutral-400" size={20} />
+        <input 
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter area, location, or landmark..."
+          className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none"
+        />
+      </div>
       
+      {/* PG Type Dropdown */}
       <div className="flex-1 relative flex items-center bg-white rounded-xl border border-neutral-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-500 transition-all">
         <Building className="absolute left-4 text-neutral-400" size={20} />
         <select 
@@ -57,11 +59,11 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
           onChange={(e) => setGender(e.target.value)}
           className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 appearance-none cursor-pointer outline-none"
         >
-          <option value="" disabled>Looking for</option>
+          <option value="" disabled>PG Type</option>
           <option value="all">Any</option>
           <option value="BOYS">Boys PG</option>
           <option value="GIRLS">Girls PG</option>
-          <option value="COED">Coliving</option>
+          <option value="COED">Co-living</option>
         </select>
       </div>
 
