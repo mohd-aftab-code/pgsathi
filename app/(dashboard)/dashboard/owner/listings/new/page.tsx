@@ -49,7 +49,7 @@ const DEFAULT_FORM = {
   // Step 1: Basic
   title: "",
   description: "",
-  pgType: "SINGLE_ROOM",
+  roomTypes: ["SINGLE_ROOM"],
   genderAllowed: "BOYS",
   
   // Step 2: Location
@@ -246,7 +246,7 @@ export default function NewListingPage() {
       const payload = {
         title: formData.title,
         description: formData.description,
-        pgType: formData.pgType,
+        roomTypes: formData.roomTypes,
         genderAllowed: formData.genderAllowed,
         cityId: parseInt(formData.cityId),
         localityId: formData.localityId ? parseInt(formData.localityId) : null,
@@ -369,17 +369,36 @@ export default function NewListingPage() {
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">PG Type *</label>
-            <select 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              value={formData.pgType}
-              onChange={e => setFormData({...formData, pgType: e.target.value})}
-            >
-              <option value="SINGLE_ROOM">Single Room</option>
-              <option value="DOUBLE_SHARING">Double Sharing</option>
-              <option value="TRIPLE_SHARING">Triple Sharing</option>
-              <option value="ENTIRE_FLAT">Entire Flat</option>
-            </select>
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">Room Types Available *</label>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { id: "SINGLE_ROOM", label: "Single Room" },
+                { id: "DOUBLE_SHARING", label: "Double Sharing" },
+                { id: "TRIPLE_SHARING", label: "Triple Sharing" },
+                { id: "ENTIRE_FLAT", label: "Entire Flat" },
+                { id: "DORMITORY", label: "Dormitory" },
+                { id: "STUDIO", label: "Studio" },
+              ].map((type) => (
+                <label key={type.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 text-primary-500 rounded border-neutral-300 focus:ring-primary-500"
+                    checked={formData.roomTypes.includes(type.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setFormData({ ...formData, roomTypes: [...formData.roomTypes, type.id] });
+                      } else {
+                        // Ensure at least one is selected
+                        if (formData.roomTypes.length > 1) {
+                          setFormData({ ...formData, roomTypes: formData.roomTypes.filter(id => id !== type.id) });
+                        }
+                      }
+                    }}
+                  />
+                  <span className="text-sm font-medium">{type.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       </div>

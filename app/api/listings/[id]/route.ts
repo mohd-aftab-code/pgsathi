@@ -60,7 +60,7 @@ export async function PATCH(
 
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
-    if (data.pgType !== undefined) updateData.pgType = data.pgType;
+    if (data.roomTypes !== undefined) updateData.roomTypes = data.roomTypes;
     if (data.genderAllowed !== undefined) updateData.genderAllowed = data.genderAllowed;
     if (data.address !== undefined) updateData.address = data.address;
     if (data.landmark !== undefined) updateData.landmark = data.landmark;

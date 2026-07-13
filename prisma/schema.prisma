@@ -107,7 +107,7 @@ model Listing {
   localityId          Int?
   title               String                @default("") @db.VarChar(200)
   description         String                @default("")
-  pgType              PGType                @default(SINGLE_ROOM)
+  roomTypes           PGType[]              @default([SINGLE_ROOM])
   genderAllowed       GenderType            @default(BOYS)
   address             String                @default("") @db.VarChar(500)
   landmark            String?               @db.VarChar(200)

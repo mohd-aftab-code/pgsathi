@@ -6,10 +6,7 @@ export default async function AdminReportsPage() {
   const totalListings = await db.listing.count();
   const activeListings = await db.listing.count({ where: { status: "ACTIVE" } });
   
-  const pgTypes = await db.listing.groupBy({
-    by: ['pgType'],
-    _count: true,
-  });
+  // pgTypes query removed
 
   return (
     <div>
@@ -47,18 +44,6 @@ export default async function AdminReportsPage() {
             <div className="text-3xl font-black text-neutral-900">{activeListings}</div>
             <div className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">Active PGs</div>
           </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><PieChart size={20} className="text-primary-600"/> PGs by Type</h2>
-        <div className="space-y-4">
-          {pgTypes.map(type => (
-            <div key={type.pgType} className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl border border-neutral-100">
-              <div className="font-bold text-neutral-700">{type.pgType.replace('_', ' ')}</div>
-              <div className="font-black text-primary-600 text-xl">{type._count}</div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

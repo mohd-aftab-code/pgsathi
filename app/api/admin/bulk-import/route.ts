@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
             title: pg.name.slice(0, 200),
             slug: uniqueSlug,
             description: `${pg.name} is a ${pg.category || "PG"} located in ${city.name}. Contact us for more details about availability and pricing.`,
-            pgType,
+            roomTypes: [pgType],
             genderAllowed,
             address: (pg.address || `${city.name}`).slice(0, 500),
             pincode: "000000", // Will be updated later

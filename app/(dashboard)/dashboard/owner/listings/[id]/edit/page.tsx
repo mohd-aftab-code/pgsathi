@@ -25,7 +25,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    pgType: "SINGLE_ROOM",
+    roomTypes: ["SINGLE_ROOM"],
     genderAllowed: "BOYS",
     cityId: "",
     localityId: "",
@@ -68,7 +68,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
           setFormData({
             title: l.title || "",
             description: l.description || "",
-            pgType: l.pgType || "SINGLE_ROOM",
+            roomTypes: l.roomTypes?.length > 0 ? l.roomTypes : ["SINGLE_ROOM"],
             genderAllowed: l.genderAllowed || "BOYS",
             cityId: l.cityId?.toString() || "",
             localityId: l.localityId?.toString() || "",
@@ -121,7 +121,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       const payload = {
         title: formData.title,
         description: formData.description,
-        pgType: formData.pgType,
+        roomTypes: formData.roomTypes,
         genderAllowed: formData.genderAllowed,
         cityId: parseInt(formData.cityId),
         localityId: formData.localityId ? parseInt(formData.localityId) : null,
@@ -217,14 +217,37 @@ export default function EditListingPage({ params }: EditListingPageProps) {
               <label className={labelCls}>PG / Flat Name *</label>
               <input type="text" className={inputCls} value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} required />
             </div>
-            <div>
-              <label className={labelCls}>PG Type *</label>
-              <select className={inputCls} value={formData.pgType} onChange={e => setFormData({ ...formData, pgType: e.target.value })}>
-                <option value="SINGLE_ROOM">Single Room</option>
-                <option value="DOUBLE_SHARING">Double Sharing</option>
-                <option value="TRIPLE_SHARING">Triple Sharing</option>
-                <option value="ENTIRE_FLAT">Entire Flat</option>
-              </select>
+            <div className="md:col-span-2">
+              <label className={labelCls}>Room Types Available *</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { id: "SINGLE_ROOM", label: "Single Room" },
+                  { id: "DOUBLE_SHARING", label: "Double Sharing" },
+                  { id: "TRIPLE_SHARING", label: "Triple Sharing" },
+                  { id: "ENTIRE_FLAT", label: "Entire Flat" },
+                  { id: "DORMITORY", label: "Dormitory" },
+                  { id: "STUDIO", label: "Studio" },
+                ].map((type) => (
+                  <label key={type.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 text-primary-500 rounded border-neutral-300 focus:ring-primary-500"
+                      checked={formData.roomTypes.includes(type.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData({ ...formData, roomTypes: [...formData.roomTypes, type.id] });
+                        } else {
+                          // Ensure at least one is selected
+                          if (formData.roomTypes.length > 1) {
+                            setFormData({ ...formData, roomTypes: formData.roomTypes.filter(id => id !== type.id) });
+                          }
+                        }
+                      }}
+                    />
+                    <span className="text-sm font-medium">{type.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="md:col-span-2">
               <label className={labelCls}>Description *</label>

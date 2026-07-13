@@ -106,7 +106,7 @@ export default async function AdminListingsPage({
                     <td className="py-4 px-6">
                       <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
                       <div className="flex items-center gap-2 text-xs font-bold text-neutral-700">
-                        <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.pgType?.replace("_", " ")}</span>
+                        <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
                         <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
                         <span className="text-primary-700 font-bold">₹{listing.priceMin}</span>
                       </div>
@@ -150,7 +150,7 @@ export default async function AdminListingsPage({
                 <div>
                   <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
                   <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-700">
-                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.pgType?.replace("_", " ")}</span>
+                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
                     <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
                     <span className="text-primary-700 font-bold">₹{listing.priceMin}</span>
                   </div>

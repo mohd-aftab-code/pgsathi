@@ -93,7 +93,7 @@ export default async function OwnerListingsPage() {
                           {listing.status === "ACTIVE" ? "● Live" : "● " + listing.status}
                         </span>
                         <div className="text-xs font-semibold text-neutral-600 bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200 inline-block">
-                          <span className="capitalize">{listing.pgType.replace("_", " ").toLowerCase()}</span> • {listing.genderAllowed}
+                          <span className="capitalize">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ").toLowerCase()}</span> • {listing.genderAllowed}
                         </div>
                       </div>
                     </td>

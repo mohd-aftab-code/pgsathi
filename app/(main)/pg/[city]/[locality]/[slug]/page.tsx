@@ -360,7 +360,7 @@ export default async function PGDetailPage(props: {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-neutral-500">PG Type</span>
-                      <span className="font-semibold text-neutral-800">{pg.pgType.replace(/_/g, " ")}</span>
+                      <span className="font-semibold text-neutral-800">{pg.roomTypes?.map((r: string) => r.replace(/_/g, " ")).join(", ")}</span>
                     </div>
                     {pg.totalViews > 0 && (
                       <div className="flex justify-between">

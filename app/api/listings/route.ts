@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
         title: data.title,
         slug: generatedSlug,
         description: data.description,
-        pgType: data.pgType || "SINGLE_ROOM",
+        roomTypes: data.roomTypes && data.roomTypes.length > 0 ? data.roomTypes : ["SINGLE_ROOM"],
         genderAllowed: data.genderAllowed || "BOYS",
         priceMin: data.priceMin || 0,
         priceMax: data.priceMax || 0,
