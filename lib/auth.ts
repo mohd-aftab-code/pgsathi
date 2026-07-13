@@ -156,10 +156,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             // Auto-link PgTenant records if they exist and aren't linked yet
             try {
-              await db.pgTenant.updateMany({
-                where: { phone: user.phone, userId: null },
-                data: { userId: user.id }
-              });
+              if (user.phone) {
+                await db.pgTenant.updateMany({
+                  where: { phone: user.phone, userId: null },
+                  data: { userId: user.id }
+                });
+              }
             } catch (e) {
               console.error("[AUTH] Error auto-linking tenant:", e);
             }
