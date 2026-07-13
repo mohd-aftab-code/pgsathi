@@ -29,6 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         phone:     { label: "Phone",     type: "text" },
         password:  { label: "Password",  type: "password" },
         isManager: { label: "Manager",   type: "text" },
+        impersonateUserId: { label: "Impersonate", type: "text" },
       },
       async authorize(credentials) {
         try {
@@ -38,8 +39,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const phone     = credentials.phone     as string | undefined;
           const password  = credentials.password  as string | undefined;
           const isManager = credentials.isManager as string | undefined;
+          const impersonateUserId = credentials.impersonateUserId as string | undefined;
 
           if (!password) throw new Error("Password is required");
+
+          // ── IMPERSONATION (Super Admin Only) ──────────────────────
+          if (impersonateUserId && email) {
+            // First, verify the admin's credentials
+            const adminUser = await db.user.findUnique({ where: { email } });
+            if (!adminUser || !adminUser.passwordHash || adminUser.role !== "ADMIN") {
+              throw new Error("Unauthorized to impersonate");
+            }
+
+            const isValidAdmin = await compare(password, adminUser.passwordHash);
+            if (!isValidAdmin) throw new Error("Invalid admin credentials");
+
+            // Fetch the target user to impersonate
+            const targetUser = await db.user.findUnique({ where: { id: parseInt(impersonateUserId) } });
+            if (!targetUser) throw new Error("Target user not found");
+
+            return {
+              id:     targetUser.id.toString(),
+              uuid:   targetUser.uuid,
+              name:   targetUser.name,
+              email:  targetUser.email,
+              role:   targetUser.role,
+              avatar: targetUser.avatar,
+            };
+          }
 
           // ── MANAGER LOGIN ─────────────────────────────────────────
           if (isManager === "true" && email) {

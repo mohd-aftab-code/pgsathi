@@ -51,7 +51,7 @@ export async function generateMetadata(props: {
     if (gender === "BOYS") genderText = "Boys ";
     if (gender === "GIRLS") genderText = "Girls ";
     if (gender === "COED") genderText = "Co-ed ";
-    
+
     title = `Best ${genderText}PGs & Hostels in ${cityName} - Zero Brokerage | PGSathi`;
     description = `Looking for a ${genderText}PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
   }
@@ -90,16 +90,26 @@ export default async function SearchPage(props: {
   const sortBy = searchParams.sort as string | undefined;
   const queryParam = searchParams.q as string | undefined;
   const pageParam = searchParams.page as string | undefined;
-  
+
   const currentPage = pageParam ? parseInt(pageParam) : 1;
   const ITEMS_PER_PAGE = 18;
 
+  // Log Search Analytics (Fire & Forget)
+  if (queryParam || citySlug) {
+    db.searchAnalytic.create({
+      data: {
+        query: queryParam ? queryParam.substring(0, 250) : null,
+        citySlug: citySlug && citySlug !== "all" ? citySlug : null,
+      }
+    }).catch(console.error);
+  }
+
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
-  
+
   if (queryParam) {
     const stopWords = ["pg", "in", "near", "hostel", "room", "rooms", "boys", "girls", "for", "rent", "best", "top", "at", "around", "the", "a", "an", "is", "of", "and"];
-    
+
     // Clean and split the search query into meaningful keywords
     const keywords = queryParam
       .toLowerCase()
@@ -127,11 +137,11 @@ export default async function SearchPage(props: {
       ];
     }
   }
-  
+
   if (citySlug && citySlug !== "all") {
     where.city = { slug: citySlug };
   }
-  
+
   if (gender && gender !== "all") {
     where.genderAllowed = gender;
   }
@@ -150,7 +160,7 @@ export default async function SearchPage(props: {
   if (amenitiesStr) {
     const amenities = amenitiesStr.split(",");
     if (amenities.includes("noticePeriod")) where.noticePeriod = false;
-    if (amenities.includes("gateClosingTime")) where.gateClosingTime = false; 
+    if (amenities.includes("gateClosingTime")) where.gateClosingTime = false;
     if (amenities.includes("foodIncluded")) where.foodIncluded = true;
     if (amenities.includes("laundryService")) where.laundryService = true;
     if (amenities.includes("roomCleaning")) where.roomCleaning = true;
@@ -186,13 +196,13 @@ export default async function SearchPage(props: {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
       <div className="container-max section-padding">
-        
+
         {/* Breadcrumb */}
-        <Breadcrumbs 
+        <Breadcrumbs
           items={[
             ...(citySlug && citySlug !== "all" ? [{ label: `PGs in ${citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")}`, href: `/pg-in-${citySlug}` }] : []),
             { label: "Search Results" }
-          ]} 
+          ]}
         />
 
         {/* Search Header */}
@@ -202,7 +212,7 @@ export default async function SearchPage(props: {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           <Suspense fallback={<div className="w-full lg:w-64 shrink-0 animate-pulse bg-white rounded-2xl h-[600px] border border-neutral-200"></div>}>
             <SearchFilters cities={cities} />
           </Suspense>
@@ -240,7 +250,7 @@ export default async function SearchPage(props: {
               </div>
             )}
           </div>
-          
+
         </div>
       </div>
     </div>

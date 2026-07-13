@@ -7,51 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ═══════════════════════════════════════
-// USERS
-// ═══════════════════════════════════════
 model User {
-  id            Int       @id @default(autoincrement())
-  uuid          String    @unique @default(cuid())
-  name          String    @db.VarChar(100)
-  email         String    @unique @db.VarChar(255)
-  phone         String?   @unique @db.VarChar(15)
-  passwordHash  String?   @db.Text
-  role          UserRole  @default(TENANT)
-  avatar        String?   @db.Text
-  isVerified    Boolean   @default(false)
-  isActive      Boolean   @default(true)
-  googleId      String?   @unique @db.VarChar(255)
-  referralCode  String?   @unique @db.VarChar(20)
-  referredBy    Int?
-  lastLoginAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  listings      Listing[]
-  subscriptions Subscription[]
-  leads         Lead[]           @relation("TenantLeads")
-  reviews       Review[]
-  savedListings SavedListing[]
-  beds          Bed[]            @relation("TenantBeds")
-  visits        VisitBooking[]   @relation("TenantVisits")
-  otpCodes      OtpCode[]
-
-  // PG Manager relations
-  pgTenantsOwned    PgTenant[]         @relation("PgTenantOwner")
-  pgPaymentsOwned   PgPayment[]        @relation("PgPaymentOwner")
-  pgRentBillsOwned  PgRentBill[]       @relation("PgRentBillOwner")
-  pgMeterOwned      PgMeterReading[]   @relation("PgMeterOwner")
-  pgComplaintsOwned PgComplaint[]      @relation("PgComplaintOwner")
-  pgExpensesOwned   PgExpense[]        @relation("PgExpenseOwner")
-  pgStaffOwned      PgStaff[]          @relation("PgStaffOwner")
-  pgSalaryOwned     PgSalaryPayout[]   @relation("PgSalaryOwner")
-  pgMessOwned       PgMessMenu[]       @relation("PgMessOwner")
-  pgTeamOwned       PgTeamMember[]     @relation("PgTeamOwner")
-  pgDocsOwned       PgTenantDocument[] @relation("PgDocOwner")
-  pgAgreementsOwned PgAgreement[]      @relation("PgAgreementOwner")
-  pgAuditOwned      PgAuditLog[]       @relation("PgAuditOwner")
-  pgAnnouncements   PgAnnouncement[]   @relation("PgAnnouncementOwner")
+  id                 Int                @id @default(autoincrement())
+  uuid               String             @unique @default(cuid())
+  name               String             @db.VarChar(100)
+  email              String             @unique @db.VarChar(255)
+  phone              String?            @unique @db.VarChar(15)
+  passwordHash       String?
+  role               UserRole           @default(TENANT)
+  avatar             String?
+  isVerified         Boolean            @default(false)
+  isActive           Boolean            @default(true)
+  googleId           String?            @unique @db.VarChar(255)
+  referralCode       String?            @unique @db.VarChar(20)
+  referredBy         Int?
+  lastLoginAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  languagePreference String             @default("ENGLISH") @db.VarChar(10)
+  ownerType          String?            @db.VarChar(20)
+  phoneVerified      Boolean            @default(false)
+  whatsappNumber     String?            @db.VarChar(15)
+  whatsappOptIn      Boolean            @default(false)
+  whatsappVerified   Boolean            @default(false)
+  beds               Bed[]              @relation("TenantBeds")
+  leads              Lead[]             @relation("TenantLeads")
+  listings           Listing[]
+  moderation_logs    moderation_logs[]
+  otpCodes           OtpCode[]
+  pgAgreementsOwned  PgAgreement[]      @relation("PgAgreementOwner")
+  pgAnnouncements    PgAnnouncement[]   @relation("PgAnnouncementOwner")
+  pgAuditOwned       PgAuditLog[]       @relation("PgAuditOwner")
+  pgComplaintsOwned  PgComplaint[]      @relation("PgComplaintOwner")
+  pgExpensesOwned    PgExpense[]        @relation("PgExpenseOwner")
+  pgMessOwned        PgMessMenu[]       @relation("PgMessOwner")
+  pgMeterOwned       PgMeterReading[]   @relation("PgMeterOwner")
+  pgPaymentsOwned    PgPayment[]        @relation("PgPaymentOwner")
+  pgRentBillsOwned   PgRentBill[]       @relation("PgRentBillOwner")
+  pgSalaryOwned      PgSalaryPayout[]   @relation("PgSalaryOwner")
+  pgStaffOwned       PgStaff[]          @relation("PgStaffOwner")
+  pgTeamOwned        PgTeamMember[]     @relation("PgTeamOwner")
+  pgDocsOwned        PgTenantDocument[] @relation("PgDocOwner")
+  pgTenantsOwned     PgTenant[]         @relation("PgTenantOwner")
+  reviews            Review[]
+  savedListings      SavedListing[]
+  subscriptions      Subscription[]
+  visits             VisitBooking[]     @relation("TenantVisits")
 
   @@index([email])
   @@index([phone])
@@ -59,15 +60,6 @@ model User {
   @@map("users")
 }
 
-enum UserRole {
-  TENANT
-  OWNER
-  ADMIN
-}
-
-// ═══════════════════════════════════════
-// CITIES & LOCALITIES
-// ═══════════════════════════════════════
 model City {
   id         Int        @id @default(autoincrement())
   name       String     @db.VarChar(100)
@@ -75,13 +67,14 @@ model City {
   state      String     @db.VarChar(100)
   isActive   Boolean    @default(true)
   priority   Int        @default(0)
-  imageUrl   String?    @db.Text
+  imageUrl   String?
   latitude   Decimal?   @db.Decimal(10, 8)
   longitude  Decimal?   @db.Decimal(11, 8)
+  metaTitle  String?    @db.VarChar(160)
+  metaDesc   String?    @db.VarChar(320)
   createdAt  DateTime   @default(now())
-
-  localities Locality[]
   listings   Listing[]
+  localities Locality[]
 
   @@index([slug])
   @@index([isActive])
@@ -89,95 +82,132 @@ model City {
 }
 
 model Locality {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   cityId    Int
-  name      String   @db.VarChar(150)
-  slug      String   @db.VarChar(180)
-  isActive  Boolean  @default(true)
-  latitude  Decimal? @db.Decimal(10, 8)
-  longitude Decimal? @db.Decimal(11, 8)
-
-  city      City     @relation(fields: [cityId], references: [id])
+  name      String    @db.VarChar(150)
+  slug      String    @db.VarChar(180)
+  isActive  Boolean   @default(true)
+  latitude  Decimal?  @db.Decimal(10, 8)
+  longitude Decimal?  @db.Decimal(11, 8)
   listings  Listing[]
+  city      City      @relation(fields: [cityId], references: [id])
 
   @@unique([cityId, slug])
   @@index([cityId])
   @@map("localities")
 }
 
-// ═══════════════════════════════════════
-// LISTINGS
-// ═══════════════════════════════════════
 model Listing {
-  id              Int           @id @default(autoincrement())
-  uuid            String        @unique @default(cuid())
-  slug            String        @unique @db.VarChar(255)
-  ownerId         Int
-  cityId          Int
-  localityId      Int?
-  title           String        @db.VarChar(200)
-  description     String        @db.Text
-  pgType          PGType
-  genderAllowed   GenderType
-  address         String        @db.VarChar(500)
-  landmark        String?       @db.VarChar(200)
-  pincode         String        @db.VarChar(10)
-  latitude        Decimal?      @db.Decimal(10, 8)
-  longitude       Decimal?      @db.Decimal(11, 8)
-  priceMin        Int
-  priceMax        Int
-  securityDeposit Int?
-  electricityCharge Int?
-  maintenanceCharge Int?
-  foodCharge        Int?
-  setupFee          Int?
-  foodIncluded    Boolean       @default(false)
-  totalRooms      Int?
-  availableRooms  Int?
-  totalBeds       Int?
-  availableBeds   Int?
-  noticePeriod    Boolean       @default(false)
-  gateClosingTime Boolean       @default(false)
-  rentLockIn      Boolean       @default(false)
-  noGuardiansStay Boolean       @default(false)
-  laundryService  Boolean       @default(false)
-  roomCleaning    Boolean       @default(false)
-  parking         Boolean       @default(false)
-  status          ListingStatus @default(PENDING)
-  isVerified      Boolean       @default(false)
-  isFeatured      Boolean       @default(false)
-  featuredUntil   DateTime?
-  isActive        Boolean       @default(true)
-  metaTitle       String?       @db.VarChar(160)
-  metaDesc        String?       @db.VarChar(320)
-  totalViews      Int           @default(0)
-  totalLeads      Int           @default(0)
-  totalReviews    Int           @default(0)
-  avgRating       Decimal       @default(0) @db.Decimal(3, 2)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  owner      User             @relation(fields: [ownerId], references: [id])
-  city       City             @relation(fields: [cityId], references: [id])
-  locality   Locality?        @relation(fields: [localityId], references: [id])
-  photos     ListingPhoto[]
-  amenities  ListingAmenity[]
-  leads      Lead[]
-  reviews    Review[]
-  saved      SavedListing[]
-  boosts     ListingBoost[]
-  analytics  ListingAnalytic[]
-  rooms      Room[]
-  visits     VisitBooking[]
-
-  // PG Manager relations
-  pgTenants       PgTenant[]
-  pgMeterReadings PgMeterReading[]
-  pgComplaints    PgComplaint[]
-  pgExpenses      PgExpense[]
-  pgStaff         PgStaff[]
-  pgMessMenus     PgMessMenu[]
-  pgAnnouncements PgAnnouncement[]
+  id                  Int                   @id @default(autoincrement())
+  uuid                String                @unique @default(cuid())
+  slug                String                @unique @db.VarChar(255)
+  ownerId             Int
+  cityId              Int?
+  localityId          Int?
+  title               String                @default("") @db.VarChar(200)
+  description         String                @default("")
+  pgType              PGType                @default(SINGLE_ROOM)
+  genderAllowed       GenderType            @default(BOYS)
+  address             String                @default("") @db.VarChar(500)
+  landmark            String?               @db.VarChar(200)
+  pincode             String                @default("") @db.VarChar(10)
+  latitude            Decimal?              @db.Decimal(10, 8)
+  longitude           Decimal?              @db.Decimal(11, 8)
+  priceMin            Int                   @default(0)
+  priceMax            Int                   @default(0)
+  securityDeposit     Int?
+  foodIncluded        Boolean               @default(false)
+  totalRooms          Int?
+  availableRooms      Int?
+  totalBeds           Int?
+  availableBeds       Int?
+  status              ListingStatus         @default(DRAFT)
+  isVerified          Boolean               @default(false)
+  isFeatured          Boolean               @default(false)
+  featuredUntil       DateTime?
+  isActive            Boolean               @default(true)
+  metaTitle           String?               @db.VarChar(160)
+  metaDesc            String?               @db.VarChar(320)
+  totalViews          Int                   @default(0)
+  totalLeads          Int                   @default(0)
+  totalReviews        Int                   @default(0)
+  avgRating           Decimal               @default(0) @db.Decimal(3, 2)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  gateClosingTime     Boolean               @default(false)
+  laundryService      Boolean               @default(false)
+  noGuardiansStay     Boolean               @default(false)
+  noticePeriod        Boolean               @default(false)
+  parking             Boolean               @default(false)
+  rentLockIn          Boolean               @default(false)
+  roomCleaning        Boolean               @default(false)
+  electricityCharge   Int?
+  foodCharge          Int?
+  maintenanceCharge   Int?
+  setupFee            Int?
+  alcoholAllowed      Boolean               @default(false)
+  areaLocality        String?               @db.VarChar(200)
+  buildingType        String?               @db.VarChar(20)
+  cctvCoverage        String?               @db.VarChar(15)
+  curfewTime          String?               @db.VarChar(10)
+  depositRefundPolicy String?               @db.VarChar(30)
+  doorNumber          String?               @db.VarChar(100)
+  emergencyExits      Boolean               @default(false)
+  fireExtinguisher    Boolean               @default(false)
+  firstAidKit         Boolean               @default(false)
+  foodAvailability    String?               @db.VarChar(20)
+  foodType            String?               @db.VarChar(10)
+  internetSpeed       String?               @db.VarChar(20)
+  internetType        String?               @db.VarChar(15)
+  isDraft             Boolean               @default(true)
+  liftAvailable       Boolean               @default(false)
+  lockInPeriodMonths  Int?
+  moderationNotes     String?
+  noticePeriodDays    Int?
+  parkingType         String?               @db.VarChar(15)
+  petsAllowed         Boolean               @default(false)
+  pgFloors            String?
+  powerBackup         String                @default("NONE") @db.VarChar(10)
+  preferredGuest      String?               @db.VarChar(15)
+  propertyAge         Int?
+  propertyType        String                @default("PG") @db.VarChar(20)
+  qualityScore        Int                   @default(0)
+  rejectionReason     String?
+  sector              String?               @db.VarChar(50)
+  securityGuard       String?               @db.VarChar(10)
+  seoScore            Int                   @default(0)
+  smokingAllowed      Boolean               @default(false)
+  state               String?               @db.VarChar(100)
+  streetName          String?               @db.VarChar(200)
+  totalFloors         Int?
+  trustScore          Int                   @default(0)
+  visitorsAllowed     String?               @db.VarChar(15)
+  waterSupply         String?               @db.VarChar(15)
+  wizardStep          Int                   @default(1)
+  womenOnlyFloors     Boolean               @default(false)
+  leads               Lead[]
+  amenities           ListingAmenity[]
+  analytics           ListingAnalytic[]
+  boosts              ListingBoost[]
+  photos              ListingPhoto[]
+  city                City?                 @relation(fields: [cityId], references: [id])
+  locality            Locality?             @relation(fields: [localityId], references: [id])
+  owner               User                  @relation(fields: [ownerId], references: [id])
+  moderation_logs     moderation_logs[]
+  pgAnnouncements     PgAnnouncement[]
+  pgComplaints        PgComplaint[]
+  pgExpenses          PgExpense[]
+  pgMessMenus         PgMessMenu[]
+  pgMeterReadings     PgMeterReading[]
+  pgStaff             PgStaff[]
+  pgTenants           PgTenant[]
+  property_pois       property_pois[]
+  reviews             Review[]
+  room_configurations room_configurations[]
+  rooms               Room[]
+  saved               SavedListing[]
+  trust_records       trust_records?
+  visits              VisitBooking[]
 
   @@index([cityId, status, isActive])
   @@index([cityId, localityId, status])
@@ -187,55 +217,31 @@ model Listing {
   @@index([ownerId])
   @@index([slug])
   @@index([status, isVerified, isActive])
+  @@index([isDraft, ownerId])
+  @@index([qualityScore])
   @@map("listings")
 }
 
-enum PGType {
-  SINGLE_ROOM
-  DOUBLE_SHARING
-  TRIPLE_SHARING
-  DORMITORY
-  STUDIO
-  ENTIRE_FLAT
-}
-
-enum GenderType {
-  BOYS
-  GIRLS
-  COED
-}
-
-enum ListingStatus {
-  PENDING
-  ACTIVE
-  INACTIVE
-  REJECTED
-  EXPIRED
-  DRAFT
-}
-
-// ═══════════════════════════════════════
-// PHOTOS
-// ═══════════════════════════════════════
 model ListingPhoto {
-  id        Int      @id @default(autoincrement())
-  listingId Int
-  url       String   @db.Text
-  publicId  String   @db.VarChar(255)
-  caption   String?  @db.VarChar(200)
-  sortOrder Int      @default(0)
-  isPrimary Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  id         Int       @id @default(autoincrement())
+  listingId  Int
+  url        String
+  publicId   String    @db.VarChar(255)
+  caption    String?   @db.VarChar(200)
+  sortOrder  Int       @default(0)
+  isPrimary  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  isVerified Boolean   @default(false)
+  mediaType  String    @default("PHOTO") @db.VarChar(15)
+  roomLabel  String?   @db.VarChar(30)
+  verifiedAt DateTime?
+  listing    Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([listingId])
+  @@index([listingId, mediaType])
   @@map("listing_photos")
 }
 
-// ═══════════════════════════════════════
-// AMENITIES
-// ═══════════════════════════════════════
 model Amenity {
   id       Int              @id @default(autoincrement())
   name     String           @unique @db.VarChar(100)
@@ -250,17 +256,15 @@ model Amenity {
 model ListingAmenity {
   listingId Int
   amenityId Int
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  detail    String? @db.VarChar(100)
   amenity   Amenity @relation(fields: [amenityId], references: [id])
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@id([listingId, amenityId])
   @@index([listingId])
   @@map("listing_amenities")
 }
 
-// ═══════════════════════════════════════
-// PLANS & SUBSCRIPTIONS
-// ═══════════════════════════════════════
 model Plan {
   id             Int            @id @default(autoincrement())
   name           String         @db.VarChar(50)
@@ -292,33 +296,15 @@ model Subscription {
   autoRenew         Boolean      @default(true)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
-
-  user     User      @relation(fields: [userId], references: [id])
-  plan     Plan      @relation(fields: [planId], references: [id])
-  invoices Invoice[]
+  invoices          Invoice[]
+  plan              Plan         @relation(fields: [planId], references: [id])
+  user              User         @relation(fields: [userId], references: [id])
 
   @@index([userId, status])
   @@index([endDate])
   @@map("subscriptions")
 }
 
-enum SubStatus {
-  PENDING
-  ACTIVE
-  CANCELLED
-  EXPIRED
-  PAST_DUE
-  TRIAL
-}
-
-enum BillingCycle {
-  MONTHLY
-  YEARLY
-}
-
-// ═══════════════════════════════════════
-// INVOICES
-// ═══════════════════════════════════════
 model Invoice {
   id              Int          @id @default(autoincrement())
   subscriptionId  Int
@@ -329,16 +315,12 @@ model Invoice {
   razorpayPayId   String?      @db.VarChar(100)
   invoiceDate     DateTime     @default(now())
   paidAt          DateTime?
-
-  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
 
   @@index([subscriptionId])
   @@map("invoices")
 }
 
-// ═══════════════════════════════════════
-// LISTING BOOSTS
-// ═══════════════════════════════════════
 model ListingBoost {
   id              Int       @id @default(autoincrement())
   listingId       Int
@@ -350,11 +332,601 @@ model ListingBoost {
   razorpayPayId   String?   @db.VarChar(100)
   isPaid          Boolean   @default(false)
   createdAt       DateTime  @default(now())
-
-  listing Listing @relation(fields: [listingId], references: [id])
+  listing         Listing   @relation(fields: [listingId], references: [id])
 
   @@index([listingId, endDate])
   @@map("listing_boosts")
+}
+
+model Lead {
+  id        Int        @id @default(autoincrement())
+  listingId Int
+  tenantId  Int?
+  name      String     @db.VarChar(100)
+  phone     String     @db.VarChar(15)
+  email     String?    @db.VarChar(255)
+  message   String?
+  source    LeadSource @default(WEBSITE)
+  isRead    Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  listing   Listing    @relation(fields: [listingId], references: [id])
+  tenant    User?      @relation("TenantLeads", fields: [tenantId], references: [id])
+
+  @@index([listingId, createdAt])
+  @@index([tenantId])
+  @@map("leads")
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  userId     Int
+  rating     Int
+  comment    String?
+  isVerified Boolean  @default(false)
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  listing    Listing  @relation(fields: [listingId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([listingId, userId])
+  @@index([listingId, isApproved])
+  @@map("reviews")
+}
+
+model SavedListing {
+  userId    Int
+  listingId Int
+  savedAt   DateTime @default(now())
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, listingId])
+  @@map("saved_listings")
+}
+
+model ListingAnalytic {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  date      DateTime @db.Date
+  views     Int      @default(0)
+  leads     Int      @default(0)
+  saves     Int      @default(0)
+  whatsapps Int      @default(0)
+  listing   Listing  @relation(fields: [listingId], references: [id])
+
+  @@unique([listingId, date])
+  @@index([listingId, date])
+  @@map("listing_analytics")
+}
+
+model Room {
+  id              Int              @id @default(autoincrement())
+  listingId       Int
+  name            String           @db.VarChar(100)
+  type            PGType
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  floor           String?          @db.VarChar(50)
+  beds            Bed[]
+  pgMeterReadings PgMeterReading[]
+  pgTenants       PgTenant[]
+  listing         Listing          @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@map("rooms")
+}
+
+model Bed {
+  id         Int        @id @default(autoincrement())
+  roomId     Int
+  name       String     @db.VarChar(50)
+  isOccupied Boolean    @default(false)
+  tenantId   Int?
+  room       Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  tenant     User?      @relation("TenantBeds", fields: [tenantId], references: [id])
+  pgTenants  PgTenant[]
+
+  @@index([roomId])
+  @@index([tenantId])
+  @@map("beds")
+}
+
+model VisitBooking {
+  id        Int         @id @default(autoincrement())
+  listingId Int
+  tenantId  Int?
+  name      String      @db.VarChar(100)
+  phone     String      @db.VarChar(15)
+  visitDate DateTime
+  status    VisitStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  listing   Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tenant    User?       @relation("TenantVisits", fields: [tenantId], references: [id])
+
+  @@index([listingId])
+  @@index([visitDate])
+  @@map("visit_bookings")
+}
+
+model OtpCode {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  phone       String?  @db.VarChar(15)
+  code        String   @db.VarChar(6)
+  purpose     String   @db.VarChar(20)
+  expiresAt   DateTime
+  isUsed      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  email       String?  @db.VarChar(255)
+  accountType String?  @db.VarChar(10)
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([phone, expiresAt])
+  @@index([email, expiresAt])
+  @@map("otp_codes")
+}
+
+model PgTenant {
+  id               Int                @id @default(autoincrement())
+  ownerId          Int
+  listingId        Int
+  roomId           Int?
+  bedId            Int?
+  name             String             @db.VarChar(100)
+  phone            String             @db.VarChar(15)
+  email            String?            @db.VarChar(255)
+  gender           String             @default("MALE") @db.VarChar(10)
+  idType           String?            @db.VarChar(30)
+  idNumber         String?            @db.VarChar(50)
+  photoUrl         String?
+  guardianName     String?            @db.VarChar(100)
+  guardianPhone    String?            @db.VarChar(15)
+  permanentAddress String?
+  monthlyRent      Int                @default(0)
+  securityDeposit  Int                @default(0)
+  rentDueDay       Int                @default(5)
+  checkInDate      DateTime           @default(now())
+  checkOutDate     DateTime?
+  noticeDate       DateTime?
+  expectedVacate   DateTime?
+  status           String             @default("ACTIVE") @db.VarChar(20)
+  depositRefunded  Int?
+  notes            String?
+  deletedAt        DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  agreements       PgAgreement[]
+  complaints       PgComplaint[]
+  payments         PgPayment[]
+  rentBills        PgRentBill[]
+  documents        PgTenantDocument[]
+  bed              Bed?               @relation(fields: [bedId], references: [id])
+  listing          Listing            @relation(fields: [listingId], references: [id])
+  owner            User               @relation("PgTenantOwner", fields: [ownerId], references: [id])
+  room             Room?              @relation(fields: [roomId], references: [id])
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@index([status])
+  @@map("pg_tenants")
+}
+
+model PgPayment {
+  id         Int         @id @default(autoincrement())
+  ownerId    Int
+  tenantId   Int
+  rentBillId Int?
+  amount     Int
+  type       String      @default("RENT") @db.VarChar(30)
+  forMonth   String?     @db.VarChar(7)
+  method     String      @default("CASH") @db.VarChar(20)
+  status     String      @default("PAID") @db.VarChar(20)
+  paidOn     DateTime    @default(now())
+  note       String?
+  receiptNo  String?     @db.VarChar(30)
+  voided     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  owner      User        @relation("PgPaymentOwner", fields: [ownerId], references: [id])
+  rentBill   PgRentBill? @relation(fields: [rentBillId], references: [id])
+  tenant     PgTenant    @relation(fields: [tenantId], references: [id])
+
+  @@index([ownerId])
+  @@index([tenantId])
+  @@index([forMonth])
+  @@map("pg_payments")
+}
+
+model PgRentBill {
+  id          Int         @id @default(autoincrement())
+  ownerId     Int
+  tenantId    Int
+  forMonth    String      @db.VarChar(7)
+  rentAmount  Int
+  electricity Int         @default(0)
+  otherAmount Int         @default(0)
+  lateFee     Int         @default(0)
+  dueDate     DateTime
+  billNo      String?     @db.VarChar(30)
+  note        String?
+  createdAt   DateTime    @default(now())
+  payments    PgPayment[]
+  owner       User        @relation("PgRentBillOwner", fields: [ownerId], references: [id])
+  tenant      PgTenant    @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, forMonth])
+  @@index([ownerId])
+  @@map("pg_rent_bills")
+}
+
+model PgMeterReading {
+  id          Int      @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int
+  roomId      Int
+  forMonth    String   @db.VarChar(7)
+  prevReading Int
+  currReading Int
+  ratePerUnit Int
+  createdAt   DateTime @default(now())
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  owner       User     @relation("PgMeterOwner", fields: [ownerId], references: [id])
+  room        Room     @relation(fields: [roomId], references: [id])
+
+  @@unique([roomId, forMonth])
+  @@index([ownerId])
+  @@index([listingId])
+  @@map("pg_meter_readings")
+}
+
+model PgComplaint {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  listingId   Int
+  tenantId    Int?
+  title       String    @db.VarChar(200)
+  description String?
+  category    String    @default("OTHER") @db.VarChar(50)
+  priority    String    @default("MEDIUM") @db.VarChar(20)
+  status      String    @default("OPEN") @db.VarChar(20)
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  listing     Listing   @relation(fields: [listingId], references: [id])
+  owner       User      @relation("PgComplaintOwner", fields: [ownerId], references: [id])
+  tenant      PgTenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@index([status])
+  @@map("pg_complaints")
+}
+
+model PgExpense {
+  id        Int      @id @default(autoincrement())
+  ownerId   Int
+  listingId Int?
+  category  String   @default("OTHER") @db.VarChar(50)
+  amount    Int
+  title     String   @db.VarChar(200)
+  spentOn   DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+  listing   Listing? @relation(fields: [listingId], references: [id])
+  owner     User     @relation("PgExpenseOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@index([listingId])
+  @@map("pg_expenses")
+}
+
+model PgStaff {
+  id        Int              @id @default(autoincrement())
+  ownerId   Int
+  listingId Int?
+  name      String           @db.VarChar(100)
+  role      String           @default("OTHER") @db.VarChar(50)
+  phone     String?          @db.VarChar(15)
+  salary    Int              @default(0)
+  joinDate  DateTime         @default(now())
+  active    Boolean          @default(true)
+  note      String?
+  createdAt DateTime         @default(now())
+  payouts   PgSalaryPayout[]
+  listing   Listing?         @relation(fields: [listingId], references: [id])
+  owner     User             @relation("PgStaffOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_staff")
+}
+
+model PgSalaryPayout {
+  id       Int      @id @default(autoincrement())
+  ownerId  Int
+  staffId  Int
+  forMonth String   @db.VarChar(7)
+  amount   Int
+  paidOn   DateTime @default(now())
+  method   String   @default("CASH") @db.VarChar(20)
+  note     String?
+  owner    User     @relation("PgSalaryOwner", fields: [ownerId], references: [id])
+  staff    PgStaff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, forMonth])
+  @@index([ownerId])
+  @@map("pg_salary_payouts")
+}
+
+model PgMessMenu {
+  id        Int      @id @default(autoincrement())
+  ownerId   Int
+  listingId Int
+  dayOfWeek Int
+  breakfast String?
+  lunch     String?
+  snacks    String?
+  dinner    String?
+  updatedAt DateTime @updatedAt
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  owner     User     @relation("PgMessOwner", fields: [ownerId], references: [id])
+
+  @@unique([listingId, dayOfWeek])
+  @@index([ownerId])
+  @@map("pg_mess_menus")
+}
+
+model PgTeamMember {
+  id           Int      @id @default(autoincrement())
+  ownerId      Int
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String
+  role         String   @default("MANAGER") @db.VarChar(20)
+  active       Boolean  @default(true)
+  listingIds   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  owner        User     @relation("PgTeamOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_team_members")
+}
+
+model PgTenantDocument {
+  id         Int      @id @default(autoincrement())
+  ownerId    Int
+  tenantId   Int
+  type       String   @db.VarChar(40)
+  fileName   String   @db.VarChar(255)
+  url        String
+  publicId   String?  @db.VarChar(255)
+  mimeType   String?  @db.VarChar(50)
+  status     String   @default("PENDING") @db.VarChar(20)
+  uploadedAt DateTime @default(now())
+  owner      User     @relation("PgDocOwner", fields: [ownerId], references: [id])
+  tenant     PgTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([ownerId])
+  @@map("pg_tenant_documents")
+}
+
+model PgAgreement {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int
+  tenantId    Int
+  startDate   DateTime
+  endDate     DateTime?
+  monthlyRent Int
+  deposit     Int
+  noticeDays  Int       @default(30)
+  terms       String?
+  status      String    @default("DRAFT") @db.VarChar(20)
+  signedDate  DateTime?
+  createdAt   DateTime  @default(now())
+  owner       User      @relation("PgAgreementOwner", fields: [ownerId], references: [id])
+  tenant      PgTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([ownerId])
+  @@map("pg_agreements")
+}
+
+model PgAuditLog {
+  id        Int      @id @default(autoincrement())
+  ownerId   Int
+  actor     String   @db.VarChar(150)
+  action    String
+  entity    String?  @db.VarChar(100)
+  createdAt DateTime @default(now())
+  owner     User     @relation("PgAuditOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_audit_logs")
+}
+
+model PgAnnouncement {
+  id        Int      @id @default(autoincrement())
+  ownerId   Int
+  listingId Int?
+  title     String   @db.VarChar(200)
+  message   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  listing   Listing? @relation(fields: [listingId], references: [id])
+  owner     User     @relation("PgAnnouncementOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("pg_announcements")
+}
+
+model moderation_logs {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  reviewerId Int?
+  action     String   @db.VarChar(20)
+  reason     String?
+  notes      String?
+  createdAt  DateTime @default(now())
+  listings   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  users      User?    @relation(fields: [reviewerId], references: [id])
+
+  @@index([listingId])
+  @@index([reviewerId])
+}
+
+model pois {
+  id            Int             @id @default(autoincrement())
+  type          String          @db.VarChar(15)
+  name          String          @db.VarChar(200)
+  latitude      Decimal?        @db.Decimal(10, 8)
+  longitude     Decimal?        @db.Decimal(11, 8)
+  cityId        Int?
+  property_pois property_pois[]
+
+  @@index([type, cityId])
+}
+
+model property_pois {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  poiId      Int
+  distanceKm Decimal? @db.Decimal(5, 2)
+  listings   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  pois       pois     @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, poiId])
+  @@index([listingId])
+}
+
+model room_availability {
+  id                    Int                 @id @default(autoincrement())
+  roomConfigId          Int                 @unique
+  totalBeds             Int                 @default(0)
+  occupiedBeds          Int                 @default(0)
+  availableBeds         Int                 @default(0)
+  nextAvailableDate     DateTime?
+  hasWaitlist           Boolean             @default(false)
+  waitlistContactMethod String?             @db.VarChar(10)
+  lastUpdated           DateTime            @default(now())
+  room_configurations   room_configurations @relation(fields: [roomConfigId], references: [id], onDelete: Cascade)
+}
+
+model room_configurations {
+  id                  Int                @id @default(autoincrement())
+  listingId           Int
+  roomType            String             @db.VarChar(15)
+  attachedWashroom    Boolean            @default(false)
+  sharedWashroom      Boolean            @default(false)
+  sharedWashroomRatio Int?
+  isAC                Boolean            @default(false)
+  hasBalcony          Boolean            @default(false)
+  balconyFacing       String?            @db.VarChar(20)
+  roomSizeSqFt        Int?
+  bedType             String?            @db.VarChar(10)
+  mattressType        String?            @db.VarChar(10)
+  cupboardCount       Int                @default(0)
+  hasStudyTable       Boolean            @default(false)
+  hasChair            Boolean            @default(false)
+  maxOccupancy        Int                @default(1)
+  roomCount           Int                @default(1)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime
+  room_availability   room_availability?
+  listings            Listing            @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  room_pricing        room_pricing?
+
+  @@index([listingId])
+}
+
+model room_pricing {
+  id                   Int                 @id @default(autoincrement())
+  roomConfigId         Int                 @unique
+  rentPerBed           Int                 @default(0)
+  depositPerBed        Int                 @default(0)
+  maintenanceMonthly   Int?
+  electricityType      String?             @db.VarChar(10)
+  electricityRate      Int?
+  waterCharges         Int?
+  foodCharges          Int?
+  laundryCharges       Int?
+  cleaningCharges      Int?
+  wifiCharges          Int?
+  parkingCharges       Int?
+  hiddenChargesNote    String?
+  noHiddenCharges      Boolean             @default(false)
+  earlyPaymentDiscount Int?
+  longTermDiscount6m   Int?
+  longTermDiscount12m  Int?
+  introOfferAmount     Int?
+  introOfferValidUntil DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime
+  room_configurations  room_configurations @relation(fields: [roomConfigId], references: [id], onDelete: Cascade)
+}
+
+model trust_records {
+  id               Int      @id @default(autoincrement())
+  listingId        Int      @unique
+  phoneVerified    Boolean  @default(false)
+  whatsappVerified Boolean  @default(false)
+  locationVerified Boolean  @default(false)
+  photoVerified    Boolean  @default(false)
+  kycDocUrl        String?
+  kycDocType       String?  @db.VarChar(30)
+  kycStatus        String   @default("NONE") @db.VarChar(15)
+  qualityScore     Int      @default(0)
+  trustScore       Int      @default(0)
+  seoScore         Int      @default(0)
+  lastCalculated   DateTime @default(now())
+  listings         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  TENANT
+  OWNER
+  ADMIN
+}
+
+enum PGType {
+  SINGLE_ROOM
+  DOUBLE_SHARING
+  TRIPLE_SHARING
+  DORMITORY
+  STUDIO
+  ENTIRE_FLAT
+}
+
+enum GenderType {
+  BOYS
+  GIRLS
+  COED
+  UNISEX
+  FAMILY
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  REJECTED
+  EXPIRED
+  DRAFT
+  UNDER_REVIEW
+}
+
+enum SubStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+  TRIAL
+  PENDING
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
 }
 
 enum BoostType {
@@ -364,151 +936,11 @@ enum BoostType {
   WHATSAPP_BLAST
 }
 
-// ═══════════════════════════════════════
-// LEADS
-// ═══════════════════════════════════════
-model Lead {
-  id        Int        @id @default(autoincrement())
-  listingId Int
-  tenantId  Int?
-  name      String     @db.VarChar(100)
-  phone     String     @db.VarChar(15)
-  email     String?    @db.VarChar(255)
-  message   String?    @db.Text
-  source    LeadSource @default(WEBSITE)
-  isRead    Boolean    @default(false)
-  createdAt DateTime   @default(now())
-
-  listing Listing @relation(fields: [listingId], references: [id])
-  tenant  User?   @relation("TenantLeads", fields: [tenantId], references: [id])
-
-  @@index([listingId, createdAt])
-  @@index([tenantId])
-  @@map("leads")
-}
-
 enum LeadSource {
   WEBSITE
   WHATSAPP
   PHONE
   APP
-}
-
-// ═══════════════════════════════════════
-// REVIEWS
-// ═══════════════════════════════════════
-model Review {
-  id         Int      @id @default(autoincrement())
-  listingId  Int
-  userId     Int
-  rating     Int
-  comment    String?  @db.Text
-  isVerified Boolean  @default(false)
-  isApproved Boolean  @default(false)
-  createdAt  DateTime @default(now())
-
-  listing Listing @relation(fields: [listingId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-
-  @@unique([listingId, userId])
-  @@index([listingId, isApproved])
-  @@map("reviews")
-}
-
-// ═══════════════════════════════════════
-// SAVED LISTINGS
-// ═══════════════════════════════════════
-model SavedListing {
-  userId    Int
-  listingId Int
-  savedAt   DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
-
-  @@id([userId, listingId])
-  @@map("saved_listings")
-}
-
-// ═══════════════════════════════════════
-// ANALYTICS (daily)
-// ═══════════════════════════════════════
-model ListingAnalytic {
-  id        Int      @id @default(autoincrement())
-  listingId Int
-  date      DateTime @db.Date
-  views     Int      @default(0)
-  leads     Int      @default(0)
-  saves     Int      @default(0)
-  whatsapps Int      @default(0)
-
-  listing Listing @relation(fields: [listingId], references: [id])
-
-  @@unique([listingId, date])
-  @@index([listingId, date])
-  @@map("listing_analytics")
-}
-
-// ═══════════════════════════════════════
-// ROOMS & BEDS (OS LAYER)
-// ═══════════════════════════════════════
-model Room {
-  id        Int      @id @default(autoincrement())
-  listingId Int
-  name      String   @db.VarChar(100)
-  type      PGType
-  floor     String?  @db.VarChar(50)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  listing       Listing          @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  beds          Bed[]
-
-  // PG Manager relations
-  pgTenants       PgTenant[]
-  pgMeterReadings PgMeterReading[]
-
-  @@index([listingId])
-  @@map("rooms")
-}
-
-model Bed {
-  id        Int      @id @default(autoincrement())
-  roomId    Int
-  name      String   @db.VarChar(50)
-  isOccupied Boolean @default(false)
-  tenantId  Int?
-
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  tenant    User?    @relation("TenantBeds", fields: [tenantId], references: [id])
-
-  // PG Manager relations
-  pgTenants PgTenant[]
-
-  @@index([roomId])
-  @@index([tenantId])
-  @@map("beds")
-}
-
-// ═══════════════════════════════════════
-// VISITS (TRUST LAYER)
-// ═══════════════════════════════════════
-model VisitBooking {
-  id        Int      @id @default(autoincrement())
-  listingId Int
-  tenantId  Int?
-  name      String   @db.VarChar(100)
-  phone     String   @db.VarChar(15)
-  visitDate DateTime
-  status    VisitStatus @default(PENDING)
-  createdAt DateTime @default(now())
-
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  tenant    User?    @relation("TenantVisits", fields: [tenantId], references: [id])
-
-  @@index([listingId])
-  @@index([visitDate])
-  @@map("visit_bookings")
 }
 
 enum VisitStatus {
@@ -519,393 +951,15 @@ enum VisitStatus {
 }
 
 // ═══════════════════════════════════════
-// OTP CODES
+// ANALYTICS & ADMIN
 // ═══════════════════════════════════════
-model OtpCode {
-  id          Int      @id @default(autoincrement())
-  userId      Int?
-  phone       String?  @db.VarChar(15)
-  email       String?  @db.VarChar(255)
-  accountType String?  @db.VarChar(10) // "ADMIN" | "MANAGER" — set only for email-based resets
-  code        String   @db.VarChar(6)
-  purpose     String   @db.VarChar(20)
-  expiresAt   DateTime
-  isUsed      Boolean  @default(false)
-  createdAt   DateTime @default(now())
+model SearchAnalytic {
+  id        Int      @id @default(autoincrement())
+  query     String?  @db.VarChar(255)
+  citySlug  String?  @db.VarChar(120)
+  createdAt DateTime @default(now())
 
-  user User? @relation(fields: [userId], references: [id])
-
-  @@index([phone, expiresAt])
-  @@index([email, expiresAt])
-  @@map("otp_codes")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — TENANT (Actual paying guest,
-// different from Lead. Owner records them manually.)
-// ═══════════════════════════════════════
-model PgTenant {
-  id               Int       @id @default(autoincrement())
-  ownerId          Int
-  listingId        Int
-  roomId           Int?
-  bedId            Int?
-
-  name             String    @db.VarChar(100)
-  phone            String    @db.VarChar(15)
-  email            String?   @db.VarChar(255)
-  gender           String    @default("MALE") @db.VarChar(10)
-
-  // KYC
-  idType           String?   @db.VarChar(30)
-  idNumber         String?   @db.VarChar(50)
-  photoUrl         String?   @db.Text
-
-  // Guardian
-  guardianName     String?   @db.VarChar(100)
-  guardianPhone    String?   @db.VarChar(15)
-  permanentAddress String?   @db.Text
-
-  // Stay & money
-  monthlyRent      Int       @default(0)
-  securityDeposit  Int       @default(0)
-  rentDueDay       Int       @default(5)
-  checkInDate      DateTime  @default(now())
-  checkOutDate     DateTime?
-  noticeDate       DateTime?
-  expectedVacate   DateTime?
-  status           String    @default("ACTIVE") @db.VarChar(20) // ACTIVE | NOTICE | VACATED
-  depositRefunded  Int?
-  notes            String?   @db.Text
-
-  deletedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-
-  owner        User              @relation("PgTenantOwner", fields: [ownerId], references: [id])
-  listing      Listing           @relation(fields: [listingId], references: [id])
-  room         Room?             @relation(fields: [roomId], references: [id])
-  bed          Bed?              @relation(fields: [bedId], references: [id])
-  payments     PgPayment[]
-  rentBills    PgRentBill[]
-  documents    PgTenantDocument[]
-  agreements   PgAgreement[]
-  complaints   PgComplaint[]
-
-  @@index([ownerId])
-  @@index([listingId])
-  @@index([status])
-  @@map("pg_tenants")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — PAYMENT (Rent/deposit/misc recorded by owner)
-// ═══════════════════════════════════════
-model PgPayment {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  tenantId    Int
-  rentBillId  Int?
-
-  amount      Int
-  type        String    @default("RENT") @db.VarChar(30) // RENT | DEPOSIT | ELECTRICITY | LATE_FEE | OTHER
-  forMonth    String?   @db.VarChar(7)                   // "2026-07"
-  method      String    @default("CASH") @db.VarChar(20) // CASH | UPI | BANK | CHEQUE
-  status      String    @default("PAID") @db.VarChar(20) // PAID | PARTIAL | PENDING
-  paidOn      DateTime  @default(now())
-  note        String?   @db.Text
-  receiptNo   String?   @db.VarChar(30)
-  voided      Boolean   @default(false)
-
-  createdAt   DateTime  @default(now())
-
-  owner    User       @relation("PgPaymentOwner", fields: [ownerId], references: [id])
-  tenant   PgTenant   @relation(fields: [tenantId], references: [id])
-  rentBill PgRentBill? @relation(fields: [rentBillId], references: [id], onDelete: SetNull)
-
-  @@index([ownerId])
-  @@index([tenantId])
-  @@index([forMonth])
-  @@map("pg_payments")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — RENT BILL (Monthly invoice auto-generated)
-// ═══════════════════════════════════════
-model PgRentBill {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  tenantId    Int
-
-  forMonth    String    @db.VarChar(7) // "2026-07"
-  rentAmount  Int
-  electricity Int       @default(0)
-  otherAmount Int       @default(0)
-  lateFee     Int       @default(0)
-  dueDate     DateTime
-  billNo      String?   @db.VarChar(30)
-  note        String?   @db.Text
-  createdAt   DateTime  @default(now())
-
-  owner    User       @relation("PgRentBillOwner", fields: [ownerId], references: [id])
-  tenant   PgTenant   @relation(fields: [tenantId], references: [id])
-  payments PgPayment[]
-
-  @@unique([tenantId, forMonth])
-  @@index([ownerId])
-  @@map("pg_rent_bills")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — METER READING (Electricity per room)
-// ═══════════════════════════════════════
-model PgMeterReading {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int
-  roomId      Int
-
-  forMonth    String    @db.VarChar(7)
-  prevReading Int
-  currReading Int
-  ratePerUnit Int
-  createdAt   DateTime  @default(now())
-
-  owner   User    @relation("PgMeterOwner", fields: [ownerId], references: [id])
-  listing Listing @relation(fields: [listingId], references: [id])
-  room    Room    @relation(fields: [roomId], references: [id])
-
-  @@unique([roomId, forMonth])
-  @@index([ownerId])
-  @@index([listingId])
-  @@map("pg_meter_readings")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — COMPLAINT / MAINTENANCE
-// ═══════════════════════════════════════
-model PgComplaint {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int
-  tenantId    Int?
-
-  title       String    @db.VarChar(200)
-  description String?   @db.Text
-  category    String    @default("OTHER") @db.VarChar(50) // PLUMBING | ELECTRICAL | CLEANING | OTHER
-  priority    String    @default("MEDIUM") @db.VarChar(20) // LOW | MEDIUM | HIGH | URGENT
-  status      String    @default("OPEN") @db.VarChar(20)   // OPEN | IN_PROGRESS | RESOLVED | CLOSED
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  owner   User      @relation("PgComplaintOwner", fields: [ownerId], references: [id])
-  listing Listing   @relation(fields: [listingId], references: [id])
-  tenant  PgTenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-
-  @@index([ownerId])
-  @@index([listingId])
-  @@index([status])
-  @@map("pg_complaints")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — EXPENSE
-// ═══════════════════════════════════════
-model PgExpense {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int?
-
-  category    String    @default("OTHER") @db.VarChar(50) // MAINTENANCE | SALARY | GROCERY | UTILITY | OTHER
-  amount      Int
-  title       String    @db.VarChar(200)
-  spentOn     DateTime  @default(now())
-  note        String?   @db.Text
-  createdAt   DateTime  @default(now())
-
-  owner   User     @relation("PgExpenseOwner", fields: [ownerId], references: [id])
-  listing Listing? @relation(fields: [listingId], references: [id])
-
-  @@index([ownerId])
-  @@index([listingId])
-  @@map("pg_expenses")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — STAFF MEMBER
-// ═══════════════════════════════════════
-model PgStaff {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int?
-
-  name        String    @db.VarChar(100)
-  role        String    @default("OTHER") @db.VarChar(50) // COOK | CLEANER | WARDEN | GUARD | OTHER
-  phone       String?   @db.VarChar(15)
-  salary      Int       @default(0)
-  joinDate    DateTime  @default(now())
-  active      Boolean   @default(true)
-  note        String?   @db.Text
-  createdAt   DateTime  @default(now())
-
-  owner   User     @relation("PgStaffOwner", fields: [ownerId], references: [id])
-  listing Listing? @relation(fields: [listingId], references: [id])
-  payouts PgSalaryPayout[]
-
-  @@index([ownerId])
-  @@map("pg_staff")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — SALARY PAYOUT
-// ═══════════════════════════════════════
-model PgSalaryPayout {
-  id        Int       @id @default(autoincrement())
-  ownerId   Int
-  staffId   Int
-
-  forMonth  String    @db.VarChar(7)
-  amount    Int
-  paidOn    DateTime  @default(now())
-  method    String    @default("CASH") @db.VarChar(20)
-  note      String?   @db.Text
-
-  owner User    @relation("PgSalaryOwner", fields: [ownerId], references: [id])
-  staff PgStaff @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  @@unique([staffId, forMonth])
-  @@index([ownerId])
-  @@map("pg_salary_payouts")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — MESS MENU (Weekly per PG)
-// ═══════════════════════════════════════
-model PgMessMenu {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int
-
-  dayOfWeek   Int       // 0=Sun, 1=Mon ... 6=Sat
-  breakfast   String?   @db.Text
-  lunch       String?   @db.Text
-  snacks      String?   @db.Text
-  dinner      String?   @db.Text
-  updatedAt   DateTime  @updatedAt
-
-  owner   User    @relation("PgMessOwner", fields: [ownerId], references: [id])
-  listing Listing @relation(fields: [listingId], references: [id])
-
-  @@unique([listingId, dayOfWeek])
-  @@index([ownerId])
-  @@map("pg_mess_menus")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — TEAM MEMBER (Manager/Warden sub-login)
-// ═══════════════════════════════════════
-model PgTeamMember {
-  id           Int       @id @default(autoincrement())
-  ownerId      Int
-  name         String    @db.VarChar(100)
-  email        String    @unique @db.VarChar(255)
-  passwordHash String    @db.Text
-  role         String    @default("MANAGER") @db.VarChar(20) // MANAGER | WARDEN | ACCOUNTANT
-  active       Boolean   @default(true)
-  listingIds   String?   @db.Text // JSON array of listing IDs they can access ("[]" = all)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  owner User @relation("PgTeamOwner", fields: [ownerId], references: [id])
-
-  @@index([ownerId])
-  @@map("pg_team_members")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — TENANT DOCUMENT (KYC)
-// ═══════════════════════════════════════
-model PgTenantDocument {
-  id         Int       @id @default(autoincrement())
-  ownerId    Int
-  tenantId   Int
-
-  type       String    @db.VarChar(40) // AADHAAR_FRONT | AADHAAR_BACK | PAN | PHOTO | POLICE_VERIFICATION | AGREEMENT | OTHER
-  fileName   String    @db.VarChar(255)
-  url        String    @db.Text
-  publicId   String?   @db.VarChar(255)
-  mimeType   String?   @db.VarChar(50)
-  status     String    @default("PENDING") @db.VarChar(20) // PENDING | VERIFIED | REJECTED
-  uploadedAt DateTime  @default(now())
-
-  owner  User     @relation("PgDocOwner", fields: [ownerId], references: [id])
-  tenant PgTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([ownerId])
-  @@map("pg_tenant_documents")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — RENT AGREEMENT
-// ═══════════════════════════════════════
-model PgAgreement {
-  id             Int       @id @default(autoincrement())
-  ownerId        Int
-  tenantId       Int
-
-  startDate      DateTime
-  endDate        DateTime?
-  monthlyRent    Int
-  deposit        Int
-  noticeDays     Int       @default(30)
-  terms          String?   @db.Text
-  status         String    @default("DRAFT") @db.VarChar(20) // DRAFT | ACTIVE | EXPIRED
-  signedDate     DateTime?
-  createdAt      DateTime  @default(now())
-
-  owner  User     @relation("PgAgreementOwner", fields: [ownerId], references: [id])
-  tenant PgTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([ownerId])
-  @@map("pg_agreements")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — AUDIT LOG
-// ═══════════════════════════════════════
-model PgAuditLog {
-  id        Int       @id @default(autoincrement())
-  ownerId   Int
-  actor     String    @db.VarChar(150)
-  action    String    @db.Text
-  entity    String?   @db.VarChar(100)
-  createdAt DateTime  @default(now())
-
-  owner User @relation("PgAuditOwner", fields: [ownerId], references: [id])
-
-  @@index([ownerId])
-  @@map("pg_audit_logs")
-}
-
-// ═══════════════════════════════════════
-// PG MANAGER — ANNOUNCEMENT / NOTICE BOARD
-// ═══════════════════════════════════════
-model PgAnnouncement {
-  id          Int       @id @default(autoincrement())
-  ownerId     Int
-  listingId   Int?
-
-  title       String    @db.VarChar(200)
-  message     String    @db.Text
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-
-  owner   User     @relation("PgAnnouncementOwner", fields: [ownerId], references: [id])
-  listing Listing? @relation(fields: [listingId], references: [id])
-
-  @@index([ownerId])
-  @@map("pg_announcements")
+  @@index([citySlug])
+  @@index([createdAt])
+  @@map("search_analytics")
 }

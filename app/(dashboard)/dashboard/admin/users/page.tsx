@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { ShieldCheck, Users, Building2, MousePointerClick, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import { useSession, signIn } from "next-auth/react";
 
 export default function AdminUsersPage() {
+  const { data: session } = useSession();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -45,6 +47,19 @@ export default function AdminUsersPage() {
     }
   }
 
+  const handleImpersonate = (userId: number) => {
+    const pwd = prompt("Security Check: Enter your admin password to impersonate this user:");
+    if (!pwd) return;
+    
+    toast.loading("Initiating impersonation session...");
+    signIn("credentials", { 
+      email: session?.user?.email, 
+      password: pwd, 
+      impersonateUserId: userId, 
+      callbackUrl: "/dashboard" 
+    });
+  };
+
   if (loading) {
     return <div className="p-8 text-center text-neutral-500">Loading master dashboard...</div>;
   }
@@ -59,7 +74,7 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-extrabold text-neutral-900 flex items-center gap-2">
             <ShieldCheck className="text-blue-600" size={28} /> SaaS Client Management
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">Manage PG owner trials and active subscriptions.</p>
+          <p className="text-sm text-neutral-500 mt-1">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
         </div>
         <button onClick={fetchData} className="btn-outline text-sm flex items-center gap-2">
           <RefreshCcw size={14} /> Refresh
@@ -90,11 +105,11 @@ export default function AdminUsersPage() {
       <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
         <div className="px-6 py-5 border-b border-neutral-200 bg-neutral-50/50">
           <h2 className="text-lg font-bold text-neutral-900">Registered PG Owners (Clients)</h2>
-          <p className="text-sm text-neutral-500">Manage trials and subscriptions manually.</p>
+          <p className="text-sm text-neutral-500">Manage trials, subscriptions, and perform account impersonations.</p>
         </div>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-sm text-left min-w-[800px]">
             <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-200">
               <tr>
                 <th className="px-6 py-4 font-semibold">Owner</th>
@@ -142,6 +157,12 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => handleImpersonate(o.id)}
+                        className="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 border border-orange-200 hover:bg-orange-200 transition"
+                      >
+                        Login As
+                      </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "extend_trial", 7)} 

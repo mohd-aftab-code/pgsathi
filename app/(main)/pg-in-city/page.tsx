@@ -11,8 +11,12 @@ export async function generateMetadata(props: {
   const city = (searchParams.city as string) || "city";
   const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, " ");
 
-  const title = `Best PGs & Hostels in ${cityName} - Zero Brokerage`;
-  const description = `Looking for a PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
+  const cityObj = await db.city.findUnique({
+    where: { slug: city }
+  });
+
+  const title = cityObj?.metaTitle || `Best PGs & Hostels in ${cityName} - Zero Brokerage`;
+  const description = cityObj?.metaDesc || `Looking for a PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
 
   const listingCount = await db.listing.count({
     where: { city: { slug: city }, status: "ACTIVE" }
