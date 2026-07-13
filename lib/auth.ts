@@ -154,6 +154,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const isValid = await compare(password, user.passwordHash);
             if (!isValid) throw new Error("Invalid phone number or password");
 
+            // Auto-link PgTenant records if they exist and aren't linked yet
+            try {
+              await db.pgTenant.updateMany({
+                where: { phone: user.phone, userId: null },
+                data: { userId: user.id }
+              });
+            } catch (e) {
+              console.error("[AUTH] Error auto-linking tenant:", e);
+            }
+
             return {
               id:     user.id.toString(),
               uuid:   user.uuid,

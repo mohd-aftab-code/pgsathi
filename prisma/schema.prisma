@@ -49,6 +49,7 @@ model User {
   pgTeamOwned        PgTeamMember[]     @relation("PgTeamOwner")
   pgDocsOwned        PgTenantDocument[] @relation("PgDocOwner")
   pgTenantsOwned     PgTenant[]         @relation("PgTenantOwner")
+  tenantProfiles     PgTenant[]         @relation("TenantProfile")
   reviews            Review[]
   savedListings      SavedListing[]
   subscriptions      Subscription[]
@@ -501,12 +502,15 @@ model PgTenant {
   payments         PgPayment[]
   rentBills        PgRentBill[]
   documents        PgTenantDocument[]
+  userId           Int?
   bed              Bed?               @relation(fields: [bedId], references: [id])
   listing          Listing            @relation(fields: [listingId], references: [id])
   owner            User               @relation("PgTenantOwner", fields: [ownerId], references: [id])
+  user             User?              @relation("TenantProfile", fields: [userId], references: [id])
   room             Room?              @relation(fields: [roomId], references: [id])
 
   @@index([ownerId])
+  @@index([userId])
   @@index([listingId])
   @@index([status])
   @@map("pg_tenants")

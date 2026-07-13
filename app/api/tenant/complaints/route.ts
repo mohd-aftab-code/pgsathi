@@ -13,20 +13,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Not authenticated" }, { status: 401 });
     }
 
-    const phone = (session.user as any).phone || "";
-    const email = session.user.email || "";
-
-    const whereTenant: any = [];
-    if (phone) whereTenant.push({ phone });
-    if (email) whereTenant.push({ email });
-
-    if (whereTenant.length === 0) {
-      return NextResponse.json({ success: false, message: "No matching tenant found" }, { status: 400 });
-    }
+    const userId = parseInt(session.user.id);
 
     // Find active tenant record
     const tenant = await db.pgTenant.findFirst({
-      where: { OR: whereTenant, status: { in: ["ACTIVE", "NOTICE"] } },
+      where: { userId, status: { in: ["ACTIVE", "NOTICE"] } },
       select: { id: true, ownerId: true, listingId: true },
     });
 
@@ -67,19 +58,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Not authenticated" }, { status: 401 });
     }
 
-    const phone = (session.user as any).phone || "";
-    const email = session.user.email || "";
-
-    const whereTenant: any = [];
-    if (phone) whereTenant.push({ phone });
-    if (email) whereTenant.push({ email });
-
-    if (whereTenant.length === 0) {
-      return NextResponse.json({ success: true, data: [] });
-    }
+    const userId = parseInt(session.user.id);
 
     const tenants = await db.pgTenant.findMany({
-      where: { OR: whereTenant },
+      where: { userId },
       select: { id: true },
     });
 

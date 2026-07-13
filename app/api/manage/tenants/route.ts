@@ -79,8 +79,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Listing not found" }, { status: 404 });
     }
 
+    // Try to auto-link with an existing User account
+    const existingUser = await db.user.findUnique({
+      where: { phone: data.phone }
+    });
+
     const tenant = await db.pgTenant.create({
       data: {
+        userId:           existingUser ? existingUser.id : null,
         ownerId:          ctx.userId,
         listingId:        parseInt(data.listingId),
         roomId:           data.roomId ? parseInt(data.roomId) : null,

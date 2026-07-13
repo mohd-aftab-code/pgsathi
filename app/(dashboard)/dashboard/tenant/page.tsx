@@ -18,11 +18,6 @@ export default async function TenantDashboardPage() {
   const email   = (session?.user as any)?.email || "";
   const month   = currentMonth();
 
-  // Build tenant OR filter
-  const whereTenant: any = [];
-  if (phone)  whereTenant.push({ phone });
-  if (email)  whereTenant.push({ email });
-
   // 1. Saved PG count
   const savedCount = await db.savedListing.count({ where: { userId } });
 
@@ -32,10 +27,10 @@ export default async function TenantDashboardPage() {
   let openComplaints = 0;
   let receiptsCount = 0;
 
-  if (whereTenant.length > 0) {
-    // 2. Find active tenancy linked by phone/email
+  if (userId) {
+    // 2. Find active tenancy linked by userId
     activeTenancy = await db.pgTenant.findFirst({
-      where: { OR: whereTenant, status: { in: ["ACTIVE", "NOTICE"] } },
+      where: { userId, status: { in: ["ACTIVE", "NOTICE"] } },
       include: {
         listing: { select: { title: true } },
         room:    { select: { name: true } },
