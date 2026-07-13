@@ -87,7 +87,7 @@ export default function AdminUsersPage() {
           </h1>
           <p className="text-sm text-neutral-500 mt-1">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
         </div>
-        <button onClick={fetchData} className="btn-outline text-sm flex items-center gap-2">
+        <button onClick={fetchData} className="cursor-pointer btn-outline text-sm flex items-center gap-2">
           <RefreshCcw size={14} /> Refresh
         </button>
       </div>
@@ -119,7 +119,7 @@ export default function AdminUsersPage() {
           <p className="text-sm text-neutral-500">Manage trials, subscriptions, and perform account impersonations.</p>
         </div>
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-sm text-left min-w-[800px]">
             <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-200">
               <tr>
@@ -170,21 +170,21 @@ export default function AdminUsersPage() {
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => handleImpersonate(o.id, o.name)}
-                        className="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 border border-orange-200 hover:bg-orange-200 transition"
+                        className="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 border border-orange-200 hover:bg-orange-200 transition"
                       >
                         Login As
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                        className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition"
+                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition"
                       >
                         +7D Trial
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "activate_plan")} 
-                        className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
                       >
                         Activate Pro
                       </button>
@@ -197,6 +197,76 @@ export default function AdminUsersPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+          {data.owners.map((o: any) => (
+            <div key={`mob-${o.id}`} className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-bold text-neutral-900">{o.name}</div>
+                  <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
+                </div>
+                <div>
+                  {o.status === "FREE_TRIAL" && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-800">
+                      Trial
+                    </span>
+                  )}
+                  {o.status === "PREMIUM" && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                      Premium
+                    </span>
+                  )}
+                  {o.status === "EXPIRED" && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-red-100 text-red-800">
+                      Expired
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 py-2 border-y border-neutral-50 text-center">
+                <div>
+                  <div className="text-[10px] text-neutral-400 font-bold uppercase">PGs</div>
+                  <div className="font-semibold text-neutral-700">{o.pgCount}</div>
+                </div>
+                <div className="border-l border-neutral-100">
+                  <div className="text-[10px] text-neutral-400 font-bold uppercase">Tenants</div>
+                  <div className="font-semibold text-neutral-700">{o.tenantCount}</div>
+                </div>
+                <div className="border-l border-neutral-100">
+                  <div className="text-[10px] text-neutral-400 font-bold uppercase">Leads</div>
+                  <div className="font-semibold text-neutral-700">{o.leadCount}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <button 
+                  onClick={() => handleImpersonate(o.id, o.name)}
+                  className="cursor-pointer flex-1 text-xs font-bold px-2 py-2 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition text-center"
+                >
+                  Login As
+                </button>
+                <button 
+                  disabled={processing}
+                  onClick={() => handleAction(o.id, "extend_trial", 7)} 
+                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition text-center"
+                >
+                  +7D Trial
+                </button>
+                <button 
+                  disabled={processing}
+                  onClick={() => handleAction(o.id, "activate_plan")} 
+                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition text-center"
+                >
+                  Pro
+                </button>
+              </div>
+            </div>
+          ))}
+          {data.owners.length === 0 && (
+            <div className="text-center text-neutral-500 py-6">No PG owners found.</div>
+          )}
         </div>
       </div>
     </div>

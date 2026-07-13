@@ -59,7 +59,8 @@ export default async function AdminListingsPage({
 
       <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
         {listings.length > 0 ? (
-          <div className="overflow-x-auto">
+          <>
+            <div className="overflow-x-auto hidden md:block">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-700">
@@ -99,7 +100,7 @@ export default async function AdminListingsPage({
                         <Link 
                           href={`/pg/${listing.slug}`} 
                           target="_blank"
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
+                          className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
                           title="Preview"
                         >
                           <Eye size={18} />
@@ -112,6 +113,45 @@ export default async function AdminListingsPage({
               </tbody>
             </table>
           </div>
+          
+          <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+            {listings.map((listing) => (
+              <div key={`mob-${listing.id}`} className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                <div>
+                  <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-700">
+                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.pgType?.replace("_", " ")}</span>
+                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
+                    <span className="text-primary-700 font-bold">₹{listing.priceMin}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 py-2 border-y border-neutral-50">
+                  <div className="w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold text-xs">
+                    {listing.owner?.name?.charAt(0) || "U"}
+                  </div>
+                  <div>
+                    <div className="font-bold text-neutral-900 text-sm">{listing.owner?.name || "Unknown"}</div>
+                    <div className="text-xs text-neutral-500">{listing.owner?.phone || "No phone"}</div>
+                  </div>
+                </div>
+                <div className="text-sm text-neutral-600 font-medium">
+                  {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
+                </div>
+                <div className="flex items-center justify-end gap-2 mt-2">
+                  <Link 
+                    href={`/pg/${listing.slug}`} 
+                    target="_blank"
+                    className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
+                    title="Preview"
+                  >
+                    <Eye size={18} />
+                  </Link>
+                  <AdminListingActions listingId={listing.id} currentStatus={listing.status} />
+                </div>
+              </div>
+            ))}
+          </div>
+          </>
         ) : (
           <div className="p-16 flex flex-col items-center text-center">
             <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mb-6 text-neutral-400 shadow-inner border border-neutral-100">

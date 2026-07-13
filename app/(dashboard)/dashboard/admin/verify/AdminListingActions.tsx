@@ -97,7 +97,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       {/* Assign Owner Button */}
       <button
         onClick={() => setShowAssignModal(true)}
-        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+        className="cursor-pointer p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
         title="Assign Owner & Send Invite"
       >
         <UserPlus size={18} />
@@ -106,7 +106,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       {/* Edit Button */}
       <Link
         href={`/dashboard/owner/listings/${listingId}/edit`}
-        className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+        className="cursor-pointer p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
         title="Edit Listing (Admin Override)"
       >
         <Edit size={18} />
@@ -118,7 +118,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
           <button 
             onClick={() => handleStatusChange("ACTIVE")}
             disabled={loading !== null}
-            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+            className="cursor-pointer p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
             title="Approve Listing"
           >
             {loading === "ACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
@@ -126,7 +126,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
           <button 
             onClick={() => handleStatusChange("REJECTED")}
             disabled={loading !== null}
-            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+            className="cursor-pointer p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
             title="Reject Listing"
           >
             {loading === "REJECTED" ? <Loader2 size={18} className="animate-spin" /> : <XCircle size={18} />}
@@ -139,7 +139,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={() => handleStatusChange("INACTIVE")}
           disabled={loading !== null}
-          className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors disabled:opacity-50"
           title="Deactivate Listing"
         >
           {loading === "INACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <PowerOff size={18} />}
@@ -151,7 +151,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={() => handleStatusChange("ACTIVE")}
           disabled={loading !== null}
-          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
           title="Activate Listing"
         >
           {loading === "ACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <Power size={18} />}
@@ -163,7 +163,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={handleDelete}
           disabled={loading !== null}
-          className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
           title="Soft Delete Listing"
         >
           {loading === "DELETE" ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
@@ -220,14 +220,14 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
                   <button
                     type="button"
                     onClick={() => setShowAssignModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="cursor-pointer px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading === "ASSIGN"}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center gap-2"
+                    className="cursor-pointer px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center gap-2"
                   >
                     {loading === "ASSIGN" ? <Loader2 size={16} className="animate-spin" /> : null}
                     {loading === "ASSIGN" ? "Assigning..." : "Assign & Invite"}

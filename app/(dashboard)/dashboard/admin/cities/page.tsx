@@ -71,7 +71,7 @@ export default function AdminCitiesPage() {
                       setEditingId(city.id);
                       setFormData({ metaTitle: city.metaTitle || "", metaDesc: city.metaDesc || "" });
                     }}
-                    className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1"
+                    className="cursor-pointer text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1"
                   >
                     <Edit size={14} /> Edit SEO
                   </button>
@@ -102,14 +102,14 @@ export default function AdminCitiesPage() {
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <button 
                       onClick={() => setEditingId(null)}
-                      className="px-4 py-2 text-xs font-bold text-neutral-500 hover:text-neutral-700 transition"
+                      className="cursor-pointer px-4 py-2 text-xs font-bold text-neutral-500 hover:text-neutral-700 transition"
                     >
                       Cancel
                     </button>
                     <button 
                       disabled={processing}
                       onClick={() => handleSave(city.id)}
-                      className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition flex items-center gap-1"
+                      className="cursor-pointer px-4 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition flex items-center gap-1"
                     >
                       <CheckCircle size={14} /> Save
                     </button>
