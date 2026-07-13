@@ -167,8 +167,24 @@ export default async function SearchPage(props: {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
+  // SEO: ItemList Schema for Rich Snippets
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": listings.map((pg, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://pgsathi.in/pg/${pg.slug}`
+    }))
+  };
+
   return (
     <div className="bg-neutral-50 min-h-screen py-8">
+      {/* JSON-LD Schema Markup for Search Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <div className="container-max section-padding">
         
         {/* Breadcrumb */}
