@@ -141,7 +141,7 @@ export default function CheckoutPage() {
     <div className="max-w-4xl mx-auto py-8">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       
-      <Link href="/pricing" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 mb-8 font-medium transition-colors">
+      <Link href="/dashboard/owner/subscription/upgrade" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 mb-8 font-medium transition-colors">
         <ArrowLeft size={18} /> Back to Plans
       </Link>
 

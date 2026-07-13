@@ -47,7 +47,7 @@ export default async function OwnerSubscriptionPage() {
           <p className="text-neutral-500 max-w-md mx-auto mb-8">
             You are currently on the Free Basic Tier. Upgrade to a premium plan to list more PGs and get priority ranking.
           </p>
-          <Link href="/pricing" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-orange-500/30 transition-all inline-block">
+          <Link href="/dashboard/owner/subscription/upgrade" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-orange-500/30 transition-all inline-block">
             View Pricing Plans
           </Link>
         </div>
@@ -119,7 +119,7 @@ export default async function OwnerSubscriptionPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
               <h3 className="font-bold text-lg mb-2 relative z-10">Need more features?</h3>
               <p className="text-sm text-neutral-400 mb-6 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
-              <Link href="/pricing" className="block w-full bg-white text-neutral-900 text-center font-bold py-3 rounded-xl hover:bg-neutral-100 transition-colors relative z-10">
+              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white text-neutral-900 text-center font-bold py-3 rounded-xl hover:bg-neutral-100 transition-colors relative z-10">
                 Upgrade Plan
               </Link>
             </div>

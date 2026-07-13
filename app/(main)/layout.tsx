@@ -7,7 +7,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Navbar user={session?.user} showPricing={false} />
+      <Navbar user={session?.user} />
       <main style={{ flex: 1 }}>{children}</main>
       <Footer />
     </div>

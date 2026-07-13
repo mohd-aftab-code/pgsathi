@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -18,7 +19,8 @@ import {
   BarChart3,
   ShieldCheck,
   ArrowLeft,
-  Settings,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 
 type NavItem = {
@@ -112,77 +114,120 @@ function MobileNavItem({
   );
 }
 
-export function ManagerSidebar({ isOwner }: { isOwner: boolean }) {
+export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; children?: React.ReactNode }) {
   const pathname = usePathname();
+  const [expanded, setExpanded] = useState(false);
 
-  const isActive = (item: any) =>
-    item.exact ? pathname === item.href : pathname.startsWith(item.href) && (item.href !== "/dashboard/manager" || pathname === "/dashboard/manager");
+  const isActive = (item: NavItem) =>
+    item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
   return (
     <>
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col gap-4">
+      {/* ── Desktop Rail — fixed flush to the left edge, click-to-pin icon rail ─────── */}
+      <aside
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white border-r border-neutral-200 transition-[width] duration-200 ease-in-out ${
+          expanded ? "w-64 shadow-xl shadow-neutral-900/10" : "w-[72px]"
+        }`}
+      >
+        {/* Brand mark */}
+        <Link
+          href="/dashboard/manager"
+          className={`flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 ${
+            expanded ? "px-4" : "justify-center"
+          }`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-icon.png" alt="PGSathi" className="w-8 h-8 object-contain shrink-0" />
+          {expanded && <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>}
+        </Link>
+
+        {/* Expand / collapse toggle — always accessible, click-based (not hover) */}
+        <button
+          onClick={() => setExpanded((e) => !e)}
+          className="flex items-center justify-center h-10 mx-2 my-2 rounded-xl text-neutral-400 hover:bg-neutral-100 hover:text-violet-600 transition-colors shrink-0"
+          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {expanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
+        </button>
+
         {isOwner && (
-          <Link 
+          <Link
             href="/dashboard/owner"
-            className="flex items-center gap-2 text-sm font-semibold text-neutral-600 hover:text-violet-700 transition-colors bg-white rounded-xl p-3 shadow-sm border border-neutral-200 group"
+            className="group relative flex items-center h-11 mx-2 mb-1 rounded-xl px-[13px] gap-3.5 text-neutral-500 hover:bg-neutral-50 hover:text-violet-600 transition-colors shrink-0"
           >
-            <div className="w-8 h-8 rounded-lg bg-neutral-100 group-hover:bg-violet-100 flex items-center justify-center transition-colors">
-              <ArrowLeft size={16} className="text-neutral-500 group-hover:text-violet-700" />
-            </div>
-            <div>
-              <span className="block text-xs text-neutral-400">Return to</span>
+            <ArrowLeft size={20} className="shrink-0" />
+            <span
+              className={`text-sm font-medium whitespace-nowrap transition-opacity duration-150 ${
+                expanded ? "opacity-100" : "opacity-0"
+              }`}
+            >
               Owner Dashboard
-            </div>
+            </span>
+            {!expanded && (
+              <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
+                Owner Dashboard
+              </span>
+            )}
           </Link>
         )}
 
-        <nav className="bg-white rounded-2xl border border-neutral-200 shadow-sm sticky top-24 overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
-          <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
-            <p className="text-xs font-bold text-neutral-800 uppercase tracking-wider">
-              CRM Workspace
-            </p>
-            <Settings size={14} className="text-neutral-400" />
-          </div>
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-1 custom-scrollbar">
+          <div className="flex flex-col gap-1 px-2">
+            {navGroups.map((group, gi) => {
+              const visibleItems = group.items.filter(item => !item.ownerOnly || isOwner);
+              if (visibleItems.length === 0) return null;
 
-          <div className="p-3 overflow-y-auto flex-1 custom-scrollbar">
-            <div className="flex flex-col gap-5">
-              {navGroups.map((group) => {
-                const visibleItems = group.items.filter(item => !item.ownerOnly || isOwner);
-                if (visibleItems.length === 0) return null;
-
-                return (
-                  <div key={group.category}>
-                    <p className="px-3 mb-2 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
-                      {group.category}
-                    </p>
-                    <div className="flex flex-col gap-1">
-                      {visibleItems.map((item) => {
-                        const Icon = item.icon;
-                        const active = isActive(item);
-                        
-                        return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                              active
-                                ? "bg-violet-50 text-violet-700 shadow-sm border border-violet-100 font-semibold"
-                                : "text-neutral-600 hover:text-violet-700 hover:bg-violet-50/50 border border-transparent"
+              return (
+                <div key={group.category} className={gi > 0 ? "mt-2 pt-2 border-t border-neutral-100" : ""}>
+                  <p
+                    className={`px-3 mb-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest whitespace-nowrap transition-opacity duration-150 ${
+                      expanded ? "opacity-100 h-auto mb-1" : "opacity-0 h-0 mb-0 overflow-hidden"
+                    }`}
+                  >
+                    {group.category}
+                  </p>
+                  <div className="flex flex-col gap-1">
+                    {visibleItems.map((item) => {
+                      const Icon = item.icon;
+                      const active = isActive(item);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-colors ${
+                            active
+                              ? "bg-violet-50 text-violet-700 font-semibold"
+                              : "text-neutral-600 hover:bg-neutral-50 hover:text-violet-600"
+                          }`}
+                        >
+                          <Icon size={20} className="shrink-0" />
+                          <span
+                            className={`text-sm font-medium whitespace-nowrap transition-opacity duration-150 ${
+                              expanded ? "opacity-100" : "opacity-0"
                             }`}
                           >
-                            <Icon size={18} className={active ? "text-violet-600" : "text-neutral-400"} />
                             {item.name}
-                          </Link>
-                        );
-                      })}
-                    </div>
+                          </span>
+                          {!expanded && (
+                            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
+                              {item.name}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </nav>
       </aside>
+
+      {/* ── Content — shifts right with the rail so nothing sits underneath it ─────── */}
+      <div className={`transition-[padding] duration-200 ease-in-out ${expanded ? "lg:pl-64" : "lg:pl-[72px]"}`}>
+        {children}
+      </div>
 
       {/* ── Mobile Bottom Nav — App-Like Premium Design ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -198,8 +243,8 @@ export function ManagerSidebar({ isOwner }: { isOwner: boolean }) {
               className="flex flex-col items-center justify-center -mt-5 relative"
             >
               <div className={`w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 ${
-                pathname.startsWith("/dashboard/manager/payments") 
-                  ? "bg-violet-600 scale-110 shadow-violet-300" 
+                pathname.startsWith("/dashboard/manager/payments")
+                  ? "bg-violet-600 scale-110 shadow-violet-300"
                   : "bg-violet-500 hover:bg-violet-600 hover:scale-105"
               }`}>
                 <Wallet size={26} className="text-white" />

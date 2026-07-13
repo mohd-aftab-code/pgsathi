@@ -82,10 +82,10 @@ export default function Home() {
                   List Your PG Now <ArrowRight size={18} />
                 </Link>
                 <Link
-                  href="/pricing"
+                  href="/for-owners"
                   className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center"
                 >
-                  View Pricing Plans
+                  Learn More
                 </Link>
               </div>
             </div>

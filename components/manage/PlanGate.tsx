@@ -61,7 +61,7 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
 
       <div className="mt-8 flex flex-wrap gap-3 justify-center">
         <Link
-          href="/pricing"
+          href="/dashboard/owner/subscription/upgrade"
           id="plan-gate-upgrade-btn"
           className="btn-primary"
         >

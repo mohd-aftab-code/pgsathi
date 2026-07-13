@@ -66,8 +66,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(userHome, request.url));
     }
 
-    // /dashboard/manager → isManager flag only (set in JWT during manager login)
-    if (pathname.startsWith("/dashboard/manager") && !isManager) {
+    // /dashboard/manager → isManager flag (staff login) OR the OWNER/ADMIN themselves
+    if (pathname.startsWith("/dashboard/manager") && !isManager && role !== "OWNER" && role !== "ADMIN") {
       return NextResponse.redirect(new URL(userHome, request.url));
     }
 

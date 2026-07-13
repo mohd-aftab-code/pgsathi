@@ -31,11 +31,11 @@ export default function ForOwnersPage() {
             >
               List Your PG for Free <ArrowRight size={20} />
             </Link>
-            <Link 
-              href="/pricing" 
+            <Link
+              href="/contact"
               className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg transition-all w-full sm:w-auto text-center"
             >
-              View Pricing Plans
+              Contact Us
             </Link>
           </div>
         </div>
