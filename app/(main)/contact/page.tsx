@@ -15,14 +15,14 @@ export default function ContactPage() {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-600/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
         
-        <div className="container-max section-padding relative z-10 text-center">
+        <div className="container-max section-padding relative z-10 text-left">
           <span className="inline-block py-1.5 px-4 rounded-full bg-violet-50 text-violet-700 font-bold text-sm mb-6 border border-violet-100">
             We're here to help
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight">
             Get in touch with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">PGSathi</span>
           </h1>
-          <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
             Whether you have a question about finding a PG, using our CRM software, or just want to say hi, our team is ready to answer all your questions.
           </p>
         </div>
