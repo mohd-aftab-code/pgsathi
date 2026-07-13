@@ -99,7 +99,7 @@ export default async function PricingPage() {
               key={plan.id}
               className={`bg-white rounded-3xl p-8 relative flex flex-col ${
                 plan.popular 
-                  ? "border-2 border-primary-500 shadow-xl scale-105 z-10" 
+                  ? "border-2 border-primary-500 shadow-xl md:scale-105 z-10" 
                   : "border border-neutral-200 shadow-sm"
               }`}
             >

@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 export default function RefundPolicyPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
-      <div className="container-max section-padding py-12 md:py-20">
-        <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-100">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8">Refund & Cancellation Policy</h1>
+      <div className="container-max section-padding px-4 sm:px-6 py-10 md:py-20">
+        <div className="max-w-4xl mx-auto bg-white p-5 sm:p-8 md:p-12 rounded-2xl shadow-sm border border-slate-100">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-6 md:mb-8">Refund & Cancellation Policy</h1>
           
           <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:text-slate-600 prose-a:text-violet-600">
             <p className="lead text-lg mb-8">

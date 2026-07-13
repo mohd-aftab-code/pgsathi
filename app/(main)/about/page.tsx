@@ -31,7 +31,7 @@ export default function AboutPage() {
             <span className="inline-block py-1.5 px-4 rounded-full bg-violet-50 text-violet-700 font-bold text-sm mb-6 border border-violet-100">
               Transforming the PG Industry
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]">
               Bridging the gap between <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">Tenants & Owners</span>
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-3xl mb-10">
@@ -92,7 +92,7 @@ export default function AboutPage() {
 
         {/* ── For Owners Section ── */}
         <section className="mb-24">
-          <div className="bg-neutral-900 rounded-[2.5rem] p-8 md:p-16 overflow-hidden relative">
+          <div className="bg-neutral-900 rounded-[2.5rem] p-6 sm:p-8 md:p-16 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[80px] -translate-y-1/3 translate-x-1/3"></div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
@@ -160,7 +160,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── Stats Section ── */}
-        <section className="bg-white rounded-3xl p-10 md:p-16 shadow-sm border border-neutral-200 mb-16">
+        <section className="bg-white rounded-3xl p-6 sm:p-10 md:p-16 shadow-sm border border-neutral-200 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">10k+</div>

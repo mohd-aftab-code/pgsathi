@@ -19,7 +19,7 @@ export default function ContactPage() {
           <span className="inline-block py-1.5 px-4 rounded-full bg-violet-50 text-violet-700 font-bold text-sm mb-6 border border-violet-100">
             We're here to help
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight">
             Get in touch with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">PGSathi</span>
           </h1>
           <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
@@ -86,7 +86,7 @@ export default function ContactPage() {
 
           {/* ── Contact Form (Right Col) ── */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-neutral-100">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl border border-neutral-100">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center text-primary-600">
                   <MessageSquare size={20} />

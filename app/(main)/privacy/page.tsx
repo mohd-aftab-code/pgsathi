@@ -6,14 +6,14 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="bg-neutral-50 min-h-screen py-16 md:py-24">
-      <div className="container-max max-w-4xl mx-auto px-6">
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-neutral-200">
+    <div className="bg-neutral-50 min-h-screen py-10 md:py-24">
+      <div className="container-max max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-sm border border-neutral-200">
           <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8">
             <Shield size={32} />
           </div>
           
-          <h1 className="text-4xl font-extrabold text-neutral-900 mb-4 tracking-tight">Privacy Policy</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4 tracking-tight">Privacy Policy</h1>
           <p className="text-neutral-500 mb-10">Last updated: June 23, 2026</p>
 
           <div className="prose prose-neutral max-w-none text-neutral-600 space-y-6">

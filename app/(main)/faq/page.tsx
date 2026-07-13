@@ -31,7 +31,7 @@ export default function FAQPage() {
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      <div className="container-max section-padding py-12 md:py-20">
+      <div className="container-max section-padding px-4 sm:px-6 py-10 md:py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h1>
@@ -40,14 +40,14 @@ export default function FAQPage() {
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             {faqs.map((faq, index) => (
-              <div key={index} className={`p-6 md:p-8 ${index !== faqs.length - 1 ? 'border-b border-slate-100' : ''}`}>
+              <div key={index} className={`p-5 sm:p-6 md:p-8 ${index !== faqs.length - 1 ? 'border-b border-slate-100' : ''}`}>
                 <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-3">{faq.q}</h3>
                 <p className="text-slate-600 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center bg-violet-50 p-8 rounded-2xl border border-violet-100">
+          <div className="mt-12 text-center bg-violet-50 p-6 sm:p-8 rounded-2xl border border-violet-100">
             <h2 className="text-xl font-semibold text-violet-900 mb-2">Still have questions?</h2>
             <p className="text-violet-700 mb-6">Can't find the answer you're looking for? Please contact our friendly team.</p>
             <a href="/contact" className="inline-flex items-center justify-center px-6 py-3 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 transition-colors">
