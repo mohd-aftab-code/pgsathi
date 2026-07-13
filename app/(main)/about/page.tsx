@@ -4,8 +4,17 @@ import Image from "next/image";
 import heroImg from "@/app/assets/images/hero-home.png"; // We can reuse an existing image or just use CSS gradients
 
 export const metadata = {
-  title: "About Us - PGSathi",
-  description: "Learn more about PGSathi, India's most trusted platform for finding verified PGs and the ultimate SaaS CRM for PG owners.",
+  title: "About Us | PGSathi - Zero Brokerage PG & Cloud CRM for Owners",
+  description: "PGSathi is India's most trusted platform for finding verified PGs without brokers. For PG owners, we provide a powerful Cloud CRM to manage tenants, rent, and leads.",
+  keywords: "PG, paying guest, zero brokerage PG, PG management software, CRM for PG owners, find PG, rent room",
+  openGraph: {
+    title: "About Us | PGSathi",
+    description: "Find verified PGs with zero brokerage or manage your PG properties with our powerful Cloud CRM.",
+    url: "https://pgsathi.in/about",
+    siteName: "PGSathi",
+    locale: "en_IN",
+    type: "website",
+  }
 };
 
 export default function AboutPage() {
@@ -17,22 +26,22 @@ export default function AboutPage() {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-600/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
         
-        <div className="container-max section-padding relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
+        <div className="container-max section-padding relative z-10 text-left">
+          <div className="max-w-4xl">
             <span className="inline-block py-1.5 px-4 rounded-full bg-violet-50 text-violet-700 font-bold text-sm mb-6 border border-violet-100">
               Transforming the PG Industry
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]">
               Bridging the gap between <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">Tenants & Owners</span>
             </h1>
-            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-3xl mx-auto mb-10">
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-3xl mb-10">
               PGSathi is a dual-powered ecosystem. For students and professionals, it's a seamless PG-hunting platform with zero brokerage. For PG owners, it's a powerful Cloud CRM to automate rent, complaints, and lead management.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/search" className="btn-primary px-8 py-3.5 text-base w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link href="/search" className="btn-primary px-8 py-3.5 text-base w-full sm:w-auto text-center">
                 Find a PG
               </Link>
-              <Link href="/dashboard/owner/listings/new" className="bg-white border-2 border-neutral-200 text-neutral-800 hover:border-primary-500 hover:text-primary-700 px-8 py-3.5 rounded-xl font-bold transition-all w-full sm:w-auto">
+              <Link href="/dashboard/owner/listings/new" className="bg-white border-2 border-neutral-200 text-neutral-800 hover:border-primary-500 hover:text-primary-700 px-8 py-3.5 rounded-xl font-bold transition-all w-full sm:w-auto text-center">
                 Join as PG Owner
               </Link>
             </div>
