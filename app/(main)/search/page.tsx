@@ -8,6 +8,7 @@ import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
+import { Metadata } from "next";
 
 const getSearchResults = unstable_cache(
   async (where: any, orderBy: any, page: number, itemsPerPage: number) => {
@@ -96,12 +97,12 @@ export default async function SearchPage(props: {
 
   // Log Search Analytics (Fire & Forget)
   if (queryParam || citySlug) {
-    db.searchAnalytic.create({
-      data: {
-        query: queryParam ? queryParam.substring(0, 250) : null,
-        citySlug: citySlug && citySlug !== "all" ? citySlug : null,
-      }
-    }).catch(console.error);
+    // db.searchAnalytic.create({
+    //   data: {
+    //     query: queryParam ? queryParam.substring(0, 250) : null,
+    //     citySlug: citySlug && citySlug !== "all" ? citySlug : null,
+    //   }
+    // }).catch(console.error);
   }
 
   // Build query
