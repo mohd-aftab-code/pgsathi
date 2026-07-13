@@ -75,6 +75,43 @@ const navGroups: NavGroup[] = [
   }
 ];
 
+// ─────────────────────────────────────────────────────────
+// MobileNavItem — reusable bottom nav tab
+// ─────────────────────────────────────────────────────────
+function MobileNavItem({
+  href, icon: Icon, label, isActive, color = "violet"
+}: {
+  href: string;
+  icon: any;
+  label: string;
+  isActive: boolean;
+  color?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
+    >
+      {/* Active indicator dot */}
+      {isActive && (
+        <span className="absolute top-1 w-1 h-1 rounded-full bg-violet-600 animate-pulse" />
+      )}
+      <div className={`w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
+        isActive
+          ? "bg-violet-100 scale-110"
+          : "hover:bg-neutral-100 scale-100"
+      }`}>
+        <Icon size={20} className={isActive ? "text-violet-700" : "text-neutral-500"} strokeWidth={isActive ? 2.5 : 1.8} />
+      </div>
+      <span className={`text-[10px] font-semibold transition-colors ${
+        isActive ? "text-violet-700" : "text-neutral-400"
+      }`}>
+        {label}
+      </span>
+    </Link>
+  );
+}
+
 export function ManagerSidebar({ isOwner }: { isOwner: boolean }) {
   const pathname = usePathname();
 
@@ -147,34 +184,35 @@ export function ManagerSidebar({ isOwner }: { isOwner: boolean }) {
         </nav>
       </aside>
 
-      {/* Mobile Bottom Nav - Only show a subset */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50 px-2 pb-safe">
-        <div className="flex justify-around items-center h-16">
-          {isOwner && (
+      {/* ── Mobile Bottom Nav — App-Like Premium Design ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="bg-white/95 backdrop-blur-xl border-t border-neutral-200/60 shadow-[0_-8px_32px_rgba(0,0,0,0.08)]">
+          <div className="flex items-end justify-around px-1 h-[68px]">
+            {/* Home */}
+            <MobileNavItem href="/dashboard/manager" icon={LayoutDashboard} label="Home" isActive={pathname === "/dashboard/manager"} color="violet" />
+            {/* Tenants */}
+            <MobileNavItem href="/dashboard/manager/tenants" icon={Users} label="Tenants" isActive={pathname.startsWith("/dashboard/manager/tenants")} color="violet" />
+            {/* CENTER: Payments — prominent */}
             <Link
-              href="/dashboard/owner"
-              className="flex flex-col items-center justify-center w-full h-full text-neutral-500 hover:text-violet-700 hover:bg-neutral-50 rounded-xl transition-colors gap-1"
+              href="/dashboard/manager/payments"
+              className="flex flex-col items-center justify-center -mt-5 relative"
             >
-              <ArrowLeft size={20} />
-              <span className="text-[10px] font-medium">Back</span>
+              <div className={`w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 ${
+                pathname.startsWith("/dashboard/manager/payments") 
+                  ? "bg-violet-600 scale-110 shadow-violet-300" 
+                  : "bg-violet-500 hover:bg-violet-600 hover:scale-105"
+              }`}>
+                <Wallet size={26} className="text-white" />
+              </div>
+              <span className={`text-[9px] font-bold mt-1.5 ${
+                pathname.startsWith("/dashboard/manager/payments") ? "text-violet-700" : "text-neutral-500"
+              }`}>Payments</span>
             </Link>
-          )}
-          {navGroups.flatMap(g => g.items).filter(item => !item.ownerOnly || isOwner).slice(0, isOwner ? 4 : 5).map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex flex-col items-center justify-center w-full h-full rounded-xl transition-colors gap-1 ${
-                  active ? "text-violet-700" : "text-neutral-500 hover:text-violet-700 hover:bg-neutral-50"
-                }`}
-              >
-                <Icon size={20} className={active ? "text-violet-700" : ""} />
-                <span className="text-[10px] font-medium">{item.name}</span>
-              </Link>
-            );
-          })}
+            {/* Complaints */}
+            <MobileNavItem href="/dashboard/manager/complaints" icon={Wrench} label="Issues" isActive={pathname.startsWith("/dashboard/manager/complaints")} color="violet" />
+            {/* More — opens to other pages */}
+            <MobileNavItem href="/dashboard/manager/tenants" icon={UsersRound} label="More" isActive={false} color="violet" />
+          </div>
         </div>
       </div>
     </>

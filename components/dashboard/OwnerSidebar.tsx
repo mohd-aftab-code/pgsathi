@@ -121,26 +121,41 @@ export function OwnerSidebar({
         </nav>
       </aside>
 
-      {/* ── Mobile Bottom Navigation Bar ─────────────────────── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50 px-2 pb-safe">
-        <div className="flex justify-around items-center h-16">
-          {OWNER_NAV.filter(item => !item.hideMobile).slice(0, 5).map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item);
-            
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex flex-col items-center justify-center w-full h-full rounded-xl transition-colors gap-1 ${
-                  active ? "text-primary-600" : "text-neutral-500 hover:text-primary-600 hover:bg-neutral-50"
-                }`}
-              >
-                <Icon size={20} />
-                <span className="text-[10px] font-medium">{item.name}</span>
-              </Link>
-            );
-          })}
+      {/* ── Mobile Bottom Navigation Bar — App-Like Premium Design ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="bg-white/95 backdrop-blur-xl border-t border-neutral-200/60 shadow-[0_-8px_32px_rgba(0,0,0,0.08)]">
+          <div className="flex items-end justify-around px-1 h-[68px]">
+            {OWNER_NAV.filter(item => !item.hideMobile).slice(0, 5).map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
+                >
+                  {/* Active indicator dot */}
+                  {active && (
+                    <span className="absolute top-1 w-1 h-1 rounded-full bg-primary-600 animate-pulse" />
+                  )}
+                  <div className={`w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                    active ? "bg-primary-100 scale-110" : "hover:bg-neutral-100 scale-100"
+                  }`}>
+                    <Icon
+                      size={20}
+                      className={active ? "text-primary-700" : "text-neutral-500"}
+                      strokeWidth={active ? 2.5 : 1.8}
+                    />
+                  </div>
+                  <span className={`text-[10px] font-semibold transition-colors ${
+                    active ? "text-primary-700" : "text-neutral-400"
+                  }`}>
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
     </>
