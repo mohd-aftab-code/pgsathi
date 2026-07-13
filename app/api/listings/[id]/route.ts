@@ -84,9 +84,45 @@ export async function PATCH(
     if (data.parking !== undefined) updateData.parking = data.parking;
     if (data.cityId !== undefined) updateData.cityId = data.cityId;
     if (data.localityId !== undefined) updateData.localityId = data.localityId;
+    
+    // Complex relations: Photos and Amenities
+    if (data.photos !== undefined) {
+      updateData.photos = {
+        deleteMany: {},
+        create: data.photos.map((photo: { url: string; publicId: string }, index: number) => ({
+          url: photo.url,
+          publicId: photo.publicId || `pgsathi/listings/${Date.now()}_${index}`,
+          sortOrder: index,
+          isPrimary: index === 0,
+        }))
+      };
+    }
+
+    if (data.amenities !== undefined) {
+      updateData.amenities = {
+        deleteMany: {},
+        create: (data.amenities || []).map((slug: string) => ({
+          amenity: { 
+            connectOrCreate: {
+              where: { slug },
+              create: {
+                slug,
+                name: slug.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+                icon: "check",
+                category: "GENERAL"
+              }
+            } 
+          }
+        }))
+      };
+    }
 
     // Status toggle (only if explicitly passed)
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
+
+    // Reset status to PENDING for admin review
+    updateData.status = "PENDING";
+    updateData.isVerified = false;
 
     const updated = await db.listing.update({
       where: { id: listingId },
