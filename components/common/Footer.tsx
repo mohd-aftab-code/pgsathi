@@ -77,7 +77,6 @@ export default function Footer() {
             <ul className="flex flex-col gap-3">
               {[
                 { label: "PG List करें — Free", href: "/dashboard/owner/listings/new" },
-                { label: "Pricing Plans", href: "/pricing" },
                 { label: "Owner Dashboard", href: "/dashboard/owner" },
                 { label: "Leads Management", href: "/dashboard/owner/leads" },
                 { label: "Analytics", href: "/dashboard/owner/analytics" },
