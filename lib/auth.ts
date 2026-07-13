@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import { compare } from "bcryptjs";
+import { jwtVerify } from "jose";
 
 // NextAuth v5 expects AUTH_SECRET, but this project's Vercel env still has the
 // v4-era NEXTAUTH_SECRET name (see proxy.ts, which already falls back the same way).
@@ -25,21 +26,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email:     { label: "Email",     type: "email" },
-        phone:     { label: "Phone",     type: "text" },
-        password:  { label: "Password",  type: "password" },
-        isManager: { label: "Manager",   type: "text" },
-        impersonateUserId: { label: "Impersonate", type: "text" },
+        email:             { label: "Email",            type: "email" },
+        phone:             { label: "Phone",            type: "text" },
+        password:          { label: "Password",         type: "password" },
+        isManager:         { label: "Manager",          type: "text" },
+        impersonateUserId: { label: "Impersonate",      type: "text" },
+        impersonateToken:  { label: "ImpersonateToken", type: "text" },
       },
       async authorize(credentials) {
         try {
           if (!credentials) return null;
 
-          const email     = credentials.email     as string | undefined;
-          const phone     = credentials.phone     as string | undefined;
-          const password  = credentials.password  as string | undefined;
-          const isManager = credentials.isManager as string | undefined;
-          const impersonateUserId = credentials.impersonateUserId as string | undefined;
+          const email              = credentials.email             as string | undefined;
+          const phone              = credentials.phone             as string | undefined;
+          const password           = credentials.password          as string | undefined;
+          const isManager          = credentials.isManager         as string | undefined;
+          const impersonateUserId  = credentials.impersonateUserId as string | undefined;
+          const impersonateToken   = credentials.impersonateToken  as string | undefined;
+
+          // ── TOKEN-BASED IMPERSONATION (no password needed — JWT is the proof) ──
+          if (impersonateToken && password === "__IMPERSONATE__") {
+            const jwtSecret = new TextEncoder().encode(
+              process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || ""
+            );
+            const { payload } = await jwtVerify(impersonateToken, jwtSecret);
+            if (!payload.sub || !payload.email) throw new Error("Invalid impersonation token");
+
+            const targetUser = await db.user.findUnique({ where: { id: parseInt(payload.sub as string) } });
+            if (!targetUser) throw new Error("Target user not found");
+
+            return {
+              id:     targetUser.id.toString(),
+              uuid:   targetUser.uuid,
+              name:   targetUser.name,
+              email:  targetUser.email,
+              role:   targetUser.role,
+              avatar: targetUser.avatar,
+            };
+          }
 
           if (!password) throw new Error("Password is required");
 

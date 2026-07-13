@@ -46,9 +46,9 @@ export default function AdminUsersPage() {
   }
 
   const handleImpersonate = async (userId: number, userName: string) => {
-    if (!confirm(`Login as "${userName}"? This will open their dashboard in a new tab for support purposes.`)) return;
+    if (!confirm(`Login as "${userName}"?\n\nThis will open their Owner Dashboard in a new tab. You can close it to return to your Admin panel.`)) return;
     
-    const toastId = toast.loading("Opening owner dashboard...");
+    const toastId = toast.loading(`Setting up session for ${userName}...`);
     try {
       const res = await fetch("/api/admin/impersonate", {
         method: "POST",
@@ -56,11 +56,15 @@ export default function AdminUsersPage() {
         body: JSON.stringify({ userId })
       });
       const d = await res.json();
-      if (d.success) {
-        toast.success("Redirecting to owner dashboard...", { id: toastId });
-        window.open("/dashboard/manager?impersonate=true", "_blank");
+      if (d.success && d.token) {
+        toast.success(`Opening ${userName}'s dashboard...`, { id: toastId });
+        // Open the impersonate-session page which will create a real session
+        window.open(
+          `/dashboard/admin/impersonate-session?token=${encodeURIComponent(d.token)}`,
+          "_blank"
+        );
       } else {
-        toast.error(d.message || "Failed", { id: toastId });
+        toast.error(d.message || "Failed to generate token", { id: toastId });
       }
     } catch {
       toast.error("Network error", { id: toastId });
