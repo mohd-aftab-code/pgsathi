@@ -66,6 +66,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: `Plan ${plan.name} activated for 1 month` });
     }
 
+    if (action === "delete") {
+      await db.user.delete({ where: { id: parseInt(userId) } });
+      return NextResponse.json({ success: true, message: "User deleted successfully" });
+    }
+
     return NextResponse.json({ success: false, message: "Invalid action" }, { status: 400 });
 
   } catch (err: any) {

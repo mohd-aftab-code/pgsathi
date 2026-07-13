@@ -7,11 +7,14 @@ export default function AdminUsersPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
-  async function fetchData() {
+  async function fetchData(currentPage = page, currentQuery = query) {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/overview");
+      const res = await fetch(`/api/admin/overview?page=${currentPage}&query=${encodeURIComponent(currentQuery)}`);
       const d = await res.json();
       if (d.success) setData(d.data);
       else toast.error(d.message || "Failed to load data");
@@ -22,7 +25,13 @@ export default function AdminUsersPage() {
     }
   }
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(page, query); }, [page, query]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+    setQuery(searchInput);
+  };
 
   async function handleAction(userId: number, action: string, days?: number) {
     if (!confirm(`Are you sure you want to perform: ${action}?`)) return;
@@ -114,9 +123,23 @@ export default function AdminUsersPage() {
 
       {/* Owners Table */}
       <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-neutral-200 bg-neutral-50/50">
-          <h2 className="text-lg font-bold text-neutral-900">Registered PG Owners (Clients)</h2>
-          <p className="text-sm text-neutral-500">Manage trials, subscriptions, and perform account impersonations.</p>
+        <div className="px-6 py-5 border-b border-neutral-200 bg-neutral-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-bold text-neutral-900">Registered PG Owners (Clients)</h2>
+            <p className="text-sm text-neutral-500">Manage trials, subscriptions, and perform account impersonations.</p>
+          </div>
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <input 
+              type="text" 
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search by name, email..."
+              className="px-3 py-2 border border-neutral-200 rounded-lg text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+            <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 cursor-pointer">
+              Search
+            </button>
+          </form>
         </div>
         
         <div className="overflow-x-auto hidden md:block">
@@ -187,6 +210,13 @@ export default function AdminUsersPage() {
                         className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
                       >
                         Activate Pro
+                      </button>
+                      <button 
+                        disabled={processing}
+                        onClick={() => handleAction(o.id, "delete")} 
+                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition"
+                      >
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -261,6 +291,13 @@ export default function AdminUsersPage() {
                 >
                   Pro
                 </button>
+                <button 
+                  disabled={processing}
+                  onClick={() => handleAction(o.id, "delete")} 
+                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition text-center"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -268,6 +305,31 @@ export default function AdminUsersPage() {
             <div className="text-center text-neutral-500 py-6">No PG owners found.</div>
           )}
         </div>
+        
+        {/* Pagination Controls */}
+        {data.pagination && data.pagination.totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-neutral-200 flex items-center justify-between">
+            <div className="text-sm text-neutral-500">
+              Showing page <span className="font-bold">{data.pagination.currentPage}</span> of <span className="font-bold">{data.pagination.totalPages}</span> (Total: {data.pagination.totalCount})
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={data.pagination.currentPage === 1}
+                className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={() => setPage(p => Math.min(data.pagination.totalPages, p + 1))}
+                disabled={data.pagination.currentPage === data.pagination.totalPages}
+                className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

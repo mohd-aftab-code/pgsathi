@@ -21,6 +21,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Forbidden: Not an admin" }, { status: 403 });
     }
 
+    const searchParams = req.nextUrl.searchParams;
+    const page = Number(searchParams.get("page")) || 1;
+    const query = searchParams.get("query") || "";
+    const pageSize = 10;
+
     // 1. Get total stats
     const [totalUsers, totalListings, totalLeads, totalTenants] = await Promise.all([
       db.user.count({ where: { role: "OWNER" } }), // total PG owners
@@ -29,9 +34,19 @@ export async function GET(req: NextRequest) {
       db.pgTenant.count({ where: { status: "ACTIVE" } }), // total active tenants in CRM
     ]);
 
+    const ownersWhere: any = { role: "OWNER" };
+    if (query) {
+      ownersWhere.OR = [
+        { name: { contains: query } },
+        { email: { contains: query } },
+        { phone: { contains: query } },
+      ];
+    }
+
     // 2. Get owners list with their CRM status (for Trial Management)
-    const owners = await db.user.findMany({
-      where: { role: "OWNER" },
+    const [owners, filteredOwnersCount] = await Promise.all([
+      db.user.findMany({
+        where: ownersWhere,
       select: {
         id: true,
         name: true,
@@ -48,8 +63,12 @@ export async function GET(req: NextRequest) {
           select: { endDate: true, planId: true }
         }
       },
-      orderBy: { createdAt: "desc" }
-    });
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize
+    }),
+    db.user.count({ where: ownersWhere })
+  ]);
 
     const ownersData = owners.map(o => {
       // Calculate trial status (15 days from creation)
@@ -82,7 +101,12 @@ export async function GET(req: NextRequest) {
       success: true,
       data: {
         stats: { totalUsers, totalListings, totalLeads, totalTenants },
-        owners: ownersData
+        owners: ownersData,
+        pagination: {
+          totalCount: filteredOwnersCount,
+          totalPages: Math.ceil(filteredOwnersCount / pageSize),
+          currentPage: page,
+        }
       }
     });
 
