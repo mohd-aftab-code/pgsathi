@@ -2,10 +2,8 @@
 import { useState, useEffect } from "react";
 import { ShieldCheck, Users, Building2, MousePointerClick, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSession, signIn } from "next-auth/react";
 
 export default function AdminUsersPage() {
-  const { data: session } = useSession();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -47,17 +45,26 @@ export default function AdminUsersPage() {
     }
   }
 
-  const handleImpersonate = (userId: number) => {
-    const pwd = prompt("Security Check: Enter your admin password to impersonate this user:");
-    if (!pwd) return;
+  const handleImpersonate = async (userId: number, userName: string) => {
+    if (!confirm(`Login as "${userName}"? This will open their dashboard in a new tab for support purposes.`)) return;
     
-    toast.loading("Initiating impersonation session...");
-    signIn("credentials", { 
-      email: session?.user?.email, 
-      password: pwd, 
-      impersonateUserId: userId, 
-      callbackUrl: "/dashboard" 
-    });
+    const toastId = toast.loading("Opening owner dashboard...");
+    try {
+      const res = await fetch("/api/admin/impersonate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success("Redirecting to owner dashboard...", { id: toastId });
+        window.open("/dashboard/manager?impersonate=true", "_blank");
+      } else {
+        toast.error(d.message || "Failed", { id: toastId });
+      }
+    } catch {
+      toast.error("Network error", { id: toastId });
+    }
   };
 
   if (loading) {
@@ -158,7 +165,7 @@ export default function AdminUsersPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
-                        onClick={() => handleImpersonate(o.id)}
+                        onClick={() => handleImpersonate(o.id, o.name)}
                         className="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 border border-orange-200 hover:bg-orange-200 transition"
                       >
                         Login As
