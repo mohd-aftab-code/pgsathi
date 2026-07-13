@@ -98,11 +98,34 @@ export default async function SearchPage(props: {
   const where: any = { isActive: true, status: "ACTIVE" };
   
   if (queryParam) {
-    where.OR = [
-      { title: { contains: queryParam, mode: "insensitive" } },
-      { address: { contains: queryParam, mode: "insensitive" } },
-      { locality: { name: { contains: queryParam, mode: "insensitive" } } },
-    ];
+    const stopWords = ["pg", "in", "near", "hostel", "room", "rooms", "boys", "girls", "for", "rent", "best", "top", "at", "around", "the", "a", "an", "is", "of", "and"];
+    
+    // Clean and split the search query into meaningful keywords
+    const keywords = queryParam
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !stopWords.includes(word));
+
+    if (keywords.length > 0) {
+      // Find listings that match ALL keywords across any of the relevant fields
+      where.AND = keywords.map(keyword => ({
+        OR: [
+          { title: { contains: keyword, mode: "insensitive" } },
+          { address: { contains: keyword, mode: "insensitive" } },
+          { landmark: { contains: keyword, mode: "insensitive" } },
+          { locality: { name: { contains: keyword, mode: "insensitive" } } },
+        ]
+      }));
+    } else {
+      // Fallback if all words were stop words or too short
+      where.OR = [
+        { title: { contains: queryParam, mode: "insensitive" } },
+        { address: { contains: queryParam, mode: "insensitive" } },
+        { landmark: { contains: queryParam, mode: "insensitive" } },
+        { locality: { name: { contains: queryParam, mode: "insensitive" } } },
+      ];
+    }
   }
   
   if (citySlug && citySlug !== "all") {
