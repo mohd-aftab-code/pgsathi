@@ -4,6 +4,7 @@ import "./globals.css";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { InstallPWA } from "@/components/common/InstallPWA";
 import { MobileAppNav } from "@/components/common/MobileAppNav";
+import { auth } from "@/lib/auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -85,11 +86,13 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -171,7 +174,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-neutral-50 antialiased">
         <InstallPWA />
         {children}
-        <MobileAppNav />
+        <MobileAppNav session={session} />
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
     </html>

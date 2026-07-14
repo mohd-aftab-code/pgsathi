@@ -2,19 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, User, PlusCircle } from "lucide-react";
+import { Home, Search, User, PlusCircle, UserCircle2 } from "lucide-react";
 
-export function MobileAppNav() {
+export function MobileAppNav({ session }: { session?: any }) {
   const pathname = usePathname();
 
   // Hide global app nav inside the dashboard (dashboard has its own bottom nav)
   if (pathname.startsWith("/dashboard")) return null;
 
+  const isLoggedIn = !!session?.user;
+
   const tabs = [
     { label: "Home", href: "/", icon: Home },
     { label: "Search", href: "/search", icon: Search },
     { label: "List PG", href: "/dashboard/owner/listings/new", icon: PlusCircle },
-    { label: "Profile", href: "/dashboard", icon: User },
+    { 
+      label: isLoggedIn ? (session.user.name?.split(" ")[0] || "Profile") : "Login", 
+      href: isLoggedIn ? "/dashboard" : "/login", 
+      icon: isLoggedIn ? User : UserCircle2,
+      isProfile: true
+    },
   ];
 
   return (
@@ -34,11 +41,19 @@ export function MobileAppNav() {
               isActive ? "text-primary-700" : "text-neutral-400 active:text-neutral-600"
             }`}
           >
-            <div className={`relative flex items-center justify-center p-1.5 rounded-2xl transition-all ${
-              isActive ? "bg-primary-50 scale-110" : "bg-transparent scale-100"
-            }`}>
-              <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-            </div>
+            {tab.isProfile && isLoggedIn ? (
+              <div className={`relative flex items-center justify-center w-[30px] h-[30px] mb-0.5 rounded-full text-white font-bold text-xs shadow-sm transition-all ${
+                isActive ? "bg-primary-700 ring-2 ring-primary-100 scale-110" : "bg-primary-600 scale-100"
+              }`}>
+                {session.user.name?.charAt(0).toUpperCase() || "U"}
+              </div>
+            ) : (
+              <div className={`relative flex items-center justify-center p-1.5 rounded-2xl transition-all ${
+                isActive ? "bg-primary-50 scale-110" : "bg-transparent scale-100"
+              }`}>
+                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+              </div>
+            )}
             <span className={`text-[11px] ${isActive ? "font-bold" : "font-medium"}`}>
               {tab.label}
             </span>
