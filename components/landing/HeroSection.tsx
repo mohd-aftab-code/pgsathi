@@ -48,31 +48,38 @@ export default async function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-8 items-center">
           {/* ── Left: Copy + Search ─────────────────────────────── */}
           <div>
-            <div className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-5">
-              <span className="w-6 h-px bg-primary-600" />
+            <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
+              <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-600" />
               For Tenants & PG Owners
             </div>
 
             <h1
-              className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-4 sm:mb-5"
+              className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
               Find your PG, or Fill your PG —{" "}
               <span className="text-primary-700">Zero Brokerage.</span>
             </h1>
 
-            <div className="text-base md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed space-y-3">
-              <div className="flex items-start gap-2.5">
-                <div className="mt-1 bg-primary-100 text-primary-700 p-1.5 rounded-lg shrink-0">
-                  <User size={16} strokeWidth={2.5} />
+            <div className="flex flex-col sm:flex-col gap-3 sm:gap-3 text-sm md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
+              <div className="flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none">
+                <div className="bg-primary-50 sm:bg-primary-100 text-primary-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1">
+                  <User size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
-                <p><strong className="text-neutral-900 block sm:inline">For Tenants:</strong> Search verified PGs & contact owners directly. No brokers, no hidden fees.</p>
+                <p className="leading-snug">
+                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0">For Tenants:</strong> 
+                  <span className="text-neutral-500 sm:text-neutral-600"> Search verified PGs & contact owners directly. No brokers.</span>
+                </p>
               </div>
-              <div className="flex items-start gap-2.5">
-                <div className="mt-1 bg-emerald-100 text-emerald-700 p-1.5 rounded-lg shrink-0">
-                  <Building2 size={16} strokeWidth={2.5} />
+              
+              <div className="flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none">
+                <div className="bg-emerald-50 sm:bg-emerald-100 text-emerald-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1">
+                  <Building2 size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
-                <p><strong className="text-neutral-900 block sm:inline">For Owners:</strong> List your PG for free, get direct WhatsApp leads, and manage everything.</p>
+                <p className="leading-snug">
+                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0">For Owners:</strong> 
+                  <span className="text-neutral-500 sm:text-neutral-600"> List your PG for free, get direct WhatsApp leads.</span>
+                </p>
               </div>
             </div>
 
@@ -80,20 +87,22 @@ export default async function HeroSection() {
               <SearchBar cities={cities} />
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-x-6 sm:gap-y-3 text-sm">
-              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
-                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">500+</span>
-                <span className="font-medium text-neutral-500">Verified PGs</span>
+            <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-x-6 sm:gap-y-3 text-sm">
+              <div className="bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">500+</span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Verified PGs</span>
               </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
-              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
-                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">12+</span>
-                <span className="font-medium text-neutral-500">Cities</span>
+              
+              <div className="bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">12+</span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Cities</span>
               </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
-              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
-                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">50k+</span>
-                <span className="font-medium text-neutral-500">Tenants Helped</span>
+              
+              <div className="col-span-2 sm:col-span-1 bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">50,000+</span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Tenants Helped</span>
               </div>
             </div>
           </div>
