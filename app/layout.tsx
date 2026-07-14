@@ -71,6 +71,11 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/manifest.json",
+  icons: {
+    icon: "/mobileaapicon.png",
+    shortcut: "/mobileaapicon.png",
+    apple: "/mobileaapicon.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -89,7 +94,7 @@ export default function RootLayout({
     "@type": "Organization",
     "name": "PGSathi",
     "url": "https://pgsathi.in",
-    "logo": "https://pgsathi.in/icon.png",
+    "logo": "https://pgsathi.in/mobileaapicon.png",
     "sameAs": [
       "https://www.facebook.com/pgsathi",
       "https://www.instagram.com/pgsathi",
