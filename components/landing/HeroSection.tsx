@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ShieldCheck, MapPin, MessageCircle, Star } from "lucide-react";
+import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2 } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
@@ -50,32 +50,51 @@ export default async function HeroSection() {
           <div>
             <div className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-5">
               <span className="w-6 h-px bg-primary-600" />
-              Zero Brokerage · Direct Owner Contact
+              For Tenants & PG Owners
             </div>
 
             <h1
-              className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold text-neutral-900 leading-[1.1] mb-4 sm:mb-5"
+              className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-4 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
-              Find your next PG —{" "}
-              <span className="text-primary-700">straight from the owner.</span>
+              Find your PG, or Fill your PG —{" "}
+              <span className="text-primary-700">Zero Brokerage.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
-              Verified Boys, Girls &amp; Co-living PGs across India. No brokers,
-              no hidden fees — just a phone number that actually picks up.
-            </p>
+            <div className="text-base md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed space-y-3">
+              <div className="flex items-start gap-2.5">
+                <div className="mt-1 bg-primary-100 text-primary-700 p-1.5 rounded-lg shrink-0">
+                  <User size={16} strokeWidth={2.5} />
+                </div>
+                <p><strong className="text-neutral-900 block sm:inline">For Tenants:</strong> Search verified PGs & contact owners directly. No brokers, no hidden fees.</p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="mt-1 bg-emerald-100 text-emerald-700 p-1.5 rounded-lg shrink-0">
+                  <Building2 size={16} strokeWidth={2.5} />
+                </div>
+                <p><strong className="text-neutral-900 block sm:inline">For Owners:</strong> List your PG for free, get direct WhatsApp leads, and manage everything.</p>
+              </div>
+            </div>
 
             <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-900/5 mb-8">
               <SearchBar cities={cities} />
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-              <span className="font-bold text-neutral-900">500+ <span className="font-medium text-neutral-500">Verified PGs</span></span>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-x-6 sm:gap-y-3 text-sm">
+              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
+                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">500+</span>
+                <span className="font-medium text-neutral-500">Verified PGs</span>
+              </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
-              <span className="font-bold text-neutral-900">12+ <span className="font-medium text-neutral-500">Cities</span></span>
+              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
+                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">12+</span>
+                <span className="font-medium text-neutral-500">Cities</span>
+              </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
-              <span className="font-bold text-neutral-900">50,000+ <span className="font-medium text-neutral-500">Tenants Helped</span></span>
+              <div className="bg-white sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-none flex items-center justify-center sm:justify-start">
+                <span className="font-extrabold text-neutral-900 text-lg sm:text-sm mr-2 sm:mr-1">50k+</span>
+                <span className="font-medium text-neutral-500">Tenants Helped</span>
+              </div>
             </div>
           </div>
 
