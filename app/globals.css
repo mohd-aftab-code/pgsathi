@@ -308,5 +308,50 @@
 }
 
 .animate-fade-in   { animation: fadeIn 0.5s ease-in-out; }
-.animate-slide-up  { animation: slideUp 0.4s ease-out; }
 .animate-slide-down { animation: slideDown 0.3s ease-out; }
+
+/* ═══════════════════════════════════════════
+   PWA NATIVE APP STYLES
+   ═══════════════════════════════════════════ */
+@media all and (display-mode: standalone) {
+  /* Hide standard web elements marked with this class */
+  .standalone-hide {
+    display: none !important;
+  }
+
+  /* Add padding to the bottom so content doesn't hide behind the bottom nav */
+  body {
+    padding-bottom: 72px !important;
+  }
+
+  /* Display the custom Mobile App Bottom Nav */
+  .mobile-app-nav {
+    display: flex !important;
+  }
+
+  /* Optimize scrolling for native app feel */
+  html, body {
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent text selection like a real app (except inputs) */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  input, textarea, [contenteditable="true"] {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  /* Hide scrollbars for a cleaner app look */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Ensure mobile nav is hidden in standard web mode */
+.mobile-app-nav {
+  display: none !important;
+}

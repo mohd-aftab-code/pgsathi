@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { User, Phone, Mail, Settings } from "lucide-react";
 import EditEmailButton from "@/components/dashboard/EditEmailButton";
+import LogoutButton from "@/components/common/LogoutButton";
 
 export default async function OwnerSettingsPage() {
   const session = await auth();
@@ -65,10 +66,14 @@ export default async function OwnerSettingsPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-block px-4 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors"
+            className="inline-block px-4 py-2 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors mb-4"
           >
             Request Account Deletion
           </Link>
+          <div className="border-t border-red-100 pt-4 mt-2">
+            <h3 className="text-sm font-bold text-neutral-800 mb-3">Or simply sign out of your app</h3>
+            <LogoutButton className="w-full flex justify-center py-3 bg-neutral-100 text-neutral-700 hover:bg-neutral-200 rounded-xl font-bold" />
+          </div>
         </div>
       </div>
     </div>
