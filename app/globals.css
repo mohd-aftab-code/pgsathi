@@ -319,9 +319,9 @@
     display: none !important;
   }
 
-  /* Add padding to the bottom so content doesn't hide behind the bottom nav */
-  body {
-    padding-bottom: 72px !important;
+  /* Add padding to the footer instead of body to avoid white gap at the bottom */
+  footer {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 72px) !important;
   }
 
   /* Display the custom Mobile App Bottom Nav */

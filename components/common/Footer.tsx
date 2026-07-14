@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail } from "lucide-react";
+import logoImg from "@/app/assets/logo/logo.png";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -15,13 +16,13 @@ export default function Footer() {
           
           {/* Brand */}
           <div className="flex flex-col gap-5">
-            <Link href="/" className="inline-block bg-white p-2 rounded-xl w-fit">
+            <Link href="/" className="inline-block w-fit">
               <Image 
-                src="/images/logo.jpeg" 
+                src={logoImg} 
                 alt="PGSathi Logo" 
                 width={160}
                 height={60}
-                className="h-12 w-auto object-contain" 
+                className="h-10 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity" 
               />
             </Link>
             <p className="text-sm leading-relaxed max-w-sm text-slate-400">
