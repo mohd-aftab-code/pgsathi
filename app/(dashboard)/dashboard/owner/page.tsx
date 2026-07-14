@@ -36,40 +36,40 @@ export default async function OwnerDashboardPage() {
         </div>
         <Link 
           href="/dashboard/owner/listings/new" 
-          className="bg-neutral-900 hover:bg-black text-white px-5 py-3 md:py-2.5 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2"
+          className="bg-neutral-900 hover:bg-black text-white px-5 py-3 md:py-2.5 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
         >
           <PlusCircle size={20} /> Add New PG
         </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-50 rounded-full blur-3xl transition-transform group-hover:scale-110 pointer-events-none hidden md:block"></div>
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-            <h3 className="font-bold text-neutral-500 text-sm md:text-base">Total Listings</h3>
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 text-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner">
+            <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Listings</h3>
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-50 text-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
               <Building2 size={20} className="md:w-6 md:h-6" />
             </div>
           </div>
           <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{listingsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-purple-50 rounded-full blur-3xl transition-transform group-hover:scale-110 pointer-events-none hidden md:block"></div>
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-purple-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-            <h3 className="font-bold text-neutral-500 text-sm md:text-base">Total Views</h3>
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 text-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner">
+            <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Views</h3>
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-50 text-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-300">
               <Eye size={20} className="md:w-6 md:h-6" />
             </div>
           </div>
           <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{viewsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-green-50 rounded-full blur-3xl transition-transform group-hover:scale-110 pointer-events-none hidden md:block"></div>
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-green-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-            <h3 className="font-bold text-neutral-500 text-sm md:text-base">Total Leads</h3>
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 text-green-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner">
+            <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Leads</h3>
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-50 text-green-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-green-100 transition-all duration-300">
               <MessageSquare size={20} className="md:w-6 md:h-6" />
             </div>
           </div>
@@ -79,17 +79,17 @@ export default async function OwnerDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Leads Feed */}
-        <div className="lg:col-span-2 bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-neutral-200">
+        <div className="lg:col-span-2 bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100">
           <div className="flex items-center justify-between mb-5 md:mb-6 pb-4 border-b border-neutral-100">
             <h2 className="text-lg md:text-xl font-bold text-neutral-900">Recent Leads</h2>
-            <Link href="/dashboard/owner/leads" className="text-xs md:text-sm font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1">
-              View All <ArrowRight size={16} />
+            <Link href="/dashboard/owner/leads" className="text-xs md:text-sm font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1 group">
+              View All <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="space-y-3 md:space-y-4">
             {recentLeads.map((lead) => (
-              <div key={lead.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl md:rounded-2xl border border-neutral-100 hover:border-primary-100 hover:bg-primary-50/30 transition-all">
+              <div key={lead.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl md:rounded-2xl border border-neutral-100 bg-white hover:border-primary-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                 {!lead.isRead && (
                   <span className="absolute -left-1.5 top-6 sm:top-1/2 -translate-y-1/2 w-3 h-3 bg-primary-500 rounded-full border-2 border-white"></span>
                 )}

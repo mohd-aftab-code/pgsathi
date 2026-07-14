@@ -38,7 +38,7 @@ export default async function OwnerDashboardLayout({
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
       <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0}>
         {/* ── Top Header ────────────────────────────────────── */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-neutral-200/60 sticky top-0 z-20 shadow-sm">
+        <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
           <div className="container-max section-padding h-16 flex items-center justify-between">
             <span className="text-neutral-500 text-sm font-semibold">Owner Dashboard</span>
 

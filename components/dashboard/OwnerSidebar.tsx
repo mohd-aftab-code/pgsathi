@@ -49,8 +49,8 @@ export function OwnerSidebar({
     <>
       {/* ── Desktop Rail — fixed flush to the left edge, click-to-pin icon rail ─────── */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white border-r border-neutral-200 transition-[width] duration-200 ease-in-out ${
-          expanded ? "w-64 shadow-xl shadow-neutral-900/10" : "w-[72px]"
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 transition-[width] duration-300 ease-in-out ${
+          expanded ? "w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)]" : "w-[72px] shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
         }`}
       >
         {/* Brand mark */}
@@ -83,10 +83,10 @@ export function OwnerSidebar({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-colors ${
+                  className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-all duration-200 ${
                     active
-                      ? "bg-primary-50 text-primary-700 font-semibold"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-primary-600"
+                      ? "bg-gradient-to-r from-primary-50 to-primary-100/50 text-primary-700 font-bold shadow-sm shadow-primary-900/5 ring-1 ring-primary-100"
+                      : "text-neutral-600 hover:bg-white hover:text-primary-600 hover:shadow-sm"
                   }`}
                 >
                   <Icon size={20} className="shrink-0" />
@@ -166,7 +166,7 @@ export function OwnerSidebar({
 
       {/* ── Mobile Bottom Navigation Bar — App-Like Premium Design ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="bg-white/95 backdrop-blur-xl border-t border-neutral-200/60 shadow-[0_-8px_32px_rgba(0,0,0,0.08)]">
+        <div className="bg-white/80 backdrop-blur-2xl border-t border-white/50 shadow-[0_-8px_32px_rgba(0,0,0,0.06)] rounded-t-3xl overflow-hidden mx-1">
           <div className="flex items-end justify-around px-1 h-[68px]">
             {OWNER_NAV.filter(item => !item.hideMobile).slice(0, 5).map((item) => {
               const Icon = item.icon;

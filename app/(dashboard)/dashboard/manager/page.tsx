@@ -110,7 +110,7 @@ export default async function ManagerDashboardPage() {
           { label: "Pending Bills", value: pendingPayments, icon: Wallet, color: "text-red-600", bg: "bg-red-50", link: "/dashboard/manager/billing" },
           { label: "Reminders", value: pendingRemindersCount, icon: BellRing, color: "text-blue-600", bg: "bg-blue-50", link: "/dashboard/manager/reminders" },
         ].map((stat, i) => (
-          <Link key={i} href={stat.link} className="bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:border-violet-300 hover:shadow-md transition-all group flex flex-col justify-between">
+          <Link key={i} href={stat.link} className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <span className="text-sm font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{stat.label}</span>
               <div className={`p-2 rounded-lg ${stat.bg}`}>
@@ -123,7 +123,7 @@ export default async function ManagerDashboardPage() {
       </div>
 
       {/* ── Role-Based Blur UI: Revenue (Owner-Only) ───────────────── */}
-      <div className="relative rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+      <div className="relative rounded-3xl border border-neutral-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp size={18} className="text-violet-600" />
@@ -152,7 +152,7 @@ export default async function ManagerDashboardPage() {
         </div>
         {/* Blur overlay with unlock CTA for non-owners */}
         {!isOwner && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-md z-10">
             <div className="text-center px-6">
               <div className="w-12 h-12 bg-amber-100 border-2 border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <Lock size={22} className="text-amber-600" />
@@ -166,7 +166,7 @@ export default async function ManagerDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Recent Tenants (CRM Table Style) ───────────────────────────────────── */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
             <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
               <Users size={16} className="text-neutral-500" />
@@ -219,7 +219,7 @@ export default async function ManagerDashboardPage() {
         </div>
 
         {/* ── Open Complaints (CRM Feed Style) ──────────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
             <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
               <Wrench size={16} className="text-neutral-500" />
