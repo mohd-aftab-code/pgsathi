@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
+import { InstallPWA } from "@/components/common/InstallPWA";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -162,6 +163,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-neutral-50 antialiased">
+        <InstallPWA />
         {children}
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
