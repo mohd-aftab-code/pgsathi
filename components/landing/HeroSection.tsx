@@ -133,6 +133,7 @@ function ShowcaseCard({ listing, className }: { listing: any; className: string 
             alt={listing.title}
             fill
             sizes="280px"
+            priority
             className="object-cover"
           />
         )}

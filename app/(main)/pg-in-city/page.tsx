@@ -4,6 +4,8 @@ import { PopularLocalitiesWidget } from "@/components/common/PopularLocalitiesWi
 
 import { db } from "@/lib/db";
 
+import { constructMetadata } from "@/lib/seo";
+
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
@@ -22,13 +24,13 @@ export async function generateMetadata(props: {
     where: { city: { slug: city }, status: "ACTIVE" }
   });
 
-  return {
+  return constructMetadata({
     title,
     description,
-    openGraph: { title, description, type: "website" },
-    alternates: { canonical: `https://pgsathi.in/pg-in-${city}` },
-    ...(listingCount === 0 && { robots: { index: false, follow: true } }),
-  };
+    canonicalPath: `/pg-in-${city}`,
+    noIndex: listingCount === 0,
+    keywords: [`PG in ${cityName}`, `Hostels in ${cityName}`, `Zero brokerage PG ${cityName}`, `Rooms for rent in ${cityName}`]
+  });
 }
 
 export default async function PgInCityPage(props: {

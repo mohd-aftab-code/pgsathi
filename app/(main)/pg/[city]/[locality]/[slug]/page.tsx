@@ -32,6 +32,8 @@ const getListingBySlug = unstable_cache(
   { revalidate: 300 } // 5 minutes — listing details rarely change minute-to-minute
 );
 
+import { constructMetadata } from "@/lib/seo";
+
 export async function generateMetadata(props: {
   params: Promise<{ city: string; locality: string; slug: string }>;
 }) {
@@ -45,20 +47,15 @@ export async function generateMetadata(props: {
   const title = pg.metaTitle || `${pg.title} - PG in ${localityName}, ${cityName}`;
   const description = pg.metaDesc || `${pg.genderAllowed} PG in ${localityName}, ${cityName}. Starting from ₹${pg.priceMin}/month. Zero brokerage, verified property. Contact owner directly on PGSathi.`;
   const image = pg.photos?.[0]?.url || "https://pgsathi.in/og-image.jpg";
+  const canonicalPath = `/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`;
 
-  return {
+  return constructMetadata({
     title,
     description,
-    alternates: {
-      canonical: `https://pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`,
-    },
-    openGraph: {
-      title,
-      description,
-      images: [{ url: image }],
-      type: "website",
-    },
-  };
+    image,
+    canonicalPath,
+    keywords: [pg.title, `PG in ${localityName}`, `PG in ${cityName}`, `${pg.genderAllowed} PG`, 'Zero Brokerage PG'],
+  });
 }
 
 export default async function PGDetailPage(props: {
@@ -111,6 +108,31 @@ export default async function PGDetailPage(props: {
     ]
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://pgsathi.in"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": `PGs in ${cityName}`,
+        "item": `https://pgsathi.in/pg-in-${pg.city?.slug}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": pg.title,
+        "item": `https://pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`
+      }
+    ]
+  };
+
   const genderLabel = pg.genderAllowed === "BOYS" ? "Boys" : pg.genderAllowed === "GIRLS" ? "Girls" : "Co-ed";
   const amenityIcons: Record<string, any> = {
     wifi: <Wifi size={16} />, parking: <Car size={16} />, food: <Utensils size={16} />,
@@ -120,10 +142,8 @@ export default async function PGDetailPage(props: {
   return (
     <>
       {/* Schema Markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <ViewTracker listingId={pg.id} />
 
       <div className="bg-neutral-50 min-h-screen">
