@@ -52,7 +52,7 @@ export default async function VisitsInboxPage() {
           {visits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {visits.map(visit => (
-                <div key={visit.id} className="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm hover:border-primary-200 transition">
+                <div key={visit.id} className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary-200 transition-all duration-300">
                   <div className="flex justify-between items-start mb-3">
                     <div className="font-bold text-lg">{visit.name}</div>
                     <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
@@ -91,8 +91,13 @@ export default async function VisitsInboxPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-2xl border border-dashed border-neutral-300 text-center text-neutral-500">
-              No physical visits scheduled yet. Tenants can book visits directly from your PG page.
+            <div className="bg-white p-12 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center text-neutral-500 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6 text-primary-400 relative z-10">
+                <CalendarClock size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-2 relative z-10">No physical visits scheduled</h3>
+              <p className="text-sm font-medium relative z-10">Tenants can book visits directly from your PG page.</p>
             </div>
           )}
         </section>
@@ -102,22 +107,22 @@ export default async function VisitsInboxPage() {
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Mail className="text-neutral-600" /> General Inquiries (Leads)
           </h2>
-          <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
+          <div className="mt-4">
             {leads.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+              <div className="overflow-x-auto pb-10 px-1 -mx-1">
+                <table className="w-full text-left border-separate border-spacing-y-4">
                   <thead>
-                    <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-500">
-                      <th className="py-5 px-6">Tenant Name</th>
-                      <th className="py-5 px-6">Contact & Actions</th>
-                      <th className="py-5 px-6">Property Interested</th>
-                      <th className="py-5 px-6 text-right">Received</th>
+                    <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+                      <th className="pb-2 px-6">Tenant Name</th>
+                      <th className="pb-2 px-6">Contact & Actions</th>
+                      <th className="pb-2 px-6">Property Interested</th>
+                      <th className="pb-2 px-6 text-right">Received</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {leads.map((lead) => (
-                      <tr key={lead.id} className={`border-b border-neutral-100 hover:bg-neutral-50 transition-colors group ${!lead.isRead ? 'bg-orange-50/30' : ''}`}>
-                        <td className="py-5 px-6">
+                      <tr key={lead.id} className={`bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group ${!lead.isRead ? 'ring-2 ring-orange-100 shadow-orange-100/50' : ''}`}>
+                        <td className={`py-5 px-6 rounded-l-2xl border-y border-l ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
                               {lead.name.charAt(0).toUpperCase()}
@@ -131,7 +136,7 @@ export default async function VisitsInboxPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-5 px-6">
+                        <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
                           <div className="flex flex-col gap-2">
                             <div className="font-bold text-neutral-800 tracking-wide">
                               {hasAccess ? lead.phone : "98XXXXXX" + lead.phone.slice(-2)}
@@ -165,7 +170,7 @@ export default async function VisitsInboxPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-5 px-6">
+                        <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
                           <div className="space-y-1.5">
                             <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1">
                               {lead.listing.title} <ExternalLink size={14} />
@@ -177,7 +182,7 @@ export default async function VisitsInboxPage() {
                             )}
                           </div>
                         </td>
-                        <td className="py-5 px-6 text-right">
+                        <td className={`py-5 px-6 rounded-r-2xl border-y border-r text-right ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
                           <div className="flex flex-col items-end gap-2">
                             <span className="font-bold text-neutral-900">
                               {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
@@ -201,13 +206,14 @@ export default async function VisitsInboxPage() {
                 </table>
               </div>
             ) : (
-              <div className="p-16 text-center">
-                <div className="w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400">
-                  <Mail size={36} />
+              <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
+                <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
+                  <Mail size={40} />
                 </div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-3">Your Inbox is Empty</h3>
-                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-lg">
-                  You haven't received any leads yet.
+                <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">Your Inbox is Empty</h3>
+                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">
+                  You haven't received any leads yet. Incoming inquiries will appear here.
                 </p>
               </div>
             )}

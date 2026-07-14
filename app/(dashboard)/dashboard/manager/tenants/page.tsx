@@ -103,27 +103,27 @@ export default async function TenantsPage({
         </div>
       ) : (
         <>
-          <div className="card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-neutral-50 border-b border-neutral-200">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Tenant</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide hidden sm:table-cell">PG / Room</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide hidden md:table-cell">Rent</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide hidden lg:table-cell">Check-in</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide hidden md:table-cell">This Month</th>
-                    <th className="px-4 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100">
+        <div className="mt-4">
+          <div className="overflow-x-auto pb-8 px-1 -mx-1">
+            <table className="w-full text-sm text-left border-separate border-spacing-y-3">
+              <thead>
+                <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+                  <th className="px-6 py-3">Tenant</th>
+                  <th className="px-6 py-3 hidden sm:table-cell">PG / Room</th>
+                  <th className="px-6 py-3 hidden md:table-cell">Rent</th>
+                  <th className="px-6 py-3 hidden lg:table-cell">Check-in</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3 hidden md:table-cell">This Month</th>
+                  <th className="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
                   {tenants.map((t) => {
                     const paid = t.payments.reduce((s, p) => s + p.amount, 0);
                     const due  = Math.max(0, t.monthlyRent - paid);
                     return (
-                      <tr key={t.id} className="hover:bg-neutral-50 transition">
-                        <td className="px-4 py-3">
+                      <tr key={t.id} className="bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group">
+                        <td className="px-6 py-4 rounded-l-2xl border-y border-l border-neutral-100">
                           <div className="flex items-center gap-3">
                             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary-100 text-xs font-bold text-primary-700">
                               {initials(t.name)}
@@ -134,27 +134,27 @@ export default async function TenantsPage({
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 hidden sm:table-cell">
+                        <td className="px-6 py-4 hidden sm:table-cell border-y border-neutral-100">
                           <div className="text-neutral-900 font-medium text-xs">{t.listing.title}</div>
                           {t.room && <div className="text-xs text-neutral-400">Room {t.room.name}</div>}
                         </td>
-                        <td className="px-4 py-3 hidden md:table-cell font-semibold text-neutral-900">
+                        <td className="px-6 py-4 hidden md:table-cell font-semibold text-neutral-900 border-y border-neutral-100">
                           {formatINR(t.monthlyRent)}
                         </td>
-                        <td className="px-4 py-3 hidden lg:table-cell text-neutral-500 text-xs">
+                        <td className="px-6 py-4 hidden lg:table-cell text-neutral-500 text-xs border-y border-neutral-100">
                           {formatDate(t.checkInDate)}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-6 py-4 border-y border-neutral-100">
                           <StatusBadge status={t.status} />
                         </td>
-                        <td className="px-4 py-3 hidden md:table-cell">
+                        <td className="px-6 py-4 hidden md:table-cell border-y border-neutral-100">
                           {due > 0 ? (
                             <span className="text-red-600 font-semibold text-xs">{formatINR(due)} due</span>
                           ) : (
                             <span className="text-green-600 font-semibold text-xs">Paid ✓</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-6 py-4 rounded-r-2xl border-y border-r border-neutral-100 text-right">
                           <Link href={`/dashboard/manager/tenants/${t.id}`} className="text-xs font-semibold text-primary-700 hover:underline">
                             View →
                           </Link>

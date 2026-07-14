@@ -38,28 +38,28 @@ export default async function OwnerListingsPage() {
         </div>
         <Link 
           href="/dashboard/owner/listings/new" 
-          className="bg-neutral-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
+          className="bg-neutral-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
         >
           <PlusCircle size={20} /> Add New PG
         </Link>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
+      <div className="mt-6">
         {listings.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto pb-10 px-1 -mx-1">
+            <table className="w-full text-left border-separate border-spacing-y-4">
               <thead>
-                <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-500">
-                  <th className="py-5 px-6">Property Details</th>
-                  <th className="py-5 px-6">Status & Type</th>
-                  <th className="py-5 px-6">Performance</th>
-                  <th className="py-5 px-6 text-right">Actions</th>
+                <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+                  <th className="pb-2 px-6">Property Details</th>
+                  <th className="pb-2 px-6">Status & Type</th>
+                  <th className="pb-2 px-6">Performance</th>
+                  <th className="pb-2 px-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
                 {listings.map((listing) => (
-                  <tr key={listing.id} className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors group">
-                    <td className="py-5 px-6">
+                  <tr key={listing.id} className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+                    <td className="py-5 px-6 rounded-l-2xl border-y border-l border-neutral-100">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200">
                           {listing.photos && listing.photos.length > 0 ? (
@@ -83,7 +83,7 @@ export default async function OwnerListingsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-5 px-6">
+                    <td className="py-5 px-6 border-y border-neutral-100">
                       <div className="flex flex-col items-start gap-2">
                         <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold ${
                           listing.status === "ACTIVE" ? "bg-green-100 text-green-700 border border-green-200" :
@@ -97,7 +97,7 @@ export default async function OwnerListingsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-5 px-6">
+                    <td className="py-5 px-6 border-y border-neutral-100">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col items-center">
                           <span className="text-lg font-black text-neutral-900 flex items-center gap-1">
@@ -114,7 +114,7 @@ export default async function OwnerListingsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-5 px-6 text-right">
+                    <td className="py-5 px-6 rounded-r-2xl border-y border-r border-neutral-100 text-right">
                       <ListingActions
                         listingId={listing.id}
                         listingSlug={listing.slug}
@@ -127,15 +127,16 @@ export default async function OwnerListingsPage() {
             </table>
           </div>
         ) : (
-          <div className="p-16 text-center">
-            <div className="w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400">
-              <Building2 size={36} />
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 p-16 text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
+            <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6 text-primary-500 shadow-inner relative z-10">
+              <Building2 size={40} />
             </div>
-            <h3 className="text-2xl font-bold text-neutral-900 mb-3">No listings yet</h3>
-            <p className="text-neutral-500 mb-8 max-w-md mx-auto text-lg">You haven't added any properties yet. Create your first listing to start getting leads.</p>
+            <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No listings yet</h3>
+            <p className="text-neutral-500 mb-8 max-w-md mx-auto text-base font-medium relative z-10">You haven't added any properties yet. Create your first listing to start getting leads and maximizing occupancy.</p>
             <Link 
               href="/dashboard/owner/listings/new" 
-              className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 inline-flex items-center gap-2 relative z-10"
             >
               <PlusCircle size={20} /> Create Your First Listing
             </Link>

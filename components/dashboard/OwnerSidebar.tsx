@@ -38,7 +38,6 @@ export function OwnerSidebar({
   children?: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [expanded, setExpanded] = useState(false);
 
   const isActive = (item: (typeof OWNER_NAV)[number]) =>
     item.href === "/dashboard/owner"
@@ -49,30 +48,17 @@ export function OwnerSidebar({
     <>
       {/* ── Desktop Rail — fixed flush to the left edge, click-to-pin icon rail ─────── */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 transition-[width] duration-300 ease-in-out ${
-          expanded ? "w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)]" : "w-[72px] shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
-        }`}
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)] transition-none`}
       >
         {/* Brand mark */}
         <Link
           href="/dashboard/owner"
-          className={`flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 ${
-            expanded ? "px-4" : "justify-center"
-          }`}
+          className="flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 px-4"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-icon.png" alt="PGSathi" className="w-8 h-8 object-contain shrink-0" />
-          {expanded && <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>}
+          <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>
         </Link>
-
-        {/* Expand / collapse toggle — always accessible, click-based (not hover) */}
-        <button
-          onClick={() => setExpanded((e) => !e)}
-          className="flex items-center justify-center h-10 mx-2 my-2 rounded-xl text-neutral-400 hover:bg-neutral-100 hover:text-primary-600 transition-colors shrink-0"
-          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          {expanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
-        </button>
 
         <nav className="flex-1 overflow-y-auto overflow-x-hidden py-1 custom-scrollbar">
           <div className="flex flex-col gap-1 px-2">
@@ -90,19 +76,9 @@ export function OwnerSidebar({
                   }`}
                 >
                   <Icon size={20} className="shrink-0" />
-                  <span
-                    className={`text-sm font-medium whitespace-nowrap transition-opacity duration-150 ${
-                      expanded ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
+                  <span className="text-sm font-medium whitespace-nowrap opacity-100">
                     {item.name}
                   </span>
-                  {/* Tooltip — only needed while collapsed */}
-                  {!expanded && (
-                    <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
-                      {item.name}
-                    </span>
-                  )}
                 </Link>
               );
             })}
@@ -112,55 +88,39 @@ export function OwnerSidebar({
         {/* Trial / upgrade footer */}
         {!hasPaidPlan && (
           <div className="px-2 pb-3 shrink-0">
-            {expanded ? (
-              trialDaysLeft > 0 ? (
-                <div className="rounded-xl bg-primary-50 border border-primary-100 p-3">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Sparkles size={13} className="text-primary-600 shrink-0" />
-                    <p className="text-xs font-bold text-primary-900 whitespace-nowrap">Free Trial Active</p>
-                  </div>
-                  <p className="text-[10px] text-primary-700/80 mb-2.5 whitespace-nowrap">
-                    {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left
-                  </p>
-                  <Link
-                    href="/dashboard/owner/subscription/upgrade"
-                    className="block text-center text-xs font-bold bg-primary-600 text-white rounded-lg py-1.5 hover:bg-primary-700 transition-colors"
-                  >
-                    Upgrade
-                  </Link>
+            {trialDaysLeft > 0 ? (
+              <div className="rounded-xl bg-primary-50 border border-primary-100 p-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Sparkles size={13} className="text-primary-600 shrink-0" />
+                  <p className="text-xs font-bold text-primary-900 whitespace-nowrap">Free Trial Active</p>
                 </div>
-              ) : (
-                <div className="rounded-xl bg-red-50 border border-red-100 p-3">
-                  <p className="text-xs font-bold text-red-700 mb-2 whitespace-nowrap">Trial Expired</p>
-                  <Link
-                    href="/dashboard/owner/subscription/upgrade"
-                    className="block text-center text-xs font-bold bg-red-600 text-white rounded-lg py-1.5 hover:bg-red-700 transition-colors"
-                  >
-                    Upgrade Now
-                  </Link>
-                </div>
-              )
+                <p className="text-[10px] text-primary-700/80 mb-2.5 whitespace-nowrap">
+                  {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left
+                </p>
+                <Link
+                  href="/dashboard/owner/subscription/upgrade"
+                  className="block text-center text-xs font-bold bg-primary-600 text-white rounded-lg py-1.5 hover:bg-primary-700 transition-colors"
+                >
+                  Upgrade
+                </Link>
+              </div>
             ) : (
-              <Link
-                href="/dashboard/owner/subscription/upgrade"
-                className={`group relative flex items-center justify-center h-11 rounded-xl border ${
-                  trialDaysLeft > 0
-                    ? "bg-primary-50 border-primary-100"
-                    : "bg-red-50 border-red-100"
-                }`}
-              >
-                <Sparkles size={18} className={trialDaysLeft > 0 ? "text-primary-600" : "text-red-600"} />
-                <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
-                  {trialDaysLeft > 0 ? `${trialDaysLeft} days left in trial` : "Trial expired — upgrade"}
-                </span>
-              </Link>
+              <div className="rounded-xl bg-red-50 border border-red-100 p-3">
+                <p className="text-xs font-bold text-red-700 mb-2 whitespace-nowrap">Trial Expired</p>
+                <Link
+                  href="/dashboard/owner/subscription/upgrade"
+                  className="block text-center text-xs font-bold bg-red-600 text-white rounded-lg py-1.5 hover:bg-red-700 transition-colors"
+                >
+                  Upgrade Now
+                </Link>
+              </div>
             )}
           </div>
         )}
       </aside>
 
-      {/* ── Content — shifts right with the rail so nothing sits underneath it ─────── */}
-      <div className={`transition-[padding] duration-200 ease-in-out ${expanded ? "lg:pl-64" : "lg:pl-[72px]"}`}>
+      {/* ── Content — static offset for fixed sidebar ─────── */}
+      <div className="lg:pl-64">
         {children}
       </div>
 

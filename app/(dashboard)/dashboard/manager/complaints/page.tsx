@@ -44,29 +44,34 @@ export default async function ComplaintsPage({
         <ComplaintActions listings={listings} />
       </div>
 
-      <form className="mb-5 flex flex-wrap gap-3">
-        <select name="status" defaultValue={status} className="input-base max-w-[160px]">
+      <form className="mb-6 flex flex-wrap gap-3">
+        <select name="status" defaultValue={status} className="input-base max-w-[160px] bg-white shadow-sm rounded-xl">
           <option value="">All Status</option>
           <option value="OPEN">Open</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="RESOLVED">Resolved</option>
           <option value="CLOSED">Closed</option>
         </select>
-        <select name="listingId" defaultValue={listingId ?? ""} className="input-base max-w-[200px]">
+        <select name="listingId" defaultValue={listingId ?? ""} className="input-base max-w-[200px] bg-white shadow-sm rounded-xl">
           <option value="">All Properties</option>
           {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
         </select>
-        <button type="submit" className="btn-primary text-sm px-5">Filter</button>
+        <button type="submit" className="btn-primary text-sm px-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">Filter</button>
       </form>
 
       {complaints.length === 0 ? (
-        <div className="card">
-          <EmptyState icon={Wrench} title="Koi complaint nahi" description="Sab theek chal raha hai! Ya filter change karein." />
+        <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
+          <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
+            <Wrench size={40} />
+          </div>
+          <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No issues found</h3>
+          <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">Everything is running smoothly! Or try changing your filters.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {complaints.map((c) => (
-            <div key={c.id} className="card p-4 flex flex-wrap items-start justify-between gap-3">
+            <div key={c.id} className="bg-white p-5 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <StatusBadge status={c.priority} />

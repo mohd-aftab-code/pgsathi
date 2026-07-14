@@ -116,7 +116,6 @@ function MobileNavItem({
 
 export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; children?: React.ReactNode }) {
   const pathname = usePathname();
-  const [expanded, setExpanded] = useState(false);
 
   const isActive = (item: NavItem) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -125,30 +124,17 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
     <>
       {/* ── Desktop Rail — fixed flush to the left edge, click-to-pin icon rail ─────── */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 transition-[width] duration-300 ease-in-out ${
-          expanded ? "w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)]" : "w-[72px] shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
-        }`}
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)] transition-none`}
       >
         {/* Brand mark */}
         <Link
           href="/dashboard/manager"
-          className={`flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 ${
-            expanded ? "px-4" : "justify-center"
-          }`}
+          className="flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 px-4"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-icon.png" alt="PGSathi" className="w-8 h-8 object-contain shrink-0" />
-          {expanded && <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>}
+          <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>
         </Link>
-
-        {/* Expand / collapse toggle — always accessible, click-based (not hover) */}
-        <button
-          onClick={() => setExpanded((e) => !e)}
-          className="flex items-center justify-center h-10 mx-2 my-2 rounded-xl text-neutral-400 hover:bg-neutral-100 hover:text-violet-600 transition-colors shrink-0"
-          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          {expanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
-        </button>
 
         {isOwner && (
           <Link
@@ -156,18 +142,9 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
             className="group relative flex items-center h-11 mx-2 mb-1 rounded-xl px-[13px] gap-3.5 text-neutral-500 hover:bg-neutral-50 hover:text-violet-600 transition-colors shrink-0"
           >
             <ArrowLeft size={20} className="shrink-0" />
-            <span
-              className={`text-sm font-medium whitespace-nowrap transition-opacity duration-150 ${
-                expanded ? "opacity-100" : "opacity-0"
-              }`}
-            >
+            <span className="text-sm font-medium whitespace-nowrap opacity-100">
               Owner Dashboard
             </span>
-            {!expanded && (
-              <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
-                Owner Dashboard
-              </span>
-            )}
           </Link>
         )}
 
@@ -179,11 +156,7 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
 
               return (
                 <div key={group.category} className={gi > 0 ? "mt-2 pt-2 border-t border-neutral-100" : ""}>
-                  <p
-                    className={`px-3 mb-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest whitespace-nowrap transition-opacity duration-150 ${
-                      expanded ? "opacity-100 h-auto mb-1" : "opacity-0 h-0 mb-0 overflow-hidden"
-                    }`}
-                  >
+                  <p className="px-3 mb-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest whitespace-nowrap opacity-100 h-auto">
                     {group.category}
                   </p>
                   <div className="flex flex-col gap-1">
@@ -201,18 +174,9 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
                           }`}
                         >
                           <Icon size={20} className="shrink-0" />
-                          <span
-                            className={`text-sm font-medium whitespace-nowrap transition-opacity duration-150 ${
-                              expanded ? "opacity-100" : "opacity-0"
-                            }`}
-                          >
+                          <span className="text-sm font-medium whitespace-nowrap opacity-100">
                             {item.name}
                           </span>
-                          {!expanded && (
-                            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-neutral-800 px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg ring-1 ring-black/20 transition-opacity duration-150 group-hover:opacity-100 z-50">
-                              {item.name}
-                            </span>
-                          )}
                         </Link>
                       );
                     })}
@@ -224,8 +188,8 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
         </nav>
       </aside>
 
-      {/* ── Content — shifts right with the rail so nothing sits underneath it ─────── */}
-      <div className={`transition-[padding] duration-200 ease-in-out ${expanded ? "lg:pl-64" : "lg:pl-[72px]"}`}>
+      {/* ── Content — static offset for fixed sidebar ─────── */}
+      <div className="lg:pl-64">
         {children}
       </div>
 

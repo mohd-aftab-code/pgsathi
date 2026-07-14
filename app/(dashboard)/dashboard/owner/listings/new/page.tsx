@@ -302,75 +302,81 @@ export default function NewListingPage() {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="flex w-full mb-8 rounded-xl overflow-x-auto whitespace-nowrap shadow-sm border border-neutral-200 snap-x hide-scrollbar">
-      {STEPS.map((step, index) => {
-        const isActive = currentStep === step.id;
-        const isCompleted = currentStep > step.id;
+    <div className="flex w-full mb-10 overflow-x-auto hide-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
+      <div className="flex w-full min-w-[600px] justify-between relative px-2">
+        <div className="absolute top-1/2 left-4 right-4 h-1 bg-neutral-100 -translate-y-1/2 rounded-full z-0"></div>
+        <div className="absolute top-1/2 left-4 h-1 bg-primary-500 -translate-y-1/2 rounded-full z-0 transition-all duration-500" style={{ width: `calc(${((currentStep - 1) / (STEPS.length - 1)) * 100}% - 2rem)` }}></div>
         
-        return (
-          <div 
-            key={step.id} 
-            className={`flex-1 flex items-center justify-between px-4 py-3 min-w-[180px] md:min-w-0 border-r border-white/20 last:border-r-0 transition-colors snap-start
-              ${isActive ? 'bg-primary-500 text-white font-bold' : 
-                isCompleted ? 'bg-primary-100 text-primary-800 font-medium' : 
-                'bg-white text-neutral-400 font-medium'}`}
-          >
-            <span className="text-xs uppercase tracking-wider hidden md:block">Step {step.id}</span>
-            <span className="text-sm truncate mx-2">{step.title}</span>
-            {isCompleted && <CheckCircle2 size={16} />}
-          </div>
-        );
-      })}
+        {STEPS.map((step, index) => {
+          const isActive = currentStep === step.id;
+          const isCompleted = currentStep > step.id;
+          
+          return (
+            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 shadow-sm
+                ${isActive ? 'bg-primary-600 text-white ring-4 ring-primary-100 scale-110' : 
+                  isCompleted ? 'bg-primary-100 text-primary-600' : 
+                  'bg-white text-neutral-400 border border-neutral-200'}`}
+              >
+                {isCompleted ? <CheckCircle2 size={20} /> : step.id}
+              </div>
+              <span className={`text-xs font-bold whitespace-nowrap transition-colors ${isActive ? 'text-neutral-900' : isCompleted ? 'text-primary-700' : 'text-neutral-400'}`}>
+                {step.title}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 
   const renderStep1 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Provide Details of PG</h3>
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">PG / Flat Name *</label>
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">PG / Flat Name *</label>
             <input 
               type="text" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
               placeholder="Enter PG Name"
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Description *</label>
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Description *</label>
             <input 
               type="text" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
               placeholder="Short catchy description"
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Place is available for *</label>
-            <div className="flex items-center gap-6">
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Place is available for *</label>
+            <div className="grid grid-cols-3 gap-4">
               {['BOYS', 'GIRLS', 'COED'].map(type => (
-                <label key={type} className="flex items-center gap-2 cursor-pointer">
+                <label key={type} className={`relative flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.genderAllowed === type ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="gender" 
-                    className="w-4 h-4 text-primary-500 focus:ring-primary-500 border-neutral-300"
+                    className="hidden"
                     checked={formData.genderAllowed === type}
                     onChange={() => setFormData({...formData, genderAllowed: type})}
                   />
-                  <span className="text-sm">{type === 'COED' ? 'Co-living' : type === 'BOYS' ? 'Boys' : 'Girls'}</span>
+                  <span className="text-sm font-bold">{type === 'COED' ? 'Co-living' : type === 'BOYS' ? 'Boys' : 'Girls'}</span>
                 </label>
               ))}
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Room Types Available *</label>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Types Available *</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
                 { id: "SINGLE_ROOM", label: "Single Room" },
                 { id: "DOUBLE_SHARING", label: "Double Sharing" },
@@ -379,23 +385,25 @@ export default function NewListingPage() {
                 { id: "DORMITORY", label: "Dormitory" },
                 { id: "STUDIO", label: "Studio" },
               ].map((type) => (
-                <label key={type.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                <label key={type.id} className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.roomTypes.includes(type.id) ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+                    {formData.roomTypes.includes(type.id) && <CheckCircle2 size={16} className="text-white" />}
+                  </div>
                   <input 
                     type="checkbox" 
-                    className="w-4 h-4 text-primary-500 rounded border-neutral-300 focus:ring-primary-500"
+                    className="hidden"
                     checked={formData.roomTypes.includes(type.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
                         setFormData({ ...formData, roomTypes: [...formData.roomTypes, type.id] });
                       } else {
-                        // Ensure at least one is selected
                         if (formData.roomTypes.length > 1) {
                           setFormData({ ...formData, roomTypes: formData.roomTypes.filter(id => id !== type.id) });
                         }
                       }
                     }}
                   />
-                  <span className="text-sm font-medium">{type.label}</span>
+                  <span className={`text-sm font-bold ${formData.roomTypes.includes(type.id) ? 'text-primary-800' : 'text-neutral-600'}`}>{type.label}</span>
                 </label>
               ))}
             </div>
@@ -407,8 +415,8 @@ export default function NewListingPage() {
 
   const renderStep2 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-2 pb-4 border-b">Location Details</h3>
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-2 pb-4 border-b border-neutral-100">Location Details</h3>
 
         {/* ── Tip banner ─────────────────────────────────────── */}
         <div className="flex items-start gap-3 bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 mt-4 mb-6">
@@ -496,9 +504,9 @@ export default function NewListingPage() {
 
           {/* Pincode — triggers auto-fetch */}
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">
               Pincode *
-              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
                 Auto-fills address
               </span>
             </label>
@@ -506,7 +514,7 @@ export default function NewListingPage() {
               type="text"
               inputMode="numeric"
               maxLength={6}
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none text-base tracking-widest"
+              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-base tracking-widest transition-all shadow-sm"
               placeholder="e.g. 302001"
               value={formData.pincode}
               onChange={e => {
@@ -565,12 +573,12 @@ export default function NewListingPage() {
 
           {/* Landmark */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
-              Landmark / Street <span className="text-neutral-400 font-normal">(Optional)</span>
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">
+              Landmark / Street <span className="text-neutral-400 font-normal normal-case tracking-normal">(Optional)</span>
             </label>
             <input
               type="text"
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
               placeholder="e.g. Near Apollo Hospital, Main Road"
               value={formData.landmark}
               onChange={e => setFormData({ ...formData, landmark: e.target.value })}
@@ -579,15 +587,15 @@ export default function NewListingPage() {
 
           {/* Address — auto-filled, editable */}
           <div className="md:col-span-3">
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">
               Complete Address *
-              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
                 Map se auto-fill hoga
               </span>
             </label>
             <textarea
               rows={2}
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none transition-all shadow-sm"
               placeholder="Map pe click karo ya pincode daalo — address auto-fill ho jayega..."
               value={formData.address}
               onChange={e => setFormData({ ...formData, address: e.target.value })}
@@ -605,92 +613,98 @@ export default function NewListingPage() {
 
   const renderStep3 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Provide Details of PG</h3>
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Available From *</label>
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Available From *</label>
             <input 
               type="date" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
               value={formData.availableFrom}
               onChange={e => setFormData({...formData, availableFrom: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Notice Period</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Notice Period</label>
+            <div className="grid grid-cols-2 gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noticePeriod === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="noticePeriod" 
-                    className="w-4 h-4 text-primary-500"
+                    className="hidden"
                     checked={formData.noticePeriod === opt}
                     onChange={() => setFormData({...formData, noticePeriod: opt})}
                   />
-                  <span className="text-sm">{opt}</span>
+                  <span className="text-sm font-bold">{opt}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Food Included</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Food Included</label>
+            <div className="grid grid-cols-2 gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.foodIncluded === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="foodIncluded" 
-                    className="w-4 h-4 text-primary-500"
+                    className="hidden"
                     checked={formData.foodIncluded === opt}
                     onChange={() => setFormData({...formData, foodIncluded: opt})}
                   />
-                  <span className="text-sm">{opt}</span>
+                  <span className="text-sm font-bold">{opt}</span>
                 </label>
               ))}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Gate Closing Time</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Gate Closing Time</label>
+            <div className="grid grid-cols-2 gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.gateClosingTime === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="gateClosingTime" 
-                    className="w-4 h-4 text-primary-500"
+                    className="hidden"
                     checked={formData.gateClosingTime === opt}
                     onChange={() => setFormData({...formData, gateClosingTime: opt})}
                   />
-                  <span className="text-sm">{opt}</span>
+                  <span className="text-sm font-bold">{opt}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">PG Rules</label>
-            <div className="flex items-center gap-8">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Rules</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.rentLockIn ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`w-6 h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.rentLockIn ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+                  {formData.rentLockIn && <CheckCircle2 size={16} className="text-white" />}
+                </div>
                 <input 
                   type="checkbox" 
-                  className="w-4 h-4 text-primary-500 rounded border-neutral-300"
+                  className="hidden"
                   checked={formData.rentLockIn}
                   onChange={(e) => setFormData({...formData, rentLockIn: e.target.checked})}
                 />
-                <span className="text-sm font-medium">Rent lock-in</span>
+                <span className={`text-sm font-bold ${formData.rentLockIn ? 'text-primary-800' : 'text-neutral-600'}`}>Rent lock-in</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noGuardiansStay ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`w-6 h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.noGuardiansStay ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+                  {formData.noGuardiansStay && <CheckCircle2 size={16} className="text-white" />}
+                </div>
                 <input 
                   type="checkbox" 
-                  className="w-4 h-4 text-primary-500 rounded border-neutral-300"
+                  className="hidden"
                   checked={formData.noGuardiansStay}
                   onChange={(e) => setFormData({...formData, noGuardiansStay: e.target.checked})}
                 />
-                <span className="text-sm font-medium">No guardians stay</span>
+                <span className={`text-sm font-bold ${formData.noGuardiansStay ? 'text-primary-800' : 'text-neutral-600'}`}>No guardians stay</span>
               </label>
             </div>
           </div>
@@ -702,71 +716,84 @@ export default function NewListingPage() {
 
   const renderStep4 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Available Services</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Available Services</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Laundry Service</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Laundry Service</label>
+            <div className="grid grid-cols-2 gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="laundry" className="w-4 h-4 text-primary-500" checked={formData.laundryService === opt} onChange={() => setFormData({...formData, laundryService: opt})} />
-                  <span className="text-sm">{opt}</span>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.laundryService === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                  <input type="radio" name="laundry" className="hidden" checked={formData.laundryService === opt} onChange={() => setFormData({...formData, laundryService: opt})} />
+                  <span className="text-sm font-bold">{opt}</span>
                 </label>
               ))}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-3">Room Cleaning</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Cleaning</label>
+            <div className="grid grid-cols-2 gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="cleaning" className="w-4 h-4 text-primary-500" checked={formData.roomCleaning === opt} onChange={() => setFormData({...formData, roomCleaning: opt})} />
-                  <span className="text-sm">{opt}</span>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomCleaning === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                  <input type="radio" name="cleaning" className="hidden" checked={formData.roomCleaning === opt} onChange={() => setFormData({...formData, roomCleaning: opt})} />
+                  <span className="text-sm font-bold">{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Parking</label>
+            <div className="grid grid-cols-2 gap-4">
+              {['Yes', 'No'].map(opt => (
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.parking === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                  <input type="radio" name="parking" className="hidden" checked={formData.parking === opt} onChange={() => setFormData({...formData, parking: opt})} />
+                  <span className="text-sm font-bold">{opt}</span>
                 </label>
               ))}
             </div>
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Available Amenities of PG</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          {AMENITIES_LIST.map(amenity => (
-            <label key={amenity.id} className="flex items-center gap-3 cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="w-5 h-5 text-primary-500 rounded border-neutral-300"
-                checked={formData.selectedAmenities.includes(amenity.id)}
-                onChange={() => toggleAmenity(amenity.id, 'pg')}
-              />
-              <span className="text-sm font-medium text-neutral-700">{amenity.label}</span>
-            </label>
-          ))}
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Available Amenities of PG</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10">
+          {AMENITIES_LIST.map(amenity => {
+            const isSelected = formData.selectedAmenities.includes(amenity.id);
+            return (
+              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
+                  {isSelected && <CheckCircle2 size={12} className="text-white" />}
+                </div>
+                <input 
+                  type="checkbox" 
+                  className="hidden"
+                  checked={isSelected}
+                  onChange={() => toggleAmenity(amenity.id, 'pg')}
+                />
+                <span className={`text-sm font-bold mt-2 ${isSelected ? 'text-primary-800' : 'text-neutral-600'}`}>{amenity.label}</span>
+              </label>
+            );
+          })}
         </div>
 
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Room Amenities of PG</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          {ROOM_AMENITIES_LIST.map(amenity => (
-            <label key={amenity.id} className="flex items-center gap-3 cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="w-5 h-5 text-primary-500 rounded border-neutral-300"
-                checked={formData.selectedRoomAmenities.includes(amenity.id)}
-                onChange={() => toggleAmenity(amenity.id, 'room')}
-              />
-              <span className="text-sm font-medium text-neutral-700">{amenity.label}</span>
-            </label>
-          ))}
-        </div>
-
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Parking</h3>
-        <div className="flex items-center gap-6">
-          {['Yes', 'No'].map(opt => (
-            <label key={opt} className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="parking" className="w-4 h-4 text-primary-500" checked={formData.parking === opt} onChange={() => setFormData({...formData, parking: opt})} />
-              <span className="text-sm">{opt}</span>
-            </label>
-          ))}
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Room Amenities of PG</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+          {ROOM_AMENITIES_LIST.map(amenity => {
+            const isSelected = formData.selectedRoomAmenities.includes(amenity.id);
+            return (
+              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
+                  {isSelected && <CheckCircle2 size={12} className="text-white" />}
+                </div>
+                <input 
+                  type="checkbox" 
+                  className="hidden"
+                  checked={isSelected}
+                  onChange={() => toggleAmenity(amenity.id, 'room')}
+                />
+                <span className={`text-sm font-bold mt-2 ${isSelected ? 'text-primary-800' : 'text-neutral-600'}`}>{amenity.label}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -776,18 +803,19 @@ export default function NewListingPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
       
       {/* Gallery */}
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Gallery</h3>
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Gallery</h3>
         
         {formData.photos.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {formData.photos.map((photo, i) => (
-              <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200 group shadow-sm">
-                <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-neutral-100 group shadow-sm hover:shadow-md transition-shadow">
+                <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <button 
                   type="button"
                   onClick={() => removePhoto(i)}
-                  className="absolute top-2 right-2 bg-red-500/90 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-lg scale-90 group-hover:scale-100"
                 >
                   &times;
                 </button>
@@ -796,7 +824,7 @@ export default function NewListingPage() {
           </div>
         )}
 
-        <label className="border-2 border-dashed border-primary-200 bg-primary-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary-100 transition-colors relative">
+        <label className="border-2 border-dashed border-primary-300 bg-primary-50/50 hover:bg-primary-50 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer transition-colors relative group">
           <input 
             type="file" 
             multiple 
@@ -805,52 +833,55 @@ export default function NewListingPage() {
             onChange={handleImageUpload} 
             disabled={uploadingImage}
           />
-          {uploadingImage ? (
-             <Loader2 className="text-primary-500 mb-4 animate-spin" size={32} />
-          ) : (
-             <Upload className="text-primary-500 mb-4" size={32} />
-          )}
-          <p className="font-bold text-neutral-800 mb-1">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
-          <p className="text-xs text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
-          <div className="bg-white text-primary-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-primary-100">Browse Files</div>
-          <p className="text-[10px] text-neutral-400 mt-4">Max size 5MB per image</p>
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform duration-300 text-primary-500">
+            {uploadingImage ? (
+               <Loader2 className="animate-spin" size={28} />
+            ) : (
+               <Upload size={28} />
+            )}
+          </div>
+          <p className="font-bold text-neutral-900 mb-1 text-lg">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
+          <p className="text-sm text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
+          <div className="bg-primary-600 text-white font-bold px-8 py-3 rounded-xl shadow-sm text-sm hover:bg-primary-700 transition-colors">Browse Files</div>
+          <p className="text-[10px] text-neutral-400 mt-4 uppercase tracking-wider font-semibold">Max size 5MB per image</p>
         </label>
       </div>
 
       {/* Pricing */}
-      <div className="border border-neutral-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Pricing Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
+        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Pricing Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Min Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Min Rent (₹/mo) *</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Max Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMax} onChange={e => setFormData({...formData, priceMax: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Max Rent (₹/mo) *</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.priceMax} onChange={e => setFormData({...formData, priceMax: e.target.value})} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Security Deposit (₹)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Security Deposit (₹)</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
           </div>
         </div>
-        <h3 className="text-md font-bold text-neutral-800 mb-4">Additional Charges (Optional)</h3>
+        
+        <h3 className="text-sm font-bold text-neutral-800 mb-6 uppercase tracking-wider">Additional Charges (Optional)</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Maintenance (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Maintenance (₹/mo)</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Electricity (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Electricity (₹/mo)</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Food / Mess (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Food / Mess (₹/mo)</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Setup Fee (One-time)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
+            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Setup Fee (One-time)</label>
+            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
           </div>
         </div>
       </div>
@@ -904,12 +935,12 @@ export default function NewListingPage() {
         {currentStep === 5 && renderStep5()}
       </div>
 
-      {/* Navigation Buttons */}
-      <div className="flex items-center justify-between border-t border-neutral-200 pt-6">
+      {/* Sticky Bottom Navigation Buttons */}
+      <div className="fixed bottom-0 left-0 right-0 md:relative bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 p-4 md:p-0 z-50 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between md:pt-6">
         <button 
           type="button" 
           onClick={handlePrev}
-          className={`px-8 py-3 rounded-xl font-bold border transition-colors ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-300 text-neutral-600 hover:bg-neutral-50'}`}
+          className={`px-6 md:px-8 py-3.5 rounded-xl font-bold border transition-all shadow-sm ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white hover:bg-neutral-50 hover:shadow-md'}`}
         >
           Previous
         </button>
@@ -918,7 +949,7 @@ export default function NewListingPage() {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30"
+            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5"
           >
             Save & Continue
           </button>
@@ -927,7 +958,7 @@ export default function NewListingPage() {
             type="button" 
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30 flex items-center gap-2 disabled:opacity-70"
+            className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-neutral-900/30 hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-70"
           >
             {loading ? <><Loader2 size={20} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
           </button>
