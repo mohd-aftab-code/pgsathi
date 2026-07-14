@@ -255,8 +255,8 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
             </Link>
             {/* Complaints */}
             <MobileNavItem href="/dashboard/manager/complaints" icon={Wrench} label="Issues" isActive={pathname.startsWith("/dashboard/manager/complaints")} color="violet" />
-            {/* More — opens to other pages */}
-            <MobileNavItem href="/dashboard/manager/tenants" icon={UsersRound} label="More" isActive={false} color="violet" />
+            {/* Rooms */}
+            <MobileNavItem href="/dashboard/manager/rooms" icon={DoorClosed} label="Rooms" isActive={pathname.startsWith("/dashboard/manager/rooms")} color="violet" />
           </div>
         </div>
       </div>

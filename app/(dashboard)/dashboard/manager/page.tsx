@@ -93,10 +93,10 @@ export default async function ManagerDashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/dashboard/manager/tenants" className="btn-primary py-2 px-4 text-sm font-semibold rounded-lg shadow-sm">
+          <Link href="/dashboard/manager/tenants/new" className="btn-primary py-2 px-4 text-sm font-semibold rounded-lg shadow-sm">
             + Add Tenant
           </Link>
-          <Link href="/dashboard/manager/complaints" className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2 px-4 text-sm font-semibold rounded-lg shadow-sm transition-colors">
+          <Link href="/dashboard/manager/complaints/new" className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2 px-4 text-sm font-semibold rounded-lg shadow-sm transition-colors">
             Log Issue
           </Link>
         </div>
