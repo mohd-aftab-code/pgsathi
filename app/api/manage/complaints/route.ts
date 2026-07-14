@@ -8,7 +8,7 @@ import { getManageContext, logPgAudit } from "@/lib/manage-auth";
 export async function GET(req: NextRequest) {
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const status    = searchParams.get("status")    ?? undefined;
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
 
     const data = await req.json();
     if (!data.title || !data.listingId) return NextResponse.json({ success: false, message: "title and listingId required" }, { status: 400 });

@@ -103,6 +103,7 @@ export async function getManageContext() {
   }
 
   const tier = await getPlanTier(userId);
+  const trial = await isTrialActive(userId);
 
   return {
     userId,
@@ -111,6 +112,7 @@ export async function getManageContext() {
     role,
     email: session.user.email ?? "",
     hasPaidPlan: tier === "GROWTH" || tier === "PRO",
+    hasAccess: tier === "GROWTH" || tier === "PRO" || trial.active,
   };
 }
 
