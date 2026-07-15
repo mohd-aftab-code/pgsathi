@@ -31,7 +31,7 @@ export default async function ManageInventoryPage(props: { params: Promise<{ id:
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
       <div className="mb-6 pb-6 border-b border-neutral-100">
         <h1 className="text-2xl font-bold">{listing.title} - Inventory</h1>
         <p className="text-neutral-500 mt-1">Add rooms and click on beds to toggle occupancy in real-time.</p>

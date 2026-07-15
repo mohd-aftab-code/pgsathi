@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
 
       {/* Top Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <div className="flex items-center gap-3 text-neutral-500 mb-2 font-medium text-sm">
             <MousePointerClick size={18} className="text-blue-500" />
             Total Profile Views
@@ -63,7 +63,7 @@ export default function AnalyticsPage() {
           <div className="text-xs text-neutral-400 mt-2">All time</div>
         </div>
         
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <div className="flex items-center gap-3 text-neutral-500 mb-2 font-medium text-sm">
             <Users size={18} className="text-green-500" />
             Leads Generated
@@ -72,7 +72,7 @@ export default function AnalyticsPage() {
           <div className="text-xs text-neutral-400 mt-2">Last 30 days</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <div className="flex items-center gap-3 text-neutral-500 mb-2 font-medium text-sm">
             <BarChart3 size={18} className="text-purple-500" />
             Conversion Rate
@@ -81,7 +81,7 @@ export default function AnalyticsPage() {
           <div className="text-xs text-neutral-400 mt-2">Views to Leads</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <div className="flex items-center gap-3 text-neutral-500 mb-2 font-medium text-sm">
             <TrendingUp size={18} className="text-orange-500" />
             Active Properties
@@ -94,7 +94,7 @@ export default function AnalyticsPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Leads Trend */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <h3 className="font-bold text-neutral-900 mb-6 flex items-center gap-2">
             <BarChart3 size={18} className="text-neutral-400" /> Leads Over Time (6 Months)
           </h3>
@@ -112,7 +112,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Leads by Source */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
           <h3 className="font-bold text-neutral-900 mb-6 flex items-center gap-2">
             <Users size={18} className="text-neutral-400" /> Leads by Source
           </h3>

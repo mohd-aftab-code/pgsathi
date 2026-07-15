@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {/* Pending Approvals Card - Highlighted */}
-        <div className="bg-gradient-to-br from-primary-50 to-orange-50 rounded-3xl p-6 shadow-sm border border-primary-100 relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-primary-50 to-orange-50 rounded-3xl p-4 sm:p-6 shadow-sm border border-primary-100 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-primary-200/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="bg-primary-100 text-primary-600 p-3 rounded-2xl">
@@ -59,7 +59,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Active PGs */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-green-100/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="bg-green-50 text-green-600 p-3 rounded-2xl">
@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Users */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="bg-blue-50 text-blue-600 p-3 rounded-2xl">
@@ -84,7 +84,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Revenue */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl transition-transform group-hover:scale-110"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="bg-purple-50 text-purple-600 p-3 rounded-2xl">

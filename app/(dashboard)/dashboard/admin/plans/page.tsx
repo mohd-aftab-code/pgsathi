@@ -167,7 +167,7 @@ export default function AdminPlansPage() {
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
             </div>
             
-            <div className="md:col-span-2 bg-neutral-50 p-6 rounded-2xl border border-neutral-200 mt-2">
+            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
               <div className="flex justify-between items-center mb-4 pb-4 border-b border-neutral-200">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-900">Features Checklist</h3>

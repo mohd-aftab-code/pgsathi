@@ -26,7 +26,7 @@ export default async function OwnerReviewsPage() {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-4 sm:p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-neutral-900">Tenant Reviews</h1>
         <p className="text-neutral-500">See what tenants are saying about your properties.</p>

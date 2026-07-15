@@ -60,7 +60,7 @@ export default function AdminCitiesPage() {
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {data.map((city: any) => (
-            <div key={city.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+            <div key={city.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4 pb-4 border-b border-neutral-100">
                 <div className="flex items-center gap-2 font-bold text-lg text-neutral-900 capitalize">
                   <MapPin className="text-emerald-500" size={20} /> {city.name}

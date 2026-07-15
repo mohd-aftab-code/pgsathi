@@ -60,11 +60,11 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-3">
+    <form onSubmit={handleSubmit} className="grid gap-4 sm:gap-6 lg:grid-cols-3">
       {/* Left: Basic Info */}
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-2 space-y-4 sm:space-y-6">
         {/* Personal Details */}
-        <div className="card p-6">
+        <div className="card p-4 sm:p-4 sm:p-6">
           <h2 className="mb-4 font-bold text-neutral-900">Personal Details</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -91,7 +91,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
         </div>
 
         {/* KYC */}
-        <div className="card p-6">
+        <div className="card p-4 sm:p-4 sm:p-6">
           <h2 className="mb-4 font-bold text-neutral-900">KYC Details</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -125,7 +125,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
         </div>
 
         {/* Rent & Stay */}
-        <div className="card p-6">
+        <div className="card p-4 sm:p-4 sm:p-6">
           <h2 className="mb-4 font-bold text-neutral-900">Rent & Stay</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -153,8 +153,8 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
       </div>
 
       {/* Right: PG Assignment */}
-      <div className="space-y-6">
-        <div className="card p-6">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="card p-4 sm:p-4 sm:p-6">
           <h2 className="mb-4 font-bold text-neutral-900">PG Assignment</h2>
           <div className="space-y-4">
             <div>

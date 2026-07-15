@@ -104,8 +104,12 @@
     background-color: var(--color-primary);
     color: white;
     font-weight: 600;
-    font-size: 0.9375rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    @media (min-width: 640px) {
+      font-size: 0.9375rem;
+      padding: 0.75rem 1.5rem;
+    }
     border-radius: var(--radius);
     border: none;
     cursor: pointer;
@@ -127,8 +131,12 @@
     background-color: var(--color-secondary);
     color: white;
     font-weight: 600;
-    font-size: 0.9375rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    @media (min-width: 640px) {
+      font-size: 0.9375rem;
+      padding: 0.75rem 1.5rem;
+    }
     border-radius: var(--radius);
     border: none;
     cursor: pointer;
@@ -146,8 +154,12 @@
     background-color: transparent;
     color: var(--color-primary);
     font-weight: 600;
-    font-size: 0.9375rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    @media (min-width: 640px) {
+      font-size: 0.9375rem;
+      padding: 0.75rem 1.5rem;
+    }
     border-radius: var(--radius);
     border: 2px solid var(--color-primary);
     cursor: pointer;
@@ -165,8 +177,12 @@
     background-color: #25D366;
     color: white;
     font-weight: 600;
-    font-size: 0.9375rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    @media (min-width: 640px) {
+      font-size: 0.9375rem;
+      padding: 0.75rem 1.5rem;
+    }
     border-radius: var(--radius);
     border: none;
     cursor: pointer;
@@ -230,12 +246,16 @@
   /* ── Input ───────────────────────── */
   .input-base {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    @media (min-width: 640px) {
+      padding: 0.75rem 1rem;
+      font-size: 0.9375rem;
+    }
     border-radius: var(--radius);
     border: 1.5px solid var(--color-neutral-200);
     background: white;
     color: var(--color-neutral-900);
-    font-size: 0.9375rem;
     font-family: var(--font-sans);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;

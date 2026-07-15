@@ -63,7 +63,7 @@ export default async function VisitsInboxPage() {
           {visits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {visits.map(visit => (
-                <div key={visit.id} className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary-200 transition-all duration-300">
+                <div key={visit.id} className="bg-white p-4 sm:p-6 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary-200 transition-all duration-300">
                   <div className="flex justify-between items-start mb-3">
                     <div className="font-bold text-lg">{visit.name}</div>
                     <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>

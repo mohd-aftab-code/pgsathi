@@ -42,7 +42,7 @@ export default function AdminHeatmapPage() {
             <Search className="text-indigo-500" size={20} />
             <h2 className="text-lg font-bold text-neutral-900">Top Search Queries (Micro-locations)</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <ul className="space-y-4">
               {data?.topQueries?.map((item: any, i: number) => (
                 <li key={i} className="flex items-center justify-between">
@@ -66,7 +66,7 @@ export default function AdminHeatmapPage() {
             <Map className="text-emerald-500" size={20} />
             <h2 className="text-lg font-bold text-neutral-900">Most Searched Cities</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <ul className="space-y-4">
               {data?.topCities?.map((item: any, i: number) => (
                 <li key={i} className="flex items-center justify-between">

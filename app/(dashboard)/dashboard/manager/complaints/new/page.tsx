@@ -35,7 +35,7 @@ export default async function NewComplaintPage() {
           <p className="text-sm text-neutral-500">Nayi complaint ya issue log karein</p>
         </div>
       </div>
-      <div className="card p-6 max-w-lg mx-auto">
+      <div className="card p-4 sm:p-4 sm:p-6 max-w-lg mx-auto">
         <LogComplaintForm listings={listings} tenants={tenants} />
       </div>
     </div>

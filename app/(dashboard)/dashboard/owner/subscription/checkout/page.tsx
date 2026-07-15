@@ -124,7 +124,7 @@ export default function CheckoutPage() {
 
   if (paymentStep === "SUCCESS") {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in duration-500">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 sm:p-6 animate-in fade-in zoom-in duration-500">
         <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-100">
           <Check size={48} />
         </div>
@@ -158,7 +158,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="bg-neutral-50 rounded-2xl p-6 mb-6 border border-neutral-100">
+          <div className="bg-neutral-50 rounded-2xl p-4 sm:p-6 mb-6 border border-neutral-100">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-neutral-800 text-lg">{selectedPlan.name} Plan</span>
               <span className="font-extrabold text-neutral-900 text-lg">₹{selectedPlan.price}</span>

@@ -22,7 +22,7 @@ export default async function InventoryPage() {
   });
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-200">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Manage Bed Inventory</h1>

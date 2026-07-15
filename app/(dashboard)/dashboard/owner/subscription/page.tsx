@@ -116,7 +116,7 @@ export default async function OwnerSubscriptionPage() {
 
           {/* Actions Sidebar */}
           <div className="space-y-6">
-            <div className="bg-neutral-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-neutral-900 rounded-3xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
               <h3 className="font-bold text-lg mb-2 relative z-10">Need more features?</h3>
               <p className="text-sm text-neutral-400 mb-6 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
@@ -125,7 +125,7 @@ export default async function OwnerSubscriptionPage() {
               </Link>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 border border-neutral-200 shadow-sm">
+            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-neutral-200 shadow-sm">
               <h3 className="font-bold text-neutral-900 mb-4">Payment Method</h3>
               <div className="flex items-center gap-3 p-3 border border-neutral-200 rounded-xl bg-neutral-50 mb-4">
                 <CreditCard className="text-neutral-400" />

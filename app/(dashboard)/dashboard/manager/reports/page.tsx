@@ -91,7 +91,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 6-Month Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 shadow-sm p-4 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-bold text-neutral-900 flex items-center gap-2">
               <BarChart2 size={16} className="text-neutral-400" /> 6-Month Trend

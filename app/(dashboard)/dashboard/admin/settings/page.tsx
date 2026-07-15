@@ -25,7 +25,7 @@ export default function AdminSettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-neutral-50 rounded-2xl p-6 border border-neutral-200">
+          <div className="bg-neutral-50 rounded-2xl p-4 sm:p-6 border border-neutral-200">
             <h3 className="font-bold text-neutral-900 mb-2 flex items-center gap-2">
               <ShieldCheck size={18} className="text-blue-500" /> Platform Fees
             </h3>
@@ -33,7 +33,7 @@ export default function AdminSettingsPage() {
             <input type="text" value="0%" disabled className="w-full bg-white border border-neutral-300 rounded-xl px-4 py-2" />
           </div>
           
-          <div className="bg-neutral-50 rounded-2xl p-6 border border-neutral-200">
+          <div className="bg-neutral-50 rounded-2xl p-4 sm:p-6 border border-neutral-200">
             <h3 className="font-bold text-neutral-900 mb-2 flex items-center gap-2">
               <ShieldCheck size={18} className="text-blue-500" /> Payment Gateway
             </h3>

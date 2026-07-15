@@ -86,7 +86,7 @@ export function TenantActions({ tenantId, listingId, forMonth, monthlyRent }: Pr
       {/* Payment Modal */}
       {showPayModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="card p-6 w-full max-w-sm">
+          <div className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Record Payment</h3>
             <div className="space-y-4">
               <div>

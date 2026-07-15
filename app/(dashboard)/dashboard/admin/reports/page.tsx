@@ -16,7 +16,7 @@ export default async function AdminReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
           <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
             <Users size={24} />
           </div>
@@ -26,7 +26,7 @@ export default async function AdminReportsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
           <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
             <Home size={24} />
           </div>
@@ -36,7 +36,7 @@ export default async function AdminReportsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
           <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
             <TrendingUp size={24} />
           </div>

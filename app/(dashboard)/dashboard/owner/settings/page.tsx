@@ -15,14 +15,14 @@ export default async function OwnerSettingsPage() {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-4 sm:p-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-neutral-900">Account Settings</h1>
         <p className="text-neutral-500">Manage your profile and preferences.</p>
       </div>
 
       <div className="grid gap-6 max-w-2xl">
-        <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-100">
+        <div className="bg-neutral-50 p-4 sm:p-6 rounded-xl border border-neutral-100">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-2xl font-bold">
               {user?.name?.charAt(0) || "U"}
@@ -59,7 +59,7 @@ export default async function OwnerSettingsPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-red-100 rounded-xl p-6">
+        <div className="bg-white border border-red-100 rounded-xl p-4 sm:p-6">
           <h3 className="text-lg font-bold text-red-600 mb-2">Danger Zone</h3>
           <p className="text-sm text-neutral-500 mb-4">
             Account deletion involves your listings, tenants, and billing history — our team handles this manually to make sure nothing is lost by mistake.

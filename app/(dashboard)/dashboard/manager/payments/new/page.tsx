@@ -67,7 +67,7 @@ function RecordPaymentForm() {
 
   return (
     <form onSubmit={submit}>
-      <div className="card p-6 max-w-lg mx-auto">
+      <div className="card p-4 sm:p-4 sm:p-6 max-w-lg mx-auto">
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-neutral-600 mb-1">Tenant *</label>
@@ -145,7 +145,7 @@ export default function RecordPaymentPage() {
           <p className="text-sm text-neutral-500">Tenant ki payment manually record karein</p>
         </div>
       </div>
-      <Suspense fallback={<div className="card p-6 text-center text-neutral-400">Loading…</div>}>
+      <Suspense fallback={<div className="card p-4 sm:p-4 sm:p-6 text-center text-neutral-400">Loading…</div>}>
         <RecordPaymentForm />
       </Suspense>
     </div>

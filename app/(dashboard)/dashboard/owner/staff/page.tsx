@@ -133,7 +133,7 @@ export default function StaffPage() {
       {/* Add Staff Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={submitStaff} className="card p-6 w-full max-w-sm">
+          <form onSubmit={submitStaff} className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Add Staff Member</h3>
             <div className="space-y-4">
               <div>
@@ -184,7 +184,7 @@ export default function StaffPage() {
       {/* Pay Salary Modal */}
       {showPayModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={submitPayout} className="card p-6 w-full max-w-sm">
+          <form onSubmit={submitPayout} className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Record Salary Payout</h3>
             <div className="space-y-4">
               <div>

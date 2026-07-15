@@ -43,7 +43,7 @@ export default async function OwnerDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
             <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Listings</h3>
@@ -54,7 +54,7 @@ export default async function OwnerDashboardPage() {
           <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{listingsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-purple-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
             <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Views</h3>
@@ -65,7 +65,7 @@ export default async function OwnerDashboardPage() {
           <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{viewsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-green-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
           <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
             <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Leads</h3>

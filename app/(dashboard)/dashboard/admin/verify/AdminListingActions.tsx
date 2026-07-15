@@ -174,7 +174,7 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       {showAssignModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Assign Owner</h3>
               <p className="text-sm text-gray-500 mb-6">
                 Enter the real owner's details. A new account will be created (if it doesn't exist) and an email with credentials will be sent.
