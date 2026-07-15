@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   ChevronsLeft,
   ChevronsRight,
+  Settings
 } from "lucide-react";
 
 type NavItem = {
@@ -73,6 +74,7 @@ const navGroups: NavGroup[] = [
       { name: "Announcements", href: "/dashboard/manager/announcements", icon: Megaphone },
       { name: "Reports", href: "/dashboard/manager/reports", icon: BarChart3, ownerOnly: true },
       { name: "Activity Log", href: "/dashboard/manager/audit", icon: ShieldCheck, ownerOnly: true },
+      { name: "Settings", href: "/dashboard/manager/settings", icon: Settings },
     ]
   }
 ];
