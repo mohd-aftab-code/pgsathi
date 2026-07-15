@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, MapPin, Building, ChevronDown } from "lucide-react";
+import { Search, MapPin, Building, ChevronDown, MapPinIcon } from "lucide-react";
 import { CITIES } from "@/constants/cities";
 
 export default function SearchBar({ initialCity = "", initialGender = "", initialQuery = "", cities = CITIES as any[] }) {
@@ -19,18 +19,60 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
   const cityRef = useRef<HTMLDivElement>(null);
 
   const [gender, setGender] = useState(initialGender);
+  
+  // Locality Auto-complete state
   const [query, setQuery] = useState(initialQuery);
+  const [isLocalityOpen, setIsLocalityOpen] = useState(false);
+  const [localities, setLocalities] = useState<any[]>([]);
+  const [isLoadingLocalities, setIsLoadingLocalities] = useState(false);
+  const localityRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (cityRef.current && !cityRef.current.contains(event.target as Node)) {
         setIsCityOpen(false);
       }
+      if (localityRef.current && !localityRef.current.contains(event.target as Node)) {
+        setIsLocalityOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Fetch localities on query change
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (query.length < 2) {
+      setLocalities([]);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setIsLoadingLocalities(true);
+      try {
+        const matchedCity = cities.find((c: any) => c.name.toLowerCase() === cityInput.toLowerCase());
+        const citySlug = matchedCity ? matchedCity.slug : "all";
+        
+        const res = await fetch(`/api/localities/search?q=${encodeURIComponent(query)}&city=${citySlug}`);
+        const data = await res.json();
+        if (data.success) {
+          setLocalities(data.data || []);
+        }
+      } catch (err) {
+        console.error("Error fetching localities", err);
+      } finally {
+        setIsLoadingLocalities(false);
+      }
+    }, 300);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, cityInput, cities]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +85,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
     if (finalCitySlug && finalCitySlug !== "all") params.set("city", finalCitySlug);
     if (gender && gender !== "all") params.set("gender", gender);
     
+    setIsLocalityOpen(false);
     router.push(`/search?${params.toString()}`);
   };
 
@@ -51,7 +94,6 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
   return (
     <form 
       onSubmit={handleSearch} 
-      // Changed grid to flex layout to prevent strict column clipping and allow flexible shrinking/growing
       className="flex flex-col lg:flex-row w-full bg-transparent lg:bg-white lg:rounded-full rounded-2xl lg:border border-neutral-200 lg:shadow-sm lg:p-1.5 gap-3 lg:gap-0 items-stretch lg:items-center"
     >
       
@@ -93,16 +135,51 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         )}
       </div>
 
-      {/* 2. Free Text Search (Area/Location) */}
-      <div className="relative w-full min-w-0 lg:flex-[1.6] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-10">
+      {/* 2. Free Text Search (Area/Location) with Auto-complete */}
+      <div ref={localityRef} className="relative w-full min-w-0 lg:flex-[1.6] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-10">
         <Search className="text-neutral-400 shrink-0 ml-1" size={16} />
         <input 
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setIsLocalityOpen(true);
+          }}
+          onFocus={() => setIsLocalityOpen(true)}
           placeholder="Area or locality..."
           className="w-full h-full min-w-0 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none px-2 text-[13px] sm:text-sm placeholder:text-neutral-400 text-ellipsis overflow-hidden whitespace-nowrap"
+          autoComplete="off"
         />
+        
+        {isLocalityOpen && query.length >= 2 && (
+          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[300px] bg-white border border-neutral-200 shadow-xl rounded-xl overflow-hidden py-2 max-h-[300px] overflow-y-auto">
+            {isLoadingLocalities ? (
+              <div className="px-4 py-3 text-sm text-neutral-500 text-center animate-pulse">Searching localities...</div>
+            ) : localities.length > 0 ? (
+              localities.map(loc => (
+                <div 
+                  key={loc.id}
+                  onClick={() => {
+                    setQuery(loc.name);
+                    // Also auto-select city if not matched
+                    if (loc.cityName && cityInput.toLowerCase() !== loc.cityName.toLowerCase()) {
+                      setCityInput(loc.cityName);
+                    }
+                    setIsLocalityOpen(false);
+                  }}
+                  className="px-4 py-2.5 hover:bg-primary-50 cursor-pointer flex flex-col transition-colors"
+                >
+                  <span className="text-sm font-semibold text-neutral-900">{loc.name}</span>
+                  <span className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5">
+                    <MapPinIcon size={10} /> {loc.cityName}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-sm text-neutral-500 text-center">No localities found</div>
+            )}
+          </div>
+        )}
       </div>
       
       {/* 3. PG Type Dropdown */}
