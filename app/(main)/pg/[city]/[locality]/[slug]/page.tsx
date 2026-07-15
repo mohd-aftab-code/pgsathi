@@ -8,6 +8,8 @@ import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import ViewTracker from "@/components/listings/ViewTracker";
 import { MapPin, CheckCircle, Star, Wifi, Car, Utensils, Shirt, Brush, Clock, Shield, Users, Home, ArrowLeft, Share2 } from "lucide-react";
 import { unstable_cache } from "next/cache";
+import { auth } from "@/lib/auth";
+import ReviewSection from "@/components/listings/ReviewSection";
 
 const getListingBySlug = unstable_cache(
   async (slug: string) => {
@@ -64,6 +66,7 @@ export default async function PGDetailPage(props: {
   const params = await props.params;
 
   const pg = await getListingBySlug(params.slug);
+  const session = await auth();
 
   if (!pg) notFound();
 
@@ -294,42 +297,13 @@ export default async function PGDetailPage(props: {
               ) : null}
 
               {/* Reviews */}
-              <div className="bg-white rounded-2xl p-6 mb-6 border border-neutral-200 shadow-sm">
-                <h2 className="text-xl font-bold text-neutral-900 mb-2">
-                  Reviews {avgRating && <span className="text-yellow-500">⭐ {avgRating}</span>}
-                </h2>
-                <p className="text-sm text-neutral-500 mb-4">{approvedReviews.length} verified reviews</p>
-                {approvedReviews.length === 0 ? (
-                  <div className="text-center py-8 text-neutral-400">
-                    <Star size={32} className="mx-auto mb-2 opacity-40" />
-                    <p>No reviews yet. Be the first to review!</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {approvedReviews.map((review) => (
-                      <div key={review.id} className="border-b border-neutral-100 pb-4 last:border-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">
-                            {review.user.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-sm text-neutral-900">{review.user.name}</p>
-                            <div className="flex items-center gap-0.5">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} size={12} className={i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"} />
-                              ))}
-                            </div>
-                          </div>
-                          <span className="ml-auto text-xs text-neutral-400">
-                            {new Date(review.createdAt).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
-                          </span>
-                        </div>
-                        {review.comment && <p className="text-sm text-neutral-600 ml-12">{review.comment}</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ReviewSection 
+                listingId={pg.id}
+                reviews={approvedReviews as any}
+                avgRating={Number(avgRating || 0)}
+                totalReviews={approvedReviews.length}
+                isLoggedIn={!!session?.user?.id}
+              />
             </div>
 
               {/* RIGHT — Sticky Contact Box */}
