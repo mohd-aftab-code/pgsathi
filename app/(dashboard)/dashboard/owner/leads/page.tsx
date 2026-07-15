@@ -7,12 +7,17 @@ import { formatDistanceToNow, format } from "date-fns";
 import MarkReadButton from "@/components/listings/MarkReadButton";
 import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 import { ExportCsvButton } from "@/components/common/ExportCsvButton";
+import { LeadsFilter } from "@/components/dashboard/LeadsFilter";
 
 export const metadata = {
   title: "Visits & Leads - Owner Dashboard",
 };
 
-export default async function VisitsInboxPage() {
+export default async function VisitsInboxPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
@@ -23,9 +28,29 @@ export default async function VisitsInboxPage() {
   const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
   const hasAccess = hasPaidPlan || trial.active;
 
+  const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;
+  const status = typeof searchParams.status === 'string' ? searchParams.status : undefined;
+
+  // Build where clause
+  const whereClause: any = { listing: { ownerId } };
+  
+  if (q) {
+    whereClause.OR = [
+      { name: { contains: q, mode: 'insensitive' } },
+      { phone: { contains: q } },
+      { email: { contains: q, mode: 'insensitive' } },
+    ];
+  }
+  
+  if (status === 'UNREAD') {
+    whereClause.isRead = false;
+  } else if (status === 'READ') {
+    whereClause.isRead = true;
+  }
+
   // Fetch leads
   const leads = await db.lead.findMany({
-    where: { listing: { ownerId } },
+    where: whereClause,
     include: { listing: { select: { title: true, slug: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -46,6 +71,8 @@ export default async function VisitsInboxPage() {
     "Status": l.isRead ? "Read" : "Unread",
     "Date": new Date(l.createdAt).toLocaleDateString(),
   }));
+
+  const sanitizePhone = (p: string) => p.replace(/\D/g, '').replace(/^(91)/, '');
 
   return (
     <div>
@@ -82,7 +109,7 @@ export default async function VisitsInboxPage() {
                     </Link>
                     {hasAccess ? (
                       <a 
-                        href={`https://wa.me/91${visit.phone}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
+                        href={`https://wa.me/91${sanitizePhone(visit.phone)}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
                         target="_blank" 
                         rel="noreferrer"
                         className="text-green-600 bg-green-50 p-1.5 rounded-lg hover:bg-green-100 transition"
@@ -121,103 +148,164 @@ export default async function VisitsInboxPage() {
             </h2>
             <ExportCsvButton data={exportData} filename="Leads_Export" tier={tier} />
           </div>
+          
+          <LeadsFilter />
+
           <div className="mt-4">
             {leads.length > 0 ? (
-              <div className="overflow-x-auto pb-10 px-1 -mx-1">
-                <table className="w-full text-left border-separate border-spacing-y-4">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
-                      <th className="pb-2 px-6">Tenant Name</th>
-                      <th className="pb-2 px-6">Contact & Actions</th>
-                      <th className="pb-2 px-6">Property Interested</th>
-                      <th className="pb-2 px-6 text-right">Received</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-sm">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className={`bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group ${!lead.isRead ? 'ring-2 ring-orange-100 shadow-orange-100/50' : ''}`}>
-                        <td className={`py-5 px-6 rounded-l-2xl border-y border-l ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
-                              {lead.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="font-extrabold text-neutral-900 flex items-center gap-2">
-                                {lead.name}
-                                {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>}
+              <div className="pb-10">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto px-1 -mx-1">
+                  <table className="w-full text-left border-separate border-spacing-y-4">
+                    <thead>
+                      <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+                        <th className="pb-2 px-6">Tenant Name</th>
+                        <th className="pb-2 px-6">Contact & Actions</th>
+                        <th className="pb-2 px-6">Property Interested</th>
+                        <th className="pb-2 px-6 text-right">Received</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {leads.map((lead) => (
+                        <tr key={lead.id} className={`bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group ${!lead.isRead ? 'ring-2 ring-orange-100 shadow-orange-100/50' : ''}`}>
+                          <td className={`py-5 px-6 rounded-l-2xl border-y border-l ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                                {lead.name.charAt(0).toUpperCase()}
                               </div>
-                              <div className="text-xs text-neutral-500 mt-1 uppercase tracking-wider font-semibold">{lead.source} Lead</div>
+                              <div>
+                                <div className="font-extrabold text-neutral-900 flex items-center gap-2">
+                                  {lead.name}
+                                  {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>}
+                                </div>
+                                <div className="text-xs text-neutral-500 mt-1 uppercase tracking-wider font-semibold">{lead.source} Lead</div>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                          <div className="flex flex-col gap-2">
-                            <div className="font-bold text-neutral-800 tracking-wide">
-                              {hasAccess ? lead.phone : "98XXXXXX" + lead.phone.slice(-2)}
+                          </td>
+                          <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                            <div className="flex flex-col gap-2">
+                              <div className="font-bold text-neutral-800 tracking-wide">
+                                {hasAccess ? lead.phone : "98XXXXXX" + lead.phone.slice(-2)}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {hasAccess ? (
+                                  <>
+                                    <a 
+                                      href={`tel:${lead.phone}`} 
+                                      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                    >
+                                      <Phone size={12} /> Call
+                                    </a>
+                                    <a 
+                                      href={`https://wa.me/91${sanitizePhone(lead.phone)}?text=Hi%20${lead.name},%20I%20am%20reaching%20out%20regarding%20your%20inquiry%20for%20${lead.listing.title}`} 
+                                      target="_blank" 
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                    >
+                                      <MessageCircle size={12} /> WhatsApp
+                                    </a>
+                                  </>
+                                ) : (
+                                  <Link
+                                    href="/dashboard/owner/subscription/upgrade"
+                                    className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                                  >
+                                    Unlock Number
+                                  </Link>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              {hasAccess ? (
-                                <>
-                                  <a 
-                                    href={`tel:${lead.phone}`} 
-                                    className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                                  >
-                                    <Phone size={12} /> Call
-                                  </a>
-                                  <a 
-                                    href={`https://wa.me/91${lead.phone}?text=Hi%20${lead.name},%20I%20am%20reaching%20out%20regarding%20your%20inquiry%20for%20${lead.listing.title}`} 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                                  >
-                                    <MessageCircle size={12} /> WhatsApp
-                                  </a>
-                                </>
-                              ) : (
-                                <Link
-                                  href="/dashboard/owner/subscription/upgrade"
-                                  className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-                                >
-                                  Unlock Number
-                                </Link>
+                          </td>
+                          <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                            <div className="space-y-1.5">
+                              <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1">
+                                {lead.listing.title} <ExternalLink size={14} />
+                              </Link>
+                              {lead.message && (
+                                <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block">
+                                  &ldquo;{lead.message}&rdquo;
+                                </div>
                               )}
                             </div>
+                          </td>
+                          <td className={`py-5 px-6 rounded-r-2xl border-y border-r text-right ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                            <div className="flex flex-col items-end gap-2">
+                              <span className="font-bold text-neutral-900">
+                                {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
+                              </span>
+                              <span className="text-xs font-medium text-neutral-400 flex items-center gap-1">
+                                <CalendarDays size={12} />
+                                {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
+                              </span>
+                              <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
+                              <Link
+                                href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
+                                className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                              >
+                                ➜ Convert to Tenant
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden space-y-4">
+                  {leads.map((lead) => (
+                    <div key={lead.id} className={`bg-white rounded-2xl shadow-sm border p-4 flex flex-col gap-4 ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                            {lead.name.charAt(0).toUpperCase()}
                           </div>
-                        </td>
-                        <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                          <div className="space-y-1.5">
-                            <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1">
-                              {lead.listing.title} <ExternalLink size={14} />
-                            </Link>
-                            {lead.message && (
-                              <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block">
-                                &ldquo;{lead.message}&rdquo;
-                              </div>
-                            )}
+                          <div>
+                            <div className="font-extrabold text-neutral-900 flex items-center gap-2">
+                              {lead.name}
+                              {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>}
+                            </div>
+                            <div className="text-xs text-neutral-500 mt-0.5 font-medium">{formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}</div>
                           </div>
-                        </td>
-                        <td className={`py-5 px-6 rounded-r-2xl border-y border-r text-right ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                          <div className="flex flex-col items-end gap-2">
-                            <span className="font-bold text-neutral-900">
-                              {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
-                            </span>
-                            <span className="text-xs font-medium text-neutral-400 flex items-center gap-1">
-                              <CalendarDays size={12} />
-                              {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
-                            </span>
-                            <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
-                            <Link
-                              href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                              className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                            >
-                              ➜ Convert to Tenant
-                            </Link>
+                        </div>
+                        <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1 text-sm">
+                          {lead.listing.title} <ExternalLink size={14} />
+                        </Link>
+                        {lead.message && (
+                          <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block line-clamp-2">
+                            &ldquo;{lead.message}&rdquo;
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+                        {hasAccess ? (
+                          <div className="flex items-center gap-2">
+                            <a href={`tel:${lead.phone}`} className="w-9 h-9 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors">
+                              <Phone size={14} />
+                            </a>
+                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="w-9 h-9 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors">
+                              <MessageCircle size={14} />
+                            </a>
+                          </div>
+                        ) : (
+                          <Link href="/dashboard/owner/subscription/upgrade" className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg font-bold">Unlock</Link>
+                        )}
+                        <Link
+                          href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
+                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                        >
+                          Convert to Tenant
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
               <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
@@ -225,9 +313,9 @@ export default async function VisitsInboxPage() {
                 <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
                   <Mail size={40} />
                 </div>
-                <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">Your Inbox is Empty</h3>
+                <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No leads found</h3>
                 <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">
-                  You haven't received any leads yet. Incoming inquiries will appear here.
+                  {q || status !== 'ALL' ? "Try adjusting your filters or search query." : "You haven't received any leads yet."}
                 </p>
               </div>
             )}

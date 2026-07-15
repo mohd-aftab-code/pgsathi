@@ -3,16 +3,19 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { 
   Building2, PlusCircle, Eye, MessageSquare, 
-  ArrowRight, Clock, Phone, MapPin
+  ArrowRight, Clock, Phone, MapPin, TrendingUp
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, subDays, format } from "date-fns";
+import { LeadsChart } from "@/components/dashboard/LeadsChart";
 
 export default async function OwnerDashboardPage() {
   const session = await auth();
   const ownerId = parseInt(session?.user?.id || "0");
   
+  const sevenDaysAgo = subDays(new Date(), 7);
+
   // Fetch stats and recent leads
-  const [listingsCount, leadsCount, recentLeads, viewAgg] = await Promise.all([
+  const [listingsCount, leadsCount, recentLeads, viewAgg, recentLeadsData] = await Promise.all([
     db.listing.count({ where: { ownerId } }),
     db.lead.count({ where: { listing: { ownerId } } }),
     db.lead.findMany({
@@ -23,9 +26,32 @@ export default async function OwnerDashboardPage() {
         listing: { select: { title: true, slug: true } }
       }
     }),
-    db.listing.aggregate({ where: { ownerId }, _sum: { totalViews: true } })
+    db.listing.aggregate({ where: { ownerId }, _sum: { totalViews: true } }),
+    db.lead.findMany({
+      where: { 
+        listing: { ownerId },
+        createdAt: { gte: sevenDaysAgo }
+      },
+      select: { createdAt: true }
+    })
   ]);
   const viewsCount = viewAgg._sum.totalViews ?? 0;
+
+  // Process chart data
+  const chartDataMap = new Map();
+  for (let i = 6; i >= 0; i--) {
+    const d = subDays(new Date(), i);
+    chartDataMap.set(format(d, 'MMM dd'), 0);
+  }
+  recentLeadsData.forEach(l => {
+    const key = format(new Date(l.createdAt), 'MMM dd');
+    if (chartDataMap.has(key)) {
+      chartDataMap.set(key, chartDataMap.get(key) + 1);
+    }
+  });
+  const chartData = Array.from(chartDataMap.entries()).map(([date, leads]) => ({ date, leads }));
+
+  const sanitizePhone = (p: string) => p.replace(/\D/g, '').replace(/^(91)/, '');
 
   return (
     <div>
@@ -54,104 +80,127 @@ export default async function OwnerDashboardPage() {
           <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{listingsCount}</p>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group flex flex-col justify-between">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-purple-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
-          <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-            <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Views</h3>
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-50 text-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-300">
-              <Eye size={20} className="md:w-6 md:h-6" />
+          <div>
+            <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
+              <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Views</h3>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-50 text-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-300">
+                <Eye size={20} className="md:w-6 md:h-6" />
+              </div>
             </div>
+            <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{viewsCount}</p>
           </div>
-          <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{viewsCount}</p>
+          <div className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 w-fit px-2 py-1 rounded-md mt-4 relative z-10">
+            <TrendingUp size={14} /> +12% this week
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group">
+        <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-neutral-100 relative overflow-hidden group flex flex-col justify-between">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-green-50 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-125 pointer-events-none hidden md:block"></div>
-          <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-            <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Leads</h3>
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-50 text-green-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-green-100 transition-all duration-300">
-              <MessageSquare size={20} className="md:w-6 md:h-6" />
+          <div>
+            <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
+              <h3 className="font-bold text-neutral-500 text-sm md:text-base group-hover:text-neutral-700 transition-colors">Total Leads</h3>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-50 text-green-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-green-100 transition-all duration-300">
+                <MessageSquare size={20} className="md:w-6 md:h-6" />
+              </div>
             </div>
+            <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{leadsCount}</p>
           </div>
-          <p className="text-3xl md:text-4xl font-black text-neutral-900 relative z-10">{leadsCount}</p>
+          <div className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 w-fit px-2 py-1 rounded-md mt-4 relative z-10">
+            <TrendingUp size={14} /> {recentLeadsData.length} new this week
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Recent Leads Feed */}
-        <div className="lg:col-span-2 bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100">
-          <div className="flex items-center justify-between mb-5 md:mb-6 pb-4 border-b border-neutral-100">
-            <h2 className="text-lg md:text-xl font-bold text-neutral-900">Recent Leads</h2>
-            <Link href="/dashboard/owner/leads" className="text-xs md:text-sm font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1 group">
-              View All <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-            </Link>
+        <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+          {/* Chart Section */}
+          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg md:text-xl font-bold text-neutral-900">Leads Activity</h2>
+              <span className="text-xs font-bold text-neutral-500 bg-neutral-100 px-3 py-1 rounded-full">Last 7 Days</span>
+            </div>
+            <LeadsChart data={chartData} />
           </div>
 
-          <div className="space-y-3 md:space-y-4">
-            {recentLeads.map((lead) => (
-              <div key={lead.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl md:rounded-2xl border border-neutral-100 bg-white hover:border-primary-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                {!lead.isRead && (
-                  <span className="absolute -left-1.5 top-6 sm:top-1/2 -translate-y-1/2 w-3 h-3 bg-primary-500 rounded-full border-2 border-white"></span>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-extrabold text-neutral-900 text-sm md:text-base truncate">{lead.name}</h3>
-                    {!lead.isRead && (
-                      <span className="bg-primary-100 text-primary-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">New</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-neutral-500 font-medium mb-2">
-                    <span className="flex items-center gap-1 truncate"><Phone size={14} className="text-primary-500 shrink-0"/> {lead.phone}</span>
-                  </div>
-                  <Link href={`/pg/${lead.listing.slug}`} className="inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold text-neutral-600 hover:text-primary-600 transition-colors truncate w-full">
-                    <MapPin size={14} className="shrink-0" /> <span className="truncate">{lead.listing.title}</span>
-                  </Link>
-                </div>
-                
-                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:h-full gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-neutral-100">
-                  <span className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-neutral-400 bg-neutral-100 px-2 py-1 rounded-md sm:mb-3">
-                    <Clock size={12} /> {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
-                  </span>
-                  <a 
-                    href={`https://wa.me/91${lead.phone}`} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold px-4 py-2 sm:px-3 sm:py-1.5 rounded-lg transition-colors flex-1 sm:flex-none text-center"
-                  >
-                    WhatsApp
-                  </a>
-                </div>
-              </div>
-            ))}
+          {/* Recent Leads Feed */}
+          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100">
+            <div className="flex items-center justify-between mb-5 md:mb-6 pb-4 border-b border-neutral-100">
+              <h2 className="text-lg md:text-xl font-bold text-neutral-900">Recent Leads</h2>
+              <Link href="/dashboard/owner/leads" className="text-xs md:text-sm font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1 group">
+                View All <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
 
-            {recentLeads.length === 0 && (
-              <div className="text-center py-10">
-                <div className="w-16 h-16 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <MessageSquare size={24} className="text-neutral-300" />
+            <div className="space-y-3 md:space-y-4">
+              {recentLeads.map((lead) => (
+                <div key={lead.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl md:rounded-2xl border border-neutral-100 bg-white hover:border-primary-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                  {!lead.isRead && (
+                    <span className="absolute -left-1.5 top-6 sm:top-1/2 -translate-y-1/2 w-3 h-3 bg-primary-500 rounded-full border-2 border-white"></span>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-extrabold text-neutral-900 text-sm md:text-base truncate">{lead.name}</h3>
+                      {!lead.isRead && (
+                        <span className="bg-primary-100 text-primary-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">New</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-neutral-500 font-medium mb-2">
+                      <span className="flex items-center gap-1 truncate"><Phone size={14} className="text-primary-500 shrink-0"/> {lead.phone}</span>
+                    </div>
+                    <Link href={`/pg/${lead.listing.slug}`} className="inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold text-neutral-600 hover:text-primary-600 transition-colors truncate w-full">
+                      <MapPin size={14} className="shrink-0" /> <span className="truncate">{lead.listing.title}</span>
+                    </Link>
+                  </div>
+                  
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:h-full gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-neutral-100">
+                    <span className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-neutral-400 bg-neutral-100 px-2 py-1 rounded-md sm:mb-3">
+                      <Clock size={12} /> {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
+                    </span>
+                    <a 
+                      href={`https://wa.me/91${sanitizePhone(lead.phone)}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold px-4 py-2 sm:px-3 sm:py-1.5 rounded-lg transition-colors flex-1 sm:flex-none text-center"
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
                 </div>
-                <p className="text-neutral-500 font-medium text-sm">No leads yet. Ensure your property is featured to get more visibility!</p>
-              </div>
-            )}
+              ))}
+
+              {recentLeads.length === 0 && (
+                <div className="text-center py-10">
+                  <div className="w-16 h-16 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <MessageSquare size={24} className="text-neutral-300" />
+                  </div>
+                  <p className="text-neutral-500 font-medium text-sm">No leads yet. Ensure your property is featured to get more visibility!</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Action Panel */}
-        <div className="bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-xl text-white relative overflow-hidden flex flex-col justify-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-          
-          <div className="w-12 h-12 md:w-16 md:h-16 bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 border border-white/20">
-            <span className="text-2xl md:text-3xl">🚀</span>
+        <div className="h-full">
+          <div className="bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-xl text-white relative overflow-hidden flex flex-col justify-center h-full min-h-[300px]">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+            
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 border border-white/20">
+              <span className="text-2xl md:text-3xl">🚀</span>
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 relative z-10">Maximize Occupancy</h3>
+            <p className="text-primary-100 mb-6 md:mb-8 text-xs md:text-sm leading-relaxed relative z-10">
+              Complete your property profile with high-quality photos and accurate rules to increase your lead conversion rate by up to 3x.
+            </p>
+            <Link 
+              href="/dashboard/owner/listings/new" 
+              className="bg-white text-primary-900 hover:bg-primary-50 w-full text-center py-3 md:py-3.5 rounded-xl font-extrabold transition-all shadow-lg hover:shadow-xl relative z-10 text-sm md:text-base"
+            >
+              Add Another PG
+            </Link>
           </div>
-          <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 relative z-10">Maximize Occupancy</h3>
-          <p className="text-primary-100 mb-6 md:mb-8 text-xs md:text-sm leading-relaxed relative z-10">
-            Complete your property profile with high-quality photos and accurate rules to increase your lead conversion rate by up to 3x.
-          </p>
-          <Link 
-            href="/dashboard/owner/listings/new" 
-            className="bg-white text-primary-900 hover:bg-primary-50 w-full text-center py-3 md:py-3.5 rounded-xl font-extrabold transition-all shadow-lg hover:shadow-xl relative z-10 text-sm md:text-base"
-          >
-            Add Another PG
-          </Link>
         </div>
       </div>
     </div>
