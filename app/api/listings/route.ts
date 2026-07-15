@@ -172,7 +172,22 @@ export async function POST(req: NextRequest) {
               } 
             }
           }))
-        }
+        },
+        ...(data.roomPrices && {
+          room_configurations: {
+            create: Object.entries(data.roomPrices).map(([roomType, pricing]: [string, any]) => ({
+              roomType,
+              updatedAt: new Date(),
+              room_pricing: {
+                create: {
+                  rentPerBed: parseInt(pricing.rent) || 0,
+                  depositPerBed: parseInt(pricing.deposit) || 0,
+                  updatedAt: new Date(),
+                }
+              }
+            }))
+          }
+        })
       },
     });
 

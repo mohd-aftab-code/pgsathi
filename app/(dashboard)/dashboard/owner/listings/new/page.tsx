@@ -78,9 +78,7 @@ const DEFAULT_FORM = {
   selectedRoomAmenities: [] as string[],
 
   // Step 5: Pricing
-  priceMin: "",
-  priceMax: "",
-  securityDeposit: "",
+  roomPrices: {} as Record<string, { rent: string; deposit: string }>,
   electricityCharge: "",
   maintenanceCharge: "",
   foodCharge: "",
@@ -229,10 +227,32 @@ export default function NewListingPage() {
     setLoading(true);
     setError("");
 
-    if (!formData.title || !formData.address || !formData.cityId || !formData.priceMin || !formData.priceMax) {
-      setError("Please fill all required fields (Name, Address, City, Price).");
+    if (!formData.title || !formData.address || !formData.cityId) {
+      setError("Please fill all required fields (Name, Address, City).");
       setLoading(false);
       return;
+    }
+
+    if (formData.roomTypes.length === 0) {
+      setError("Please select at least one Room Type in Step 1.");
+      setLoading(false);
+      return;
+    }
+
+    let minRent = Infinity;
+    let maxRent = 0;
+    
+    // Calculate global Min and Max prices based on filled room prices
+    for (const rt of formData.roomTypes) {
+      const rentStr = formData.roomPrices[rt]?.rent;
+      if (!rentStr) {
+        setError("Please enter the monthly rent for all selected room types.");
+        setLoading(false);
+        return;
+      }
+      const rent = parseInt(rentStr) || 0;
+      if (rent < minRent) minRent = rent;
+      if (rent > maxRent) maxRent = rent;
     }
 
     if (formData.photos.length === 0) {
@@ -255,9 +275,9 @@ export default function NewListingPage() {
         landmark: formData.landmark,
         latitude: formData.latitude,
         longitude: formData.longitude,
-        priceMin: parseInt(formData.priceMin) || 0,
-        priceMax: parseInt(formData.priceMax) || 0,
-        securityDeposit: formData.securityDeposit ? parseInt(formData.securityDeposit) : null,
+        priceMin: minRent === Infinity ? 0 : minRent,
+        priceMax: maxRent,
+        roomPrices: formData.roomPrices,
         electricityCharge: formData.electricityCharge ? parseInt(formData.electricityCharge) : null,
         maintenanceCharge: formData.maintenanceCharge ? parseInt(formData.maintenanceCharge) : null,
         foodCharge: formData.foodCharge ? parseInt(formData.foodCharge) : null,
@@ -849,20 +869,65 @@ export default function NewListingPage() {
 
       {/* Pricing */}
       <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Pricing Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Min Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Max Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.priceMax} onChange={e => setFormData({...formData, priceMax: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Security Deposit (₹)</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
-          </div>
+        <h3 className="text-xl font-black text-neutral-900 mb-2">Pricing per Room Type</h3>
+        <p className="text-sm text-neutral-500 mb-8 pb-4 border-b border-neutral-100">Set the monthly rent and security deposit for each room type you selected.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {formData.roomTypes.map(rt => {
+            const labelMap: Record<string, string> = {
+              "SINGLE_ROOM": "Single Room",
+              "DOUBLE_SHARING": "Double Sharing",
+              "TRIPLE_SHARING": "Triple Sharing",
+              "DORMITORY": "Dormitory",
+              "STUDIO": "Studio",
+              "ENTIRE_FLAT": "Entire Flat",
+            };
+            const label = labelMap[rt] || rt;
+            const currentRent = formData.roomPrices[rt]?.rent || "";
+            const currentDeposit = formData.roomPrices[rt]?.deposit || "";
+
+            return (
+              <div key={rt} className="border-2 border-neutral-100 rounded-2xl p-5 bg-neutral-50/30">
+                <h4 className="font-bold text-neutral-800 mb-4 flex items-center gap-2">
+                   <div className="w-2 h-2 rounded-full bg-primary-500"></div> {label}
+                </h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Rent (₹/mo) *</label>
+                    <input 
+                      type="number" 
+                      className="w-full h-12 px-3 rounded-xl border border-neutral-200 bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all shadow-sm" 
+                      placeholder="e.g. 8000"
+                      value={currentRent} 
+                      onChange={e => setFormData({
+                        ...formData, 
+                        roomPrices: { 
+                          ...formData.roomPrices, 
+                          [rt]: { ...formData.roomPrices[rt], rent: e.target.value, deposit: currentDeposit } 
+                        }
+                      })} 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Deposit (₹)</label>
+                    <input 
+                      type="number" 
+                      className="w-full h-12 px-3 rounded-xl border border-neutral-200 bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all shadow-sm" 
+                      placeholder="e.g. 10000"
+                      value={currentDeposit} 
+                      onChange={e => setFormData({
+                        ...formData, 
+                        roomPrices: { 
+                          ...formData.roomPrices, 
+                          [rt]: { ...formData.roomPrices[rt], rent: currentRent, deposit: e.target.value } 
+                        }
+                      })} 
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
         
         <h3 className="text-sm font-bold text-neutral-800 mb-6 uppercase tracking-wider">Additional Charges (Optional)</h3>
