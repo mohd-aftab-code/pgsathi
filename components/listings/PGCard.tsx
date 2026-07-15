@@ -56,7 +56,7 @@ export default function PGCard({ pg }: PGCardProps) {
         <div className="flex items-center gap-1.5 text-neutral-500 text-xs md:text-sm mb-3 mt-1">
           <MapPin size={14} className="text-orange-500 shrink-0" />
           <span className="line-clamp-1">
-            {[pg.locality?.name, pg.city?.name].filter(Boolean).join(", ")}
+            {[pg.address, pg.locality?.name, pg.city?.name].filter(Boolean).join(", ")}
           </span>
         </div>
 

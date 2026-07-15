@@ -170,13 +170,17 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
                         <Link
                           key={item.href}
                           href={item.href}
-                          className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-all duration-200 ${
+                          className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-all duration-300 ${
                             active
                               ? "bg-gradient-to-r from-violet-50 to-violet-100/50 text-violet-700 font-bold shadow-sm shadow-violet-900/5 ring-1 ring-violet-100"
-                              : "text-neutral-600 hover:bg-white hover:text-violet-600 hover:shadow-sm"
+                              : "text-neutral-600 hover:bg-neutral-50 hover:text-violet-600 hover:translate-x-1"
                           }`}
                         >
-                          <Icon size={20} className="shrink-0" />
+                          {/* Animated indicator line on hover */}
+                          {!active && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-violet-500 rounded-r-md transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:h-5"></div>
+                          )}
+                          <Icon size={20} className={`shrink-0 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
                           <span className="text-sm font-medium whitespace-nowrap opacity-100">
                             {item.name}
                           </span>

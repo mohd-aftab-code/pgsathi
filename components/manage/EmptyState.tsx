@@ -15,14 +15,17 @@ interface Props {
 
 export function EmptyState({ icon: Icon, title, description, actionLabel, actionHref }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-      <div className="grid h-16 w-16 place-items-center rounded-2xl bg-primary-50 mb-4">
-        <Icon className="h-8 w-8 text-primary-400" />
+    <div className="flex flex-col items-center justify-center py-16 text-center px-4 border-2 border-dashed border-neutral-200 rounded-3xl bg-neutral-50/50 my-6">
+      <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+        <Icon className="h-10 w-10 text-neutral-300" strokeWidth={1.5} />
       </div>
-      <h3 className="text-lg font-bold text-neutral-900">{title}</h3>
-      <p className="mt-2 max-w-sm text-sm text-neutral-500">{description}</p>
+      <h3 className="text-xl font-bold text-neutral-900 mb-1">{title}</h3>
+      <p className="mt-2 max-w-sm text-sm text-neutral-500 mb-6">{description}</p>
       {actionLabel && actionHref && (
-        <Link href={actionHref} className="mt-6 btn-primary text-sm px-5 py-2.5">
+        <Link 
+          href={actionHref} 
+          className="bg-primary-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-700 transition flex items-center gap-2 shadow-sm hover:shadow-md"
+        >
           {actionLabel}
         </Link>
       )}

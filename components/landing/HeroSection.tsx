@@ -83,7 +83,7 @@ export default async function HeroSection() {
               </Link>
             </div>
 
-            <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-900/5 mb-8">
+            <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8 sticky top-[72px] md:relative md:top-0 z-40 transition-all">
               <SearchBar cities={cities} />
             </div>
 
