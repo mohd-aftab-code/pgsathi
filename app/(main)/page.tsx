@@ -7,6 +7,7 @@ import FAQ from "@/components/landing/FAQ";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import PGCardSkeleton from "@/components/listings/PGCardSkeleton";
 
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
@@ -30,7 +31,23 @@ export default function Home() {
       <HowItWorks />
 
       {/* Featured PGs Section */}
-      <Suspense fallback={<div className="h-96 bg-neutral-100 flex items-center justify-center animate-pulse">Loading featured PGs...</div>}>
+      <Suspense fallback={
+        <section className="py-20 bg-white">
+          <div className="container-max section-padding">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+              <div>
+                <div className="h-10 bg-neutral-200 rounded-md w-64 mb-4 animate-pulse"></div>
+                <div className="h-6 bg-neutral-200 rounded-md w-96 animate-pulse"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <PGCardSkeleton />
+              <PGCardSkeleton />
+              <PGCardSkeleton />
+            </div>
+          </div>
+        </section>
+      }>
         <FeaturedListings />
       </Suspense>
 

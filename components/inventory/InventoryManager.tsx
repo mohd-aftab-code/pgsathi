@@ -112,7 +112,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                 type="text" 
                 value={newRoomName} 
                 onChange={e => setNewRoomName(e.target.value)} 
-                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm" 
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none" 
                 placeholder="e.g. Room 101" 
               />
             </div>
@@ -126,7 +126,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                   if(e.target.value === "DOUBLE_SHARING") setNewBedCount(2);
                   if(e.target.value === "TRIPLE_SHARING") setNewBedCount(3);
                 }}
-                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm bg-white"
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none cursor-pointer"
               >
                 <option value="SINGLE_ROOM">Single Room</option>
                 <option value="DOUBLE_SHARING">Double Sharing</option>
@@ -139,7 +139,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                 type="text" 
                 value={newRoomFloor} 
                 onChange={e => setNewRoomFloor(e.target.value)} 
-                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm" 
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none" 
                 placeholder="e.g. 1st Floor" 
               />
             </div>
@@ -149,17 +149,17 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                 type="number" 
                 value={newBedCount} 
                 onChange={e => setNewBedCount(parseInt(e.target.value))} 
-                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm" 
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none" 
                 min="1" max="10"
               />
             </div>
             <div>
-              <label className="block text-xs text-neutral-500 mb-1">Rent per Bed (₹/mo)</label>
+              <label className="block text-xs text-neutral-500 mb-1 font-medium text-primary-700">Rent per Bed (₹/mo)</label>
               <input 
                 type="number" 
                 value={newRoomPrice} 
                 onChange={e => setNewRoomPrice(e.target.value)} 
-                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm font-semibold text-primary-700 bg-primary-50 focus:bg-white" 
+                className="w-full border border-primary-200 rounded-lg p-2.5 text-sm font-semibold text-primary-900 bg-primary-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all outline-none" 
                 placeholder="e.g. 5000" 
                 min="0"
               />
@@ -185,8 +185,18 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
       )}
 
       {rooms.length === 0 ? (
-        <div className="text-center py-10 text-neutral-500 border border-dashed border-neutral-300 rounded-xl bg-neutral-50">
-          No rooms added yet. Click "Add Room" to setup your inventory.
+        <div className="text-center py-16 px-4 border-2 border-dashed border-neutral-200 rounded-3xl bg-neutral-50/50 flex flex-col items-center justify-center">
+          <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+            <BedDouble size={32} className="text-neutral-300" />
+          </div>
+          <h3 className="text-lg font-bold text-neutral-900 mb-1">No rooms added yet</h3>
+          <p className="text-neutral-500 mb-6 max-w-sm">Setup your inventory by adding rooms. You can set the price and manage beds for each room.</p>
+          <button 
+            onClick={() => setIsAddingRoom(true)}
+            className="bg-primary-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-700 transition flex items-center gap-2 shadow-sm hover:shadow-md"
+          >
+            <Plus size={18} /> Add Your First Room
+          </button>
         </div>
       ) : (
         <div className="space-y-6">
