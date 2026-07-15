@@ -9,6 +9,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { formatINR, formatDate, initials, currentMonth } from "@/lib/manage-utils";
+import { ExportCsvButton } from "@/components/common/ExportCsvButton";
 
 export const metadata = { title: "Tenants — PG Manager" };
 
@@ -17,7 +18,7 @@ export default async function TenantsPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string; listingId?: string; page?: string }>;
 }) {
-  const { userId } = await requireManagerAccess();
+  const { userId, tier } = await requireManagerAccess();
   const sp         = await searchParams;
   const q          = sp.q ?? "";
   const status     = sp.status ?? "";
@@ -48,6 +49,18 @@ export default async function TenantsPage({
   ]);
 
   const pages = Math.ceil(total / limit);
+
+  // Map tenants for CSV export
+  const exportData = tenants.map(t => ({
+    "Name": t.name,
+    "Phone": t.phone,
+    "Email": t.email || "",
+    "Status": t.status,
+    "Property": t.listing.title,
+    "Room": t.room?.name || "",
+    "Monthly Rent": t.monthlyRent,
+    "Check-in Date": t.checkInDate ? new Date(t.checkInDate).toLocaleDateString() : "",
+  }));
 
   return (
     <div>
@@ -84,6 +97,7 @@ export default async function TenantsPage({
             <button type="submit" className="hidden" aria-label="Submit filters"></button>
           </form>
           <div className="w-px h-6 bg-neutral-200 hidden md:block"></div>
+          <ExportCsvButton data={exportData} filename="Tenants_Export" tier={tier} />
           <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1">
             <Plus className="h-4 w-4" /> Add Tenant
           </Link>

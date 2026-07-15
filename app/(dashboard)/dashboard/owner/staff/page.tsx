@@ -19,6 +19,7 @@ export default function StaffPage() {
   const [showModal, setShowModal] = useState(false);
   const [showPayModal, setShowPayModal] = useState<number | null>(null);
   const [saving, setSaving]     = useState(false);
+  const [tier, setTier]         = useState<string>("STARTER");
 
   // New staff form
   const [form, setForm] = useState({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "" });
@@ -32,6 +33,7 @@ export default function StaffPage() {
       const res = await fetch("/api/manage/staff");
       const d   = await res.json();
       setStaff(d.data ?? []);
+      setTier(d.tier ?? "STARTER");
     } finally {
       setLoading(false);
     }
@@ -142,7 +144,11 @@ export default function StaffPage() {
                 <div>
                   <label className="block text-xs font-semibold mb-1">Role</label>
                   <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="input-base">
-                    {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                    {ROLES.map(r => (
+                      <option key={r} value={r} disabled={r === "MANAGER" && tier !== "PRO"}>
+                        {r} {r === "MANAGER" && tier !== "PRO" ? "(PRO Only)" : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

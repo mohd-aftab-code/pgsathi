@@ -6,6 +6,7 @@ import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import MarkReadButton from "@/components/listings/MarkReadButton";
 import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
+import { ExportCsvButton } from "@/components/common/ExportCsvButton";
 
 export const metadata = {
   title: "Visits & Leads - Owner Dashboard",
@@ -35,6 +36,16 @@ export default async function VisitsInboxPage() {
     include: { listing: { select: { title: true, slug: true } } },
     orderBy: { visitDate: "asc" },
   });
+
+  const exportData = leads.map(l => ({
+    "Name": l.name,
+    "Phone": l.phone,
+    "Email": l.email || "",
+    "Source": l.source,
+    "Property": l.listing.title,
+    "Status": l.isRead ? "Read" : "Unread",
+    "Date": new Date(l.createdAt).toLocaleDateString(),
+  }));
 
   return (
     <div>
@@ -104,9 +115,12 @@ export default async function VisitsInboxPage() {
 
         {/* Leads Section */}
         <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Mail className="text-neutral-600" /> General Inquiries (Leads)
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Mail className="text-neutral-600" /> General Inquiries (Leads)
+            </h2>
+            <ExportCsvButton data={exportData} filename="Leads_Export" tier={tier} />
+          </div>
           <div className="mt-4">
             {leads.length > 0 ? (
               <div className="overflow-x-auto pb-10 px-1 -mx-1">

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { CreditCard, CheckCircle2, ShieldCheck, Zap, AlertTriangle, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { CancelSubscriptionButton } from "@/components/manage/CancelSubscriptionButton";
 
 export const metadata = {
   title: "My Subscription - PGSathi",
@@ -133,9 +134,7 @@ export default async function OwnerSubscriptionPage() {
                   <div className="text-xs text-neutral-500">Razorpay Secured</div>
                 </div>
               </div>
-              <button className="text-sm font-bold text-red-600 hover:text-red-700 w-full text-left py-2 border-t border-neutral-100 mt-2">
-                Cancel Subscription
-              </button>
+              <CancelSubscriptionButton />
             </div>
           </div>
 

@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       return s;
     });
 
-    return NextResponse.json({ success: true, data: enrichedStaff });
+    return NextResponse.json({ success: true, data: enrichedStaff, tier: ctx.tier });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
@@ -55,6 +55,10 @@ export async function POST(req: NextRequest) {
     if (!data.name) return NextResponse.json({ success: false, message: "name required" }, { status: 400 });
 
     const role = data.role ?? "OTHER";
+
+    if (role === "MANAGER" && ctx.tier !== "PRO") {
+      return NextResponse.json({ success: false, message: "PRO plan is required to add Team Managers." }, { status: 403 });
+    }
 
     // 1. Create Staff Record
     const staff = await db.pgStaff.create({
