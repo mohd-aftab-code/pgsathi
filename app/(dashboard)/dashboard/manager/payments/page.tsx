@@ -78,14 +78,14 @@ export default async function PaymentsPage({
         </div>
       ) : (
         <div className="mt-4">
-          <div className="overflow-x-auto pb-8 px-1 -mx-1">
-            <table className="w-full text-sm text-left border-separate border-spacing-y-3">
+          <div className="overflow-x-auto pb-8 md:px-1 md:-mx-1">
+            <table className="w-full text-sm text-left border-separate border-spacing-y-3 hidden md:table">
               <thead>
                 <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
                   <th className="px-6 py-3">Tenant</th>
-                  <th className="px-6 py-3 hidden sm:table-cell">Type</th>
-                  <th className="px-6 py-3 hidden md:table-cell">Method</th>
-                  <th className="px-6 py-3 hidden md:table-cell">Receipt</th>
+                  <th className="px-6 py-3">Type</th>
+                  <th className="px-6 py-3">Method</th>
+                  <th className="px-6 py-3">Receipt</th>
                   <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-right">Remind</th>
@@ -100,12 +100,12 @@ export default async function PaymentsPage({
                       </Link>
                       <div className="text-xs text-neutral-400">{p.tenant.phone}</div>
                     </td>
-                    <td className="px-6 py-4 hidden sm:table-cell border-y border-neutral-100">
+                    <td className="px-6 py-4 border-y border-neutral-100">
                       <StatusBadge status={p.status} />
                       <div className="text-xs text-neutral-400 mt-0.5">{p.type}</div>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell text-neutral-600 border-y border-neutral-100">{p.method}</td>
-                    <td className="px-6 py-4 hidden md:table-cell text-xs text-neutral-400 border-y border-neutral-100">{p.receiptNo ?? "—"}</td>
+                    <td className="px-6 py-4 text-neutral-600 border-y border-neutral-100">{p.method}</td>
+                    <td className="px-6 py-4 text-xs text-neutral-400 border-y border-neutral-100">{p.receiptNo ?? "—"}</td>
                     <td className="px-6 py-4 text-neutral-600 border-y border-neutral-100">{formatDate(p.paidOn)}</td>
                     <td className="px-6 py-4 text-right font-bold text-green-700 border-y border-neutral-100">{formatINR(p.amount)}</td>
                     <td className="px-6 py-4 rounded-r-2xl border-y border-r border-neutral-100 text-right">
@@ -124,6 +124,47 @@ export default async function PaymentsPage({
                 ))}
               </tbody>
             </table>
+
+            <div className="md:hidden flex flex-col space-y-4">
+              {payments.map((p) => (
+                <div key={p.id} className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col gap-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <Link href={`/dashboard/manager/tenants/${p.tenantId}`} className="font-bold text-neutral-900 hover:underline block">
+                        {p.tenant.name}
+                      </Link>
+                      <div className="text-xs text-neutral-500">{p.tenant.phone}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-extrabold text-green-700">{formatINR(p.amount)}</div>
+                      <div className="text-xs text-neutral-400">{formatDate(p.paidOn)}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 text-sm bg-neutral-50 p-3 rounded-xl border border-neutral-100">
+                    <div>
+                      <span className="text-xs text-neutral-400 block mb-0.5">Type & Method</span>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <StatusBadge status={p.status} />
+                      </div>
+                      <span className="text-xs text-neutral-600 font-medium block">{p.type} via {p.method}</span>
+                    </div>
+                    <div className="flex flex-col items-end justify-center">
+                      <div className="flex gap-2">
+                        <WhatsAppReminderBtn
+                          phone={p.tenant.phone || ""}
+                          tenantName={p.tenant.name}
+                          amount={p.amount}
+                          month={p.forMonth || month}
+                          type={p.type}
+                        />
+                        {!p.voided && <VoidPaymentBtn paymentId={p.id} />}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

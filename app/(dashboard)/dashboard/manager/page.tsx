@@ -203,37 +203,59 @@ export default async function ManagerDashboardPage() {
                 <p className="text-sm text-neutral-500">No active tenants found.</p>
               </div>
             ) : (
-              <table className="w-full text-sm text-left">
-                <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-100">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Tenant</th>
-                    <th className="px-5 py-3 font-medium">Property & Room</th>
-                    <th className="px-5 py-3 font-medium text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100">
-                  {recentTenants.map((t) => (
-                    <tr key={t.id} className="hover:bg-neutral-50/50 transition-colors">
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0">
-                            {t.name.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="font-semibold text-neutral-800">{t.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 text-neutral-600">
-                        {t.listing?.title} {t.room ? <span className="text-neutral-400">({t.room.name})</span> : ""}
-                      </td>
-                      <td className="px-5 py-3 text-right">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-100">
-                          <CheckCircle2 size={10} /> ACTIVE
-                        </span>
-                      </td>
+              <>
+                <table className="w-full text-sm text-left hidden sm:table">
+                  <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-100">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Tenant</th>
+                      <th className="px-5 py-3 font-medium">Property & Room</th>
+                      <th className="px-5 py-3 font-medium text-right">Status</th>
                     </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {recentTenants.map((t) => (
+                      <tr key={t.id} className="hover:bg-neutral-50/50 transition-colors">
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0">
+                              {t.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="font-semibold text-neutral-800">{t.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 text-neutral-600">
+                          {t.listing?.title} {t.room ? <span className="text-neutral-400">({t.room.name})</span> : ""}
+                        </td>
+                        <td className="px-5 py-3 text-right">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-100">
+                            <CheckCircle2 size={10} /> ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="sm:hidden flex flex-col divide-y divide-neutral-100">
+                  {recentTenants.map((t) => (
+                    <div key={t.id} className="p-4 hover:bg-neutral-50/50 transition-colors flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0">
+                          {t.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-neutral-900 truncate">{t.name}</div>
+                          <div className="text-xs text-neutral-500 truncate">
+                            {t.listing?.title} {t.room ? `(${t.room.name})` : ""}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-100 shrink-0">
+                        <CheckCircle2 size={10} /> ACTIVE
+                      </span>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </div>
         </div>

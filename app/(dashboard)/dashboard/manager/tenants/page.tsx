@@ -118,16 +118,16 @@ export default async function TenantsPage({
       ) : (
         <>
         <div className="mt-4">
-          <div className="overflow-x-auto pb-8 px-1 -mx-1">
-            <table className="w-full text-sm text-left border-separate border-spacing-y-3">
+          <div className="overflow-x-auto pb-8 md:px-1 md:-mx-1">
+            <table className="w-full text-sm text-left border-separate border-spacing-y-3 hidden md:table">
               <thead>
                 <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
                   <th className="px-6 py-3">Tenant</th>
-                  <th className="px-6 py-3 hidden sm:table-cell">PG / Room</th>
-                  <th className="px-6 py-3 hidden md:table-cell">Rent</th>
+                  <th className="px-6 py-3">PG / Room</th>
+                  <th className="px-6 py-3">Rent</th>
                   <th className="px-6 py-3 hidden lg:table-cell">Check-in</th>
                   <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3 hidden md:table-cell">This Month</th>
+                  <th className="px-6 py-3">This Month</th>
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
@@ -148,11 +148,11 @@ export default async function TenantsPage({
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 hidden sm:table-cell border-y border-neutral-100">
+                        <td className="px-6 py-4 border-y border-neutral-100">
                           <div className="text-neutral-900 font-medium text-xs">{t.listing.title}</div>
                           {t.room && <div className="text-xs text-neutral-400">Room {t.room.name}</div>}
                         </td>
-                        <td className="px-6 py-4 hidden md:table-cell font-semibold text-neutral-900 border-y border-neutral-100">
+                        <td className="px-6 py-4 font-semibold text-neutral-900 border-y border-neutral-100">
                           {formatINR(t.monthlyRent)}
                         </td>
                         <td className="px-6 py-4 hidden lg:table-cell text-neutral-500 text-xs border-y border-neutral-100">
@@ -161,7 +161,7 @@ export default async function TenantsPage({
                         <td className="px-6 py-4 border-y border-neutral-100">
                           <StatusBadge status={t.status} />
                         </td>
-                        <td className="px-6 py-4 hidden md:table-cell border-y border-neutral-100">
+                        <td className="px-6 py-4 border-y border-neutral-100">
                           {due > 0 ? (
                             <span className="text-red-600 font-semibold text-xs">{formatINR(due)} due</span>
                           ) : (
@@ -178,6 +178,46 @@ export default async function TenantsPage({
                   })}
                 </tbody>
               </table>
+
+              <div className="md:hidden flex flex-col space-y-4">
+                {tenants.map((t) => {
+                  const paid = t.payments.reduce((s, p) => s + p.amount, 0);
+                  const due  = Math.max(0, t.monthlyRent - paid);
+                  return (
+                    <Link key={t.id} href={`/dashboard/manager/tenants/${t.id}`} className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col gap-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary-100 text-sm font-bold text-primary-700">
+                            {initials(t.name)}
+                          </div>
+                          <div>
+                            <div className="font-bold text-neutral-900">{t.name}</div>
+                            <div className="text-xs text-neutral-500">{t.phone}</div>
+                          </div>
+                        </div>
+                        <StatusBadge status={t.status} />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 text-sm bg-neutral-50 p-3 rounded-xl border border-neutral-100">
+                        <div>
+                          <span className="text-xs text-neutral-400 block mb-0.5">Property</span>
+                          <span className="font-semibold text-neutral-700 block truncate">{t.listing.title}</span>
+                          {t.room && <span className="text-xs text-neutral-500">Room {t.room.name}</span>}
+                        </div>
+                        <div>
+                          <span className="text-xs text-neutral-400 block mb-0.5">Rent</span>
+                          <span className="font-semibold text-neutral-900 block">{formatINR(t.monthlyRent)}</span>
+                          {due > 0 ? (
+                            <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 rounded">{formatINR(due)} due</span>
+                          ) : (
+                            <span className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 rounded">Paid ✓</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
