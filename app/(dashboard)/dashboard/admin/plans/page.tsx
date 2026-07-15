@@ -17,6 +17,8 @@ export default function AdminPlansPage() {
     yearlyPrice: "",
     maxListings: "",
     maxPhotos: "",
+    maxTenants: "",
+    features: [] as { name: string; included: boolean }[],
     isActive: true,
   });
 
@@ -44,6 +46,8 @@ export default function AdminPlansPage() {
         yearlyPrice: plan.yearlyPrice ? plan.yearlyPrice.toString() : "",
         maxListings: plan.maxListings.toString(),
         maxPhotos: plan.maxPhotos.toString(),
+        maxTenants: plan.maxTenants ? plan.maxTenants.toString() : "",
+        features: Array.isArray(plan.features) ? plan.features : [],
         isActive: plan.isActive,
       });
     } else {
@@ -55,6 +59,8 @@ export default function AdminPlansPage() {
         yearlyPrice: "",
         maxListings: "",
         maxPhotos: "",
+        maxTenants: "",
+        features: [],
         isActive: true,
       });
     }
@@ -85,6 +91,25 @@ export default function AdminPlansPage() {
     const res = await fetch(`/api/admin/plans/${id}`, { method: "DELETE" });
     if (res.ok) fetchPlans();
     else alert("Failed to delete.");
+  };
+
+  const addFeature = () => {
+    setFormData({
+      ...formData,
+      features: [...formData.features, { name: "", included: true }]
+    });
+  };
+
+  const updateFeature = (index: number, key: string, value: any) => {
+    const newFeatures = [...formData.features];
+    newFeatures[index] = { ...newFeatures[index], [key]: value };
+    setFormData({ ...formData, features: newFeatures });
+  };
+
+  const removeFeature = (index: number) => {
+    const newFeatures = [...formData.features];
+    newFeatures.splice(index, 1);
+    setFormData({ ...formData, features: newFeatures });
   };
 
   const toggleStatus = async (plan: any) => {
@@ -130,13 +155,62 @@ export default function AdminPlansPage() {
               <input type="number" className="w-full border rounded-xl p-2.5" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Max Listings</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Max PGs (Listings) [-1 for Unlimited]</label>
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxListings} onChange={e => setFormData({...formData, maxListings: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Max Tenants [-1 for Unlimited]</label>
+              <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxTenants} onChange={e => setFormData({...formData, maxTenants: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">Max Photos</label>
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
             </div>
+            
+            <div className="md:col-span-2 bg-neutral-50 p-6 rounded-2xl border border-neutral-200 mt-2">
+              <div className="flex justify-between items-center mb-4 pb-4 border-b border-neutral-200">
+                <div>
+                  <h3 className="text-lg font-bold text-neutral-900">Features Checklist</h3>
+                  <p className="text-sm text-neutral-500">Add features and toggle if they are included in this plan.</p>
+                </div>
+                <button type="button" onClick={addFeature} className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-100 px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2 transition-colors">
+                  <Plus size={16} /> Add Feature
+                </button>
+              </div>
+              <div className="space-y-3">
+                {formData.features.map((feat, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-neutral-200 shadow-sm transition-all focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100">
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Audit log, Meter billing..." 
+                      className="flex-1 border-none focus:ring-0 text-sm font-medium outline-none px-2" 
+                      value={feat.name} 
+                      onChange={e => updateFeature(idx, "name", e.target.value)} 
+                    />
+                    <div className="w-px h-6 bg-neutral-200"></div>
+                    <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer shrink-0 min-w-24 px-2 select-none">
+                      <input 
+                        type="checkbox" 
+                        className="w-4 h-4 text-primary-600 rounded cursor-pointer"
+                        checked={feat.included} 
+                        onChange={e => updateFeature(idx, "included", e.target.checked)} 
+                      />
+                      <span className={feat.included ? 'text-green-600' : 'text-neutral-400'}>
+                        {feat.included ? 'Included' : 'Excluded'}
+                      </span>
+                    </label>
+                    <button type="button" onClick={() => removeFeature(idx)} className="text-neutral-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"><Trash2 size={18}/></button>
+                  </div>
+                ))}
+                {formData.features.length === 0 && (
+                  <div className="text-center py-8 text-neutral-500 bg-white rounded-xl border border-dashed border-neutral-300">
+                    <p className="text-sm font-medium">No features added yet.</p>
+                    <p className="text-xs mt-1">Click "Add Feature" to start building the checklist.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="md:col-span-2 flex items-center gap-4 mt-4">
               <button type="submit" className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer">Save Plan</button>
               <button type="button" onClick={() => setIsFormOpen(false)} className="cursor-pointer px-6 py-2.5 rounded-xl font-bold text-neutral-500 bg-neutral-100 hover:bg-neutral-200">Cancel</button>
@@ -162,7 +236,8 @@ export default function AdminPlansPage() {
                 </div>
               </div>
               <div className="space-y-2 mb-6 text-sm text-neutral-600">
-                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> Up to {plan.maxListings} PGs</div>
+                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxListings === -1 ? 'Unlimited' : `Up to ${plan.maxListings}`} PGs</div>
+                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxTenants === -1 ? 'Unlimited' : `Up to ${plan.maxTenants}`} Tenants</div>
                 <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxPhotos} Photos</div>
               </div>
               <div className="flex items-center gap-2 pt-4 border-t border-neutral-100">

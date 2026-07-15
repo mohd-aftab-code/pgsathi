@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
         yearlyPrice: body.yearlyPrice ? parseInt(body.yearlyPrice) : null,
         maxListings: parseInt(body.maxListings),
         maxPhotos: parseInt(body.maxPhotos),
+        maxTenants: parseInt(body.maxTenants),
         features: body.features || {},
         isActive: body.isActive !== false,
       }

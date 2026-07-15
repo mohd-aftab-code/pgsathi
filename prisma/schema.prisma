@@ -274,6 +274,7 @@ model Plan {
   yearlyPrice    Int?
   maxListings    Int
   maxPhotos      Int
+  maxTenants     Int            @default(-1)
   features       Json
   razorpayPlanId String?        @db.VarChar(100)
   isActive       Boolean        @default(true)

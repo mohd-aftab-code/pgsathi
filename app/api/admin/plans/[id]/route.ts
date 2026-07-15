@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         yearlyPrice: body.yearlyPrice !== undefined ? parseInt(body.yearlyPrice) : undefined,
         maxListings: body.maxListings !== undefined ? parseInt(body.maxListings) : undefined,
         maxPhotos: body.maxPhotos !== undefined ? parseInt(body.maxPhotos) : undefined,
+        maxTenants: body.maxTenants !== undefined ? parseInt(body.maxTenants) : undefined,
         features: body.features !== undefined ? body.features : undefined,
         isActive: body.isActive !== undefined ? body.isActive : undefined,
       }
