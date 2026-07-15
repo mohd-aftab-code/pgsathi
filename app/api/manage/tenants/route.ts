@@ -71,6 +71,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "name, phone, listingId are required" }, { status: 400 });
     }
 
+    // Subscription & Tenant Limit Check
+    const activeSub = await db.subscription.findFirst({
+      where: {
+        userId: ctx.userId,
+        status: { in: ["ACTIVE", "TRIAL"] },
+        endDate: { gt: new Date() }
+      },
+      include: { plan: true }
+    });
+
+    if (!activeSub) {
+      return NextResponse.json({ success: false, message: "Active subscription required to add tenants" }, { status: 403 });
+    }
+
+    const currentTenantsCount = await db.pgTenant.count({
+      where: { ownerId: ctx.userId, deletedAt: null }
+    });
+
+    if (activeSub.plan.maxTenants !== -1 && currentTenantsCount >= activeSub.plan.maxTenants) {
+      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxTenants} tenants.` }, { status: 403 });
+    }
+
     // Verify listing belongs to this owner
     const listing = await db.listing.findFirst({
       where: { id: parseInt(data.listingId), ownerId: ctx.userId },

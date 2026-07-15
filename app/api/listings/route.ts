@@ -103,12 +103,12 @@ export async function POST(req: NextRequest) {
       where: { ownerId: parseInt(session.user.id) } // Count all listings (or you could filter by active)
     });
 
-    if (userListingsCount >= activeSub.plan.maxListings) {
+    if (activeSub.plan.maxListings !== -1 && userListingsCount >= activeSub.plan.maxListings) {
       return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxListings} listings.` }, { status: 403 });
     }
 
     // 3. Photo Limit Check
-    if (data.photos && data.photos.length > activeSub.plan.maxPhotos) {
+    if (activeSub.plan.maxPhotos !== -1 && data.photos && data.photos.length > activeSub.plan.maxPhotos) {
       return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxPhotos} photos per listing.` }, { status: 400 });
     }
 
