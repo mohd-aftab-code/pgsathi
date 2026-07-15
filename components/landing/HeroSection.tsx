@@ -45,7 +45,7 @@ export default async function HeroSection() {
       />
 
       <div className="container-max section-padding relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] xl:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-8 items-center">
           {/* ── Left: Copy + Search ─────────────────────────────── */}
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
@@ -62,25 +62,25 @@ export default async function HeroSection() {
             </h1>
 
             <div className="flex flex-col sm:flex-col gap-3 sm:gap-3 text-sm md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
-              <div className="flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none">
-                <div className="bg-primary-50 sm:bg-primary-100 text-primary-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1">
+              <Link href="/register?role=tenant" className="relative z-20 cursor-pointer group flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none sm:hover:bg-neutral-50 transition-colors sm:p-2 sm:-ml-2 sm:rounded-xl">
+                <div className="bg-primary-50 sm:bg-primary-100 text-primary-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1 group-hover:scale-105 transition-transform">
                   <User size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0">For Tenants:</strong> 
+                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-primary-700 transition-colors">For Tenants:</strong> 
                   <span className="text-neutral-500 sm:text-neutral-600"> Search verified PGs & contact owners directly. No brokers.</span>
                 </p>
-              </div>
+              </Link>
               
-              <div className="flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none">
-                <div className="bg-emerald-50 sm:bg-emerald-100 text-emerald-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1">
+              <Link href="/register?role=owner" className="relative z-20 cursor-pointer group flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none sm:hover:bg-neutral-50 transition-colors sm:p-2 sm:-ml-2 sm:rounded-xl">
+                <div className="bg-emerald-50 sm:bg-emerald-100 text-emerald-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1 group-hover:scale-105 transition-transform">
                   <Building2 size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0">For Owners:</strong> 
+                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-emerald-700 transition-colors">For Owners:</strong> 
                   <span className="text-neutral-500 sm:text-neutral-600"> List your PG for free, get direct WhatsApp leads.</span>
                 </p>
-              </div>
+              </Link>
             </div>
 
             <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-900/5 mb-8">

@@ -51,13 +51,13 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
   return (
     <form 
       onSubmit={handleSearch} 
-      // Using grid layout for desktop ensures proper width distribution without squashing inputs
-      className="flex flex-col lg:grid lg:grid-cols-[minmax(140px,1.5fr)_minmax(180px,2fr)_minmax(140px,1.2fr)_auto] w-full bg-transparent lg:bg-white lg:rounded-full rounded-2xl lg:border border-neutral-200 lg:shadow-sm lg:p-1.5 gap-3 lg:gap-0"
+      // Changed grid to flex layout to prevent strict column clipping and allow flexible shrinking/growing
+      className="flex flex-col lg:flex-row w-full bg-transparent lg:bg-white lg:rounded-full rounded-2xl lg:border border-neutral-200 lg:shadow-sm lg:p-1.5 gap-3 lg:gap-0 items-stretch lg:items-center"
     >
       
       {/* 1. Searchable City Custom Dropdown */}
-      <div ref={cityRef} className="relative w-full lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-l-full lg:rounded-r-none border lg:border-none px-2 lg:px-4 h-14 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-20">
-        <MapPin className="text-neutral-400 shrink-0 ml-1" size={18} />
+      <div ref={cityRef} className="relative w-full min-w-0 lg:flex-[1.1] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-l-full lg:rounded-r-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-20">
+        <MapPin className="text-neutral-400 shrink-0 ml-1" size={16} />
         <input 
           type="text" 
           value={cityInput}
@@ -66,10 +66,10 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
             setIsCityOpen(true);
           }}
           onFocus={() => setIsCityOpen(true)}
-          placeholder="Select City"
-          className="w-full h-full bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none px-2 text-sm md:text-base placeholder:text-neutral-400"
+          placeholder="City"
+          className="w-full h-full min-w-0 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none px-2 text-[13px] sm:text-sm placeholder:text-neutral-400 text-ellipsis overflow-hidden whitespace-nowrap"
         />
-        <ChevronDown size={16} className={`text-neutral-400 shrink-0 transition-transform ${isCityOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={14} className={`text-neutral-400 shrink-0 transition-transform ${isCityOpen ? "rotate-180" : ""}`} />
         
         {isCityOpen && (
           <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[220px] bg-white border border-neutral-200 shadow-xl rounded-xl overflow-hidden py-2 max-h-[240px] overflow-y-auto">
@@ -94,24 +94,24 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
       </div>
 
       {/* 2. Free Text Search (Area/Location) */}
-      <div className="relative w-full lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 lg:px-4 h-14 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-10">
-        <Search className="text-neutral-400 shrink-0 ml-1" size={18} />
+      <div className="relative w-full min-w-0 lg:flex-[1.6] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-10">
+        <Search className="text-neutral-400 shrink-0 ml-1" size={16} />
         <input 
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter area, location..."
-          className="w-full h-full bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none px-2 text-sm md:text-base placeholder:text-neutral-400"
+          placeholder="Area or locality..."
+          className="w-full h-full min-w-0 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 outline-none px-2 text-[13px] sm:text-sm placeholder:text-neutral-400 text-ellipsis overflow-hidden whitespace-nowrap"
         />
       </div>
       
       {/* 3. PG Type Dropdown */}
-      <div className="relative w-full bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none border-neutral-200 px-2 lg:px-3 h-14 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 cursor-pointer shadow-sm lg:shadow-none z-10">
-        <Building className="text-neutral-400 shrink-0 ml-1" size={18} />
+      <div className="relative w-full min-w-0 lg:flex-[1] bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none border-neutral-200 px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 cursor-pointer shadow-sm lg:shadow-none z-10">
+        <Building className="text-neutral-400 shrink-0 ml-1" size={16} />
         <select 
           value={gender}
           onChange={(e) => setGender(e.target.value)}
-          className="w-full h-full bg-transparent border-none text-neutral-900 font-medium focus:ring-0 appearance-none outline-none px-2 text-sm md:text-base cursor-pointer"
+          className="w-full h-full min-w-0 bg-transparent border-none text-neutral-900 font-medium focus:ring-0 appearance-none outline-none px-2 text-[13px] sm:text-sm cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
         >
           <option value="" disabled>PG Type</option>
           <option value="all">Any Type</option>
@@ -125,10 +125,10 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
       {/* 4. Submit Button */}
       <button 
         type="submit"
-        className="w-full lg:w-auto shrink-0 h-14 px-8 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl lg:rounded-full shadow-lg shadow-primary-500/30 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer mt-1 lg:mt-0"
+        className="w-full lg:w-auto shrink-0 h-14 lg:h-10 lg:my-1 lg:mx-1 px-6 lg:px-4 xl:px-6 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl lg:rounded-full shadow-lg shadow-primary-500/30 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer mt-1 lg:mt-0"
       >
-        <Search size={18} className="group-hover:scale-110 transition-transform" />
-        <span className="lg:hidden xl:inline">Search</span>
+        <Search size={16} className="group-hover:scale-110 transition-transform" />
+        <span className="lg:hidden xl:inline text-sm">Search</span>
       </button>
     </form>
   );
