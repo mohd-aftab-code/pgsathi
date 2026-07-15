@@ -1,9 +1,10 @@
 /**
- * app/(main)/dashboard/manager/mess/page.tsx
- * Weekly mess menu manager.
+ * app/(dashboard)/dashboard/manager/mess/page.tsx
+ * Weekly mess menu manager — uses /api/manage/listings for correct property list.
  */
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Utensils } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -18,6 +19,7 @@ const DAYS = [
 ];
 
 export default function MessMenuPage() {
+  const router = useRouter();
   const [listings, setListings] = useState<any[]>([]);
   const [listingId, setListingId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,12 +31,15 @@ export default function MessMenuPage() {
   );
 
   useEffect(() => {
-    // We can re-use the tenants API listing fetch logic, or just a generic listing API.
-    // For now we'll fetch from an existing API or just assume the owner has listings.
-    fetch("/api/listings")
-      .then(r => r.json())
+    // Fix: use /api/manage/listings (owner's own listings, regardless of public status)
+    fetch("/api/manage/listings")
+      .then(r => {
+        if (r.status === 401) { router.push("/login"); return null; }
+        return r.json();
+      })
       .then(d => {
-        const data = d.data || d.listings || [];
+        if (!d) return;
+        const data = d.data || [];
         setListings(data);
         if (data.length > 0) setListingId(String(data[0].id));
       })
@@ -45,8 +50,12 @@ export default function MessMenuPage() {
     if (!listingId) return;
     setLoading(true);
     fetch(`/api/manage/mess?listingId=${listingId}`)
-      .then(r => r.json())
+      .then(r => {
+        if (r.status === 401) { router.push("/login"); return null; }
+        return r.json();
+      })
       .then(d => {
+        if (!d) return;
         if (d.success && d.data.length > 0) {
           // Merge fetched data with default structure
           const newMenu = DAYS.map(day => {

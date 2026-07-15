@@ -9,6 +9,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { WhatsAppReminderBtn } from "@/components/manage/WhatsAppReminderBtn";
+import { VoidPaymentBtn } from "@/components/manage/VoidPaymentBtn";
 import { formatINR, formatDate, currentMonth } from "@/lib/manage-utils";
 
 export const metadata = { title: "Payments — PG Manager" };
@@ -108,13 +109,16 @@ export default async function PaymentsPage({
                     <td className="px-6 py-4 text-neutral-600 border-y border-neutral-100">{formatDate(p.paidOn)}</td>
                     <td className="px-6 py-4 text-right font-bold text-green-700 border-y border-neutral-100">{formatINR(p.amount)}</td>
                     <td className="px-6 py-4 rounded-r-2xl border-y border-r border-neutral-100 text-right">
-                      <WhatsAppReminderBtn
-                        phone={p.tenant.phone || ""}
-                        tenantName={p.tenant.name}
-                        amount={p.amount}
-                        month={p.forMonth || month}
-                        type={p.type}
-                      />
+                      <div className="flex items-center justify-end gap-2">
+                        <WhatsAppReminderBtn
+                          phone={p.tenant.phone || ""}
+                          tenantName={p.tenant.name}
+                          amount={p.amount}
+                          month={p.forMonth || month}
+                          type={p.type}
+                        />
+                        {!p.voided && <VoidPaymentBtn paymentId={p.id} />}
+                      </div>
                     </td>
                   </tr>
                 ))}

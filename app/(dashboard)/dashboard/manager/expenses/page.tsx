@@ -1,8 +1,9 @@
 /**
- * app/(main)/dashboard/manager/expenses/page.tsx
+ * app/(dashboard)/dashboard/manager/expenses/page.tsx
  */
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Receipt, Plus, TrendingDown } from "lucide-react";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { StatusBadge } from "@/components/manage/StatusBadge";
@@ -18,17 +19,20 @@ function formatDate(d: string) {
 const CATEGORIES = ["MAINTENANCE", "SALARY", "GROCERY", "UTILITY", "WIFI", "REPAIRS", "OTHER"];
 
 export default function ExpensesPage() {
+  const router = useRouter();
   const [expenses, setExpenses] = useState<any[]>([]);
+  const [listings, setListings] = useState<any[]>([]);
   const [total, setTotal]       = useState(0);
   const [loading, setLoading]   = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving]     = useState(false);
-  const [form, setForm] = useState({ title: "", amount: "", category: "OTHER", spentOn: today(), note: "" });
+  const [form, setForm] = useState({ title: "", amount: "", category: "OTHER", spentOn: today(), note: "", listingId: "" });
 
   async function fetchExpenses() {
     setLoading(true);
     try {
       const res = await fetch("/api/manage/expenses");
+      if (res.status === 401) { router.push("/login"); return; }
       const d   = await res.json();
       setExpenses(d.data ?? []);
       setTotal(d.totalAmount ?? 0);
@@ -37,7 +41,17 @@ export default function ExpensesPage() {
     }
   }
 
-  useEffect(() => { fetchExpenses(); }, []);
+  useEffect(() => {
+    fetchExpenses();
+    // Fetch owner's own listings for the property selector
+    fetch("/api/manage/listings")
+      .then(r => {
+        if (r.status === 401) { router.push("/login"); return null; }
+        return r.json();
+      })
+      .then(d => { if (d) setListings(d.data || []); })
+      .catch(() => {});
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,7 +67,7 @@ export default function ExpensesPage() {
       if (!d.success) throw new Error(d.message);
       toast.success("Expense add ho gaya!");
       setShowModal(false);
-      setForm({ title: "", amount: "", category: "OTHER", spentOn: today(), note: "" });
+      setForm({ title: "", amount: "", category: "OTHER", spentOn: today(), note: "", listingId: "" });
       fetchExpenses();
     } catch (err: any) {
       toast.error(err.message);
@@ -123,9 +137,20 @@ export default function ExpensesPage() {
           <form onSubmit={submit} className="card p-6 w-full max-w-md">
             <h3 className="font-bold text-neutral-900 mb-4">Add Expense</h3>
             <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Title *</label>
-                <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-base" placeholder="e.g., Plumber ka paisa" required />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-600 mb-1">Title *</label>
+                  <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-base" placeholder="e.g., Plumber ka paisa" required />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-600 mb-1">Property</label>
+                  <select value={form.listingId} onChange={e => setForm({ ...form, listingId: e.target.value })} className="input-base">
+                    <option value="">All PGs / General</option>
+                    {listings.map(l => (
+                      <option key={l.id} value={l.id}>{l.title}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>

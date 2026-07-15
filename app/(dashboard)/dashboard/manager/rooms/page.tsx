@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { AddRoomModal } from "@/components/manage/AddRoomModal";
+import { DeleteRoomBtn } from "@/components/manage/DeleteRoomBtn";
 import Link from "next/link";
 
 export const metadata = { title: "Rooms & Beds — PG Manager" };
@@ -173,7 +174,10 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
                               roomVacant === room.beds.length ? "bg-green-50 border-green-100 text-green-700" :
                               "bg-amber-50 border-amber-100 text-amber-700"
                             }`}>
-                              <span>🛏 Room {room.name}</span>
+                              <span className="flex items-center">
+                                🛏 Room {room.name}
+                                {roomVacant === room.beds.length && <DeleteRoomBtn roomId={room.id} />}
+                              </span>
                               <span>{roomVacant > 0 ? `${roomVacant} Vacant` : "Full 🔴"}</span>
                             </div>
 

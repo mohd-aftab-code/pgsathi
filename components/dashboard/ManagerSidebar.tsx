@@ -116,6 +116,7 @@ function MobileNavItem({
 
 export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; children?: React.ReactNode }) {
   const pathname = usePathname();
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   const isActive = (item: NavItem) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -219,11 +220,65 @@ export function ManagerSidebar({ isOwner, children }: { isOwner: boolean; childr
             </Link>
             {/* Complaints */}
             <MobileNavItem href="/dashboard/manager/complaints" icon={Wrench} label="Issues" isActive={pathname.startsWith("/dashboard/manager/complaints")} color="violet" />
-            {/* Rooms */}
-            <MobileNavItem href="/dashboard/manager/rooms" icon={DoorClosed} label="Rooms" isActive={pathname.startsWith("/dashboard/manager/rooms")} color="violet" />
+            {/* Menu */}
+            <button
+              onClick={() => setIsMoreMenuOpen(true)}
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
+            >
+              <div className="w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-neutral-100 scale-100">
+                <LayoutDashboard size={20} className="text-neutral-500" strokeWidth={1.8} />
+              </div>
+              <span className="text-[10px] font-semibold transition-colors text-neutral-400">
+                Menu
+              </span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* ── Mobile "More" Menu Overlay ── */}
+      {isMoreMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-[60] flex flex-col justify-end bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setIsMoreMenuOpen(false)}>
+          <div className="bg-white rounded-t-3xl overflow-hidden max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 border-b border-neutral-100 flex justify-between items-center">
+              <h2 className="font-bold text-neutral-900">All Modules</h2>
+              <button onClick={() => setIsMoreMenuOpen(false)} className="p-2 bg-neutral-100 rounded-full text-neutral-600">
+                <ArrowLeft size={18} />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-4 flex flex-col gap-4">
+              {navGroups.map((group) => {
+                const visibleItems = group.items.filter(item => !item.ownerOnly || isOwner);
+                if (visibleItems.length === 0) return null;
+                return (
+                  <div key={group.category}>
+                    <p className="px-2 mb-2 text-xs font-bold text-neutral-400 uppercase tracking-widest">{group.category}</p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {visibleItems.map(item => {
+                        const Icon = item.icon;
+                        const active = isActive(item);
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsMoreMenuOpen(false)}
+                            className={`flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl transition-colors ${
+                              active ? "bg-violet-50 text-violet-700" : "hover:bg-neutral-50 text-neutral-600"
+                            }`}
+                          >
+                            <Icon size={22} className={active ? "text-violet-600" : "text-neutral-400"} />
+                            <span className="text-[9px] font-semibold text-center leading-tight">{item.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

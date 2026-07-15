@@ -8,6 +8,7 @@ import { formatINR, formatMonth, currentMonth } from "@/lib/manage-utils";
 import { FileText, Play } from "lucide-react";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { GenerateBillsButton } from "./GenerateBillsButton";
+import Link from "next/link";
 
 export const metadata = { title: "Billing — PG Manager" };
 
@@ -83,7 +84,19 @@ export default async function BillingPage({
                         {(b.electricity > 0 || b.otherAmount > 0) && <div className="text-xs text-neutral-400">incl. extras</div>}
                       </td>
                       <td className="px-4 py-3 text-right font-medium text-green-700">{formatINR(paid)}</td>
-                      <td className="px-4 py-3 text-right font-bold text-red-600">{bal > 0 ? formatINR(bal) : "Paid"}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className={`font-bold ${bal > 0 ? "text-red-600" : "text-green-600"}`}>
+                          {bal > 0 ? formatINR(bal) : "Paid"}
+                        </div>
+                        {bal > 0 && (
+                          <Link
+                            href={`/dashboard/manager/payments/new?tenantId=${b.tenantId}`}
+                            className="text-[10px] font-bold text-violet-600 hover:underline inline-block mt-1"
+                          >
+                            + Record Payment
+                          </Link>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}

@@ -16,9 +16,16 @@ function formatDateTime(d: Date) {
   });
 }
 
+import { redirect } from "next/navigation";
+
 export default async function AuditPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const sp = await searchParams;
-  const { userId } = await requireManagerAccess();
+  const { userId, isOwner } = await requireManagerAccess();
+  
+  if (!isOwner) {
+    redirect("/dashboard/manager");
+  }
+
   const page  = parseInt(sp.page ?? "1");
   const limit = 50;
 

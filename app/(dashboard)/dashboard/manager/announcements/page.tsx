@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Megaphone, Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AnnouncementsPage() {
+  const router = useRouter();
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,9 +15,13 @@ export default function AnnouncementsPage() {
 
   useEffect(() => {
     fetchAnnouncements();
-    fetch("/api/listings")
-      .then(r => r.json())
-      .then(d => setListings(d.data || d.listings || []))
+    // Fix: use /api/manage/listings (owner's own listings, not public API)
+    fetch("/api/manage/listings")
+      .then(r => {
+        if (r.status === 401) { router.push("/login"); return null; }
+        return r.json();
+      })
+      .then(d => { if (d) setListings(d.data || []); })
       .catch(() => {});
   }, []);
 
@@ -23,6 +29,7 @@ export default function AnnouncementsPage() {
     setLoading(true);
     try {
       const res = await fetch("/api/manage/announcements");
+      if (res.status === 401) { router.push("/login"); return; }
       const d = await res.json();
       if (d.success) setAnnouncements(d.data);
     } finally {

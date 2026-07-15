@@ -24,7 +24,9 @@ export default async function ManagerDashboardPage() {
 
   const forMonth = currentMonth();
 
-  // Fetch relevant data for manager
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
   const [
     activeTenants,
     pendingComplaints,
@@ -32,6 +34,8 @@ export default async function ManagerDashboardPage() {
     recentTenants,
     openComplaints,
     tenantsWithDues,
+    incomeAgg,
+    expenseAgg,
   ] = await Promise.all([
     db.pgTenant.count({
       where: { ownerId, status: "ACTIVE" },
@@ -69,7 +73,23 @@ export default async function ManagerDashboardPage() {
         payments: { where: { type: "RENT", forMonth, voided: false }, select: { amount: true } },
       },
     }),
+    db.pgPayment.aggregate({
+      where: { ownerId, voided: false, paidOn: { gte: monthStart } },
+      _sum: { amount: true },
+    }),
+    db.pgExpense.aggregate({
+      where: { ownerId, spentOn: { gte: monthStart } },
+      _sum: { amount: true },
+    }),
   ]);
+
+  const totalIncome = incomeAgg._sum.amount ?? 0;
+  const totalExpense = expenseAgg._sum.amount ?? 0;
+  const netProfit = totalIncome - totalExpense;
+
+  const expectedRent = tenantsWithDues.reduce((s, t) => s + t.monthlyRent, 0);
+  const collectedRent = tenantsWithDues.reduce((s, t) => s + t.payments.reduce((ps, p) => ps + p.amount, 0), 0);
+  const totalPendingDues = Math.max(0, expectedRent - collectedRent);
 
   const pendingRemindersCount = tenantsWithDues.filter(
     (t) => t.monthlyRent - t.payments.reduce((s, p) => s + p.amount, 0) > 0
@@ -138,15 +158,15 @@ export default async function ManagerDashboardPage() {
         {/* Content (always rendered — just blurred for non-owners) */}
         <div className={`p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
           {[
-            { label: "Rent Collected", value: "₹1,24,500", trend: "+12%", color: "text-green-600", bg: "bg-green-50" },
-            { label: "Pending Dues", value: "₹18,000", trend: "-3%", color: "text-red-600", bg: "bg-red-50" },
-            { label: "Expenses", value: "₹32,800", trend: "+8%", color: "text-orange-600", bg: "bg-orange-50" },
-            { label: "Net Profit", value: "₹72,700", trend: "+15%", color: "text-violet-600", bg: "bg-violet-50" },
+            { label: "Rent Collected", value: `₹${totalIncome.toLocaleString('en-IN')}`, color: "text-green-600", bg: "bg-green-50" },
+            { label: "Pending Dues", value: `₹${totalPendingDues.toLocaleString('en-IN')}`, color: "text-red-600", bg: "bg-red-50" },
+            { label: "Expenses", value: `₹${totalExpense.toLocaleString('en-IN')}`, color: "text-orange-600", bg: "bg-orange-50" },
+            { label: "Net Profit", value: `₹${netProfit.toLocaleString('en-IN')}`, color: "text-violet-600", bg: "bg-violet-50" },
           ].map((item, i) => (
             <div key={i} className={`p-4 rounded-xl ${item.bg}`}>
               <div className="text-xs font-semibold text-neutral-500 mb-1">{item.label}</div>
               <div className={`text-xl font-extrabold ${item.color}`}>{item.value}</div>
-              <div className={`text-xs font-bold mt-1 ${item.trend.startsWith("+") ? "text-green-600" : "text-red-600"}`}>{item.trend} vs last month</div>
+              <div className="text-[10px] text-neutral-400 mt-1">This Month</div>
             </div>
           ))}
         </div>
