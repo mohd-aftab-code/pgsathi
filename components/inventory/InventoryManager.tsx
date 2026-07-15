@@ -15,6 +15,7 @@ type Room = {
   name: string;
   type: string;
   floor: string | null;
+  price?: number;
   beds: Bed[];
 };
 
@@ -25,6 +26,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
   const [newRoomType, setNewRoomType] = useState("DOUBLE_SHARING");
   const [newRoomFloor, setNewRoomFloor] = useState("");
   const [newBedCount, setNewBedCount] = useState(2);
+  const [newRoomPrice, setNewRoomPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAddRoom = async () => {
@@ -40,7 +42,8 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
           name: newRoomName,
           type: newRoomType,
           floor: newRoomFloor,
-          bedCount: newBedCount
+          bedCount: newBedCount,
+          price: newRoomPrice
         })
       });
 
@@ -50,6 +53,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
       setIsAddingRoom(false);
       setNewRoomName("");
       setNewRoomFloor("");
+      setNewRoomPrice("");
       toast.success("Room added successfully");
     } catch (error) {
       toast.error("Could not add room");
@@ -149,19 +153,30 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                 min="1" max="10"
               />
             </div>
+            <div>
+              <label className="block text-xs text-neutral-500 mb-1">Rent per Bed (₹/mo)</label>
+              <input 
+                type="number" 
+                value={newRoomPrice} 
+                onChange={e => setNewRoomPrice(e.target.value)} 
+                className="w-full border border-neutral-200 rounded-lg p-2.5 text-sm font-semibold text-primary-700 bg-primary-50 focus:bg-white" 
+                placeholder="e.g. 5000" 
+                min="0"
+              />
+            </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button 
-              onClick={handleAddRoom} 
+              onClick={handleAddRoom}
               disabled={loading}
-              className="bg-primary-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-70 flex items-center gap-2"
+              className="bg-neutral-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-neutral-800 transition flex items-center gap-2"
             >
-              {loading && <Loader2 size={14} className="animate-spin" />}
+              {loading ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />} 
               Save Room
             </button>
             <button 
-              onClick={() => setIsAddingRoom(false)} 
-              className="px-5 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-200"
+              onClick={() => setIsAddingRoom(false)}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-neutral-500 hover:bg-neutral-100 transition"
             >
               Cancel
             </button>
@@ -183,6 +198,7 @@ export default function InventoryManager({ listingId, initialRooms }: { listingI
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-neutral-500 bg-white px-2 py-0.5 rounded border border-neutral-200">{room.type.replace('_', ' ')}</span>
                     {room.floor && <span className="text-xs text-neutral-500 bg-white px-2 py-0.5 rounded border border-neutral-200">{room.floor}</span>}
+                    {room.price !== undefined && room.price > 0 && <span className="text-xs font-bold text-primary-700 bg-primary-50 px-2 py-0.5 rounded border border-primary-100">₹{room.price}/bed</span>}
                   </div>
                 </div>
                 <div className="text-sm bg-white px-3 py-1 rounded-full border border-neutral-200">
