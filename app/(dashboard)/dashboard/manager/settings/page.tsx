@@ -1,26 +1,39 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { User, Phone, Mail, Settings } from "lucide-react";
+import { requireManagerAccess } from "@/lib/manager-auth";
+import { User, Phone, Mail, Settings, ShieldCheck } from "lucide-react";
 import EditEmailButton from "@/components/dashboard/EditEmailButton";
 import LogoutButton from "@/components/common/LogoutButton";
 
 export const metadata = { title: "Settings - Manager Dashboard" };
 
 export default async function ManagerSettingsPage() {
+  const { isManager, isOwner, managerRole } = await requireManagerAccess();
   const session = await auth();
-  if (!session) redirect("/login");
 
-  const user = await db.user.findUnique({
-    where: { id: Number(session.user.id) }
-  });
+  let name: string | undefined;
+  let email: string | undefined;
+  let phone: string | null | undefined;
+
+  if (isManager) {
+    // Staff logins are PgTeamMember rows, not User rows — session.user.id is "manager:<memberId>".
+    const memberId = parseInt(session!.user.id.replace("manager:", ""));
+    const member = await db.pgTeamMember.findUnique({ where: { id: memberId } });
+    name = member?.name;
+    email = member?.email;
+    phone = null;
+  } else {
+    const user = await db.user.findUnique({ where: { id: Number(session!.user.id) } });
+    name = user?.name;
+    email = user?.email ?? undefined;
+    phone = user?.phone;
+  }
 
   return (
     <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-neutral-200 p-4 sm:p-6 md:p-8">
       <div className="mb-6 lg:mb-8 border-b border-neutral-200 pb-5">
         <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight flex items-center gap-2">
-          <Settings className="text-teal-600" /> My Profile
+          <Settings className="text-violet-600" /> My Profile
         </h1>
         <p className="text-sm text-neutral-500 mt-1">Manage your basic details and account preferences.</p>
       </div>
@@ -28,29 +41,32 @@ export default async function ManagerSettingsPage() {
       <div className="grid gap-6 max-w-2xl">
         <div className="bg-neutral-50 p-4 sm:p-6 rounded-xl border border-neutral-100">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-2xl font-bold">
-              {user?.name?.charAt(0) || "U"}
+            <div className="w-16 h-16 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center text-2xl font-bold shrink-0">
+              {name?.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-neutral-900">{user?.name}</h2>
-              <div className="text-sm font-medium text-teal-600 bg-teal-50 px-2 py-0.5 rounded-md inline-block mt-1 capitalize">
-                {user?.role?.toLowerCase()}
+              <h2 className="text-xl font-bold text-neutral-900">{name}</h2>
+              <div className="text-sm font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-md inline-flex items-center gap-1 mt-1 capitalize">
+                {isOwner ? <User size={12} /> : <ShieldCheck size={12} />}
+                {isOwner ? "Owner" : managerRole?.toLowerCase()}
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-neutral-200 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="bg-neutral-50 p-2 rounded-lg">
-                  <Phone size={18} className="text-neutral-500" />
-                </div>
-                <div>
-                  <div className="text-xs text-neutral-500 font-medium">Phone Number</div>
-                  <div className="text-sm font-bold text-neutral-900">+91 {user?.phone}</div>
+            {phone && (
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-neutral-200 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="bg-neutral-50 p-2 rounded-lg">
+                    <Phone size={18} className="text-neutral-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-neutral-500 font-medium">Phone Number</div>
+                    <div className="text-sm font-bold text-neutral-900">+91 {phone}</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-neutral-200 shadow-sm">
               <div className="flex items-center gap-3">
@@ -59,10 +75,10 @@ export default async function ManagerSettingsPage() {
                 </div>
                 <div>
                   <div className="text-xs text-neutral-500 font-medium">Email Address</div>
-                  <div className="text-sm font-bold text-neutral-900">{user?.email || "Not provided"}</div>
+                  <div className="text-sm font-bold text-neutral-900">{email || "Not provided"}</div>
                 </div>
               </div>
-              <EditEmailButton currentEmail={user?.email ?? ""} />
+              {isOwner && <EditEmailButton currentEmail={email ?? ""} />}
             </div>
           </div>
         </div>
