@@ -6,24 +6,10 @@ import { unstable_cache } from "next/cache";
 
 const getHomepageListings = unstable_cache(
   async () => {
-    // Fetch featured listings first
-    let listings = await db.listing.findMany({
-      where: { isActive: true, status: "ACTIVE", isFeatured: true },
-      take: 6,
-      include: {
-        city: true,
-        locality: true,
-        photos: { take: 1 },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const isFeatured = listings.length > 0;
-
-    // Fallback: show latest listings if no featured ones
-    if (!isFeatured) {
-      listings = await db.listing.findMany({
-        where: { isActive: true, status: "ACTIVE" },
+    try {
+      // Fetch featured listings first
+      let listings = await db.listing.findMany({
+        where: { isActive: true, status: "ACTIVE", isFeatured: true },
         take: 6,
         include: {
           city: true,
@@ -32,16 +18,43 @@ const getHomepageListings = unstable_cache(
         },
         orderBy: { createdAt: "desc" },
       });
-    }
 
-    return { listings, isFeatured };
+      const isFeatured = listings.length > 0;
+
+      // Fallback: show latest listings if no featured ones
+      if (!isFeatured) {
+        listings = await db.listing.findMany({
+          where: { isActive: true, status: "ACTIVE" },
+          take: 6,
+          include: {
+            city: true,
+            locality: true,
+            photos: { take: 1 },
+          },
+          orderBy: { createdAt: "desc" },
+        });
+      }
+
+      return { listings, isFeatured };
+    } catch (error) {
+      console.error("[FeaturedListings] DB connection error (cold start?):", error);
+      return { listings: [], isFeatured: false };
+    }
   },
   ["homepage-featured-listings"],
-  { revalidate: 300 } // 5 minutes — homepage is the highest-traffic page, doesn't need second-fresh data
+  { revalidate: 60 } // 1 minute on error recovery
 );
 
 export default async function FeaturedListings() {
-  const { listings, isFeatured } = await getHomepageListings();
+  let listings: any[] = [];
+  let isFeatured = false;
+  try {
+    const data = await getHomepageListings();
+    listings = data.listings;
+    isFeatured = data.isFeatured;
+  } catch (error) {
+    console.error("[FeaturedListings] Failed to load:", error);
+  }
 
   if (listings.length === 0) return null;
 

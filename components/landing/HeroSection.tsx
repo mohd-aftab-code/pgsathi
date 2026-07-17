@@ -7,30 +7,43 @@ import { unstable_cache } from "next/cache";
 
 const getHeroData = unstable_cache(
   async () => {
-    const [cities, showcase] = await Promise.all([
-      db.city.findMany({
-        where: { isActive: true },
-        orderBy: { priority: "desc" },
-      }),
-      db.listing.findMany({
-        where: { isActive: true, status: "ACTIVE", photos: { some: {} } },
-        take: 2,
-        include: {
-          city: true,
-          locality: true,
-          photos: { take: 1, orderBy: { sortOrder: "asc" } },
-        },
-        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
-      }),
-    ]);
-    return { cities, showcase };
+    try {
+      const [cities, showcase] = await Promise.all([
+        db.city.findMany({
+          where: { isActive: true },
+          orderBy: { priority: "desc" },
+        }),
+        db.listing.findMany({
+          where: { isActive: true, status: "ACTIVE", photos: { some: {} } },
+          take: 2,
+          include: {
+            city: true,
+            locality: true,
+            photos: { take: 1, orderBy: { sortOrder: "asc" } },
+          },
+          orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        }),
+      ]);
+      return { cities, showcase };
+    } catch (error) {
+      console.error("[HeroSection] DB connection error (cold start?):", error);
+      return { cities: [], showcase: [] };
+    }
   },
   ["hero-data"],
-  { revalidate: 300 }
+  { revalidate: 60 }
 );
 
 export default async function HeroSection() {
-  const { cities, showcase } = await getHeroData();
+  let cities: any[] = [];
+  let showcase: any[] = [];
+  try {
+    const data = await getHeroData();
+    cities = data.cities;
+    showcase = data.showcase;
+  } catch (error) {
+    console.error("[HeroSection] Failed to load data:", error);
+  }
 
   return (
     <section className="relative bg-neutral-50 pt-8 pb-12 sm:pt-12 sm:pb-16 md:pt-16 md:pb-24 overflow-hidden">

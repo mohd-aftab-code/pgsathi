@@ -71,9 +71,9 @@ model City {
   imageUrl   String?
   latitude   Decimal?   @db.Decimal(10, 8)
   longitude  Decimal?   @db.Decimal(11, 8)
-  metaTitle  String?    @db.VarChar(160)
-  metaDesc   String?    @db.VarChar(320)
   createdAt  DateTime   @default(now())
+  metaDesc   String?    @db.VarChar(320)
+  metaTitle  String?    @db.VarChar(160)
   listings   Listing[]
   localities Locality[]
 
@@ -107,7 +107,6 @@ model Listing {
   localityId          Int?
   title               String                @default("") @db.VarChar(200)
   description         String                @default("")
-  roomTypes           PGType[]              @default([SINGLE_ROOM])
   genderAllowed       GenderType            @default(BOYS)
   address             String                @default("") @db.VarChar(500)
   landmark            String?               @db.VarChar(200)
@@ -186,6 +185,7 @@ model Listing {
   waterSupply         String?               @db.VarChar(15)
   wizardStep          Int                   @default(1)
   womenOnlyFloors     Boolean               @default(false)
+  roomTypes           PGType[]              @default([SINGLE_ROOM])
   leads               Lead[]
   amenities           ListingAmenity[]
   analytics           ListingAnalytic[]
@@ -274,10 +274,10 @@ model Plan {
   yearlyPrice    Int?
   maxListings    Int
   maxPhotos      Int
-  maxTenants     Int            @default(-1)
   features       Json
   razorpayPlanId String?        @db.VarChar(100)
   isActive       Boolean        @default(true)
+  maxTenants     Int            @default(-1)
   subscriptions  Subscription[]
 
   @@map("plans")
@@ -407,10 +407,10 @@ model Room {
   listingId       Int
   name            String           @db.VarChar(100)
   type            PGType
-  price           Int              @default(0)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   floor           String?          @db.VarChar(50)
+  price           Int              @default(0)
   beds            Bed[]
   pgMeterReadings PgMeterReading[]
   pgTenants       PgTenant[]
@@ -499,17 +499,17 @@ model PgTenant {
   deletedAt        DateTime?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  userId           Int?
   agreements       PgAgreement[]
   complaints       PgComplaint[]
   payments         PgPayment[]
   rentBills        PgRentBill[]
   documents        PgTenantDocument[]
-  userId           Int?
   bed              Bed?               @relation(fields: [bedId], references: [id])
   listing          Listing            @relation(fields: [listingId], references: [id], onDelete: Cascade)
   owner            User               @relation("PgTenantOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  user             User?              @relation("TenantProfile", fields: [userId], references: [id], onDelete: Cascade)
   room             Room?              @relation(fields: [roomId], references: [id])
+  user             User?              @relation("TenantProfile", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
   @@index([userId])
@@ -888,6 +888,17 @@ model trust_records {
   listings         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
+model SearchAnalytic {
+  id        Int      @id @default(autoincrement())
+  query     String?  @db.VarChar(255)
+  citySlug  String?  @db.VarChar(120)
+  createdAt DateTime @default(now())
+
+  @@index([citySlug])
+  @@index([createdAt])
+  @@map("search_analytics")
+}
+
 enum UserRole {
   TENANT
   OWNER
@@ -954,18 +965,4 @@ enum VisitStatus {
   ACCEPTED
   COMPLETED
   CANCELLED
-}
-
-// ═══════════════════════════════════════
-// ANALYTICS & ADMIN
-// ═══════════════════════════════════════
-model SearchAnalytic {
-  id        Int      @id @default(autoincrement())
-  query     String?  @db.VarChar(255)
-  citySlug  String?  @db.VarChar(120)
-  createdAt DateTime @default(now())
-
-  @@index([citySlug])
-  @@index([createdAt])
-  @@map("search_analytics")
 }
