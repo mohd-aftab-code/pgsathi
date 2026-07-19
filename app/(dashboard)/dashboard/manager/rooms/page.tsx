@@ -8,6 +8,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { AddRoomModal } from "@/components/manage/AddRoomModal";
 import { DeleteRoomBtn } from "@/components/manage/DeleteRoomBtn";
+import { PropertyFilterSelect } from "@/components/manage/PropertyFilterSelect";
 import Link from "next/link";
 
 export const metadata = { title: "Rooms & Beds — PG Manager" };
@@ -124,13 +125,7 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
           <p className="text-sm text-neutral-500 mt-1">Visual map of all beds across your properties</p>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
-          <form className="flex gap-2">
-            <select name="listingId" defaultValue={listingId ?? ""} className="input-base w-44 text-sm">
-              <option value="">All Properties</option>
-              {allOwnerListings.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
-            </select>
-            <button type="submit" className="btn-ghost text-sm px-4 py-2 border border-neutral-200">Filter</button>
-          </form>
+          <PropertyFilterSelect listings={allOwnerListings} value={listingId} />
           <AddRoomModal listings={allOwnerListings} defaultListingId={listingId} />
         </div>
       </div>

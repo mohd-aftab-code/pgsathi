@@ -18,9 +18,26 @@ import { currentMonth, formatMonth, formatINR, initials } from "@/lib/manage-uti
 import { buildRentReminderLink } from "@/lib/whatsapp-reminder";
 import { RevenueTrendChart } from "@/components/manage/RevenueTrendChart";
 import { LiveTime } from "@/components/manage/LiveTime";
+import { PropertyFilterSelect } from "@/components/manage/PropertyFilterSelect";
 
-export default async function ManagerDashboardPage() {
+export default async function ManagerDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ listingId?: string }>;
+}) {
   const { userId: ownerId, name: managerName, isOwner } = await requireManagerAccess();
+  const sp = await searchParams;
+  const listingId = sp.listingId ? parseInt(sp.listingId) : undefined;
+
+  const ownerListings = await db.listing.findMany({
+    where: { ownerId },
+    select: { id: true, title: true },
+    orderBy: { title: "asc" },
+  });
+
+  // Per-property filters — applied when a specific PG is chosen from the dropdown
+  const listingFilter = listingId ? { listingId } : {};
+  const bedListingWhere = listingId ? { ownerId, id: listingId } : { ownerId };
 
   const forMonth = currentMonth();
   const now = new Date();
@@ -38,17 +55,17 @@ export default async function ManagerDashboardPage() {
     payments6mo,
     expenses6mo,
   ] = await Promise.all([
-    db.pgTenant.count({ where: { ownerId, status: "ACTIVE" } }),
-    db.pgTenant.count({ where: { ownerId, status: "ACTIVE", createdAt: { gte: monthStart } } }),
-    db.pgComplaint.count({ where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] } } }),
+    db.pgTenant.count({ where: { ownerId, status: "ACTIVE", ...listingFilter } }),
+    db.pgTenant.count({ where: { ownerId, status: "ACTIVE", createdAt: { gte: monthStart }, ...listingFilter } }),
+    db.pgComplaint.count({ where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] }, ...listingFilter } }),
     db.pgComplaint.findMany({
-      where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] } },
+      where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] }, ...listingFilter },
       orderBy: { createdAt: "desc" },
       take: 5,
       include: { listing: { select: { title: true } } },
     }),
     db.pgTenant.findMany({
-      where: { ownerId, status: "ACTIVE", deletedAt: null, monthlyRent: { gt: 0 } },
+      where: { ownerId, status: "ACTIVE", deletedAt: null, monthlyRent: { gt: 0 }, ...listingFilter },
       select: {
         id: true,
         name: true,
@@ -58,14 +75,14 @@ export default async function ManagerDashboardPage() {
         payments: { where: { type: "RENT", forMonth, voided: false }, select: { amount: true } },
       },
     }),
-    db.bed.count({ where: { room: { listing: { ownerId } } } }),
-    db.bed.count({ where: { room: { listing: { ownerId } }, isOccupied: true } }),
+    db.bed.count({ where: { room: { listing: bedListingWhere } } }),
+    db.bed.count({ where: { room: { listing: bedListingWhere }, isOccupied: true } }),
     db.pgPayment.findMany({
-      where: { ownerId, voided: false, paidOn: { gte: sixMonthsStart } },
+      where: { ownerId, voided: false, paidOn: { gte: sixMonthsStart }, ...(listingId ? { tenant: { listingId } } : {}) },
       select: { amount: true, paidOn: true },
     }),
     db.pgExpense.findMany({
-      where: { ownerId, spentOn: { gte: sixMonthsStart } },
+      where: { ownerId, spentOn: { gte: sixMonthsStart }, ...(listingId ? { listingId } : {}) },
       select: { amount: true, spentOn: true },
     }),
   ]);
@@ -174,7 +191,8 @@ export default async function ManagerDashboardPage() {
             {todayStr} <LiveTime />
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <PropertyFilterSelect listings={ownerListings} value={listingId} className="input-base text-sm w-44 cursor-pointer bg-white" />
           <Link href="/dashboard/manager/tenants/new" className="btn-primary py-2 px-4 text-sm font-semibold rounded-lg shadow-sm">
             + Add Tenant
           </Link>
