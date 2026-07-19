@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notify } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -20,6 +21,18 @@ export async function POST(req: Request) {
         status: "PENDING"
       }
     });
+
+    // Notify the owner in-app
+    const listing = await db.listing.findUnique({ where: { id: parseInt(listingId) }, select: { ownerId: true, title: true } });
+    if (listing) {
+      await notify({
+        userId: listing.ownerId,
+        type: "VISIT",
+        title: `Visit booked by ${name}`,
+        message: `${name} wants to visit ${listing.title} on ${new Date(visitDate).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}.`,
+        link: "/dashboard/owner/leads",
+      });
+    }
 
     return NextResponse.json(visit);
   } catch (error) {

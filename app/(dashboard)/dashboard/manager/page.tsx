@@ -5,7 +5,6 @@ import {
   Wallet,
   Wrench,
   BedDouble,
-  Building2,
   CheckCircle2,
   Lock,
   TrendingUp,
@@ -18,9 +17,10 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { currentMonth, formatMonth, formatINR, initials } from "@/lib/manage-utils";
 import { buildRentReminderLink } from "@/lib/whatsapp-reminder";
 import { RevenueTrendChart } from "@/components/manage/RevenueTrendChart";
+import { LiveTime } from "@/components/manage/LiveTime";
 
 export default async function ManagerDashboardPage() {
-  const { userId: ownerId, name: managerName, managerRole, isOwner } = await requireManagerAccess();
+  const { userId: ownerId, name: managerName, isOwner } = await requireManagerAccess();
 
   const forMonth = currentMonth();
   const now = new Date();
@@ -170,11 +170,8 @@ export default async function ManagerDashboardPage() {
           <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
             {greeting}, {managerName} 👋
           </h1>
-          <p className="text-sm text-neutral-500 mt-1 flex items-center gap-2">
-            <Building2 size={14} className="text-neutral-400" />
-            <span className="font-medium text-neutral-700">{managerRole}</span>
-            <span className="text-neutral-300">·</span>
-            {todayStr}
+          <p className="text-sm text-neutral-500 mt-1 flex items-center gap-1.5">
+            {todayStr} <LiveTime />
           </p>
         </div>
         <div className="flex items-center gap-3">

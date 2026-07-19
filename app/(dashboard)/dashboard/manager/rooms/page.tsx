@@ -12,6 +12,73 @@ import Link from "next/link";
 
 export const metadata = { title: "Rooms & Beds — PG Manager" };
 
+// A room with N beds is "N-sharing" — single (1), double (2), triple (3)…
+function sharingLabel(n: number): string {
+  if (n === 0) return "No beds yet";
+  const names: Record<number, string> = { 1: "Single", 2: "Double", 3: "Triple", 4: "Four", 5: "Five", 6: "Six" };
+  return `${names[n] ?? n} Sharing`;
+}
+
+function catStyle(n: number): string {
+  const styles: Record<number, string> = {
+    1: "bg-blue-50 text-blue-700 border-blue-200",
+    2: "bg-violet-50 text-violet-700 border-violet-200",
+    3: "bg-amber-50 text-amber-700 border-amber-200",
+    4: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  };
+  return styles[n] ?? "bg-neutral-100 text-neutral-600 border-neutral-200";
+}
+
+function RoomCard({ room }: { room: any }) {
+  const roomVacant = room.beds.filter((b: any) => !b.isOccupied).length;
+  return (
+    <div className="rounded-xl border border-neutral-200 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+      {/* Room header bar */}
+      <div className={`px-3 py-2 flex justify-between items-center text-xs font-bold border-b ${
+        roomVacant === 0 ? "bg-red-50 border-red-100 text-red-700" :
+        roomVacant === room.beds.length ? "bg-green-50 border-green-100 text-green-700" :
+        "bg-amber-50 border-amber-100 text-amber-700"
+      }`}>
+        <span className="flex items-center">
+          🛏 Room {room.name}
+          {roomVacant === room.beds.length && <DeleteRoomBtn roomId={room.id} />}
+        </span>
+        <span>{roomVacant > 0 ? `${roomVacant} Vacant` : "Full 🔴"}</span>
+      </div>
+
+      {/* Bed grid */}
+      <div className="p-3 grid grid-cols-2 gap-2 bg-neutral-50/50">
+        {room.beds.map((bed: any) => {
+          const tenant = room.pgTenants.find((t: any) => t.bedId === bed.id);
+          return (
+            <div
+              key={bed.id}
+              className={`rounded-lg border text-center p-2.5 text-xs font-semibold transition-transform hover:scale-105 cursor-default ${
+                bed.isOccupied ? "bg-red-50 border-red-200 text-red-800" : "bg-green-50 border-green-200 text-green-800"
+              }`}
+            >
+              <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 opacity-50">Bed {bed.name}</div>
+              {bed.isOccupied ? (
+                <Link
+                  href={`/dashboard/manager/tenants/${tenant?.id}`}
+                  className="hover:underline block truncate font-bold"
+                  title={tenant?.name}
+                >
+                  {tenant?.name?.split(" ")[0] || "Occupied"}
+                </Link>
+              ) : (
+                <span className="flex items-center justify-center gap-1 text-green-700">
+                  <CheckCircle size={11} /> Free
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default async function RoomsPage({ searchParams }: { searchParams: Promise<{ listingId?: string }> }) {
   const sp = await searchParams;
   const { userId } = await requireManagerAccess();
@@ -138,6 +205,24 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
             const listingTotal    = listing.rooms.reduce((s, r) => s + r.beds.length, 0);
             const listingPct      = listingTotal > 0 ? Math.round((listingOccupied / listingTotal) * 100) : 0;
 
+            // Group this property's rooms by bed count — Single / Double / Triple sharing…
+            const groupsMap = new Map<number, any[]>();
+            for (const room of listing.rooms) {
+              const n = room.beds.length;
+              const arr = groupsMap.get(n) ?? [];
+              arr.push(room);
+              groupsMap.set(n, arr);
+            }
+            const categories = [...groupsMap.keys()].sort((a, b) => a - b).map((count) => {
+              const rooms = groupsMap.get(count)!;
+              return {
+                count,
+                rooms,
+                beds: rooms.reduce((s, r) => s + r.beds.length, 0),
+                occupied: rooms.reduce((s, r) => s + r.beds.filter((b: any) => b.isOccupied).length, 0),
+              };
+            });
+
             return (
               <div key={listing.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
                 {/* PG Header */}
@@ -163,58 +248,24 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
                       <AlertCircle className="h-4 w-4" /> Is property mein koi room add nahi kiya gaya hai.
                     </div>
                   ) : (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {listing.rooms.map(room => {
-                        const roomVacant = room.beds.filter(b => !b.isOccupied).length;
-                        return (
-                          <div key={room.id} className="rounded-xl border border-neutral-200 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                            {/* Room header bar */}
-                            <div className={`px-3 py-2 flex justify-between items-center text-xs font-bold border-b ${
-                              roomVacant === 0 ? "bg-red-50 border-red-100 text-red-700" :
-                              roomVacant === room.beds.length ? "bg-green-50 border-green-100 text-green-700" :
-                              "bg-amber-50 border-amber-100 text-amber-700"
-                            }`}>
-                              <span className="flex items-center">
-                                🛏 Room {room.name}
-                                {roomVacant === room.beds.length && <DeleteRoomBtn roomId={room.id} />}
-                              </span>
-                              <span>{roomVacant > 0 ? `${roomVacant} Vacant` : "Full 🔴"}</span>
-                            </div>
-
-                            {/* Bed grid */}
-                            <div className="p-3 grid grid-cols-2 gap-2 bg-neutral-50/50">
-                              {room.beds.map(bed => {
-                                const tenant = room.pgTenants.find(t => t.bedId === bed.id);
-                                return (
-                                  <div
-                                    key={bed.id}
-                                    className={`rounded-lg border text-center p-2.5 text-xs font-semibold transition-transform hover:scale-105 cursor-default ${
-                                      bed.isOccupied
-                                        ? "bg-red-50 border-red-200 text-red-800"
-                                        : "bg-green-50 border-green-200 text-green-800"
-                                    }`}
-                                  >
-                                    <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 opacity-50">Bed {bed.name}</div>
-                                    {bed.isOccupied ? (
-                                      <Link
-                                        href={`/dashboard/manager/tenants/${tenant?.id}`}
-                                        className="hover:underline block truncate font-bold"
-                                        title={tenant?.name}
-                                      >
-                                        {tenant?.name?.split(" ")[0] || "Occupied"}
-                                      </Link>
-                                    ) : (
-                                      <span className="flex items-center justify-center gap-1 text-green-700">
-                                        <CheckCircle size={11} /> Free
-                                      </span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
+                    <div className="space-y-6">
+                      {categories.map((cat) => (
+                        <div key={cat.count}>
+                          <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                            <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${catStyle(cat.count)}`}>
+                              {sharingLabel(cat.count)}
+                            </span>
+                            <span className="text-xs text-neutral-500 font-medium">
+                              {cat.rooms.length} room{cat.rooms.length === 1 ? "" : "s"} · {cat.beds} beds · {cat.occupied} occupied
+                            </span>
                           </div>
-                        );
-                      })}
+                          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {cat.rooms.map((room: any) => (
+                              <RoomCard key={room.id} room={room} />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

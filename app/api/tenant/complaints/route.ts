@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notify } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,6 +44,15 @@ export async function POST(req: NextRequest) {
         priority: "MEDIUM",
         status: "OPEN",
       },
+    });
+
+    // Notify the owner in-app
+    await notify({
+      userId: tenant.ownerId,
+      type: "COMPLAINT",
+      title: `New complaint: ${complaint.title}`,
+      message: `A tenant raised a ${complaint.category} complaint.`,
+      link: "/dashboard/manager/complaints",
     });
 
     return NextResponse.json({ success: true, data: complaint }, { status: 201 });

@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getManageContext, logPgAudit } from "@/lib/manage-auth";
+import { notify } from "@/lib/notifications";
 
 export async function GET(req: NextRequest) {
   try {
@@ -81,6 +82,18 @@ export async function POST(req: NextRequest) {
     });
 
     await logPgAudit(ctx.userId, ctx.name, `Recorded payment ₹${data.amount} from ${tenant.name}`, "PgPayment");
+
+    // Notify the tenant in-app (if their account is linked)
+    if (tenant.userId) {
+      await notify({
+        userId: tenant.userId,
+        type: "PAYMENT",
+        title: `Payment received: ₹${payment.amount.toLocaleString("en-IN")}`,
+        message: `Your ${payment.type === "RENT" ? "rent" : "payment"} for ${payment.forMonth ?? "this month"} has been recorded.`,
+        link: "/dashboard/tenant/receipts",
+      });
+    }
+
     return NextResponse.json({ success: true, data: payment }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });

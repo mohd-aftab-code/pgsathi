@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoutButton from "@/components/common/LogoutButton";
+import { NotificationBell } from "@/components/common/NotificationBell";
 import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { ManagerSidebar } from "@/components/dashboard/ManagerSidebar";
@@ -59,6 +60,7 @@ export default async function ManagerDashboardLayout({
                   {name?.charAt(0).toUpperCase() || "M"}
                 </div>
               </div>
+              <NotificationBell viewAllHref="/dashboard/manager/notifications" />
               <div className="w-px h-6 bg-neutral-200 hidden sm:block"></div>
               <LogoutButton />
             </div>

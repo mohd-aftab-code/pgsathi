@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { notify } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function submitReviewAction(listingId: number, rating: number, comment: string) {
@@ -47,6 +48,18 @@ export async function submitReviewAction(listingId: number, rating: number, comm
         isApproved
       }
     });
+
+    // Notify the owner of the new review
+    const reviewedListing = await db.listing.findUnique({ where: { id: listingId }, select: { ownerId: true, title: true } });
+    if (reviewedListing) {
+      await notify({
+        userId: reviewedListing.ownerId,
+        type: "REVIEW",
+        title: `New ${rating}★ review on ${reviewedListing.title}`,
+        message: comment ? `"${comment.slice(0, 100)}"` : null,
+        link: "/dashboard/owner/reviews",
+      });
+    }
 
     // Update listing stats if approved
     if (isApproved) {

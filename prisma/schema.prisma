@@ -56,6 +56,7 @@ model User {
   savedListings      SavedListing[]
   subscriptions      Subscription[]
   visits             VisitBooking[]     @relation("TenantVisits")
+  notifications      Notification[]
 
   @@index([email])
   @@index([phone])
@@ -363,6 +364,22 @@ model Lead {
   @@index([listingId, status])
   @@index([tenantId])
   @@map("leads")
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType @default(SYSTEM)
+  title     String           @db.VarChar(180)
+  message   String?
+  link      String?          @db.VarChar(255)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 model Review {
@@ -972,6 +989,17 @@ enum LeadStatus {
   VISIT_SCHEDULED
   CONVERTED
   LOST
+}
+
+enum NotificationType {
+  LEAD
+  VISIT
+  PAYMENT
+  RENT_DUE
+  COMPLAINT
+  REVIEW
+  SUBSCRIPTION
+  SYSTEM
 }
 
 enum VisitStatus {

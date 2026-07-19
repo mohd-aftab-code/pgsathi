@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { notify } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,11 +36,21 @@ export async function POST(req: NextRequest) {
     });
 
     // Update listing analytics and total leads
-    await db.listing.update({
+    const updatedListing = await db.listing.update({
       where: { id: listingId },
       data: {
         totalLeads: { increment: 1 }
-      }
+      },
+      select: { ownerId: true, title: true },
+    });
+
+    // Notify the owner in-app
+    await notify({
+      userId: updatedListing.ownerId,
+      type: "LEAD",
+      title: `New enquiry from ${name}`,
+      message: `${name} enquired about ${updatedListing.title}${message ? `: "${message}"` : ""}`,
+      link: "/dashboard/owner/leads",
     });
 
     return NextResponse.json({ success: true, data: lead });

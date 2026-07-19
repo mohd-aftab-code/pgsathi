@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Heart, CalendarClock, Receipt, Settings, User, Wrench } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
+import { NotificationBell } from "@/components/common/NotificationBell";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
 export const metadata = {
@@ -66,6 +67,7 @@ export default async function TenantDashboardLayout({
                 TENANT
               </span>
             </div>
+            <NotificationBell viewAllHref="/dashboard/tenant/notifications" />
             <div className="w-9 h-9 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
               {session.user.name?.charAt(0).toUpperCase() || "T"}
             </div>

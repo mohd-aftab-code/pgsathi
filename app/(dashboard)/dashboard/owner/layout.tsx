@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
+import { NotificationBell } from "@/components/common/NotificationBell";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
 import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 
@@ -57,6 +58,7 @@ export default async function OwnerDashboardLayout({
                   {session.user.name?.charAt(0).toUpperCase() || "O"}
                 </div>
               </div>
+              <NotificationBell viewAllHref="/dashboard/owner/notifications" />
               <div className="w-px h-6 bg-neutral-200 hidden sm:block"></div>
               <LogoutButton />
             </div>
