@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import MarkReadButton from "@/components/listings/MarkReadButton";
+import { LeadStatusControl } from "@/components/manage/LeadStatusControl";
 import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
 import { ExportCsvButton } from "@/components/common/ExportCsvButton";
 import { LeadsFilter } from "@/components/dashboard/LeadsFilter";
@@ -16,8 +16,9 @@ export const metadata = {
 export default async function VisitsInboxPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const sp = await searchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
 
@@ -28,12 +29,21 @@ export default async function VisitsInboxPage({
   const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
   const hasAccess = hasPaidPlan || trial.active;
 
-  const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;
-  const status = typeof searchParams.status === 'string' ? searchParams.status : undefined;
+  const q = typeof sp.q === 'string' ? sp.q : undefined;
+  const status = typeof sp.status === 'string' ? sp.status : undefined;
+  const stage = typeof sp.stage === 'string' ? sp.stage : undefined;
+
+  const PIPELINE = [
+    { value: "NEW", label: "New", cls: "bg-orange-50 text-orange-700 border-orange-200", active: "bg-orange-600 text-white border-orange-600" },
+    { value: "CONTACTED", label: "Contacted", cls: "bg-blue-50 text-blue-700 border-blue-200", active: "bg-blue-600 text-white border-blue-600" },
+    { value: "VISIT_SCHEDULED", label: "Visit set", cls: "bg-violet-50 text-violet-700 border-violet-200", active: "bg-violet-600 text-white border-violet-600" },
+    { value: "CONVERTED", label: "Converted", cls: "bg-green-50 text-green-700 border-green-200", active: "bg-green-600 text-white border-green-600" },
+    { value: "LOST", label: "Lost", cls: "bg-neutral-100 text-neutral-500 border-neutral-200", active: "bg-neutral-700 text-white border-neutral-700" },
+  ];
 
   // Build where clause
   const whereClause: any = { listing: { ownerId } };
-  
+
   if (q) {
     whereClause.OR = [
       { name: { contains: q, mode: 'insensitive' } },
@@ -41,11 +51,15 @@ export default async function VisitsInboxPage({
       { email: { contains: q, mode: 'insensitive' } },
     ];
   }
-  
+
   if (status === 'UNREAD') {
     whereClause.isRead = false;
   } else if (status === 'READ') {
     whereClause.isRead = true;
+  }
+
+  if (stage && PIPELINE.some((s) => s.value === stage)) {
+    whereClause.status = stage;
   }
 
   // Fetch leads
@@ -61,6 +75,18 @@ export default async function VisitsInboxPage({
     include: { listing: { select: { title: true, slug: true } } },
     orderBy: { visitDate: "asc" },
   });
+
+  // Pipeline counts (overall for the owner) — drives the summary strip + stage filter
+  const stageGroups = await db.lead.groupBy({
+    by: ["status"],
+    where: { listing: { ownerId } },
+    _count: { _all: true },
+  });
+  const countBy: Record<string, number> = {};
+  for (const g of stageGroups) countBy[g.status] = g._count._all;
+  const totalLeads = Object.values(countBy).reduce((a, b) => a + b, 0);
+  const convertedLeads = countBy["CONVERTED"] ?? 0;
+  const convRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
 
   const exportData = leads.map(l => ({
     "Name": l.name,
@@ -149,6 +175,33 @@ export default async function VisitsInboxPage({
             <ExportCsvButton data={exportData} filename="Leads_Export" tier={tier} />
           </div>
           
+          {/* Pipeline summary + stage filter */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Link
+              href={`/dashboard/owner/leads${q ? `?q=${encodeURIComponent(q)}` : ""}`}
+              className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"}`}
+            >
+              All <span className="tabular-nums">{totalLeads}</span>
+            </Link>
+            {PIPELINE.map((s) => {
+              const active = stage === s.value;
+              const href = `/dashboard/owner/leads?stage=${s.value}${q ? `&q=${encodeURIComponent(q)}` : ""}`;
+              return (
+                <Link
+                  key={s.value}
+                  href={href}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors hover:opacity-90 ${active ? s.active : s.cls}`}
+                >
+                  {s.label} <span className="tabular-nums">{countBy[s.value] ?? 0}</span>
+                </Link>
+              );
+            })}
+            <span className="ml-auto text-xs font-semibold text-neutral-500 bg-neutral-50 border border-neutral-200 px-3 py-1.5 rounded-lg">
+              Conversion: <span className="text-green-600 font-bold tabular-nums">{convRate}%</span>{" "}
+              <span className="text-neutral-400">({convertedLeads}/{totalLeads})</span>
+            </span>
+          </div>
+
           <LeadsFilter />
 
           <div className="mt-4">
@@ -237,7 +290,7 @@ export default async function VisitsInboxPage({
                                 <CalendarDays size={12} />
                                 {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
                               </span>
-                              <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
+                              <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                               <Link
                                 href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
                                 className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
@@ -269,7 +322,7 @@ export default async function VisitsInboxPage({
                             <div className="text-xs text-neutral-500 mt-0.5 font-medium">{formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}</div>
                           </div>
                         </div>
-                        <MarkReadButton leadId={lead.id} isRead={lead.isRead} />
+                        <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                       </div>
 
                       <div className="space-y-1.5">

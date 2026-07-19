@@ -7,7 +7,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { Mail, Phone, MessageCircle, CalendarDays, UserPlus, ExternalLink, Clock } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { MarkLeadReadBtn } from "@/components/manage/MarkLeadReadBtn";
+import { LeadStatusControl } from "@/components/manage/LeadStatusControl";
 
 export const metadata = { title: "Enquiries — PG Manager" };
 
@@ -169,7 +169,7 @@ export default async function EnquiriesPage() {
                             >
                               ➜ Tenant
                             </Link>
-                            {!lead.isRead && <MarkLeadReadBtn leadId={lead.id} />}
+                            <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                           </div>
                         </td>
                       </tr>
@@ -233,11 +233,7 @@ export default async function EnquiriesPage() {
                         >
                           Convert to Tenant
                         </Link>
-                        {!lead.isRead && (
-                          <div className="flex-1 text-center">
-                            <MarkLeadReadBtn leadId={lead.id} />
-                          </div>
-                        )}
+                        <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                       </div>
                     </div>
                   ))}

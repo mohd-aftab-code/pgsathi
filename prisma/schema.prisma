@@ -349,14 +349,18 @@ model Lead {
   name      String     @db.VarChar(100)
   phone     String     @db.VarChar(15)
   email     String?    @db.VarChar(255)
-  message   String?
-  source    LeadSource @default(WEBSITE)
-  isRead    Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  listing   Listing    @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  tenant    User?      @relation("TenantLeads", fields: [tenantId], references: [id])
+  message    String?
+  source     LeadSource @default(WEBSITE)
+  isRead     Boolean    @default(false)
+  status     LeadStatus @default(NEW)
+  followUpAt DateTime?
+  notes      String?
+  createdAt  DateTime   @default(now())
+  listing    Listing    @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tenant     User?      @relation("TenantLeads", fields: [tenantId], references: [id])
 
   @@index([listingId, createdAt])
+  @@index([listingId, status])
   @@index([tenantId])
   @@map("leads")
 }
@@ -960,6 +964,14 @@ enum LeadSource {
   WHATSAPP
   PHONE
   APP
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  VISIT_SCHEDULED
+  CONVERTED
+  LOST
 }
 
 enum VisitStatus {

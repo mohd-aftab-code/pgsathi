@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Receipt, AlertCircle, Calendar, Download, CheckCircle2 } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Receipt, Calendar, Download, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -12,46 +13,37 @@ export default async function TenantReceiptsPage({
   searchParams: Promise<{ tenantId?: string }>
 }) {
   const session = await auth();
-  const phone = (session?.user as any)?.phone || "";
-  const email = (session?.user as any)?.email || "";
-  
+  if (!session?.user?.id) redirect("/login");
+  const userId = parseInt(session.user.id);
+
   const resolvedParams = await searchParams;
 
-  const whereTenant: any = [];
-  if (phone) whereTenant.push({ phone });
-  if (email) whereTenant.push({ email });
+  // Reliable identity link first (PgTenant.userId), then legacy phone/email match —
+  // fixes the old inconsistency where the dashboard used userId but receipts used phone/email.
+  const user = await db.user.findUnique({ where: { id: userId }, select: { phone: true, email: true } });
+  const orClauses: any[] = [{ userId }];
+  if (user?.phone) orClauses.push({ phone: user.phone });
+  if (user?.email) orClauses.push({ email: user.email });
+
+  const tenants = await db.pgTenant.findMany({ where: { OR: orClauses }, select: { id: true } });
 
   let bills: any[] = [];
-  if (whereTenant.length > 0) {
-    const tenants = await db.pgTenant.findMany({
-      where: { OR: whereTenant },
-      select: { id: true }
-    });
+  if (tenants.length > 0) {
+    let tenantIds = tenants.map((t) => t.id);
 
-    if (tenants.length > 0) {
-      let tenantIds = tenants.map((t) => t.id);
-      
-      if (resolvedParams.tenantId) {
-        const tId = parseInt(resolvedParams.tenantId);
-        if (tenantIds.includes(tId)) {
-          tenantIds = [tId];
-        }
-      }
-
-      bills = await db.pgRentBill.findMany({
-        where: { tenantId: { in: tenantIds } },
-        include: {
-          payments: true,
-          tenant: {
-            include: { listing: { select: { title: true } } }
-          }
-        },
-        orderBy: [
-          { forMonth: 'desc' },
-          { dueDate: 'desc' }
-        ]
-      });
+    if (resolvedParams.tenantId) {
+      const tId = parseInt(resolvedParams.tenantId);
+      if (tenantIds.includes(tId)) tenantIds = [tId];
     }
+
+    bills = await db.pgRentBill.findMany({
+      where: { tenantId: { in: tenantIds } },
+      include: {
+        payments: true,
+        tenant: { include: { listing: { select: { title: true } } } },
+      },
+      orderBy: [{ forMonth: "desc" }, { dueDate: "desc" }],
+    });
   }
 
   const getBillStatus = (bill: any) => {
@@ -155,14 +147,12 @@ export default async function TenantReceiptsPage({
                       <Calendar size={14} /> Due: {format(new Date(bill.dueDate), 'dd MMM yyyy')}
                     </span>
                     
-                    {/* PDF download isn't built yet — disabled instead of a silent dead click */}
-                    <button
-                      disabled
-                      title="Receipt download is coming soon"
-                      className="text-neutral-400 cursor-not-allowed font-medium flex items-center gap-1"
+                    <Link
+                      href={`/dashboard/tenant/receipts/${bill.id}`}
+                      className="text-violet-600 hover:text-violet-700 font-semibold flex items-center gap-1"
                     >
-                      <Download size={14} /> Receipt
-                    </button>
+                      <Download size={14} /> View / Print
+                    </Link>
                   </div>
                 </div>
               </div>
