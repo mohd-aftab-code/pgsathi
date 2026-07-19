@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { User, Phone, Mail, Settings, ShieldCheck } from "lucide-react";
 import EditEmailButton from "@/components/dashboard/EditEmailButton";
+import { ModuleToggle } from "@/components/manage/ModuleToggle";
 import LogoutButton from "@/components/common/LogoutButton";
 
 export const metadata = { title: "Settings - Manager Dashboard" };
@@ -14,6 +15,8 @@ export default async function ManagerSettingsPage() {
   let name: string | undefined;
   let email: string | undefined;
   let phone: string | null | undefined;
+  let messMenuEnabled = false;
+  let expensesEnabled = false;
 
   if (isManager) {
     // Staff logins are PgTeamMember rows, not User rows — session.user.id is "manager:<memberId>".
@@ -27,6 +30,8 @@ export default async function ManagerSettingsPage() {
     name = user?.name;
     email = user?.email ?? undefined;
     phone = user?.phone;
+    messMenuEnabled = user?.messMenuEnabled ?? false;
+    expensesEnabled = user?.expensesEnabled ?? false;
   }
 
   return (
@@ -82,6 +87,27 @@ export default async function ManagerSettingsPage() {
             </div>
           </div>
         </div>
+
+        {isOwner && (
+          <div className="bg-white border border-neutral-200 rounded-xl p-4 sm:p-6">
+            <h3 className="text-lg font-bold text-neutral-900 mb-1">Modules & Preferences</h3>
+            <p className="text-sm text-neutral-500 mb-4">Apne CRM ke optional modules on/off karein.</p>
+            <div className="space-y-3">
+              <ModuleToggle
+                moduleKey="messMenuEnabled"
+                title="Mess Menu"
+                description="Weekly food menu module. Sirf tab on karein jab aapka PG khana serve karta ho."
+                initialEnabled={messMenuEnabled}
+              />
+              <ModuleToggle
+                moduleKey="expensesEnabled"
+                title="Expenses"
+                description="PG kharchon ka hisaab (Finance section). Zaroorat ho to on karein."
+                initialEnabled={expensesEnabled}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="bg-white border border-red-100 rounded-xl p-4 sm:p-6">
           <h3 className="text-lg font-bold text-red-600 mb-2">Logout</h3>

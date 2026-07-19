@@ -30,16 +30,16 @@ export default async function OwnerDashboardLayout({
 
   const userId = parseInt(session.user.id);
   const [tier, trial] = await Promise.all([getPlanTier(userId), isTrialActive(userId)]);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
 
   return (
     <div className="min-h-screen bg-neutral-50/50">
       {/* ── Sidebar — fixed, full height, flush to the screen edge, owns the brand logo ─ */}
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
-      <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0}>
+      <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} tier={tier}>
         {/* ── Top Header ────────────────────────────────────── */}
         <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <div className="container-max section-padding h-16 flex items-center justify-between">
+          <div className="section-padding h-16 flex items-center justify-between">
             <span className="text-neutral-500 text-sm font-semibold">Owner Dashboard</span>
 
             {/* User info */}
@@ -64,7 +64,7 @@ export default async function OwnerDashboardLayout({
         </header>
 
         {/* ── Main Content Area ────────────────────────────── */}
-        <div className="container-max section-padding py-6 pb-24 lg:pb-16">
+        <div className="section-padding py-6 pb-24 lg:pb-16">
           <main className="w-full min-w-0">
             {/* Mobile-only trial/upgrade reminder (desktop version lives in the sidebar) */}
             {!hasPaidPlan && (

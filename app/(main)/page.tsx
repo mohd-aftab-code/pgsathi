@@ -94,7 +94,7 @@ export default function Home() {
               <div className="flex flex-col gap-3">
                 <Link
                   href="/dashboard/owner/listings/new"
-                  className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2.5"
+                  className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2.5"
                 >
                   List Your PG Now <ArrowRight size={18} />
                 </Link>

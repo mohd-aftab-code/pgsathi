@@ -103,7 +103,7 @@ export default async function LocalityPage(props: {
             <p className="text-neutral-500 mb-8">We couldn't find any active listings in this specific locality right now. Try searching in nearby areas or the entire city.</p>
             <Link 
               href={`/pg-in-${city.slug}`}
-              className="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
+              className="inline-flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-xl font-bold transition-all"
             >
               View all PGs in {city.name}
             </Link>

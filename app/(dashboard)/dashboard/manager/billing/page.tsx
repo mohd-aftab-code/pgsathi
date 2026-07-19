@@ -7,6 +7,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { formatINR, formatMonth, currentMonth } from "@/lib/manage-utils";
 import { FileText, Play } from "lucide-react";
 import { EmptyState } from "@/components/manage/EmptyState";
+import { MonthFilterInput } from "@/components/manage/MonthFilterInput";
 import { GenerateBillsButton } from "./GenerateBillsButton";
 import Link from "next/link";
 
@@ -45,7 +46,7 @@ export default async function BillingPage({
       </div>
 
       <form className="mb-5 flex gap-3">
-        <input type="month" name="month" defaultValue={month} className="input-base max-w-[170px]" onChange={(e) => e.currentTarget.form?.requestSubmit()} />
+        <MonthFilterInput defaultValue={month} />
       </form>
 
       {bills.length === 0 ? (

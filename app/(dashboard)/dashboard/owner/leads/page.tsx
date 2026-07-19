@@ -25,7 +25,7 @@ export default async function VisitsInboxPage({
 
   const tier = await getPlanTier(ownerId);
   const trial = await isTrialActive(ownerId);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
   const hasAccess = hasPaidPlan || trial.active;
 
   const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;

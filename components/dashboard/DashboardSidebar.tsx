@@ -60,32 +60,32 @@ export function DashboardSidebar({
   return (
     <>
       {/* ── Desktop Rail — fixed flush to the left edge ─────── */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white/80 backdrop-blur-2xl border-r border-white/50 w-64 shadow-[8px_0_30px_rgba(0,0,0,0.04)]">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-violet-300 border-r border-violet-400 w-64">
         {/* Brand mark */}
-        <Link href={brandHref} className="flex items-center h-16 shrink-0 border-b border-neutral-100 gap-2.5 px-4">
+        <Link href={brandHref} className="flex items-center h-20 shrink-0 border-b border-violet-400 gap-2.5 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-icon.png" alt="PGSathi" className="w-8 h-8 object-contain shrink-0" />
-          <span className="text-neutral-900 font-bold text-sm whitespace-nowrap">PGSathi</span>
+          <img src="/logo-icon.png" alt="PGSathi" className="w-11 h-11 object-contain shrink-0" />
+          <span className="text-neutral-900 font-bold text-lg whitespace-nowrap">PGSathi</span>
         </Link>
 
         {backLink && (
           <Link
             href={backLink.href}
-            className="group relative flex items-center h-11 mx-2 mt-2 mb-1 rounded-xl px-[13px] gap-3.5 text-neutral-500 hover:bg-neutral-50 hover:text-violet-600 transition-colors shrink-0"
+            className="flex items-center h-9 mx-3 mt-3 rounded-md px-3 gap-3 text-neutral-500 hover:bg-white hover:text-neutral-900 transition-colors shrink-0"
           >
-            <ArrowLeft size={20} className="shrink-0" />
-            <span className="text-sm font-medium whitespace-nowrap">{backLink.label}</span>
+            <ArrowLeft size={16} className="shrink-0" />
+            <span className="text-sm font-semibold whitespace-nowrap">{backLink.label}</span>
           </Link>
         )}
 
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-1 custom-scrollbar">
-          <div className="flex flex-col gap-1 px-2">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 scrollbar-hide">
+          <div className="flex flex-col px-3">
             {visibleGroups.map((group, gi) => (
-              <div key={group.category} className={gi > 0 ? "mt-2 pt-2 border-t border-neutral-100" : ""}>
-                <p className="px-3 mb-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest whitespace-nowrap">
+              <div key={group.category} className={gi > 0 ? "mt-3" : ""}>
+                <p className="px-3 mb-1 text-[11px] font-bold text-neutral-500 uppercase tracking-wide whitespace-nowrap">
                   {group.category}
                 </p>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item);
@@ -93,20 +93,14 @@ export function DashboardSidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group relative flex items-center h-11 rounded-xl px-[13px] gap-3.5 transition-all duration-300 ${
+                        className={`flex items-center h-8 rounded-md px-3 gap-3 text-sm transition-colors ${
                           active
-                            ? "bg-gradient-to-r from-violet-50 to-violet-100/50 text-violet-700 font-bold shadow-sm shadow-violet-900/5 ring-1 ring-violet-100"
-                            : "text-neutral-600 hover:bg-neutral-50 hover:text-violet-600 hover:translate-x-1"
+                            ? "bg-white text-violet-700 font-bold shadow-sm"
+                            : "text-neutral-700 font-semibold hover:bg-white/60 hover:text-neutral-900"
                         }`}
                       >
-                        {!active && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-violet-500 rounded-r-md transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:h-5" />
-                        )}
-                        <Icon
-                          size={20}
-                          className={`shrink-0 transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`}
-                        />
-                        <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
+                        <Icon size={17} strokeWidth={2} className="shrink-0" />
+                        <span className="whitespace-nowrap">{item.name}</span>
                       </Link>
                     );
                   })}
@@ -116,7 +110,7 @@ export function DashboardSidebar({
           </div>
         </nav>
 
-        {footer && <div className="px-2 pb-3 shrink-0">{footer}</div>}
+        {footer && <div className="px-3 pb-3 shrink-0">{footer}</div>}
       </aside>
 
       {/* ── Content — static offset for fixed sidebar ─────── */}
@@ -135,10 +129,9 @@ export function DashboardSidebar({
                   href={item.href}
                   className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
                 >
-                  {active && <span className="absolute top-1 w-1 h-1 rounded-full bg-violet-600 animate-pulse" />}
                   <div
-                    className={`w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                      active ? "bg-violet-100 scale-110" : "hover:bg-neutral-100 scale-100"
+                    className={`w-10 h-9 rounded-lg flex items-center justify-center transition-colors ${
+                      active ? "bg-violet-100" : "hover:bg-neutral-100"
                     }`}
                   >
                     <Icon size={20} className={active ? "text-violet-700" : "text-neutral-500"} strokeWidth={active ? 2.5 : 1.8} />

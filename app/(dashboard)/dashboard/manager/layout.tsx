@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoutButton from "@/components/common/LogoutButton";
+import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { ManagerSidebar } from "@/components/dashboard/ManagerSidebar";
 import { ManagerFAB } from "@/components/dashboard/ManagerFAB";
@@ -15,7 +16,15 @@ export default async function ManagerDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { name, managerRole, isOwner, trial, hasPaidPlan } = await requireManagerAccess();
+  const { userId, name, managerRole, isOwner, trial, hasPaidPlan } = await requireManagerAccess();
+
+  // Optional modules — owner-level preferences that drive the sidebar nav items.
+  const owner = await db.user.findUnique({
+    where: { id: userId },
+    select: { messMenuEnabled: true, expensesEnabled: true },
+  });
+  const messEnabled = owner?.messMenuEnabled ?? false;
+  const expensesEnabled = owner?.expensesEnabled ?? false;
 
   const roleColors: Record<string, string> = {
     MANAGER:    "bg-violet-100 text-violet-700",
@@ -29,10 +38,10 @@ export default async function ManagerDashboardLayout({
     <div className="min-h-screen bg-neutral-50/50">
       {/* ── Sidebar — fixed, full height, flush to the screen edge, owns the brand logo ─ */}
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
-      <ManagerSidebar isOwner={isOwner}>
+      <ManagerSidebar isOwner={isOwner} messEnabled={messEnabled} expensesEnabled={expensesEnabled}>
         {/* ── Top Header ────────────────────────────────────── */}
         <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <div className="container-max section-padding h-16 flex items-center justify-between">
+          <div className="section-padding h-16 flex items-center justify-between">
             <span className="text-neutral-500 text-sm font-semibold">CRM Workspace</span>
 
             {/* User info */}
@@ -57,7 +66,7 @@ export default async function ManagerDashboardLayout({
         </header>
 
         {/* ── Main Content Area ────────────────────────────── */}
-        <div className="container-max section-padding py-6 pb-24 lg:pb-16">
+        <div className="section-padding py-6 pb-24 lg:pb-16">
           <main className="w-full min-w-0">
             {isOwner && !hasPaidPlan && trial?.active && (
               <div className="mb-6 rounded-xl bg-indigo-50 border border-indigo-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">

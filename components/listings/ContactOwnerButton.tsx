@@ -124,7 +124,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
                   </p>
                   <button 
                     onClick={() => setShowPopup(false)}
-                    className="w-full bg-primary-600 text-white py-3 rounded-xl font-bold hover:bg-primary-700 transition-colors"
+                    className="w-full bg-primary-500 text-white py-3 rounded-xl font-bold hover:bg-primary-600 transition-colors"
                   >
                     Done
                   </button>
@@ -163,7 +163,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
                     <button 
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-xl font-bold transition-colors mt-2"
+                      className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-bold transition-colors mt-2"
                     >
                       {loading ? "Connecting..." : "Get Contact Details"}
                     </button>

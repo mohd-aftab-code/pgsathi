@@ -212,7 +212,7 @@ export default function AdminPlansPage() {
             </div>
 
             <div className="md:col-span-2 flex items-center gap-4 mt-4">
-              <button type="submit" className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer">Save Plan</button>
+              <button type="submit" className="bg-primary-500 text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer">Save Plan</button>
               <button type="button" onClick={() => setIsFormOpen(false)} className="cursor-pointer px-6 py-2.5 rounded-xl font-bold text-neutral-500 bg-neutral-100 hover:bg-neutral-200">Cancel</button>
             </div>
           </form>

@@ -165,7 +165,7 @@ function RegisterContent() {
                 <div
                   className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     role === "TENANT"
-                      ? "bg-violet-600 text-white"
+                      ? "bg-violet-500 text-white"
                       : "bg-neutral-100 text-neutral-500"
                   }`}
                 >
@@ -381,7 +381,7 @@ function RegisterContent() {
               className={`w-full h-12 font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2 text-white ${
                 role === "OWNER"
                   ? "bg-orange-600 hover:bg-orange-700"
-                  : "bg-primary-600 hover:bg-primary-700"
+                  : "bg-primary-500 hover:bg-primary-600"
               }`}
             >
               {loading ? (

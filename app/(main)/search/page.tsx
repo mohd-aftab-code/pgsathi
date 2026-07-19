@@ -245,7 +245,7 @@ export default async function SearchPage(props: {
                 </div>
                 <h3 className="text-xl font-bold mb-2">No PGs found</h3>
                 <p className="text-neutral-500 mb-6">We couldn't find any listings matching your criteria. Try adjusting your filters.</p>
-                <Link href="/search" className="inline-block bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
+                <Link href="/search" className="inline-block bg-primary-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-600 transition-colors">
                   Clear Filters
                 </Link>
               </div>

@@ -39,7 +39,7 @@ export async function requireManagerAccess() {
 
   const tier = await getPlanTier(ownerId);
   const trial = await isTrialActive(ownerId);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO";
+  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
   const hasAccess = hasPaidPlan || trial.active;
 
   // Optional: Gate features based on tier for owners

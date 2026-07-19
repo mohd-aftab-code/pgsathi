@@ -8,11 +8,23 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
-export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO";
+export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO" | "SCALE";
+
+/**
+ * Accounts created before this cutoff keep the old "free 15-day CRM trial on
+ * signup" behavior. Accounts created at/after it get no automatic trial —
+ * they're routed to the plans page when they try to open PG Manager, and
+ * must pick a paid plan (or stay on the free Starter tier's own limits).
+ */
+export const TRIAL_CUTOFF = new Date("2026-07-18T07:06:51.477Z");
 
 export async function isTrialActive(userId: number): Promise<{ active: boolean; daysLeft: number; endDate: Date }> {
   const user = await db.user.findUnique({ where: { id: userId }, select: { createdAt: true } });
   if (!user) return { active: false, daysLeft: 0, endDate: new Date() };
+
+  if (user.createdAt >= TRIAL_CUTOFF) {
+    return { active: false, daysLeft: 0, endDate: user.createdAt };
+  }
 
   const trialEndDate = new Date(user.createdAt);
   trialEndDate.setDate(trialEndDate.getDate() + 15);
@@ -43,6 +55,7 @@ export async function getPlanTier(userId: number): Promise<PlanTier> {
   if (!sub) return "NONE";
 
   const slug = sub.plan.slug.toUpperCase();
+  if (slug.includes("SCALE")) return "SCALE";
   if (slug.includes("PRO")) return "PRO";
   if (slug.includes("GROWTH") || slug.includes("BASIC")) return "GROWTH";
   return "STARTER";
@@ -111,8 +124,8 @@ export async function getManageContext() {
     name,
     role,
     email: session.user.email ?? "",
-    hasPaidPlan: tier === "GROWTH" || tier === "PRO",
-    hasAccess: tier === "GROWTH" || tier === "PRO" || trial.active,
+    hasPaidPlan: tier === "GROWTH" || tier === "PRO" || tier === "SCALE",
+    hasAccess: tier === "GROWTH" || tier === "PRO" || tier === "SCALE" || trial.active,
   };
 }
 

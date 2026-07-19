@@ -11,7 +11,7 @@ export function ManagerFAB() {
       label: "Add Tenant",
       href: "/dashboard/manager/tenants/new",
       icon: UserPlus,
-      color: "bg-violet-600 hover:bg-violet-700 text-white",
+      color: "bg-violet-500 hover:bg-violet-600 text-white",
     },
     {
       label: "Log Issue",
@@ -63,7 +63,7 @@ export function ManagerFAB() {
           className={`w-14 h-14 rounded-2xl shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 ${
             open
               ? "bg-neutral-700 rotate-45 shadow-neutral-400/40"
-              : "bg-violet-600 hover:bg-violet-700 shadow-violet-400/40"
+              : "bg-violet-500 hover:bg-violet-600 shadow-violet-400/40"
           }`}
           aria-label="Quick Actions"
         >

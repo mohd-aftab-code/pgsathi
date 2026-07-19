@@ -178,6 +178,14 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       .catch(() => setFetching(false));
   }, [listingId]);
 
+  useEffect(() => {
+    fetch("/api/cities?localities=true")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setCities(data.data);
+      });
+  }, []);
+
   if (fetching) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -188,14 +196,6 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       </div>
     );
   }
-
-  useEffect(() => {
-    fetch("/api/cities?localities=true")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) setCities(data.data);
-      });
-  }, []);
 
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const cityId = e.target.value;
@@ -972,7 +972,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30"
+            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30"
           >
             Save & Continue
           </button>
@@ -981,7 +981,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             type="button" 
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30 flex items-center gap-2 disabled:opacity-70"
+            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30 flex items-center gap-2 disabled:opacity-70"
           >
             {loading ? <><Loader2 size={20} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
           </button>

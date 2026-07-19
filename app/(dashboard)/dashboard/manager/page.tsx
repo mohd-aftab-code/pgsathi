@@ -1,115 +1,180 @@
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import {
   Users,
   Wallet,
   Wrench,
-  BellRing,
-  ArrowRight,
+  BedDouble,
   Building2,
   CheckCircle2,
-  AlertCircle,
-  Clock,
   Lock,
   TrendingUp,
+  MessageCircle,
+  ArrowRight,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 
 import { requireManagerAccess } from "@/lib/manager-auth";
-import { currentMonth } from "@/lib/manage-utils";
+import { currentMonth, formatMonth, formatINR, initials } from "@/lib/manage-utils";
+import { buildRentReminderLink } from "@/lib/whatsapp-reminder";
+import { RevenueTrendChart } from "@/components/manage/RevenueTrendChart";
 
 export default async function ManagerDashboardPage() {
   const { userId: ownerId, name: managerName, managerRole, isOwner } = await requireManagerAccess();
 
   const forMonth = currentMonth();
-
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const sixMonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
   const [
     activeTenants,
+    newTenantsThisMonth,
     pendingComplaints,
-    pendingPayments,
-    recentTenants,
     openComplaints,
     tenantsWithDues,
-    incomeAgg,
-    expenseAgg,
+    totalBeds,
+    occupiedBeds,
+    payments6mo,
+    expenses6mo,
   ] = await Promise.all([
-    db.pgTenant.count({
-      where: { ownerId, status: "ACTIVE" },
-    }),
-    db.pgComplaint.count({
-      where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] } },
-    }),
-    db.pgRentBill.count({
-      where: {
-        ownerId,
-        payments: { none: {} },
-      },
-    }),
-    db.pgTenant.findMany({
-      where: { ownerId, status: "ACTIVE" },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: {
-        listing: { select: { title: true } },
-        room: { select: { name: true } },
-      },
-    }),
+    db.pgTenant.count({ where: { ownerId, status: "ACTIVE" } }),
+    db.pgTenant.count({ where: { ownerId, status: "ACTIVE", createdAt: { gte: monthStart } } }),
+    db.pgComplaint.count({ where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] } } }),
     db.pgComplaint.findMany({
       where: { ownerId, status: { in: ["OPEN", "IN_PROGRESS"] } },
       orderBy: { createdAt: "desc" },
-      take: 4,
-      include: {
-        listing: { select: { title: true } },
-      },
+      take: 5,
+      include: { listing: { select: { title: true } } },
     }),
     db.pgTenant.findMany({
       where: { ownerId, status: "ACTIVE", deletedAt: null, monthlyRent: { gt: 0 } },
       select: {
+        id: true,
+        name: true,
+        phone: true,
         monthlyRent: true,
+        listing: { select: { title: true } },
         payments: { where: { type: "RENT", forMonth, voided: false }, select: { amount: true } },
       },
     }),
-    db.pgPayment.aggregate({
-      where: { ownerId, voided: false, paidOn: { gte: monthStart } },
-      _sum: { amount: true },
+    db.bed.count({ where: { room: { listing: { ownerId } } } }),
+    db.bed.count({ where: { room: { listing: { ownerId } }, isOccupied: true } }),
+    db.pgPayment.findMany({
+      where: { ownerId, voided: false, paidOn: { gte: sixMonthsStart } },
+      select: { amount: true, paidOn: true },
     }),
-    db.pgExpense.aggregate({
-      where: { ownerId, spentOn: { gte: monthStart } },
-      _sum: { amount: true },
+    db.pgExpense.findMany({
+      where: { ownerId, spentOn: { gte: sixMonthsStart } },
+      select: { amount: true, spentOn: true },
     }),
   ]);
 
-  const totalIncome = incomeAgg._sum.amount ?? 0;
-  const totalExpense = expenseAgg._sum.amount ?? 0;
-  const netProfit = totalIncome - totalExpense;
+  // ── 6-month trend buckets (income vs expense) ─────────────────────────
+  const months: { key: string; label: string; income: number; expense: number }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: format(d, "MMM"), income: 0, expense: 0 });
+  }
+  const bucketIdx = new Map(months.map((m, i) => [m.key, i]));
+  for (const p of payments6mo) {
+    const d = new Date(p.paidOn);
+    const i = bucketIdx.get(`${d.getFullYear()}-${d.getMonth()}`);
+    if (i !== undefined) months[i].income += p.amount;
+  }
+  for (const e of expenses6mo) {
+    const d = new Date(e.spentOn);
+    const i = bucketIdx.get(`${d.getFullYear()}-${d.getMonth()}`);
+    if (i !== undefined) months[i].expense += e.amount;
+  }
+  const trendData = months.map((m) => ({ month: m.label, income: m.income, expense: m.expense }));
+
+  const thisMonthIncome = months[5].income;
+  const thisMonthExpense = months[5].expense;
+
+  // ── Rent collection (this month, rent-specific) ───────────────────────
+  const pending = tenantsWithDues
+    .map((t) => {
+      const paid = t.payments.reduce((s, p) => s + p.amount, 0);
+      return { ...t, paid, due: Math.max(0, t.monthlyRent - paid) };
+    })
+    .filter((t) => t.due > 0)
+    .sort((a, b) => b.due - a.due);
 
   const expectedRent = tenantsWithDues.reduce((s, t) => s + t.monthlyRent, 0);
-  const collectedRent = tenantsWithDues.reduce((s, t) => s + t.payments.reduce((ps, p) => ps + p.amount, 0), 0);
+  const collectedRent = tenantsWithDues.reduce(
+    (s, t) => s + t.payments.reduce((ps, p) => ps + p.amount, 0),
+    0
+  );
   const totalPendingDues = Math.max(0, expectedRent - collectedRent);
+  const collectionPct = expectedRent > 0 ? Math.round((collectedRent / expectedRent) * 100) : 0;
+  const pendingCount = pending.length;
 
-  const pendingRemindersCount = tenantsWithDues.filter(
-    (t) => t.monthlyRent - t.payments.reduce((s, p) => s + p.amount, 0) > 0
-  ).length;
+  const occupancyPct = totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : null;
 
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const hour = now.getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const todayStr = format(now, "EEEE, d MMM yyyy");
+
+  const tone: Record<string, { bg: string; text: string; bar: string }> = {
+    violet: { bg: "bg-violet-50", text: "text-violet-600", bar: "bg-violet-500" },
+    blue: { bg: "bg-blue-50", text: "text-blue-600", bar: "bg-blue-500" },
+    red: { bg: "bg-red-50", text: "text-red-600", bar: "bg-red-500" },
+    orange: { bg: "bg-orange-50", text: "text-orange-600", bar: "bg-orange-500" },
+  };
+
+  const kpis = [
+    {
+      label: "Active Tenants",
+      value: String(activeTenants),
+      sub: newTenantsThisMonth > 0 ? `+${newTenantsThisMonth} new this month` : "No new joins this month",
+      icon: Users,
+      color: "violet",
+      href: "/dashboard/manager/tenants",
+      bar: null as number | null,
+    },
+    {
+      label: "Occupancy",
+      value: occupancyPct !== null ? `${occupancyPct}%` : "—",
+      sub: totalBeds > 0 ? `${occupiedBeds}/${totalBeds} beds filled` : "Set up rooms & beds",
+      icon: BedDouble,
+      color: "blue",
+      href: "/dashboard/manager/rooms",
+      bar: occupancyPct,
+    },
+    {
+      label: "Rent Pending",
+      value: formatINR(totalPendingDues),
+      sub: `${pendingCount} tenant${pendingCount === 1 ? "" : "s"} pending`,
+      icon: Wallet,
+      color: "red",
+      href: "/dashboard/manager/reminders",
+      bar: null as number | null,
+    },
+    {
+      label: "Open Issues",
+      value: String(pendingComplaints),
+      sub: pendingComplaints > 0 ? "Needs attention" : "All resolved 🎉",
+      icon: Wrench,
+      color: "orange",
+      href: "/dashboard/manager/complaints",
+      bar: null as number | null,
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* ── CRM Style Header ──────────────────────────────────── */}
+      {/* ── Header ─────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-neutral-200">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight flex items-center gap-2">
-            Welcome back, {managerName}
+          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
+            {greeting}, {managerName} 👋
           </h1>
           <p className="text-sm text-neutral-500 mt-1 flex items-center gap-2">
             <Building2 size={14} className="text-neutral-400" />
-            <span className="font-medium text-neutral-700">{managerRole}</span> — PG Management Workspace
+            <span className="font-medium text-neutral-700">{managerRole}</span>
+            <span className="text-neutral-300">·</span>
+            {todayStr}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -122,55 +187,90 @@ export default async function ManagerDashboardPage() {
         </div>
       </div>
 
-      {/* ── CRM Key Metrics ──────────────────────────────────────── */}
+      {/* ── KPI Cards ──────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Active Tenants", value: activeTenants, icon: Users, color: "text-violet-600", bg: "bg-violet-50", link: "/dashboard/manager/tenants" },
-          { label: "Open Issues", value: pendingComplaints, icon: Wrench, color: "text-orange-600", bg: "bg-orange-50", link: "/dashboard/manager/complaints" },
-          { label: "Pending Bills", value: pendingPayments, icon: Wallet, color: "text-red-600", bg: "bg-red-50", link: "/dashboard/manager/billing" },
-          { label: "Reminders", value: pendingRemindersCount, icon: BellRing, color: "text-blue-600", bg: "bg-blue-50", link: "/dashboard/manager/reminders" },
-        ].map((stat, i) => (
-          <Link key={i} href={stat.link} className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 group flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-sm font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{stat.label}</span>
-              <div className={`p-2 rounded-lg ${stat.bg}`}>
-                <stat.icon size={16} className={stat.color} />
+        {kpis.map((k) => {
+          const t = tone[k.color];
+          return (
+            <Link
+              key={k.label}
+              href={k.href}
+              className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 group flex flex-col justify-between"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-sm font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{k.label}</span>
+                <div className={`p-2 rounded-lg ${t.bg}`}>
+                  <k.icon size={16} className={t.text} />
+                </div>
               </div>
-            </div>
-            <div className="text-2xl font-bold text-neutral-900">{stat.value}</div>
-          </Link>
-        ))}
+              <div>
+                <div className="text-2xl font-bold text-neutral-900">{k.value}</div>
+                {k.bar !== null && (
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+                    <div className={`h-full rounded-full ${t.bar}`} style={{ width: `${Math.min(100, k.bar)}%` }} />
+                  </div>
+                )}
+                <div className="text-xs text-neutral-400 mt-1.5">{k.sub}</div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* ── Role-Based Blur UI: Revenue (Owner-Only) ───────────────── */}
+      {/* ── Revenue & Analytics (Owner-Only) ───────────────────── */}
       <div className="relative rounded-3xl border border-neutral-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <TrendingUp size={18} className="text-violet-600" />
             <h2 className="font-bold text-neutral-900 text-sm">Revenue & Analytics</h2>
+            <span className="text-xs text-neutral-400 font-medium">· {formatMonth(forMonth)}</span>
           </div>
-          {!isOwner && (
-            <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <Lock size={10} /> Owner Only
-            </span>
-          )}
-        </div>
-        {/* Content (always rendered — just blurred for non-owners) */}
-        <div className={`p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
-          {[
-            { label: "Rent Collected", value: `₹${totalIncome.toLocaleString('en-IN')}`, color: "text-green-600", bg: "bg-green-50" },
-            { label: "Pending Dues", value: `₹${totalPendingDues.toLocaleString('en-IN')}`, color: "text-red-600", bg: "bg-red-50" },
-            { label: "Expenses", value: `₹${totalExpense.toLocaleString('en-IN')}`, color: "text-orange-600", bg: "bg-orange-50" },
-            { label: "Net Profit", value: `₹${netProfit.toLocaleString('en-IN')}`, color: "text-violet-600", bg: "bg-violet-50" },
-          ].map((item, i) => (
-            <div key={i} className={`p-4 rounded-xl ${item.bg}`}>
-              <div className="text-xs font-semibold text-neutral-500 mb-1">{item.label}</div>
-              <div className={`text-xl font-extrabold ${item.color}`}>{item.value}</div>
-              <div className="text-[10px] text-neutral-400 mt-1">This Month</div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 text-xs font-medium text-neutral-500">
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /> Collected</span>
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-orange-500" /> Expenses</span>
             </div>
-          ))}
+            {!isOwner && (
+              <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Lock size={10} /> Owner Only
+              </span>
+            )}
+          </div>
         </div>
-        {/* Blur overlay with unlock CTA for non-owners */}
+
+        <div className={`p-5 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
+          {/* Mini financial stats */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="p-3 rounded-xl bg-green-50">
+              <div className="text-xs font-semibold text-neutral-500 mb-0.5">Rent Collected</div>
+              <div className="text-lg sm:text-xl font-extrabold text-green-600">{formatINR(thisMonthIncome)}</div>
+            </div>
+            <div className="p-3 rounded-xl bg-orange-50">
+              <div className="text-xs font-semibold text-neutral-500 mb-0.5">Expenses</div>
+              <div className="text-lg sm:text-xl font-extrabold text-orange-600">{formatINR(thisMonthExpense)}</div>
+            </div>
+          </div>
+
+          {/* Collection progress bar */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="font-semibold text-neutral-600">This month's rent collection</span>
+              <span className="font-bold text-neutral-900">{collectionPct}%</span>
+            </div>
+            <div className="h-2.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-600" style={{ width: `${Math.min(100, collectionPct)}%` }} />
+            </div>
+            <div className="text-xs text-neutral-400 mt-1.5">
+              {formatINR(collectedRent)} collected of {formatINR(expectedRent)} expected
+            </div>
+          </div>
+
+          {/* 6-month trend chart */}
+          <div className="pt-1">
+            <RevenueTrendChart data={trendData} />
+          </div>
+        </div>
+
         {!isOwner && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-md z-10">
             <div className="text-center px-6">
@@ -184,83 +284,81 @@ export default async function ManagerDashboardPage() {
         )}
       </div>
 
+      {/* ── Rent Pending + Action Items ─────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── Recent Tenants (CRM Table Style) ───────────────────────────────────── */}
+        {/* Rent Pending This Month (actionable) */}
         <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
             <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
-              <Users size={16} className="text-neutral-500" />
-              Recently Onboarded Tenants
+              <Wallet size={16} className="text-neutral-500" />
+              Rent Pending — {formatMonth(forMonth)}
             </h2>
-            <Link href="/dashboard/manager/tenants" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+            <Link href="/dashboard/manager/reminders" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
               View All
             </Link>
           </div>
 
-          <div className="flex-1 p-0">
-            {recentTenants.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-sm text-neutral-500">No active tenants found.</p>
+          <div className="flex-1">
+            {pending.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <CheckCircle2 size={28} className="mx-auto text-green-400 mb-2" />
+                <p className="text-sm font-semibold text-neutral-700">Sab ne pay kar diya! 🎉</p>
+                <p className="text-xs text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
               </div>
             ) : (
-              <>
-                <table className="w-full text-sm text-left hidden sm:table">
-                  <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-100">
-                    <tr>
-                      <th className="px-5 py-3 font-medium">Tenant</th>
-                      <th className="px-5 py-3 font-medium">Property & Room</th>
-                      <th className="px-5 py-3 font-medium text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100">
-                    {recentTenants.map((t) => (
-                      <tr key={t.id} className="hover:bg-neutral-50/50 transition-colors">
-                        <td className="px-5 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0">
-                              {t.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="font-semibold text-neutral-800">{t.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 text-neutral-600">
-                          {t.listing?.title} {t.room ? <span className="text-neutral-400">({t.room.name})</span> : ""}
-                        </td>
-                        <td className="px-5 py-3 text-right">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-100">
-                            <CheckCircle2 size={10} /> ACTIVE
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="sm:hidden flex flex-col divide-y divide-neutral-100">
-                  {recentTenants.map((t) => (
-                    <div key={t.id} className="p-4 hover:bg-neutral-50/50 transition-colors flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0">
-                          {t.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-semibold text-neutral-900 truncate">{t.name}</div>
-                          <div className="text-xs text-neutral-500 truncate">
-                            {t.listing?.title} {t.room ? `(${t.room.name})` : ""}
-                          </div>
+              <div className="divide-y divide-neutral-100">
+                {pending.slice(0, 6).map((t) => (
+                  <div key={t.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50/50 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-xs shrink-0">
+                        {initials(t.name)}
+                      </div>
+                      <div className="min-w-0">
+                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="font-semibold text-neutral-900 hover:underline truncate block">
+                          {t.name}
+                        </Link>
+                        <div className="text-xs text-neutral-400 truncate">
+                          {t.listing?.title}
+                          {t.paid > 0 && <span className="text-amber-600"> · partial {formatINR(t.paid)} paid</span>}
                         </div>
                       </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-100 shrink-0">
-                        <CheckCircle2 size={10} /> ACTIVE
-                      </span>
                     </div>
-                  ))}
-                </div>
-              </>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="text-right">
+                        <div className="font-extrabold text-red-600 text-sm">{formatINR(t.due)}</div>
+                        <div className="text-[10px] text-neutral-400">pending</div>
+                      </div>
+                      <a
+                        href={buildRentReminderLink({
+                          phone: t.phone ?? "",
+                          tenantName: t.name,
+                          ownerName: managerName,
+                          propertyName: t.listing?.title ?? "PG",
+                          amount: t.due,
+                          month: forMonth,
+                        })}
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Send WhatsApp reminder"
+                        className="p-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                      >
+                        <MessageCircle size={15} />
+                      </a>
+                      <Link
+                        href={`/dashboard/manager/payments/new?tenantId=${t.id}`}
+                        className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-900"
+                      >
+                        Record <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
 
-        {/* ── Open Complaints (CRM Feed Style) ──────────────────────────────────── */}
+        {/* Action Items (open complaints) */}
         <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
             <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
@@ -285,7 +383,7 @@ export default async function ManagerDashboardPage() {
                   return (
                     <div key={c.id} className="flex gap-3">
                       <div className="mt-0.5 relative">
-                        <div className={`w-2 h-2 rounded-full mt-1.5 ${isUrgent ? 'bg-red-500' : 'bg-orange-400'}`} />
+                        <div className={`w-2 h-2 rounded-full mt-1.5 ${isUrgent ? "bg-red-500" : "bg-orange-400"}`} />
                         <div className="absolute top-4 left-1 w-px h-full bg-neutral-200 -z-10" />
                       </div>
                       <div>

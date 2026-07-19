@@ -99,37 +99,37 @@ export default function NewListingPage() {
   const [localities, setLocalities] = useState<any[]>([]);
   const [error, setError] = useState("");
 
-  // Load saved draft from localStorage on first render
-  const [currentStep, setCurrentStep] = useState<StepType>(() => {
-    if (typeof window === "undefined") return 1;
-    try {
-      const saved = localStorage.getItem(DRAFT_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return (parsed.currentStep as StepType) || 1;
-      }
-    } catch {}
-    return 1;
-  });
+  // Start from SSR-safe defaults — reading localStorage here would make the
+  // client's first render diverge from the server-rendered HTML (hydration
+  // mismatch). The saved draft is restored client-side after mount instead.
+  const [currentStep, setCurrentStep] = useState<StepType>(1);
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM);
+  // Gates the auto-save effect below until the restore below has applied —
+  // it's state (not a ref) so the gate flips in the same batched re-render
+  // as the restored values, instead of one render pass ahead of them.
+  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
 
-  const [formData, setFormData] = useState<FormData>(() => {
-    if (typeof window === "undefined") return DEFAULT_FORM;
-    try {
-      const saved = localStorage.getItem(DRAFT_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return { ...DEFAULT_FORM, ...parsed.formData } as FormData;
-      }
-    } catch {}
-    return DEFAULT_FORM;
-  });
-
-  // Auto-save draft to localStorage on every change
+  // Restore saved draft from localStorage once, after hydration
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.currentStep) setCurrentStep(parsed.currentStep as StepType);
+        if (parsed.formData) setFormData({ ...DEFAULT_FORM, ...parsed.formData });
+      }
+    } catch {}
+    setHasRestoredDraft(true);
+  }, []);
+
+  // Auto-save draft to localStorage on every change (skip until the restore
+  // above has applied, otherwise this would overwrite the saved draft with defaults)
+  useEffect(() => {
+    if (!hasRestoredDraft) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({ currentStep, formData }));
     } catch {}
-  }, [currentStep, formData]);
+  }, [hasRestoredDraft, currentStep, formData]);
 
   useEffect(() => {
     fetch("/api/cities?localities=true")
@@ -334,7 +334,7 @@ export default function NewListingPage() {
           return (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 shadow-sm
-                ${isActive ? 'bg-primary-600 text-white ring-4 ring-primary-100 scale-110' : 
+                ${isActive ? 'bg-primary-500 text-white ring-4 ring-primary-100 scale-110' : 
                   isCompleted ? 'bg-primary-100 text-primary-600' : 
                   'bg-white text-neutral-400 border border-neutral-200'}`}
               >
@@ -862,7 +862,7 @@ export default function NewListingPage() {
           </div>
           <p className="font-bold text-neutral-900 mb-1 text-lg">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
           <p className="text-sm text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
-          <div className="bg-primary-600 text-white font-bold px-8 py-3 rounded-xl shadow-sm text-sm hover:bg-primary-700 transition-colors">Browse Files</div>
+          <div className="bg-primary-500 text-white font-bold px-8 py-3 rounded-xl shadow-sm text-sm hover:bg-primary-600 transition-colors">Browse Files</div>
           <p className="text-[10px] text-neutral-400 mt-4 uppercase tracking-wider font-semibold">Max size 5MB per image</p>
         </label>
       </div>
@@ -1014,7 +1014,7 @@ export default function NewListingPage() {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5"
+            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5"
           >
             Save & Continue
           </button>

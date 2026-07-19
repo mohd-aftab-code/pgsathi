@@ -41,13 +41,21 @@ export async function POST(req: NextRequest) {
 
     if (!plan) {
       const def = PLANS[planId];
+      const LIMITS: Record<typeof planId, { maxListings: number; maxPhotos: number; maxTenants: number }> = {
+        free:  { maxListings: 1,   maxPhotos: 5,  maxTenants: 5 },
+        basic: { maxListings: 2,   maxPhotos: 10, maxTenants: 50 },
+        pro:   { maxListings: 5,   maxPhotos: 30, maxTenants: 100 },
+        scale: { maxListings: -1,  maxPhotos: 99, maxTenants: -1 },
+      };
+      const limits = LIMITS[planId];
       plan = await db.plan.create({
         data: {
           name: def.name,
           slug: planId,
           price: def.price,
-          maxListings: planId === "pro" ? 999 : (planId === "free" ? 1 : 5),
-          maxPhotos: planId === "pro" ? 99 : (planId === "free" ? 5 : 10),
+          maxListings: limits.maxListings,
+          maxPhotos: limits.maxPhotos,
+          maxTenants: limits.maxTenants,
           features: [],
         }
       });

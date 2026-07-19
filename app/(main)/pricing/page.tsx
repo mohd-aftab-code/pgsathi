@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { db } from "@/lib/db";
 import Link from "next/link";
 
@@ -40,7 +40,7 @@ export default async function PricingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
           {plans.map((plan) => {
-            const isPopular = plan.slug === 'pro' || plan.slug === 'growth'; // Just an example, you can add a field in DB for this
+            const isPopular = plan.slug === 'pro';
             const features = (plan.features as any[]) || [];
 
             return (
@@ -81,7 +81,11 @@ export default async function PricingPage() {
                   <ul className="space-y-4">
                     {features.map((feat: any, idx: number) => (
                       <li key={idx} className="flex items-center gap-3">
-                        {feat.included ? (
+                        {feat.comingSoon ? (
+                          <div className="bg-amber-100 p-1 rounded-full shrink-0">
+                            <Clock className="text-amber-600" size={16} strokeWidth={2.5} />
+                          </div>
+                        ) : feat.included ? (
                           <div className="bg-green-100 p-1 rounded-full shrink-0">
                             <CheckCircle2 className="text-green-600" size={16} strokeWidth={3} />
                           </div>
@@ -90,22 +94,23 @@ export default async function PricingPage() {
                             <XCircle className="text-neutral-400" size={16} strokeWidth={2} />
                           </div>
                         )}
-                        <span className={feat.included ? 'text-neutral-800 font-semibold text-sm' : 'text-neutral-400 line-through text-sm'}>
+                        <span className={feat.comingSoon ? 'text-amber-700 font-semibold text-sm' : feat.included ? 'text-neutral-800 font-semibold text-sm' : 'text-neutral-400 line-through text-sm'}>
                           {feat.name}
+                          {feat.comingSoon && <span className="ml-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-600">(Coming Soon)</span>}
                         </span>
                       </li>
                     ))}
                   </ul>
 
-                  <Link 
-                    href="/dashboard/owner/listings/new" 
+                  <Link
+                    href={plan.price === 0 ? "/dashboard/owner/listings/new" : `/dashboard/owner/subscription/checkout?plan=${plan.slug}`}
                     className={`block w-full py-4 px-6 text-center rounded-xl font-black mt-10 transition-all shadow-sm ${
-                      isPopular 
-                        ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-lg hover:-translate-y-0.5' 
+                      isPopular
+                        ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-lg hover:-translate-y-0.5'
                         : 'bg-white border-2 border-neutral-200 text-neutral-800 hover:border-primary-500 hover:bg-neutral-50'
                     }`}
                   >
-                    Start Free Trial
+                    {plan.price === 0 ? "Start Free" : "Start 15-Day Trial"}
                   </Link>
                 </div>
               </div>

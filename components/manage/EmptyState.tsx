@@ -24,7 +24,7 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, action
       {actionLabel && actionHref && (
         <Link 
           href={actionHref} 
-          className="bg-primary-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-700 transition flex items-center gap-2 shadow-sm hover:shadow-md"
+          className="bg-primary-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-600 transition flex items-center gap-2 shadow-sm hover:shadow-md"
         >
           {actionLabel}
         </Link>

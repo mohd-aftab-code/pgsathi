@@ -163,9 +163,17 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
-                });
+                if (${process.env.NODE_ENV === "production" ? "true" : "false"}) {
+                  window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js');
+                  });
+                } else {
+                  // Dev mode: unregister any previously-installed SW so a stale
+                  // fetch handler can't intercept requests while the dev server restarts.
+                  navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    regs.forEach(function(r) { r.unregister(); });
+                  });
+                }
               }
             `,
           }}

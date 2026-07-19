@@ -5,10 +5,10 @@
    DESIGN TOKENS — Tailwind v4 Theme
    ═══════════════════════════════════════════ */
 @theme {
-  /* Primary — Deep Violet */
-  --color-primary:       #6d28d9;
-  --color-primary-light: #7c3aed;
-  --color-primary-dark:  #4c1d95;
+  /* Primary — Violet (matches the sidebar's violet-300/400 tone) */
+  --color-primary:       #8b5cf6;
+  --color-primary-light: #a78bfa;
+  --color-primary-dark:  #7c3aed;
   --color-primary-50:    #f5f3ff;
   --color-primary-100:   #ede9fe;
   --color-primary-200:   #ddd6fe;

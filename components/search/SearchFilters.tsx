@@ -159,7 +159,7 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
           <div className="pt-5 shrink-0">
             <button 
               onClick={applyFilters}
-              className="w-full bg-primary-600 text-white font-bold py-3.5 lg:py-2 lg:bg-primary-100 lg:text-primary-700 rounded-xl lg:hover:bg-primary-200 transition-colors cursor-pointer"
+              className="w-full bg-primary-500 text-white font-bold py-3.5 lg:py-2 lg:bg-primary-100 lg:text-primary-700 rounded-xl lg:hover:bg-primary-200 transition-colors cursor-pointer"
             >
               Show Results
             </button>

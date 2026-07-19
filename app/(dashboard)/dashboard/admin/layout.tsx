@@ -42,7 +42,7 @@ export default async function AdminDashboardLayout({
     <div className="min-h-screen bg-neutral-50">
       {/* ── Top Header ──────────────────────────────────────── */}
       <header className="bg-white border-b border-neutral-200 sticky top-0 z-40">
-        <div className="container-max section-padding h-16 flex items-center justify-between">
+        <div className="section-padding h-16 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5">
             <Image 
@@ -76,7 +76,7 @@ export default async function AdminDashboardLayout({
         </div>
       </header>
 
-      <div className="container-max section-padding py-6 flex flex-col lg:flex-row gap-8 pb-24 lg:pb-16">
+      <div className="section-padding py-6 flex flex-col lg:flex-row gap-8 pb-24 lg:pb-16">
         
         {/* ── Sidebar ─────────────────────────────────────────── */}
         <aside className="hidden lg:block w-56 shrink-0">

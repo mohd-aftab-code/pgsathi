@@ -30,6 +30,8 @@ model User {
   whatsappNumber     String?            @db.VarChar(15)
   whatsappOptIn      Boolean            @default(false)
   whatsappVerified   Boolean            @default(false)
+  messMenuEnabled    Boolean            @default(false)
+  expensesEnabled    Boolean            @default(false)
   beds               Bed[]              @relation("TenantBeds")
   leads              Lead[]             @relation("TenantLeads")
   listings           Listing[]

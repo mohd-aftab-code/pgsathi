@@ -50,7 +50,7 @@ export default function FAQPage() {
           <div className="mt-12 text-center bg-violet-50 p-6 sm:p-8 rounded-2xl border border-violet-100">
             <h2 className="text-xl font-semibold text-violet-900 mb-2">Still have questions?</h2>
             <p className="text-violet-700 mb-6">Can't find the answer you're looking for? Please contact our friendly team.</p>
-            <a href="/contact" className="inline-flex items-center justify-center px-6 py-3 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 transition-colors">
+            <a href="/contact" className="inline-flex items-center justify-center px-6 py-3 bg-violet-500 text-white font-medium rounded-lg hover:bg-violet-600 transition-colors">
               Contact Us
             </a>
           </div>

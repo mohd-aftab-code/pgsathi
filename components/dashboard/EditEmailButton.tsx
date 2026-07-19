@@ -63,7 +63,7 @@ export default function EditEmailButton({ currentEmail }: { currentEmail: string
                 type="button"
                 onClick={handleSave}
                 disabled={saving || !email}
-                className="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save"}
               </button>

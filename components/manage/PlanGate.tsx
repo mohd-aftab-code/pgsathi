@@ -29,10 +29,10 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
         <div className="rounded-2xl border border-primary-200 bg-primary-50 p-6 text-left">
           <div className="flex items-center gap-2 mb-3">
             <Zap className="h-5 w-5 text-primary-600" />
-            <span className="font-bold text-primary-800">Growth — ₹349/mo</span>
+            <span className="font-bold text-primary-800">Growth — ₹999/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
-            {["Tenant Management","Rent & Billing","WhatsApp Reminders","Complaints","Expenses","Staff & Mess","Reports"].map(f => (
+            {["Tenant Management","Rent & Billing","WhatsApp Reminders","Complaints","Expenses","Reports & CSV Export"].map(f => (
               <li key={f} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500 shrink-0" /> {f}
               </li>
@@ -50,7 +50,7 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
             <span className="font-bold text-purple-800">Pro — ₹1799/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
-            {["Everything in Growth","Team Logins (5 members)","PDF Agreements","Excel Export","Advanced Analytics","Priority Support"].map(f => (
+            {["Everything in Growth","Staff & Payroll","Team Logins (Manager/Warden)","Audit Log","Advanced Reports"].map(f => (
               <li key={f} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500 shrink-0" /> {f}
               </li>

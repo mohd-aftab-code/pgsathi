@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { TRIAL_CUTOFF } from "@/lib/manage-auth";
 import slugify from "slugify";
 
 export async function GET(req: NextRequest) {
@@ -55,32 +56,37 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
+    const ownerId = parseInt(session.user.id);
 
     // 1. Subscription & Limits Enforcement
     let activeSub = await db.subscription.findFirst({
       where: {
-        userId: parseInt(session.user.id),
+        userId: ownerId,
         status: { in: ["ACTIVE", "TRIAL"] },
         endDate: { gt: new Date() }
       },
       include: { plan: true }
     });
 
-    // Auto-start 14-day trial if they've never had any subscription
+    // Auto-start a 14-day Growth trial for accounts old enough to be grandfathered
+    // into the free-trial-on-signup flow. Accounts created after TRIAL_CUTOFF no
+    // longer get this — they fall through to the free Starter plan's own limits below.
     if (!activeSub) {
-      const pastSubCount = await db.subscription.count({
-        where: { userId: parseInt(session.user.id) }
-      });
-      
-      if (pastSubCount === 0) {
-        const basicPlan = await db.plan.findFirst({ orderBy: { price: "asc" } });
+      const pastSubCount = await db.subscription.count({ where: { userId: ownerId } });
+      const owner = await db.user.findUnique({ where: { id: ownerId }, select: { createdAt: true } });
+
+      if (pastSubCount === 0 && owner && owner.createdAt < TRIAL_CUTOFF) {
+        // Trial should land the owner on the Growth tier (the cheapest *paid* plan),
+        // not the free Starter plan — picking "cheapest by price" alone would grab
+        // Starter (₹0) since it sorts first, giving a "trial" with no real features.
+        const basicPlan = await db.plan.findFirst({ where: { price: { gt: 0 } }, orderBy: { price: "asc" } });
         if (basicPlan) {
           const endDate = new Date();
           endDate.setDate(endDate.getDate() + 14); // 14 Days Free Trial
-          
+
           activeSub = await db.subscription.create({
             data: {
-              userId: parseInt(session.user.id),
+              userId: ownerId,
               planId: basicPlan.id,
               status: "TRIAL",
               amount: 0,
@@ -94,22 +100,27 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!activeSub) {
+    // No active/trial subscription (post-cutoff new owner, or trial exhausted) —
+    // fall back to the free Starter plan's own limits instead of blocking outright,
+    // since Starter is meant to allow 1 free listing with no subscription required.
+    const effectivePlan = activeSub?.plan ?? await db.plan.findUnique({ where: { slug: "free" } });
+
+    if (!effectivePlan) {
       return NextResponse.json({ success: false, message: "Forbidden: Active subscription or trial required to add listings." }, { status: 403 });
     }
 
     // 2. Listing Count Limit Check
     const userListingsCount = await db.listing.count({
-      where: { ownerId: parseInt(session.user.id) } // Count all listings (or you could filter by active)
+      where: { ownerId } // Count all listings (or you could filter by active)
     });
 
-    if (activeSub.plan.maxListings !== -1 && userListingsCount >= activeSub.plan.maxListings) {
-      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxListings} listings.` }, { status: 403 });
+    if (effectivePlan.maxListings !== -1 && userListingsCount >= effectivePlan.maxListings) {
+      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${effectivePlan.maxListings} listings. Upgrade to add more.` }, { status: 403 });
     }
 
     // 3. Photo Limit Check
-    if (activeSub.plan.maxPhotos !== -1 && data.photos && data.photos.length > activeSub.plan.maxPhotos) {
-      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxPhotos} photos per listing.` }, { status: 400 });
+    if (effectivePlan.maxPhotos !== -1 && data.photos && data.photos.length > effectivePlan.maxPhotos) {
+      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${effectivePlan.maxPhotos} photos per listing.` }, { status: 400 });
     }
 
     const generatedSlug = slugify(`${data.title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });

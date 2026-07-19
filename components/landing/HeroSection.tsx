@@ -62,7 +62,7 @@ export default async function HeroSection() {
           {/* ── Left: Copy + Search ─────────────────────────────── */}
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
-              <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-600" />
+              <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-500" />
               For Tenants & PG Owners
             </div>
 

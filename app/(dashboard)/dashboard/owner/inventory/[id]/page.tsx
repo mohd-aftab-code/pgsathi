@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { db as prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, BedDouble } from "lucide-react";
 import InventoryManager from "@/components/inventory/InventoryManager";
 
 export const metadata = {
@@ -13,7 +15,7 @@ export default async function ManageInventoryPage(props: { params: Promise<{ id:
   if (!session?.user?.id) redirect("/login");
 
   const listing = await prisma.listing.findUnique({
-    where: { 
+    where: {
       id: parseInt(params.id),
       ownerId: parseInt(session.user.id)
     },
@@ -31,10 +33,22 @@ export default async function ManageInventoryPage(props: { params: Promise<{ id:
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-neutral-200">
-      <div className="mb-6 pb-6 border-b border-neutral-100">
-        <h1 className="text-2xl font-bold">{listing.title} - Inventory</h1>
-        <p className="text-neutral-500 mt-1">Add rooms and click on beds to toggle occupancy in real-time.</p>
+    <div>
+      <Link
+        href="/dashboard/owner/inventory"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-500 hover:text-primary-600 transition-colors mb-4"
+      >
+        <ArrowLeft size={14} /> All Properties
+      </Link>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight flex items-center gap-2">
+            <BedDouble className="text-primary-600" size={28} />
+            {listing.title}
+          </h1>
+          <p className="text-neutral-500 mt-1">Add rooms and click on beds to toggle occupancy in real-time.</p>
+        </div>
       </div>
 
       <InventoryManager listingId={listing.id} initialRooms={listing.rooms} />

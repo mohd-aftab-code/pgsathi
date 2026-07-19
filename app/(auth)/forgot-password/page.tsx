@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
   };
 
   const inputCls = "w-full h-12 px-4 bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all";
-  const btnCls = "w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors disabled:opacity-70 flex justify-center items-center gap-2";
+  const btnCls = "w-full h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-70 flex justify-center items-center gap-2";
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">

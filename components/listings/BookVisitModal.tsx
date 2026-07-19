@@ -37,7 +37,7 @@ export default function BookVisitModal({ listingId, ownerName }: { listingId: nu
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg shadow-primary-600/20"
+        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg shadow-primary-600/20"
       >
         <Calendar size={20} />
         Schedule a Visit
@@ -112,7 +112,7 @@ export default function BookVisitModal({ listingId, ownerName }: { listingId: nu
                 <button 
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl disabled:opacity-70 transition-all shadow-lg shadow-primary-600/20"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 rounded-xl disabled:opacity-70 transition-all shadow-lg shadow-primary-600/20"
                 >
                   {loading ? "Confirming..." : "Confirm Visit"}
                 </button>

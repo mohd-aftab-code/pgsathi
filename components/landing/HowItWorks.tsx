@@ -38,7 +38,7 @@ export default function HowItWorks() {
 
           {steps.map((step, idx) => (
             <div key={idx} className="flex flex-col items-center text-center group relative bg-white p-2">
-              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-primary-50 flex items-center justify-center mb-4 md:mb-6 group-hover:bg-primary-600 transition-colors duration-300 shadow-sm border-4 md:border-8 border-white">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-primary-50 flex items-center justify-center mb-4 md:mb-6 group-hover:bg-primary-500 transition-colors duration-300 shadow-sm border-4 md:border-8 border-white">
                 <step.icon size={24} className="text-primary-600 group-hover:text-white transition-colors duration-300 md:w-[36px] md:h-[36px]" />
               </div>
               <div className="bg-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center font-bold text-xs md:text-sm text-neutral-500 border border-neutral-200 absolute top-0 right-[15%] md:right-1/4 translate-x-2 md:translate-x-4 shadow-sm group-hover:bg-secondary-500 group-hover:text-white group-hover:border-secondary-500 transition-colors">

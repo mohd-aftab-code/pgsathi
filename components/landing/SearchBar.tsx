@@ -202,7 +202,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
       {/* 4. Submit Button */}
       <button 
         type="submit"
-        className="w-full lg:w-auto shrink-0 h-14 lg:h-10 lg:my-1 lg:mx-1 px-6 lg:px-4 xl:px-6 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl lg:rounded-full shadow-lg shadow-primary-500/30 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer mt-1 lg:mt-0"
+        className="w-full lg:w-auto shrink-0 h-14 lg:h-10 lg:my-1 lg:mx-1 px-6 lg:px-4 xl:px-6 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl lg:rounded-full shadow-lg shadow-primary-500/30 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer mt-1 lg:mt-0"
       >
         <Search size={16} className="group-hover:scale-110 transition-transform" />
         <span className="lg:hidden xl:inline text-sm">Search</span>

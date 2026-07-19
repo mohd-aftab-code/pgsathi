@@ -132,7 +132,7 @@ function AdminLoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 mt-2 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full h-12 mt-2 bg-violet-500 hover:bg-violet-500 text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <><Loader2 size={18} className="animate-spin" /> Verifying...</>

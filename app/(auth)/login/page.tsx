@@ -268,7 +268,7 @@ function LoginContent() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+                className="w-full h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
               >
                 {loading ? (
                   <><Loader2 size={18} className="animate-spin" /> Signing in...</>

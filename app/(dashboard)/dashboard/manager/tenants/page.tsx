@@ -229,7 +229,7 @@ export default async function TenantsPage({
                   key={p}
                   href={`?q=${q}&status=${status}&page=${p}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    p === page ? "bg-primary-600 text-white" : "bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
+                    p === page ? "bg-primary-500 text-white" : "bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
                   }`}
                 >
                   {p}

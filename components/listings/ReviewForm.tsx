@@ -77,7 +77,7 @@ export default function ReviewForm({ listingId, onCancel, onSuccess }: { listing
         </button>
         <button
           type="submit"
-          className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+          className="px-6 py-2 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
           disabled={loading || rating === 0}
         >
           {loading ? "Submitting..." : "Submit Review"}

@@ -7,6 +7,7 @@ import { requireManagerAccess } from "@/lib/manager-auth";
 import { formatINR, formatMonth, currentMonth, initials } from "@/lib/manage-utils";
 import { buildRentReminderLink } from "@/lib/whatsapp-reminder";
 import { EmptyState } from "@/components/manage/EmptyState";
+import { MonthFilterInput } from "@/components/manage/MonthFilterInput";
 import { BellRing, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -47,7 +48,7 @@ export default async function RemindersPage({
           </p>
         </div>
         <form>
-          <input type="month" name="month" defaultValue={month} className="input-base max-w-[170px]" onChange={(e) => e.currentTarget.form?.requestSubmit()} />
+          <MonthFilterInput defaultValue={month} />
         </form>
       </div>
 

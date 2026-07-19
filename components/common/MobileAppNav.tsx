@@ -43,7 +43,7 @@ export function MobileAppNav({ session }: { session?: any }) {
           >
             {tab.isProfile && isLoggedIn ? (
               <div className={`relative flex items-center justify-center w-[30px] h-[30px] mb-0.5 rounded-full text-white font-bold text-xs shadow-sm transition-all ${
-                isActive ? "bg-primary-700 ring-2 ring-primary-100 scale-110" : "bg-primary-600 scale-100"
+                isActive ? "bg-primary-600 ring-2 ring-primary-100 scale-110" : "bg-primary-500 scale-100"
               }`}>
                 {session.user.name?.charAt(0).toUpperCase() || "U"}
               </div>
