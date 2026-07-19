@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { FileDown } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface ExportCsvButtonProps {
@@ -11,9 +11,12 @@ interface ExportCsvButtonProps {
 }
 
 export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButtonProps) {
+  // Scale is the tier above Pro — it must not be locked out of an export Pro already has.
+  const canExport = tier === "PRO" || tier === "SCALE";
+
   const handleExport = () => {
-    if (tier !== "PRO") {
-      toast.error("Excel Export is a PRO feature. Please upgrade your plan.");
+    if (!canExport) {
+      toast.error("CSV Export is a Pro/Scale feature. Please upgrade your plan.");
       return;
     }
 
@@ -60,12 +63,13 @@ export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButt
   return (
     <button
       onClick={handleExport}
-      className={`btn-outline py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1 ${
-        tier !== "PRO" ? "opacity-75" : ""
+      className={`btn-outline py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1.5 ${
+        canExport ? "" : "opacity-75"
       }`}
-      title={tier !== "PRO" ? "PRO feature only" : "Export to CSV"}
+      title={canExport ? "Export to CSV" : "Pro/Scale feature"}
     >
-      <Download className="h-4 w-4" /> Export CSV {tier !== "PRO" && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">PRO</span>}
+      <FileDown className="h-4 w-4" /> Export CSV
+      {!canExport && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">PRO</span>}
     </button>
   );
 }

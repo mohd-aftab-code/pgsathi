@@ -3,13 +3,15 @@
  * Tenants list page with search, status filter, and pagination.
  */
 import Link from "next/link";
-import { Plus, Users, Search } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireManagerAccess } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { formatINR, formatDate, initials, currentMonth } from "@/lib/manage-utils";
 import { ExportCsvButton } from "@/components/common/ExportCsvButton";
+import { ImportCsvButton } from "@/components/common/ImportCsvButton";
+import { TenantFilters } from "@/components/manage/TenantFilters";
 
 export const metadata = { title: "Tenants — PG Manager" };
 
@@ -50,6 +52,16 @@ export default async function TenantsPage({
 
   const pages = Math.ceil(total / limit);
 
+  // Pagination must keep the active filters (the old links dropped listingId)
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (status) params.set("status", status);
+    if (listingId) params.set("listingId", String(listingId));
+    params.set("page", String(p));
+    return `?${params.toString()}`;
+  };
+
   // Map tenants for CSV export
   const exportData = tenants.map(t => ({
     "Name": t.name,
@@ -73,30 +85,10 @@ export default async function TenantsPage({
           </h1>
           <p className="text-xs text-neutral-500 mt-1 font-medium">{total} total tenants across all properties</p>
         </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          {/* Filters moved to the right side of header for a cleaner CRM look */}
-          <form className="flex-1 md:flex-none flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
-              <input
-                name="q" defaultValue={q}
-                placeholder="Search name or phone…"
-                className="pl-8 pr-3 py-1.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 w-full md:w-48 bg-white shadow-sm"
-              />
-            </div>
-            <select name="status" defaultValue={status} className="py-1.5 px-2.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white shadow-sm">
-              <option value="">All Status</option>
-              <option value="ACTIVE">Active</option>
-              <option value="NOTICE">Notice</option>
-              <option value="VACATED">Vacated</option>
-            </select>
-            <select name="listingId" defaultValue={listingId ?? ""} className="py-1.5 px-2.5 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white shadow-sm max-w-[150px] truncate hidden sm:block">
-              <option value="">All Properties</option>
-              {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
-            </select>
-            <button type="submit" className="hidden" aria-label="Submit filters"></button>
-          </form>
+        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
+          <TenantFilters q={q} status={status} listingId={listingId} listings={listings} />
           <div className="w-px h-6 bg-neutral-200 hidden md:block"></div>
+          <ImportCsvButton listings={listings} canImport={tier === "PRO" || tier === "SCALE"} />
           <ExportCsvButton data={exportData} filename="Tenants_Export" tier={tier} />
           <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1">
             <Plus className="h-4 w-4" /> Add Tenant
@@ -227,7 +219,7 @@ export default async function TenantsPage({
               {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
                 <Link
                   key={p}
-                  href={`?q=${q}&status=${status}&page=${p}`}
+                  href={pageHref(p)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                     p === page ? "bg-primary-500 text-white" : "bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
                   }`}

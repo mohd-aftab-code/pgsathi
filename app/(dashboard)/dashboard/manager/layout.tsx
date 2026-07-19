@@ -36,7 +36,7 @@ export default async function ManagerDashboardLayout({
   const roleBadgeCls = roleColors[managerRole] ?? "bg-neutral-100 text-neutral-600";
 
   return (
-    <div className="min-h-screen bg-neutral-50/50">
+    <div className="min-h-screen bg-canvas">
       {/* ── Sidebar — fixed, full height, flush to the screen edge, owns the brand logo ─ */}
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
       <ManagerSidebar isOwner={isOwner} messEnabled={messEnabled} expensesEnabled={expensesEnabled}>

@@ -39,7 +39,7 @@ export default async function AdminDashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-canvas">
       {/* ── Top Header ──────────────────────────────────────── */}
       <header className="bg-white border-b border-neutral-200 sticky top-0 z-40">
         <div className="section-padding h-16 flex items-center justify-between">

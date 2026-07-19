@@ -34,7 +34,7 @@ export default async function OwnerDashboardLayout({
   const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
 
   return (
-    <div className="min-h-screen bg-neutral-50/50">
+    <div className="min-h-screen bg-canvas">
       {/* ── Sidebar — fixed, full height, flush to the screen edge, owns the brand logo ─ */}
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
       <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} tier={tier}>
