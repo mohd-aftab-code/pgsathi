@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, MapPin, CheckCircle2, Upload, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, MapPin, CheckCircle2, Upload, Plus, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import LocationPicker from "@/components/common/LocationPicker";
+import { LocationStep, validateLocation } from "@/components/listings/LocationStep";
 
 // ════════════════════════════════════════════════════════
 // TYPES & CONSTANTS
@@ -50,9 +50,12 @@ const DEFAULT_FORM = {
   roomTypes: ["SINGLE_ROOM"],
   genderAllowed: "BOYS",
   
-  // Step 2: Location
-  cityId: "",
+  // Step 2: Location — plain text the owner types; the server turns
+  // pincode/city/state into the real City row when the listing is saved.
   localityId: "",
+  cityName: "",
+  stateName: "",
+  areaLocality: "",
   address: "",
   pincode: "",
   landmark: "",
@@ -106,8 +109,6 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [cities, setCities] = useState<any[]>([]);
-  const [localities, setLocalities] = useState<any[]>([]);
   const [error, setError] = useState("");
 
   // Load saved draft from localStorage on first render
@@ -143,8 +144,10 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             description: l.description || "",
             roomTypes: l.roomTypes?.length > 0 ? l.roomTypes : ["SINGLE_ROOM"],
             genderAllowed: l.genderAllowed || "BOYS",
-            cityId: l.cityId?.toString() || "",
             localityId: l.localityId?.toString() || "",
+            cityName: l.city?.name || "",
+            stateName: l.city?.state || "",
+            areaLocality: l.areaLocality || l.locality?.name || "",
             address: l.address || "",
             pincode: l.pincode || "",
             landmark: l.landmark || "",
@@ -178,14 +181,6 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       .catch(() => setFetching(false));
   }, [listingId]);
 
-  useEffect(() => {
-    fetch("/api/cities?localities=true")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) setCities(data.data);
-      });
-  }, []);
-
   if (fetching) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -197,24 +192,28 @@ export default function EditListingPage({ params }: EditListingPageProps) {
     );
   }
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityId = e.target.value;
-    setFormData({ ...formData, cityId, localityId: "" });
-    const selectedCity = cities.find(c => c.id.toString() === cityId);
-    setLocalities(selectedCity?.localities || []);
+  const validateStep = (step: StepType): string | null => {
+    if (step === 1) {
+      if (!formData.title.trim()) return "PG / Flat ka naam daalein.";
+      if (formData.roomTypes.length === 0) return "Kam se kam ek room type chunein.";
+    }
+    // Shared with the new-listing page so both reject the same things
+    if (step === 2) return validateLocation(formData);
+    if (step === 5) {
+      if (formData.photos.length === 0) return "Kam se kam ek photo upload karein.";
+      if (!formData.priceMin || !formData.priceMax) return "Price range daalein.";
+    }
+    return null;
   };
 
   const handleNext = () => {
-    setError(""); // Clear any previous errors
-    
-    // Step 2 Validation: Ensure location is selected
-    if (currentStep === 2) {
-      if (!formData.latitude || !formData.longitude) {
-        setError("Please mark the exact location on the map before proceeding.");
-        return;
-      }
+    const problem = validateStep(currentStep);
+    if (problem) {
+      setError(problem);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
-
+    setError("");
     if (currentStep < 5) setCurrentStep((prev) => (prev + 1) as StepType);
   };
 
@@ -282,20 +281,21 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
     setError("");
 
-    if (!formData.title || !formData.address || !formData.cityId || !formData.priceMin || !formData.priceMax) {
-      setError("Please fill all required fields (Name, Address, City, Price).");
-      setLoading(false);
-      return;
+    // Send the owner back to the step that's incomplete instead of showing an
+    // error about a step they can't see.
+    for (const step of [1, 2, 5] as StepType[]) {
+      const problem = validateStep(step);
+      if (problem) {
+        setError(`Step ${step}: ${problem}`);
+        setCurrentStep(step);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
     }
 
-    if (formData.photos.length === 0) {
-      setError("Please upload at least one photo for your listing.");
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
 
     try {
       // Create a clean payload mapping to our backend schema
@@ -304,8 +304,11 @@ export default function EditListingPage({ params }: EditListingPageProps) {
         description: formData.description,
         roomTypes: formData.roomTypes,
         genderAllowed: formData.genderAllowed,
-        cityId: parseInt(formData.cityId),
+        // The server resolves (and if needed creates) the City row from these.
+        cityName: formData.cityName.trim(),
+        stateName: formData.stateName.trim(),
         localityId: formData.localityId ? parseInt(formData.localityId) : null,
+        areaLocality: formData.areaLocality.trim() || null,
         address: formData.address,
         pincode: formData.pincode,
         landmark: formData.landmark,
@@ -461,201 +464,16 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   );
 
   const renderStep2 = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-800 mb-2 pb-4 border-b">Location Details</h3>
-
-        {/* ── Tip banner ─────────────────────────────────────── */}
-        <div className="flex items-start gap-3 bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 mt-4 mb-6">
-          <MapPin className="text-primary-500 shrink-0 mt-0.5" size={18} />
-          <p className="text-sm text-primary-700">
-            <strong>Map pe search karein ya click karein</strong> — pincode, address aur city sab automatically set ho jayenge.
-            Ya neeche sirf <strong>Pincode</strong> daalein to bhi address aa jayega.
-          </p>
-        </div>
-
-        {/* ── Map ──────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="text-primary-500" size={18} />
-              <h4 className="font-bold text-neutral-800 text-sm">Map pe Pin karo *</h4>
-            </div>
-            {(formData.latitude && formData.longitude) && (
-              <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                <CheckCircle2 size={12} /> Location set hai
-              </span>
-            )}
-          </div>
-
-          <LocationPicker
-            latitude={formData.latitude}
-            longitude={formData.longitude}
-            onChange={(lat, lng) => setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))}
-            onAddressFound={(data) => {
-              const addressDetails = data.address || {};
-              const displayName   = data.display_name || "";
-
-              // ── Auto-fill city from map result ─────────────────
-              let matchedCityId = formData.cityId;
-              let newLocalities  = localities;
-              const cityName = (
-                addressDetails.city ||
-                addressDetails.state_district ||
-                addressDetails.county || ""
-              ).toLowerCase();
-              if (cityName) {
-                const found = cities.find(c => cityName.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cityName));
-                if (found) {
-                  matchedCityId = found.id.toString();
-                  newLocalities = found.localities || [];
-                  setLocalities(newLocalities);
-                }
-              }
-
-              // ── Auto-fill locality from map result ─────────────
-              let matchedLocalityId = formData.localityId;
-              if (matchedCityId && newLocalities.length) {
-                const search = displayName.toLowerCase();
-                const suburb = (addressDetails.suburb || addressDetails.neighbourhood || "").toLowerCase();
-                const found  = newLocalities.find(l =>
-                  search.includes(l.name.toLowerCase()) ||
-                  (suburb && suburb.includes(l.name.toLowerCase()))
-                );
-                if (found) matchedLocalityId = found.id.toString();
-              }
-
-              // ── Build clean short address (no long nominatim string) ─
-              const parts = [
-                addressDetails.road,
-                addressDetails.suburb || addressDetails.neighbourhood,
-                addressDetails.city || addressDetails.state_district,
-                addressDetails.state,
-              ].filter(Boolean);
-              const cleanAddress = parts.join(", ") || displayName;
-
-              setFormData(prev => ({
-                ...prev,
-                address:    !prev.address || prev.address === prev._autoAddress ? cleanAddress : prev.address,
-                _autoAddress: cleanAddress,
-                pincode:    addressDetails.postcode || prev.pincode,
-                cityId:     matchedCityId,
-                localityId: matchedLocalityId,
-              }));
-            }}
-          />
-        </div>
-
-        {/* ── Fields row ───────────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-          {/* Pincode — triggers auto-fetch */}
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
-              Pincode *
-              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-                Auto-fills address
-              </span>
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none text-base tracking-widest"
-              placeholder="e.g. 302001"
-              value={formData.pincode}
-              onChange={e => {
-                const val = e.target.value.replace(/\D/g, "").slice(0, 6);
-                setFormData(prev => ({ ...prev, pincode: val }));
-              }}
-              onBlur={async (e) => {
-                const pin = e.target.value.trim();
-                if (pin.length !== 6) return;
-                // Fetch address from pincode using Nominatim
-                try {
-                  const res = await fetch(
-                    `https://nominatim.openstreetmap.org/search?postalcode=${pin}&country=India&format=json&limit=1&addressdetails=1`,
-                    { headers: { "Accept-Language": "en" } }
-                  );
-                  const data = await res.json();
-                  if (!data || !data[0]) return;
-                  const result = data[0];
-                  const addr   = result.address || {};
-                  const lat    = parseFloat(result.lat);
-                  const lng    = parseFloat(result.lon);
-
-                  // Match city
-                  let matchedCityId = formData.cityId;
-                  let newLocalities  = localities;
-                  const cn = (addr.city || addr.state_district || addr.county || "").toLowerCase();
-                  if (cn) {
-                    const found = cities.find(c => cn.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cn));
-                    if (found) {
-                      matchedCityId = found.id.toString();
-                      newLocalities = found.localities || [];
-                      setLocalities(newLocalities);
-                    }
-                  }
-
-                  // Build clean address
-                  const parts = [
-                    addr.suburb || addr.neighbourhood,
-                    addr.city || addr.state_district,
-                    addr.state,
-                  ].filter(Boolean);
-                  const cleanAddress = parts.join(", ") || result.display_name;
-
-                  setFormData(prev => ({
-                    ...prev,
-                    latitude:  !prev.latitude  ? lat : prev.latitude,
-                    longitude: !prev.longitude ? lng : prev.longitude,
-                    cityId:    matchedCityId,
-                    address:   !prev.address || prev.address === prev._autoAddress ? cleanAddress : prev.address,
-                    _autoAddress: cleanAddress,
-                  }));
-                } catch {}
-              }}
-            />
-          </div>
-
-          {/* Landmark */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
-              Landmark / Street <span className="text-neutral-400 font-normal">(Optional)</span>
-            </label>
-            <input
-              type="text"
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              placeholder="e.g. Near Apollo Hospital, Main Road"
-              value={formData.landmark}
-              onChange={e => setFormData({ ...formData, landmark: e.target.value })}
-            />
-          </div>
-
-          {/* Address — auto-filled, editable */}
-          <div className="md:col-span-3">
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
-              Complete Address *
-              <span className="ml-2 text-xs font-normal text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-                Map se auto-fill hoga
-              </span>
-            </label>
-            <textarea
-              rows={2}
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none resize-none"
-              placeholder="Map pe click karo ya pincode daalo — address auto-fill ho jayega..."
-              value={formData.address}
-              onChange={e => setFormData({ ...formData, address: e.target.value })}
-            />
-          </div>
-        </div>
-
-        {/* Hidden city/locality — still submitted but not shown as dropdowns */}
-        <input type="hidden" value={formData.cityId} />
-        <input type="hidden" value={formData.localityId} />
-
-      </div>
-    </div>
+    <LocationStep
+      value={{
+        stateName: formData.stateName, cityName: formData.cityName,
+        pincode: formData.pincode, areaLocality: formData.areaLocality,
+        localityId: formData.localityId, address: formData.address,
+        landmark: formData.landmark,
+        latitude: formData.latitude, longitude: formData.longitude,
+      }}
+      onChange={(patch) => setFormData(prev => ({ ...prev, ...patch }))}
+    />
   );
 
   const renderStep3 = () => (
@@ -913,7 +731,9 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   );
 
   return (
-    <div className="max-w-5xl mx-auto pb-24">
+    // pb-52 on mobile: the action bar AND the app's bottom tab bar both sit at
+    // the bottom of the viewport there, so content needs to clear both.
+    <div className="max-w-5xl mx-auto pb-52 md:pb-24">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
@@ -958,21 +778,22 @@ export default function EditListingPage({ params }: EditListingPageProps) {
         {currentStep === 5 && renderStep5()}
       </div>
 
-      {/* Navigation Buttons */}
-      <div className="flex items-center justify-between border-t border-neutral-200 pt-6">
-        <button 
-          type="button" 
+      {/* Navigation Buttons — same mobile treatment as the new-listing form:
+          floats above the app's bottom tab bar instead of being buried by it. */}
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-6">
+        <button
+          type="button"
           onClick={handlePrev}
-          className={`px-8 py-3 rounded-xl font-bold border transition-colors ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-300 text-neutral-600 hover:bg-neutral-50'}`}
+          className={`px-6 md:px-8 py-3 rounded-xl font-bold border transition-colors ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-300 text-neutral-600 hover:bg-neutral-50'}`}
         >
           Previous
         </button>
 
         {currentStep < 5 ? (
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={handleNext}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30"
+            className="bg-primary-500 hover:bg-primary-600 text-white px-6 md:px-8 py-3 rounded-xl font-bold transition-colors shadow-sm shadow-primary-500/30"
           >
             Save & Continue
           </button>

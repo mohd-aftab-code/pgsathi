@@ -1,0 +1,346 @@
+"use client";
+
+/**
+ * components/listings/LocationStep.tsx
+ * Step 2 of the listing wizard, shared by the "new" and "edit" pages.
+ *
+ * It exists as one component because the two pages previously each had their own
+ * copy — fixing the city bug in one silently left the other broken.
+ *
+ * Flow is a strict cascade so the owner is never asked for something we haven't
+ * given them the context for:
+ *   State → City/District → PIN code → Area → street address → map
+ * Every step has a free-text escape hatch; nothing here can dead-end.
+ */
+
+import { useEffect, useState } from "react";
+import { MapPin, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import LocationPicker from "@/components/common/LocationPicker";
+import { SearchableSelect } from "@/components/common/SearchableSelect";
+import { STATE_NAMES, districtsOf } from "@/lib/india-locations";
+
+export type LocationValue = {
+  stateName: string;
+  cityName: string;
+  pincode: string;
+  areaLocality: string;
+  localityId: string;
+  address: string;
+  landmark: string;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+export function LocationStep({
+  value,
+  onChange,
+}: {
+  value: LocationValue;
+  onChange: (patch: Partial<LocationValue>) => void;
+}) {
+  const [pinStatus, setPinStatus] = useState<"idle" | "loading" | "ok" | "fail">("idle");
+  const [pinMessage, setPinMessage] = useState("");
+  const [pinCity, setPinCity] = useState<{ city: string; state: string } | null>(null);
+  const [areas, setAreas] = useState<{ id: number | null; name: string }[]>([]);
+  const [geoStatus, setGeoStatus] = useState<"idle" | "loading" | "ok" | "fail">("idle");
+
+  const districts = districtsOf(value.stateName);
+
+  // Re-resolve a pincode that arrived from a saved draft / existing listing, so
+  // the area list is populated on first paint instead of looking empty.
+  useEffect(() => {
+    if (value.pincode.length === 6 && areas.length === 0 && pinStatus === "idle") {
+      resolvePincode(value.pincode);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function resolvePincode(pin: string) {
+    if (pin.length !== 6) return;
+    setPinStatus("loading");
+    setPinMessage("");
+    try {
+      const res = await fetch(`/api/geo/pincode?pin=${pin}`);
+      const data = await res.json();
+      if (!data.success) {
+        setPinStatus("fail");
+        setPinCity(null);
+        setPinMessage(data.message || "Is PIN ki jaankari nahi mili — area khud likh dein.");
+        setAreas([]);
+        return;
+      }
+      setAreas(data.areas || []);
+      setPinCity({ city: data.cityName, state: data.stateName });
+      setPinStatus("ok");
+      setPinMessage("");
+      // Fill state/city only if the owner hasn't chosen them yet
+      onChange({
+        stateName: value.stateName || data.stateName,
+        cityName: value.cityName || data.cityName,
+        latitude: value.latitude ?? data.latitude ?? null,
+        longitude: value.longitude ?? data.longitude ?? null,
+      });
+    } catch {
+      setPinStatus("fail");
+      setPinCity(null);
+      setPinMessage("Network issue — area khud likh dein, kaam chal jayega.");
+      setAreas([]);
+    }
+  }
+
+  async function locateOnMap() {
+    if (!value.cityName && value.pincode.length !== 6) return;
+    setGeoStatus("loading");
+    try {
+      const res = await fetch("/api/geo/geocode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: value.address,
+          area: value.areaLocality,
+          city: value.cityName,
+          state: value.stateName,
+          pincode: value.pincode,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) return setGeoStatus("fail");
+      setGeoStatus("ok");
+      onChange({ latitude: data.latitude, longitude: data.longitude });
+    } catch {
+      setGeoStatus("fail");
+    }
+  }
+
+  // The PIN belongs to a different district than the one picked — worth saying,
+  // but not worth blocking: administrative and postal districts differ.
+  const cityMismatch =
+    pinStatus === "ok" &&
+    pinCity &&
+    value.cityName &&
+    pinCity.city.toLowerCase() !== value.cityName.toLowerCase();
+
+  const locationReady = !!(value.latitude && value.longitude);
+
+  const label = (n: number, text: string, required = true) => (
+    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-500 text-white text-[10px] mr-1.5 align-middle">
+        {n}
+      </span>
+      {text} {required && <span className="text-red-500">*</span>}
+    </label>
+  );
+
+  const inputCls =
+    "w-full h-11 px-3 rounded-lg border-2 border-neutral-200 bg-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition-all shadow-sm placeholder:text-neutral-400";
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl p-5 md:p-6 bg-white">
+        <h3 className="text-lg font-bold text-neutral-900 mb-1">Aapka PG kahan hai?</h3>
+        <p className="text-xs text-neutral-500 mb-5 pb-4 border-b border-neutral-100">
+          Har field type karke bhi dhoondh sakte hain. Map aakhir mein khud ban jayega.
+        </p>
+
+        {/* Row 1 — State + City */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            {label(1, "State")}
+            <SearchableSelect
+              options={STATE_NAMES}
+              value={value.stateName}
+              onChange={(v) => onChange({ stateName: v, cityName: "" })}
+              placeholder="Type karein, e.g. Uttar"
+              customHint="ye state list mein nahi hai"
+            />
+          </div>
+          <div>
+            {label(2, "City / District")}
+            <SearchableSelect
+              options={districts}
+              value={value.cityName}
+              onChange={(v) => onChange({ cityName: v })}
+              disabled={!value.stateName}
+              disabledText="Pehle state chunein…"
+              placeholder="Type karein, e.g. Hath"
+              customHint="ye city list mein nahi hai — yahi save hogi"
+            />
+          </div>
+        </div>
+
+        {/* Row 2 — PIN + Area */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            {label(3, "PIN Code")}
+            {!value.cityName ? (
+              <div className="h-11 px-3 rounded-lg border-2 border-neutral-200 bg-neutral-50 flex items-center text-sm text-neutral-400 cursor-not-allowed">
+                Pehle city chunein…
+              </div>
+            ) : (
+              <div className="relative">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className={`w-full h-11 pl-3 pr-9 rounded-lg border-2 bg-white text-sm tracking-[0.2em] font-semibold focus:ring-2 outline-none transition-all shadow-sm ${
+                    pinStatus === "fail"
+                      ? "border-amber-300 focus:ring-amber-300"
+                      : pinStatus === "ok"
+                      ? "border-green-400 focus:ring-green-300"
+                      : "border-neutral-200 focus:ring-primary-300 focus:border-primary-400"
+                  }`}
+                  placeholder="204211"
+                  value={value.pincode}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    onChange({ pincode: v, areaLocality: "", localityId: "" });
+                    if (v.length < 6) {
+                      setPinStatus("idle");
+                      setPinMessage("");
+                      setPinCity(null);
+                      setAreas([]);
+                    } else {
+                      resolvePincode(v);
+                    }
+                  }}
+                />
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                  {pinStatus === "loading" && <Loader2 size={16} className="animate-spin text-primary-500" />}
+                  {pinStatus === "ok" && <CheckCircle2 size={16} className="text-green-500" />}
+                  {pinStatus === "fail" && <AlertCircle size={16} className="text-amber-500" />}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div>
+            {label(4, "Area / Mohalla", false)}
+            <SearchableSelect
+              options={areas.map((a) => a.name)}
+              value={value.areaLocality}
+              onChange={(v) => {
+                const match = areas.find((a) => a.name === v);
+                onChange({ areaLocality: v, localityId: match?.id ? String(match.id) : "" });
+              }}
+              disabled={value.pincode.length !== 6}
+              disabledText="Pehle PIN code daalein…"
+              placeholder={areas.length ? "Type ya chunein" : "Apna area likhein"}
+              customHint="apna likha hua area save hoga"
+            />
+          </div>
+        </div>
+
+        {/* PIN feedback sits under the row so the grid stays aligned */}
+        {value.cityName && (pinStatus !== "idle" || pinMessage) && (
+          <div className="-mt-1 mb-4">
+            {pinStatus === "ok" && !cityMismatch && (
+              <p className="text-[11px] font-medium text-green-700">✓ {pinCity?.city}, {pinCity?.state} — sahi hai</p>
+            )}
+            {cityMismatch && (
+              <p className="text-[11px] font-medium text-amber-700">
+                Dhyan dein: ye PIN <strong>{pinCity?.city}</strong> ka hai, aapne <strong>{value.cityName}</strong> chuna hai — ek baar check kar lein.
+              </p>
+            )}
+            {pinStatus === "fail" && <p className="text-[11px] font-medium text-amber-700">{pinMessage}</p>}
+          </div>
+        )}
+
+        {/* Row 3 — Address + Landmark */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          <div>
+            {label(5, "Makaan / Building / Street")}
+            <input
+              type="text"
+              className={inputCls}
+              placeholder="e.g. 42, Gandhi Road"
+              value={value.address}
+              onChange={(e) => onChange({ address: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+              Landmark <span className="text-neutral-400 font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              className={inputCls}
+              placeholder="e.g. Apollo Hospital ke saamne"
+              value={value.landmark}
+              onChange={(e) => onChange({ landmark: e.target.value })}
+            />
+          </div>
+        </div>
+
+        {/* Map — built from everything above */}
+        <div className="border-t border-neutral-100 pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h4 className="font-bold text-neutral-800 text-sm flex items-center gap-1.5">
+                <MapPin className="text-primary-500" size={15} /> Location confirm karein
+              </h4>
+              <p className="text-[11px] text-neutral-500 mt-0.5">
+                {locationReady ? "Pin galat ho to drag karke sahi kar dein." : "Address bharne ke baad ye button dabayein."}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {locationReady && (
+                <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
+                  <CheckCircle2 size={11} /> Set hai
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={locateOnMap}
+                disabled={geoStatus === "loading" || (!value.cityName && value.pincode.length !== 6)}
+                className="bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+              >
+                {geoStatus === "loading" ? (
+                  <><Loader2 size={13} className="animate-spin" /> Dhoondh rahe hain…</>
+                ) : (
+                  <><MapPin size={13} /> Map par dikhayein</>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {geoStatus === "fail" && (
+            <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 text-xs text-amber-800">
+              <AlertCircle size={14} className="shrink-0 mt-0.5" />
+              <span>Is address se exact location nahi mili. Neeche map pe apni jagah par click kar dein.</span>
+            </div>
+          )}
+
+          <LocationPicker
+            latitude={value.latitude}
+            longitude={value.longitude}
+            onChange={(lat, lng) => {
+              onChange({ latitude: lat, longitude: lng });
+              setGeoStatus("ok");
+            }}
+            onAddressFound={(data) => {
+              // Manual map click is an override — only fill what's still blank.
+              const a = data.address || {};
+              const mapPin = (a.postcode || "").replace(/\D/g, "").slice(0, 6);
+              onChange({
+                pincode: value.pincode || mapPin,
+                cityName: value.cityName || a.city || a.state_district || a.county || a.town || "",
+                stateName: value.stateName || a.state || "",
+                address: value.address || [a.road, a.suburb || a.neighbourhood].filter(Boolean).join(", "),
+              });
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Shared validation so both pages reject the same things with the same words. */
+export function validateLocation(v: LocationValue): string | null {
+  if (!v.stateName.trim()) return "State chunein.";
+  if (!v.cityName.trim()) return "City chunein.";
+  if (v.pincode.length !== 6) return "6-digit PIN code daalein.";
+  if (!v.address.trim()) return "Address daalein (makaan / building / street).";
+  if (!v.latitude || !v.longitude)
+    return "Location set nahi hui — 'Map par dikhayein' dabayein ya map pe pin karein.";
+  return null;
+}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { TRIAL_CUTOFF } from "@/lib/manage-auth";
+import { resolveCity } from "@/lib/geo";
 import slugify from "slugify";
 
 export async function GET(req: NextRequest) {
@@ -123,6 +124,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${effectivePlan.maxPhotos} photos per listing.` }, { status: 400 });
     }
 
+    // Resolve the city here rather than trusting a client-computed cityId. The
+    // form only sends what the owner typed (pincode / city / state); if their
+    // city isn't in the table yet it gets created. This is what stops owners
+    // outside the seeded cities from being unable to register at all.
+    const resolvedCity = await resolveCity({
+      pincode: data.pincode,
+      cityName: data.cityName,
+      stateName: data.stateName,
+    });
+
+    if (!resolvedCity) {
+      return NextResponse.json(
+        { success: false, message: "City resolve nahi hui — PIN code ya city ka naam check karein." },
+        { status: 400 }
+      );
+    }
+
     const generatedSlug = slugify(`${data.title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
 
     // Create listing
@@ -156,8 +174,9 @@ export async function POST(req: NextRequest) {
         latitude: data.latitude,
         longitude: data.longitude,
         
-        cityId: data.cityId,
+        cityId: resolvedCity.id,
         localityId: data.localityId,
+        areaLocality: data.areaLocality,
         
         status: "PENDING", // Admin will publish later
         

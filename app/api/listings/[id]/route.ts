@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { resolveCity } from "@/lib/geo";
 
 // ─── GET single listing ──────────────────────────────────────────
 export async function GET(
@@ -82,8 +83,25 @@ export async function PATCH(
     if (data.laundryService !== undefined) updateData.laundryService = data.laundryService;
     if (data.roomCleaning !== undefined) updateData.roomCleaning = data.roomCleaning;
     if (data.parking !== undefined) updateData.parking = data.parking;
-    if (data.cityId !== undefined) updateData.cityId = data.cityId;
+    // Resolve the city from what the owner typed rather than trusting a
+    // client-computed cityId — matches the create route, and means editing a PG
+    // in a city that isn't seeded yet works instead of failing validation.
+    if (data.cityName !== undefined || data.pincode !== undefined) {
+      const resolved = await resolveCity({
+        pincode: data.pincode,
+        cityName: data.cityName,
+        stateName: data.stateName,
+      });
+      if (!resolved) {
+        return NextResponse.json(
+          { success: false, message: "City resolve nahi hui — PIN code ya city ka naam check karein." },
+          { status: 400 }
+        );
+      }
+      updateData.cityId = resolved.id;
+    }
     if (data.localityId !== undefined) updateData.localityId = data.localityId;
+    if (data.areaLocality !== undefined) updateData.areaLocality = data.areaLocality;
     
     // Complex relations: Photos and Amenities
     if (data.photos !== undefined) {
