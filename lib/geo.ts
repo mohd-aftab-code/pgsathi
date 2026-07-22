@@ -70,16 +70,21 @@ export async function geocodeAddress(parts: {
   city?: string;
   state?: string;
   pincode?: string;
-}): Promise<{ lat: number; lng: number; label: string } | null> {
+}): Promise<{ lat: number; lng: number; label: string; precision: "exact" | "area" | "city" } | null> {
   const { address, area, city, state, pincode } = parts;
-  const attempts = [
-    [address, area, city, state, pincode].filter(Boolean).join(", "),
-    [area, city, state, pincode].filter(Boolean).join(", "),
-    [city, state, pincode].filter(Boolean).join(", "),
-    [pincode, city].filter(Boolean).join(", "),
-  ].filter((q) => q && q.length > 3);
+  // Ordered most specific → least. Which one hits tells us how much to trust the
+  // pin, which the form shows to the owner so a coarse match isn't mistaken for
+  // their doorstep.
+  const attempts = (
+    [
+      { q: [address, area, city, state, pincode].filter(Boolean).join(", "), precision: "exact" },
+      { q: [area, city, state, pincode].filter(Boolean).join(", "), precision: "area" },
+      { q: [city, state, pincode].filter(Boolean).join(", "), precision: "city" },
+      { q: [pincode, city].filter(Boolean).join(", "), precision: "city" },
+    ] as const
+  ).filter((a) => a.q && a.q.length > 3);
 
-  for (const q of attempts) {
+  for (const { q, precision } of attempts) {
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${q}, India`)}&format=json&limit=1&addressdetails=1`,
@@ -91,7 +96,18 @@ export async function geocodeAddress(parts: {
       );
       if (!res.ok) continue;
       const hit = (await res.json())?.[0];
-      if (hit) return { lat: parseFloat(hit.lat), lng: parseFloat(hit.lon), label: hit.display_name };
+      if (hit) {
+        // Nominatim can answer a street query with the whole city; trust its own
+        // classification over which query happened to match.
+        const t = String(hit.addresstype ?? hit.type ?? "");
+        const coarse = ["city", "town", "state", "state_district", "county", "administrative"].includes(t);
+        return {
+          lat: parseFloat(hit.lat),
+          lng: parseFloat(hit.lon),
+          label: hit.display_name,
+          precision: coarse && precision === "exact" ? "city" : precision,
+        };
+      }
     } catch {
       // try the next, coarser query
     }

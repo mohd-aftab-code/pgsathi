@@ -25,8 +25,16 @@ export default function LocationPicker({ latitude, longitude, onChange, onAddres
   const position: [number, number] | null = latitude && longitude ? [latitude, longitude] : null;
 
   return (
-    <div className="w-full h-80 relative border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="w-full h-72 sm:h-96 relative border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
       <Map position={position} onChange={onChange} onAddressFound={onAddressFound || (() => {})} />
+
+      {/* Sits above the map (Leaflet panes cap out around z-index 700) so the
+          one action that actually matters is never missed. */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none">
+        <span className="bg-neutral-900/85 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap backdrop-blur-sm">
+          {position ? "📍 Pin ko drag karke apne PG par rakhein" : "📍 Map pe apni jagah par click karein"}
+        </span>
+      </div>
     </div>
   );
 }

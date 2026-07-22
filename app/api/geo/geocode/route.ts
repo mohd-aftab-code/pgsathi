@@ -36,5 +36,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ success: true, latitude: hit.lat, longitude: hit.lng, label: hit.label });
+  return NextResponse.json({
+    success: true,
+    latitude: hit.lat,
+    longitude: hit.lng,
+    label: hit.label,
+    precision: hit.precision,
+  });
 }

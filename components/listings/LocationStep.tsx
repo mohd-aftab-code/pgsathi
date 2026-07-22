@@ -43,6 +43,7 @@ export function LocationStep({
   const [pinCity, setPinCity] = useState<{ city: string; state: string } | null>(null);
   const [areas, setAreas] = useState<{ id: number | null; name: string }[]>([]);
   const [geoStatus, setGeoStatus] = useState<"idle" | "loading" | "ok" | "fail">("idle");
+  const [geoHit, setGeoHit] = useState<{ label: string; precision: string } | null>(null);
 
   const districts = districtsOf(value.stateName);
 
@@ -103,10 +104,12 @@ export function LocationStep({
         }),
       });
       const data = await res.json();
-      if (!data.success) return setGeoStatus("fail");
+      if (!data.success) { setGeoHit(null); return setGeoStatus("fail"); }
       setGeoStatus("ok");
+      setGeoHit({ label: data.label, precision: data.precision });
       onChange({ latitude: data.latitude, longitude: data.longitude });
     } catch {
+      setGeoHit(null);
       setGeoStatus("fail");
     }
   }
@@ -214,6 +217,8 @@ export function LocationStep({
 
           <div>
             {label(4, "Area / Mohalla", false)}
+            {/* India Post only lists post offices, not every mohalla — so this is
+                a text field first, with those names offered as suggestions. */}
             <SearchableSelect
               options={areas.map((a) => a.name)}
               value={value.areaLocality}
@@ -223,9 +228,12 @@ export function LocationStep({
               }}
               disabled={value.pincode.length !== 6}
               disabledText="Pehle PIN code daalein…"
-              placeholder={areas.length ? "Type ya chunein" : "Apna area likhein"}
-              customHint="apna likha hua area save hoga"
+              placeholder="Apna mohalla likhein"
+              customHint="ye naam save hoga"
             />
+            <p className="text-[11px] text-neutral-400 mt-1">
+              Apne mohalle ka naam likh dein — list mein ho ya na ho, wahi save hoga.
+            </p>
           </div>
         </div>
 
@@ -247,7 +255,12 @@ export function LocationStep({
         {/* Row 3 — Address + Landmark */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div>
-            {label(5, "Makaan / Building / Street")}
+            {/* Optional, not required: area + city + PIN + the map pin already
+                locate the PG. This only sharpens it for tenants who are coming
+                to visit, so it must never block a listing. */}
+            <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+              Makaan / Building <span className="text-neutral-400 font-normal">(optional)</span>
+            </label>
             <input
               type="text"
               className={inputCls}
@@ -305,7 +318,35 @@ export function LocationStep({
           {geoStatus === "fail" && (
             <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 text-xs text-amber-800">
               <AlertCircle size={14} className="shrink-0 mt-0.5" />
-              <span>Is address se exact location nahi mili. Neeche map pe apni jagah par click kar dein.</span>
+              <span>Is address se location nahi mili. Neeche map pe apni jagah par click kar dein.</span>
+            </div>
+          )}
+
+          {/* Say plainly what the map actually matched. A city-level match looks
+              identical to a doorstep match on screen, so without this an owner
+              would happily publish a pin that's kilometres off. */}
+          {geoStatus === "ok" && geoHit && (
+            <div
+              className={`flex items-start gap-2 rounded-lg px-3 py-2 mb-3 text-xs border ${
+                geoHit.precision === "exact"
+                  ? "bg-green-50 border-green-200 text-green-800"
+                  : "bg-amber-50 border-amber-200 text-amber-800"
+              }`}
+            >
+              {geoHit.precision === "exact" ? (
+                <CheckCircle2 size={14} className="shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle size={14} className="shrink-0 mt-0.5" />
+              )}
+              <span>
+                <strong>Map yahan set hua:</strong> {geoHit.label}
+                {geoHit.precision !== "exact" && (
+                  <>
+                    {" "}— ye {geoHit.precision === "city" ? "poore city" : "aapke area"} ka centre hai, aapke PG ki
+                    exact jagah nahi. <strong>Neeche pin ko drag karke apne PG par rakh dein.</strong>
+                  </>
+                )}
+              </span>
             </div>
           )}
 
@@ -339,7 +380,8 @@ export function validateLocation(v: LocationValue): string | null {
   if (!v.stateName.trim()) return "State chunein.";
   if (!v.cityName.trim()) return "City chunein.";
   if (v.pincode.length !== 6) return "6-digit PIN code daalein.";
-  if (!v.address.trim()) return "Address daalein (makaan / building / street).";
+  // Street address is deliberately optional — state/city/PIN plus the map pin
+  // are enough to place the PG, and requiring it only blocked owners.
   if (!v.latitude || !v.longitude)
     return "Location set nahi hui — 'Map par dikhayein' dabayein ya map pe pin karein.";
   return null;
