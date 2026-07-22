@@ -4,6 +4,8 @@
  */
 import Link from "next/link";
 import { Lock, Zap, Check } from "lucide-react";
+// Prices come from the canonical plan table so this card can never drift out of date.
+import { PLANS } from "@/lib/plans";
 
 interface Props {
   currentPlan?: string;
@@ -29,7 +31,7 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
         <div className="rounded-2xl border border-primary-200 bg-primary-50 p-6 text-left">
           <div className="flex items-center gap-2 mb-3">
             <Zap className="h-5 w-5 text-primary-600" />
-            <span className="font-bold text-primary-800">Growth — ₹999/mo</span>
+            <span className="font-bold text-primary-800">{PLANS.basic.name} — ₹{PLANS.basic.price}/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
             {["Tenant Management","Rent & Billing","WhatsApp Reminders","Complaints","Expenses","Reports & CSV Export"].map(f => (
@@ -47,7 +49,7 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
           </div>
           <div className="flex items-center gap-2 mb-3">
             <Zap className="h-5 w-5 text-purple-600" />
-            <span className="font-bold text-purple-800">Pro — ₹1799/mo</span>
+            <span className="font-bold text-purple-800">{PLANS.pro.name} — ₹{PLANS.pro.price}/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
             {["Everything in Growth","Staff & Payroll","Team Logins (Manager/Warden)","Audit Log","Advanced Reports"].map(f => (

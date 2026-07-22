@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
-import { isValidPlanId, getPlanTotalAmount, PLANS } from "@/lib/plans";
+import { isValidPlanId, getPlanTotalAmount, PLANS, PLAN_LIMITS } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,13 +41,7 @@ export async function POST(req: NextRequest) {
 
     if (!plan) {
       const def = PLANS[planId];
-      const LIMITS: Record<typeof planId, { maxListings: number; maxPhotos: number; maxTenants: number }> = {
-        free:  { maxListings: 1,   maxPhotos: 5,  maxTenants: 5 },
-        basic: { maxListings: 2,   maxPhotos: 10, maxTenants: 50 },
-        pro:   { maxListings: 5,   maxPhotos: 30, maxTenants: 100 },
-        scale: { maxListings: -1,  maxPhotos: 99, maxTenants: -1 },
-      };
-      const limits = LIMITS[planId];
+      const limits = PLAN_LIMITS[planId];
       plan = await db.plan.create({
         data: {
           name: def.name,

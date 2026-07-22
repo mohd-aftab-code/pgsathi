@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { PLANS, isValidPlanId, getPlanTotalAmount } from "@/lib/plans";
+import { PLANS, isValidPlanId, getPlanTotalAmount, getPlanPriceBreakdown } from "@/lib/plans";
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
@@ -17,7 +17,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
 
+  // Listed prices are GST-inclusive — the breakdown is only for the invoice view.
   const totalAmount = getPlanTotalAmount(planId);
+  const { base: baseAmount, gst: gstAmount } = getPlanPriceBreakdown(planId);
 
   const handlePayment = async () => {
     if (selectedPlan.price === 0) {
@@ -172,17 +174,20 @@ export default function CheckoutPage() {
           {selectedPlan.price > 0 && (
             <div className="space-y-3 text-sm text-neutral-600 border-t border-neutral-100 pt-6">
               <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="font-medium text-neutral-800">₹{selectedPlan.price}</span>
+                <span>Taxable value</span>
+                <span className="font-medium text-neutral-800">₹{baseAmount}</span>
               </div>
               <div className="flex justify-between">
                 <span>GST (18%)</span>
-                <span className="font-medium text-neutral-800">₹{Math.round(selectedPlan.price * 0.18)}</span>
+                <span className="font-medium text-neutral-800">₹{gstAmount}</span>
               </div>
               <div className="flex justify-between pt-3 border-t border-neutral-100 text-lg font-bold text-neutral-900">
                 <span>Total Amount</span>
                 <span>₹{totalAmount}</span>
               </div>
+              <p className="text-xs text-neutral-400 pt-1">
+                GST included — no extra charges at payment.
+              </p>
             </div>
           )}
         </div>

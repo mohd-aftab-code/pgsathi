@@ -88,7 +88,7 @@ export default async function TenantsPage({
         <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
           <TenantFilters q={q} status={status} listingId={listingId} listings={listings} />
           <div className="w-px h-6 bg-neutral-200 hidden md:block"></div>
-          <ImportCsvButton listings={listings} canImport={tier === "PRO" || tier === "SCALE"} />
+          <ImportCsvButton listings={listings} canImport={tier === "PRO" || tier === "SCALE" || tier === "ENTERPRISE"} />
           <ExportCsvButton data={exportData} filename="Tenants_Export" tier={tier} />
           <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1">
             <Plus className="h-4 w-4" /> Add Tenant

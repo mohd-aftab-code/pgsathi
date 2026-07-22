@@ -120,8 +120,17 @@ export function ImportCsvButton({
   return (
     <>
       <button
-        onClick={() => { if (!canImport) { toast.error("Bulk import is a Pro/Scale feature. Please upgrade your plan."); return; } reset(); setOpen(true); }}
-        title={canImport ? "Import tenants from CSV" : "Pro/Scale feature"}
+        onClick={() => {
+          if (!canImport) {
+            // Locked → take them straight to the plans page instead of a dead-end toast
+            toast("Bulk Import is a Pro plan feature", { icon: "🔒" });
+            router.push("/dashboard/owner/subscription/upgrade");
+            return;
+          }
+          reset();
+          setOpen(true);
+        }}
+        title={canImport ? "Import tenants from CSV" : "Pro plan feature — see plans"}
         className={`btn-outline py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1.5 ${canImport ? "" : "opacity-75"}`}
       >
         <FileUp className="h-4 w-4" /> Import CSV

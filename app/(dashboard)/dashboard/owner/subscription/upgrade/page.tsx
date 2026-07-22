@@ -7,7 +7,7 @@ export const metadata = { title: "Upgrade to Premium — PGSathi" };
 type FeatureRow = { text: string; comingSoon?: boolean };
 
 const TIERS: {
-  planId: "basic" | "pro" | "scale";
+  planId: "basic" | "pro" | "scale" | "enterprise";
   tagline: string;
   features: FeatureRow[];
   recommended?: boolean;
@@ -34,29 +34,42 @@ const TIERS: {
       { text: "Staff & payroll management" },
       { text: "Team logins (Manager/Warden)" },
       { text: "Advanced reports & audit log" },
-      { text: "Up to 100 tenants, 5 PGs" },
+      { text: "Up to 100 tenants, 3 PGs" },
       { text: "Attendance & advances", comingSoon: true },
-      { text: "Bulk CSV import", comingSoon: true },
+      { text: "Bulk CSV import" },
     ],
   },
   {
     planId: "scale",
-    tagline: "Unlimited scale + priority support.",
+    tagline: "Multi-PG operators — bigger caps, priority support.",
     features: [
       { text: "Everything in Pro" },
-      { text: "Unlimited tenants & PGs" },
+      { text: "Up to 200 tenants, 5 PGs" },
       { text: "Multi-branch analytics" },
       { text: "Dedicated WhatsApp & phone support" },
       { text: "Ad-free dashboard" },
+      { text: "60 photos per listing" },
+      { text: "Priority complaint escalation" },
+    ],
+  },
+  {
+    planId: "enterprise",
+    tagline: "No limits at all — for chains and hostel operators.",
+    features: [
+      { text: "Everything in Scale" },
+      { text: "Unlimited tenants & unlimited PGs" },
+      { text: "Dedicated account manager" },
+      { text: "Free onboarding & data migration" },
+      { text: "99.9% uptime SLA + priority bug fixes" },
       { text: "API access", comingSoon: true },
-      { text: "Custom branding", comingSoon: true },
+      { text: "Custom branding (white-label)", comingSoon: true },
     ],
   },
 ];
 
 export default async function UpgradePage() {
   return (
-    <div className="max-w-6xl mx-auto py-8">
+    <div className="max-w-7xl mx-auto py-8">
       <div className="text-center mb-10">
         <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertCircle size={32} />
@@ -67,7 +80,7 @@ export default async function UpgradePage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
+      <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
         {TIERS.map((tier) => {
           const plan = PLANS[tier.planId];
           return (
@@ -75,13 +88,20 @@ export default async function UpgradePage() {
               key={tier.planId}
               className={
                 tier.recommended
-                  ? "bg-neutral-900 rounded-3xl p-8 shadow-xl relative overflow-hidden ring-2 ring-primary-500 ring-offset-2"
-                  : "bg-white rounded-3xl p-8 border border-neutral-200 shadow-sm relative"
+                  ? "bg-neutral-900 rounded-3xl p-6 shadow-xl relative overflow-hidden ring-2 ring-primary-500 ring-offset-2"
+                  : tier.planId === "enterprise"
+                  ? "bg-white rounded-3xl p-6 border-2 border-primary-300 shadow-md relative overflow-hidden"
+                  : "bg-white rounded-3xl p-6 border border-neutral-200 shadow-sm relative"
               }
             >
               {tier.recommended && (
                 <div className="absolute top-0 right-0 bg-gradient-to-r from-primary-600 to-primary-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg">
                   Recommended
+                </div>
+              )}
+              {tier.planId === "enterprise" && (
+                <div className="absolute top-0 right-0 bg-primary-100 text-primary-700 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg">
+                  Unlimited
                 </div>
               )}
 
@@ -94,6 +114,7 @@ export default async function UpgradePage() {
               <div className="mb-6">
                 <span className={`text-4xl font-extrabold ${tier.recommended ? "text-white" : "text-neutral-900"}`}>₹{plan.price}</span>
                 <span className="text-neutral-500 font-medium">/mo</span>
+                <span className="block text-xs text-neutral-400 font-semibold mt-0.5">GST included</span>
               </div>
 
               <ul className="space-y-3 mb-8">

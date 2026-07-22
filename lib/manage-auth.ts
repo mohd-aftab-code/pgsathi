@@ -8,7 +8,14 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
-export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO" | "SCALE";
+export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO" | "SCALE" | "ENTERPRISE";
+
+/** Every tier that counts as a paid subscription. Add new paid tiers here only. */
+export const PAID_TIERS: PlanTier[] = ["GROWTH", "PRO", "SCALE", "ENTERPRISE"];
+
+export function isPaidTier(tier: string): boolean {
+  return (PAID_TIERS as string[]).includes(tier);
+}
 
 /**
  * Accounts created before this cutoff keep the old "free 15-day CRM trial on
@@ -55,6 +62,8 @@ export async function getPlanTier(userId: number): Promise<PlanTier> {
   if (!sub) return "NONE";
 
   const slug = sub.plan.slug.toUpperCase();
+  // Order matters — check the highest tier first so a slug never falls through.
+  if (slug.includes("ENTERPRISE")) return "ENTERPRISE";
   if (slug.includes("SCALE")) return "SCALE";
   if (slug.includes("PRO")) return "PRO";
   if (slug.includes("GROWTH") || slug.includes("BASIC")) return "GROWTH";
@@ -124,8 +133,8 @@ export async function getManageContext() {
     name,
     role,
     email: session.user.email ?? "",
-    hasPaidPlan: tier === "GROWTH" || tier === "PRO" || tier === "SCALE",
-    hasAccess: tier === "GROWTH" || tier === "PRO" || tier === "SCALE" || trial.active,
+    hasPaidPlan: isPaidTier(tier),
+    hasAccess: isPaidTier(tier) || trial.active,
   };
 }
 

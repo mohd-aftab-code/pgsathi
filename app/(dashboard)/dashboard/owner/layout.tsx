@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
-import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
 
 export const metadata = {
   title: "Owner Dashboard - PGSathi",
@@ -31,7 +31,7 @@ export default async function OwnerDashboardLayout({
 
   const userId = parseInt(session.user.id);
   const [tier, trial] = await Promise.all([getPlanTier(userId), isTrialActive(userId)]);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
+  const hasPaidPlan = isPaidTier(tier);
 
   return (
     <div className="min-h-screen bg-canvas">

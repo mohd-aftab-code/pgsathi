@@ -10,7 +10,8 @@ export function AdSlot() {
       <span className="block text-center text-[9px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">
         Advertisement
       </span>
-      <div className="rounded-lg bg-neutral-100 h-24 flex items-center justify-center px-2">
+      {/* Shorter box on low-height laptops so the ad never crowds the nav out. */}
+      <div className="rounded-lg bg-neutral-100 h-14 [@media(min-height:800px)]:h-24 flex items-center justify-center px-2">
         <span className="text-[10px] text-neutral-400 text-center leading-snug">
           Ad space — upgrade to Pro or Scale to remove ads
         </span>

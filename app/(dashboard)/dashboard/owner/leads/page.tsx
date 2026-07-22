@@ -5,7 +5,7 @@ import { Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock }
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import { LeadStatusControl } from "@/components/manage/LeadStatusControl";
-import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
 import { ExportCsvButton } from "@/components/common/ExportCsvButton";
 import { LeadsFilter } from "@/components/dashboard/LeadsFilter";
 
@@ -26,7 +26,7 @@ export default async function VisitsInboxPage({
 
   const tier = await getPlanTier(ownerId);
   const trial = await isTrialActive(ownerId);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
+  const hasPaidPlan = isPaidTier(tier);
   const hasAccess = hasPaidPlan || trial.active;
 
   const q = typeof sp.q === 'string' ? sp.q : undefined;

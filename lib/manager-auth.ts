@@ -5,7 +5,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPlanTier, isTrialActive } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
 
 /**
  * Checks that the current user is a logged-in MANAGER.
@@ -39,7 +39,7 @@ export async function requireManagerAccess() {
 
   const tier = await getPlanTier(ownerId);
   const trial = await isTrialActive(ownerId);
-  const hasPaidPlan = tier === "GROWTH" || tier === "PRO" || tier === "SCALE";
+  const hasPaidPlan = isPaidTier(tier);
   const hasAccess = hasPaidPlan || trial.active;
 
   // Optional: Gate features based on tier for owners

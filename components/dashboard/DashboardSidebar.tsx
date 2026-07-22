@@ -62,9 +62,10 @@ export function DashboardSidebar({
       {/* ── Desktop Rail — fixed flush to the left edge ─────── */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-violet-300 border-r border-violet-400 w-64">
         {/* Brand mark */}
-        <Link href={brandHref} className="flex items-center h-20 shrink-0 border-b border-violet-400 gap-2.5 px-4">
+        {/* Brand shrinks on short laptops so the nav keeps its room. */}
+        <Link href={brandHref} className="flex items-center h-16 [@media(min-height:800px)]:h-20 shrink-0 border-b border-violet-400 gap-2.5 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-icon.png" alt="PGSathi" className="w-11 h-11 object-contain shrink-0" />
+          <img src="/logo-icon.png" alt="PGSathi" className="w-9 h-9 [@media(min-height:800px)]:w-11 [@media(min-height:800px)]:h-11 object-contain shrink-0 transition-all" />
           <span className="text-neutral-900 font-bold text-lg whitespace-nowrap">PGSathi</span>
         </Link>
 
@@ -78,10 +79,14 @@ export function DashboardSidebar({
           </Link>
         )}
 
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 scrollbar-hide">
-          <div className="flex flex-col px-3">
+        {/* Nav + footer share ONE scroll container. `min-h-0` lets it actually shrink
+            inside the flex column (without it the footer gets pushed off-screen on
+            short laptops), and `mt-auto` still pins the footer to the bottom when
+            there is spare height. Nothing clips — on a short screen it just scrolls. */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col scrollbar-hide">
+          <nav className="flex flex-col px-3 py-2 [@media(min-height:800px)]:py-3">
             {visibleGroups.map((group, gi) => (
-              <div key={group.category} className={gi > 0 ? "mt-3" : ""}>
+              <div key={group.category} className={gi > 0 ? "mt-2 [@media(min-height:800px)]:mt-3" : ""}>
                 <p className="px-3 mb-1 text-[11px] font-bold text-neutral-500 uppercase tracking-wide whitespace-nowrap">
                   {group.category}
                 </p>
@@ -107,10 +112,10 @@ export function DashboardSidebar({
                 </div>
               </div>
             ))}
-          </div>
-        </nav>
+          </nav>
 
-        {footer && <div className="px-3 pb-3 shrink-0">{footer}</div>}
+          {footer && <div className="mt-auto px-3 pt-2 pb-3">{footer}</div>}
+        </div>
       </aside>
 
       {/* ── Content — static offset for fixed sidebar ─────── */}

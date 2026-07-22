@@ -68,7 +68,7 @@ export function OwnerSidebar({
 }) {
   const hasManagerAccess = hasPaidPlan || trialDaysLeft > 0;
   const ownerNav = buildOwnerNav(hasManagerAccess);
-  const showAds = tier !== "PRO" && tier !== "SCALE";
+  const showAds = tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE";
   const planWidget = hasPaidPlan ? null : trialDaysLeft > 0 ? (
     <div className="rounded-xl bg-white border border-violet-100 p-3 shadow-sm">
       <div className="flex items-center gap-1.5 mb-1">

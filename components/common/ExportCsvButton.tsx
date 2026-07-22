@@ -1,6 +1,7 @@
 "use client";
 
 import { FileDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface ExportCsvButtonProps {
@@ -11,12 +12,16 @@ interface ExportCsvButtonProps {
 }
 
 export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButtonProps) {
-  // Scale is the tier above Pro — it must not be locked out of an export Pro already has.
-  const canExport = tier === "PRO" || tier === "SCALE";
+  const router = useRouter();
+  // The price catalogue lists "Reports & CSV export" from Growth upward — the code
+  // must honour that promise (and Scale, the tier above Pro, must never be locked out).
+  const canExport = tier === "GROWTH" || tier === "PRO" || tier === "SCALE" || tier === "ENTERPRISE";
 
   const handleExport = () => {
     if (!canExport) {
-      toast.error("CSV Export is a Pro/Scale feature. Please upgrade your plan.");
+      // Locked → take them straight to the plans page instead of a dead-end toast
+      toast("CSV Export is available from the Growth plan", { icon: "🔒" });
+      router.push("/dashboard/owner/subscription/upgrade");
       return;
     }
 
@@ -66,10 +71,10 @@ export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButt
       className={`btn-outline py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1.5 ${
         canExport ? "" : "opacity-75"
       }`}
-      title={canExport ? "Export to CSV" : "Pro/Scale feature"}
+      title={canExport ? "Export to CSV" : "Available from the Growth plan — see plans"}
     >
       <FileDown className="h-4 w-4" /> Export CSV
-      {!canExport && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">PRO</span>}
+      {!canExport && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">GROWTH</span>}
     </button>
   );
 }
