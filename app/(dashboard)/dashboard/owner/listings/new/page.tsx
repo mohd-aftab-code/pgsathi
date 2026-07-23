@@ -65,7 +65,6 @@ const DEFAULT_FORM = {
   longitude: null as number | null,
 
   // Step 3: PG Details
-  availableFrom: "",
   noticePeriod: "No",
   foodIncluded: "No",
   gateClosingTime: "No",
@@ -443,16 +442,11 @@ export default function NewListingPage() {
       <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
         <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
         
+        {/* "Available From" used to sit here marked required. It had no column in
+            the schema and was never sent to the API — the owner filled a date
+            that went nowhere. Removed rather than wired up: a PG being listed is
+            available now, and vacancy is tracked per-bed in PG Manager. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Available From *</label>
-            <input 
-              type="date" 
-              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
-              value={formData.availableFrom}
-              onChange={e => setFormData({...formData, availableFrom: e.target.value})}
-            />
-          </div>
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Notice Period</label>
             <div className="grid grid-cols-2 gap-4">

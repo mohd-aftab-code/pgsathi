@@ -63,7 +63,6 @@ const DEFAULT_FORM = {
   longitude: null as number | null,
 
   // Step 3: PG Details
-  availableFrom: "",
   noticePeriod: "No",
   foodIncluded: "No",
   gateClosingTime: "No",
@@ -153,7 +152,6 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             landmark: l.landmark || "",
             latitude: l.latitude || null,
             longitude: l.longitude || null,
-            availableFrom: l.availableFrom || "",
             noticePeriod: l.noticePeriod ? "Yes" : "No",
             foodIncluded: l.foodIncluded ? "Yes" : "No",
             gateClosingTime: l.gateClosingTime ? "Yes" : "No",
@@ -481,16 +479,9 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Provide Details of PG</h3>
         
+        {/* "Available From" removed — see the new-listing form: it had no schema
+            column and was never submitted. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">Available From *</label>
-            <input 
-              type="date" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
-              value={formData.availableFrom}
-              onChange={e => setFormData({...formData, availableFrom: e.target.value})}
-            />
-          </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-3">Notice Period</label>
             <div className="flex items-center gap-6">

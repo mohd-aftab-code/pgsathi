@@ -4,7 +4,8 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Search, Loader2, MapPin } from "lucide-react";
+import { Search, Loader2, MapPin, Link2 } from "lucide-react";
+import { parseMapInput, isShortMapLink } from "@/lib/map-link";
 
 // Fix missing marker icons in production builds
 if (typeof window !== "undefined") {
@@ -70,6 +71,7 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [linkNote, setLinkNote] = useState("");
   const markerRef = useRef<L.Marker>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -102,14 +104,66 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
     [onChange, onAddressFound]
   );
 
+  /**
+   * Owners typically already have their PG pinned on Google Maps. Pasting that
+   * link (or bare coordinates) drops the marker exactly there instead of making
+   * them find the same spot again on this map.
+   */
+  const applyPastedLink = async (value: string): Promise<boolean> => {
+    const direct = parseMapInput(value);
+    if (direct) {
+      setMarkerPos([direct.lat, direct.lng]);
+      onChange(direct.lat, direct.lng);
+      setLinkNote("✓ Google Maps location set ho gayi");
+      setShowResults(false);
+      setSearchResults([]);
+      return true;
+    }
+
+    if (isShortMapLink(value)) {
+      setSearching(true);
+      setLinkNote("Google link khol rahe hain…");
+      try {
+        const res = await fetch("/api/geo/resolve-link", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: value.trim() }),
+        });
+        const d = await res.json();
+        if (d.success) {
+          setMarkerPos([d.latitude, d.longitude]);
+          onChange(d.latitude, d.longitude);
+          setLinkNote("✓ Google Maps location set ho gayi");
+          setShowResults(false);
+          setSearchResults([]);
+          return true;
+        }
+        setLinkNote(d.message || "Is link se location nahi mili");
+      } catch {
+        setLinkNote("Link kholne mein dikkat aayi");
+      } finally {
+        setSearching(false);
+      }
+      return true; // handled — don't fall through to a text search
+    }
+    return false;
+  };
+
   // Search address via Nominatim
   const handleSearchInput = (value: string) => {
     setSearchQuery(value);
     setShowResults(false);
+    setLinkNote("");
 
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     if (!value.trim() || value.length < 3) {
       setSearchResults([]);
+      return;
+    }
+
+    // A pasted link/coords resolves immediately — no debounce, no text search
+    if (parseMapInput(value) || isShortMapLink(value)) {
+      applyPastedLink(value);
       return;
     }
 
@@ -160,11 +214,32 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => handleSearchInput(e.target.value)}
+              onPaste={(e) => {
+                // Handle the paste directly: React's onChange fires with the same
+                // text a tick later, but doing it here means the marker moves the
+                // instant they paste, with no debounce.
+                const text = e.clipboardData.getData("text");
+                if (parseMapInput(text) || isShortMapLink(text)) {
+                  e.preventDefault();
+                  setSearchQuery(text);
+                  applyPastedLink(text);
+                }
+              }}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
-              placeholder="Search address, area, landmark..."
+              placeholder="Google Maps link paste karein, ya address search karein"
               className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
             />
           </div>
+
+          {linkNote && (
+            <div
+              className={`mt-1 flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg shadow ${
+                linkNote.startsWith("✓") ? "bg-green-600 text-white" : "bg-white text-neutral-700 border border-neutral-200"
+              }`}
+            >
+              <Link2 size={12} className="shrink-0" /> {linkNote}
+            </div>
+          )}
 
           {/* Search Results Dropdown */}
           {showResults && searchResults.length > 0 && (
