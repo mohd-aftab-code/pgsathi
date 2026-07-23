@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRazorpayClient } from "@/lib/razorpay";
 import { auth } from "@/lib/auth";
-import { isValidPlanId, getPlanTotalAmount } from "@/lib/plans";
+import { getServerPlanAmount } from "@/lib/plan-service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,11 +12,11 @@ export async function POST(req: NextRequest) {
 
     const { planId } = await req.json();
 
-    if (!planId || !isValidPlanId(planId)) {
+    // Amount comes from the DB plan (super-admin controlled), never the client.
+    const amount = typeof planId === "string" ? await getServerPlanAmount(planId) : null;
+    if (amount === null) {
       return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
     }
-
-    const amount = getPlanTotalAmount(planId);
     if (amount <= 0) {
       return NextResponse.json({ success: false, message: "This plan does not require payment" }, { status: 400 });
     }

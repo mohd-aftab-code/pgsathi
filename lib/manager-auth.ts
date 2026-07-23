@@ -5,7 +5,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier, getPlanCapabilities } from "@/lib/manage-auth";
 
 /**
  * Checks that the current user is a logged-in MANAGER.
@@ -37,8 +37,11 @@ export async function requireManagerAccess() {
     ownerId = parseInt(session.user.id);
   }
 
-  const tier = await getPlanTier(ownerId);
-  const trial = await isTrialActive(ownerId);
+  const [tier, trial, capabilities] = await Promise.all([
+    getPlanTier(ownerId),
+    isTrialActive(ownerId),
+    getPlanCapabilities(ownerId),
+  ]);
   const hasPaidPlan = isPaidTier(tier);
   const hasAccess = hasPaidPlan || trial.active;
 
@@ -53,6 +56,7 @@ export async function requireManagerAccess() {
     trial,
     hasPaidPlan,
     hasAccess,
+    capabilities,
     name,
     email: session.user.email ?? "",
     managerRole,

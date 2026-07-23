@@ -62,17 +62,21 @@ export function OwnerSidebar({
   hasPaidPlan = false,
   trialDaysLeft = 0,
   tier = "NONE",
+  showAds: showAdsProp,
   children,
 }: {
   hasPaidPlan?: boolean;
   trialDaysLeft?: number;
-  /** Actual billing tier — Pro & Scale are ad-free; Starter & Growth (and free trials) see ads. */
+  /** Billing tier — used only for the plan-name label, not for gating. */
   tier?: PlanTier;
+  /** Whether to show dashboard ads — the inverse of the plan's `adsFree`
+   *  capability (super-admin controlled). Falls back to the old tier logic. */
+  showAds?: boolean;
   children?: React.ReactNode;
 }) {
   const hasManagerAccess = hasPaidPlan || trialDaysLeft > 0;
   const ownerNav = buildOwnerNav(hasManagerAccess);
-  const showAds = tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE";
+  const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE");
   const displayTier = tier === "NONE" || tier === "STARTER" ? "Basic" : tier;
   const isEnterprise = tier === "ENTERPRISE";
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { readCapabilities } from "@/lib/plan-capabilities";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -23,6 +24,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         maxPhotos: body.maxPhotos !== undefined ? parseInt(body.maxPhotos) : undefined,
         maxTenants: body.maxTenants !== undefined ? parseInt(body.maxTenants) : undefined,
         features: body.features !== undefined ? body.features : undefined,
+        tagline: body.tagline !== undefined ? body.tagline || null : undefined,
+        recommended: body.recommended !== undefined ? body.recommended === true : undefined,
+        badge: body.badge !== undefined ? body.badge || null : undefined,
+        sortOrder: body.sortOrder !== undefined ? parseInt(body.sortOrder) : undefined,
+        capabilities: body.capabilities !== undefined ? (readCapabilities(body.capabilities) as object) : undefined,
         isActive: body.isActive !== undefined ? body.isActive : undefined,
       }
     });

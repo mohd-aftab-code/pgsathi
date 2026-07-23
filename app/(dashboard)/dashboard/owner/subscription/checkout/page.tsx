@@ -1,25 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { PLANS, isValidPlanId, getPlanTotalAmount, getPlanPriceBreakdown } from "@/lib/plans";
+import { PLANS, isValidPlanId, GST_RATE } from "@/lib/plans";
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const rawPlanId = searchParams?.get("plan") ?? "basic";
-  const planId = isValidPlanId(rawPlanId) ? rawPlanId : "basic";
-  const selectedPlan = PLANS[planId];
+  const planId = searchParams?.get("plan") ?? "basic"; // any slug; the server validates at payment
+
+  // Plan shown here comes from the DB (super-admin controlled). Start from the
+  // hardcoded fallback so the first paint has a value, then replace with the
+  // live DB row. The real charge is derived server-side, so display can't be gamed.
+  const fallback = isValidPlanId(planId)
+    ? { name: PLANS[planId].name, price: PLANS[planId].price }
+    : { name: planId, price: 0 };
+  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: number }>(fallback);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/plans/public")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive || !d?.success) return;
+        const hit = (d.data as any[]).find((p) => p.slug === planId);
+        if (hit) setSelectedPlan({ name: hit.name, price: hit.price });
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [planId]);
 
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
 
   // Listed prices are GST-inclusive — the breakdown is only for the invoice view.
-  const totalAmount = getPlanTotalAmount(planId);
-  const { base: baseAmount, gst: gstAmount } = getPlanPriceBreakdown(planId);
+  const totalAmount = selectedPlan.price;
+  const baseAmount = Math.round(totalAmount / (1 + GST_RATE));
+  const gstAmount = totalAmount - baseAmount;
 
   const handlePayment = async () => {
     if (selectedPlan.price === 0) {
@@ -166,7 +186,7 @@ export default function CheckoutPage() {
               <span className="font-extrabold text-neutral-900 text-lg">₹{selectedPlan.price}</span>
             </div>
             <div className="text-sm text-neutral-500 flex justify-between">
-              <span>Duration: {selectedPlan.duration}</span>
+              <span>Duration: {selectedPlan.price === 0 ? "Free" : "1 Month"}</span>
               <span>{selectedPlan.price === 0 ? "No charges" : "Billed once"}</span>
             </div>
           </div>

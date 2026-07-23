@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       return s;
     });
 
-    return NextResponse.json({ success: true, data: enrichedStaff, tier: ctx.tier });
+    return NextResponse.json({ success: true, data: enrichedStaff, tier: ctx.tier, staffEnabled: ctx.capabilities.staff });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
 
     const role = data.role ?? "OTHER";
 
-    if (role === "MANAGER" && ctx.tier !== "PRO") {
-      return NextResponse.json({ success: false, message: "PRO plan is required to add Team Managers." }, { status: 403 });
+    if (role === "MANAGER" && !ctx.capabilities.staff) {
+      return NextResponse.json({ success: false, message: "Your plan does not include Team Manager logins. Please upgrade." }, { status: 403 });
     }
 
     // 1. Create Staff Record

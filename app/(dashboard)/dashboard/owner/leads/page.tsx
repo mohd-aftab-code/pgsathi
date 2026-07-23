@@ -5,7 +5,7 @@ import { Mail, Phone, ExternalLink, CalendarDays, MessageCircle, CalendarClock }
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import { LeadStatusControl } from "@/components/manage/LeadStatusControl";
-import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier, getPlanCapabilities } from "@/lib/manage-auth";
 import { ExportCsvButton } from "@/components/common/ExportCsvButton";
 import { LeadsFilter } from "@/components/dashboard/LeadsFilter";
 
@@ -24,10 +24,15 @@ export default async function VisitsInboxPage({
 
   const ownerId = parseInt(session.user.id!);
 
-  const tier = await getPlanTier(ownerId);
-  const trial = await isTrialActive(ownerId);
+  const [tier, trial, capabilities] = await Promise.all([
+    getPlanTier(ownerId),
+    isTrialActive(ownerId),
+    getPlanCapabilities(ownerId),
+  ]);
   const hasPaidPlan = isPaidTier(tier);
-  const hasAccess = hasPaidPlan || trial.active;
+  // Lead phone/contact unlock: the plan's `leads` capability (admin-controlled),
+  // OR an active trial — so a trial keeps unlocking leads as it did before.
+  const hasAccess = capabilities.leads || trial.active;
 
   const q = typeof sp.q === 'string' ? sp.q : undefined;
   const status = typeof sp.status === 'string' ? sp.status : undefined;
@@ -172,7 +177,7 @@ export default async function VisitsInboxPage({
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Mail className="text-neutral-600" /> General Inquiries (Leads)
             </h2>
-            <ExportCsvButton data={exportData} filename="Leads_Export" tier={tier} />
+            <ExportCsvButton data={exportData} filename="Leads_Export" canExport={capabilities.csvExport} />
           </div>
           
           {/* Pipeline summary + stage filter */}

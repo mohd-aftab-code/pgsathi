@@ -123,7 +123,7 @@ export function ImportCsvButton({
         onClick={() => {
           if (!canImport) {
             // Locked → take them straight to the plans page instead of a dead-end toast
-            toast("Bulk Import is a Pro plan feature", { icon: "🔒" });
+            toast("Bulk Import isn't included in your plan — upgrade to unlock", { icon: "🔒" });
             router.push("/dashboard/owner/subscription/upgrade");
             return;
           }

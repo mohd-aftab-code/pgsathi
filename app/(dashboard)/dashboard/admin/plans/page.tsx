@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock } from "lucide-react";
+import { CAPABILITY_META, NO_CAPABILITIES, readCapabilities, type PlanCapabilities } from "@/lib/plan-capabilities";
+
+type Feature = { name: string; included: boolean; comingSoon?: boolean };
 
 export default function AdminPlansPage() {
   const [plans, setPlans] = useState<any[]>([]);
@@ -9,16 +12,21 @@ export default function AdminPlansPage() {
   const [editingPlan, setEditingPlan] = useState<any>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Form State
+  // Form State — everything a plan shows or unlocks is editable here.
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    tagline: "",
+    badge: "",
+    recommended: false,
+    sortOrder: "0",
     price: "",
     yearlyPrice: "",
     maxListings: "",
     maxPhotos: "",
     maxTenants: "",
-    features: [] as { name: string; included: boolean }[],
+    features: [] as Feature[],
+    capabilities: { ...NO_CAPABILITIES } as PlanCapabilities,
     isActive: true,
   });
 
@@ -42,12 +50,17 @@ export default function AdminPlansPage() {
       setFormData({
         name: plan.name,
         slug: plan.slug,
+        tagline: plan.tagline ?? "",
+        badge: plan.badge ?? "",
+        recommended: !!plan.recommended,
+        sortOrder: (plan.sortOrder ?? 0).toString(),
         price: plan.price.toString(),
         yearlyPrice: plan.yearlyPrice ? plan.yearlyPrice.toString() : "",
         maxListings: plan.maxListings.toString(),
         maxPhotos: plan.maxPhotos.toString(),
         maxTenants: plan.maxTenants ? plan.maxTenants.toString() : "",
         features: Array.isArray(plan.features) ? plan.features : [],
+        capabilities: readCapabilities(plan.capabilities),
         isActive: plan.isActive,
       });
     } else {
@@ -55,12 +68,17 @@ export default function AdminPlansPage() {
       setFormData({
         name: "",
         slug: "",
+        tagline: "",
+        badge: "",
+        recommended: false,
+        sortOrder: (plans.length + 1).toString(),
         price: "",
         yearlyPrice: "",
         maxListings: "",
         maxPhotos: "",
         maxTenants: "",
         features: [],
+        capabilities: { ...NO_CAPABILITIES },
         isActive: true,
       });
     }
@@ -96,8 +114,15 @@ export default function AdminPlansPage() {
   const addFeature = () => {
     setFormData({
       ...formData,
-      features: [...formData.features, { name: "", included: true }]
+      features: [...formData.features, { name: "", included: true, comingSoon: false }]
     });
+  };
+
+  const toggleCapability = (key: keyof PlanCapabilities) => {
+    setFormData((prev) => ({
+      ...prev,
+      capabilities: { ...prev.capabilities, [key]: !prev.capabilities[key] },
+    }));
   };
 
   const updateFeature = (index: number, key: string, value: any) => {
@@ -146,6 +171,27 @@ export default function AdminPlansPage() {
               <label className="block text-sm font-medium text-neutral-700 mb-1">Slug (e.g. basic, pro)</label>
               <input required type="text" className="w-full border rounded-xl p-2.5" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} />
             </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Tagline <span className="text-neutral-400 font-normal">(short line under the plan name)</span></label>
+              <input type="text" className="w-full border rounded-xl p-2.5" placeholder="e.g. Complete CRM — staff, team logins, audit trail." value={formData.tagline} onChange={e => setFormData({...formData, tagline: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Corner Badge <span className="text-neutral-400 font-normal">(optional, e.g. Unlimited)</span></label>
+              <input type="text" maxLength={30} className="w-full border rounded-xl p-2.5" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Display Order <span className="text-neutral-400 font-normal">(lower = shown first)</span></label>
+              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.sortOrder} onChange={e => setFormData({...formData, sortOrder: e.target.value})} />
+            </div>
+            <div className="md:col-span-2">
+              <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors ${formData.recommended ? 'border-primary-400 bg-primary-50' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}>
+                <input type="checkbox" className="w-5 h-5 text-primary-600 rounded cursor-pointer" checked={formData.recommended} onChange={e => setFormData({...formData, recommended: e.target.checked})} />
+                <Star size={16} className={formData.recommended ? 'text-primary-600' : 'text-neutral-400'} />
+                <span className="text-sm font-semibold text-neutral-800">Mark as “Recommended” <span className="font-normal text-neutral-500">— highlights this plan on the pricing &amp; upgrade pages</span></span>
+              </label>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">Monthly Price (₹)</label>
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
@@ -179,27 +225,40 @@ export default function AdminPlansPage() {
               </div>
               <div className="space-y-3">
                 {formData.features.map((feat, idx) => (
-                  <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-neutral-200 shadow-sm transition-all focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100">
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Audit log, Meter billing..." 
-                      className="flex-1 border-none focus:ring-0 text-sm font-medium outline-none px-2" 
-                      value={feat.name} 
-                      onChange={e => updateFeature(idx, "name", e.target.value)} 
+                  <div key={idx} className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 bg-white p-3 rounded-xl border border-neutral-200 shadow-sm transition-all focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100">
+                    <input
+                      type="text"
+                      placeholder="e.g. Audit log, Meter billing..."
+                      className="flex-1 min-w-[140px] border-none focus:ring-0 text-sm font-medium outline-none px-2"
+                      value={feat.name}
+                      onChange={e => updateFeature(idx, "name", e.target.value)}
                     />
-                    <div className="w-px h-6 bg-neutral-200"></div>
-                    <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer shrink-0 min-w-24 px-2 select-none">
-                      <input 
-                        type="checkbox" 
+                    <div className="hidden sm:block w-px h-6 bg-neutral-200"></div>
+                    <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer shrink-0 px-2 select-none">
+                      <input
+                        type="checkbox"
                         className="w-4 h-4 text-primary-600 rounded cursor-pointer"
-                        checked={feat.included} 
-                        onChange={e => updateFeature(idx, "included", e.target.checked)} 
+                        checked={feat.included}
+                        onChange={e => updateFeature(idx, "included", e.target.checked)}
                       />
                       <span className={feat.included ? 'text-green-600' : 'text-neutral-400'}>
                         {feat.included ? 'Included' : 'Excluded'}
                       </span>
                     </label>
-                    <button type="button" onClick={() => removeFeature(idx)} className="text-neutral-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"><Trash2 size={18}/></button>
+                    <div className="hidden sm:block w-px h-6 bg-neutral-200"></div>
+                    {/* Coming-soon marks a feature as promised-but-not-live (amber clock on the cards). */}
+                    <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer shrink-0 px-2 select-none">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 text-amber-500 rounded cursor-pointer"
+                        checked={!!feat.comingSoon}
+                        onChange={e => updateFeature(idx, "comingSoon", e.target.checked)}
+                      />
+                      <span className={feat.comingSoon ? 'text-amber-600 flex items-center gap-1' : 'text-neutral-400 flex items-center gap-1'}>
+                        <Clock size={13} /> Soon
+                      </span>
+                    </label>
+                    <button type="button" onClick={() => removeFeature(idx)} className="text-neutral-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors shrink-0"><Trash2 size={18}/></button>
                   </div>
                 ))}
                 {formData.features.length === 0 && (
@@ -208,6 +267,29 @@ export default function AdminPlansPage() {
                     <p className="text-xs mt-1">Click "Add Feature" to start building the checklist.</p>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Capabilities — the actual feature switches this plan unlocks. These
+                drive the real gates in the app (CSV, ads, staff, leads, CRM). */}
+            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
+              <div className="mb-4 pb-4 border-b border-neutral-200">
+                <h3 className="text-lg font-bold text-neutral-900">Feature Access</h3>
+                <p className="text-sm text-neutral-500">Turn on what this plan unlocks. Ye seedhe app ke gates control karte hain.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {CAPABILITY_META.map((cap) => {
+                  const on = formData.capabilities[cap.key];
+                  return (
+                    <label key={cap.key} className={`flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors ${on ? 'border-green-300 bg-green-50' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}>
+                      <input type="checkbox" className="w-5 h-5 mt-0.5 text-green-600 rounded cursor-pointer shrink-0" checked={on} onChange={() => toggleCapability(cap.key)} />
+                      <span>
+                        <span className={`block text-sm font-bold ${on ? 'text-green-800' : 'text-neutral-700'}`}>{cap.label}</span>
+                        <span className="block text-xs text-neutral-500">{cap.hint}</span>
+                      </span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 

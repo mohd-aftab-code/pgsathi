@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { readCapabilities } from "@/lib/plan-capabilities";
 
 export async function GET(req: NextRequest) {
   try {
@@ -37,7 +38,14 @@ export async function POST(req: NextRequest) {
         maxListings: parseInt(body.maxListings),
         maxPhotos: parseInt(body.maxPhotos),
         maxTenants: parseInt(body.maxTenants),
-        features: body.features || {},
+        features: body.features || [],
+        // Super-admin controlled presentation + capability flags. Capabilities are
+        // normalised through readCapabilities so only known keys are ever stored.
+        tagline: body.tagline || null,
+        recommended: body.recommended === true,
+        badge: body.badge || null,
+        sortOrder: body.sortOrder !== undefined ? parseInt(body.sortOrder) : 0,
+        capabilities: readCapabilities(body.capabilities) as object,
         isActive: body.isActive !== false,
       }
     });

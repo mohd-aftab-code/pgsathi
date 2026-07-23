@@ -7,6 +7,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { readCapabilities, NO_CAPABILITIES, type PlanCapabilities } from "@/lib/plan-capabilities";
 
 export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO" | "SCALE" | "ENTERPRISE";
 
@@ -71,6 +72,21 @@ export async function getPlanTier(userId: number): Promise<PlanTier> {
 }
 
 /**
+ * The feature switches for a user's active plan — the DB-driven replacement for
+ * hardcoded `tier === "PRO"` gates. No active plan → nothing unlocked. During a
+ * trial the trial plan's own capabilities apply (same as its tier did before).
+ */
+export async function getPlanCapabilities(userId: number): Promise<PlanCapabilities> {
+  const sub = await db.subscription.findFirst({
+    where: { userId, status: { in: ["ACTIVE", "TRIAL"] }, endDate: { gt: new Date() } },
+    include: { plan: true },
+    orderBy: { endDate: "desc" },
+  });
+  if (!sub) return NO_CAPABILITIES;
+  return readCapabilities(sub.plan.capabilities);
+}
+
+/**
  * Checks that the current user is a logged-in OWNER with an active
  * paid plan (GROWTH or PRO). Redirects otherwise.
  * Returns { userId, tier, name, email }.
@@ -124,8 +140,11 @@ export async function getManageContext() {
     role = session.user.role ?? "OWNER";
   }
 
-  const tier = await getPlanTier(userId);
-  const trial = await isTrialActive(userId);
+  const [tier, trial, capabilities] = await Promise.all([
+    getPlanTier(userId),
+    isTrialActive(userId),
+    getPlanCapabilities(userId),
+  ]);
 
   return {
     userId,
@@ -135,6 +154,7 @@ export async function getManageContext() {
     email: session.user.email ?? "",
     hasPaidPlan: isPaidTier(tier),
     hasAccess: isPaidTier(tier) || trial.active,
+    capabilities,
   };
 }
 

@@ -277,10 +277,18 @@ model Plan {
   yearlyPrice    Int?
   maxListings    Int
   maxPhotos      Int
+  maxTenants     Int            @default(-1)
   features       Json
+  // Super-admin controlled presentation + capability flags. These used to be
+  // hardcoded in the owner upgrade page and in tier checks scattered across the
+  // code; storing them here makes every plan fully admin-managed.
+  tagline        String?        @db.VarChar(200) // short line under the plan name
+  recommended    Boolean        @default(false)  // the "Recommended" highlight
+  badge          String?        @db.VarChar(30)   // small corner badge, e.g. "Unlimited"
+  sortOrder      Int            @default(0)        // display order across pricing/upgrade
+  capabilities   Json           @default("{}")     // { csvExport, csvImport, adsFree, staff, leads, pgManager }
   razorpayPlanId String?        @db.VarChar(100)
   isActive       Boolean        @default(true)
-  maxTenants     Int            @default(-1)
   subscriptions  Subscription[]
 
   @@map("plans")

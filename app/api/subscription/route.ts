@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
-import { isValidPlanId, getPlanTotalAmount, PLANS, PLAN_LIMITS } from "@/lib/plans";
+import { isValidPlanId, PLANS, PLAN_LIMITS } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,12 +14,34 @@ export async function POST(req: NextRequest) {
 
     const { planId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = await req.json();
 
-    if (!planId || !isValidPlanId(planId)) {
+    if (!planId || typeof planId !== "string") {
       return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
     }
 
-    // Amount is derived server-side from the canonical plan price — never trust the client for this.
-    const amount = getPlanTotalAmount(planId);
+    // The plan (and therefore its price) is the DB row — super-admin controlled.
+    // For a canonical slug whose row doesn't exist yet, seed it from the fallback.
+    let plan = await db.plan.findUnique({ where: { slug: planId } });
+    if (!plan && isValidPlanId(planId)) {
+      const def = PLANS[planId];
+      const limits = PLAN_LIMITS[planId];
+      plan = await db.plan.create({
+        data: {
+          name: def.name,
+          slug: planId,
+          price: def.price,
+          maxListings: limits.maxListings,
+          maxPhotos: limits.maxPhotos,
+          maxTenants: limits.maxTenants,
+          features: [],
+        }
+      });
+    }
+    if (!plan) {
+      return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
+    }
+
+    // Amount is derived server-side from the DB plan price — never trust the client.
+    const amount = plan.price;
 
     if (amount > 0) {
       if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
@@ -34,25 +56,6 @@ export async function POST(req: NextRequest) {
       if (!verifyRazorpaySignature(razorpayOrderId, razorpayPaymentId, razorpaySignature)) {
         return NextResponse.json({ success: false, message: "Invalid payment signature" }, { status: 400 });
       }
-    }
-
-    // Get the plan from DB, or create it from the canonical definition if it doesn't exist yet
-    let plan = await db.plan.findUnique({ where: { slug: planId } });
-
-    if (!plan) {
-      const def = PLANS[planId];
-      const limits = PLAN_LIMITS[planId];
-      plan = await db.plan.create({
-        data: {
-          name: def.name,
-          slug: planId,
-          price: def.price,
-          maxListings: limits.maxListings,
-          maxPhotos: limits.maxPhotos,
-          maxTenants: limits.maxTenants,
-          features: [],
-        }
-      });
     }
 
     const endDate = new Date();

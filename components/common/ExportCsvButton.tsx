@@ -7,15 +7,14 @@ import toast from "react-hot-toast";
 interface ExportCsvButtonProps {
   data: any[];
   filename: string;
-  tier: string;
+  /** Whether the owner's plan unlocks CSV export — resolved from the DB plan
+   *  capabilities (super-admin controlled), no longer a hardcoded tier check. */
+  canExport: boolean;
   headers?: { key: string; label: string }[];
 }
 
-export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButtonProps) {
+export function ExportCsvButton({ data, filename, canExport, headers }: ExportCsvButtonProps) {
   const router = useRouter();
-  // The price catalogue lists "Reports & CSV export" from Growth upward — the code
-  // must honour that promise (and Scale, the tier above Pro, must never be locked out).
-  const canExport = tier === "GROWTH" || tier === "PRO" || tier === "SCALE" || tier === "ENTERPRISE";
 
   const handleExport = () => {
     if (!canExport) {
@@ -71,10 +70,10 @@ export function ExportCsvButton({ data, filename, tier, headers }: ExportCsvButt
       className={`btn-outline py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1.5 ${
         canExport ? "" : "opacity-75"
       }`}
-      title={canExport ? "Export to CSV" : "Available from the Growth plan — see plans"}
+      title={canExport ? "Export to CSV" : "Upgrade your plan to unlock CSV export"}
     >
       <FileDown className="h-4 w-4" /> Export CSV
-      {!canExport && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">GROWTH</span>}
+      {!canExport && <span className="ml-1 text-[10px] bg-violet-100 text-violet-700 px-1 rounded">PRO</span>}
     </button>
   );
 }

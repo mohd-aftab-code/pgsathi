@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
-import { getPlanTier, isTrialActive, isPaidTier } from "@/lib/manage-auth";
+import { getPlanTier, isTrialActive, isPaidTier, getPlanCapabilities } from "@/lib/manage-auth";
 
 export const metadata = {
   title: "Owner Dashboard - PGSathi",
@@ -30,14 +30,20 @@ export default async function OwnerDashboardLayout({
   }
 
   const userId = parseInt(session.user.id);
-  const [tier, trial] = await Promise.all([getPlanTier(userId), isTrialActive(userId)]);
+  const [tier, trial, capabilities] = await Promise.all([
+    getPlanTier(userId),
+    isTrialActive(userId),
+    getPlanCapabilities(userId),
+  ]);
   const hasPaidPlan = isPaidTier(tier);
+  // Ads hide when the plan's adsFree capability is on (super-admin controlled).
+  const showAds = !capabilities.adsFree;
 
   return (
     <div className="min-h-screen bg-canvas">
       {/* ── Sidebar — fixed, full height, flush to the screen edge, owns the brand logo ─ */}
       {/* ── and shifts the content below to the right when expanded ────────────────── */}
-      <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} tier={tier}>
+      <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} tier={tier} showAds={showAds}>
         {/* ── Top Header ────────────────────────────────────── */}
         <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
           <div className="section-padding h-16 flex items-center justify-between">
