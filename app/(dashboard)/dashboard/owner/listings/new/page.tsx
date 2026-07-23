@@ -387,7 +387,7 @@ export default function NewListingPage() {
           
           <div className="md:col-span-2">
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Types Available *</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { id: "SINGLE_ROOM", label: "Single Room" },
                 { id: "DOUBLE_SHARING", label: "Double Sharing" },
@@ -396,8 +396,8 @@ export default function NewListingPage() {
                 { id: "DORMITORY", label: "Dormitory" },
                 { id: "STUDIO", label: "Studio" },
               ].map((type) => (
-                <label key={type.id} className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.roomTypes.includes(type.id) ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+                <label key={type.id} className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.roomTypes.includes(type.id) ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
                     {formData.roomTypes.includes(type.id) && <CheckCircle2 size={16} className="text-white" />}
                   </div>
                   <input 
@@ -449,9 +449,9 @@ export default function NewListingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Notice Period</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noticePeriod === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noticePeriod === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="noticePeriod" 
@@ -467,9 +467,9 @@ export default function NewListingPage() {
 
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Food Included</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.foodIncluded === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.foodIncluded === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="foodIncluded" 
@@ -484,9 +484,9 @@ export default function NewListingPage() {
           </div>
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Gate Closing Time</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.gateClosingTime === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.gateClosingTime === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input 
                     type="radio" 
                     name="gateClosingTime" 
@@ -502,9 +502,9 @@ export default function NewListingPage() {
 
           <div className="col-span-1 md:col-span-2">
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Rules</label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.rentLockIn ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`w-6 h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.rentLockIn ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <label className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.rentLockIn ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.rentLockIn ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
                   {formData.rentLockIn && <CheckCircle2 size={16} className="text-white" />}
                 </div>
                 <input 
@@ -515,8 +515,8 @@ export default function NewListingPage() {
                 />
                 <span className={`text-sm font-bold ${formData.rentLockIn ? 'text-primary-800' : 'text-neutral-600'}`}>Rent lock-in</span>
               </label>
-              <label className={`relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noGuardiansStay ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`w-6 h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.noGuardiansStay ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
+              <label className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noGuardiansStay ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.noGuardiansStay ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
                   {formData.noGuardiansStay && <CheckCircle2 size={16} className="text-white" />}
                 </div>
                 <input 
@@ -542,9 +542,9 @@ export default function NewListingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Laundry Service</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.laundryService === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.laundryService === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input type="radio" name="laundry" className="hidden" checked={formData.laundryService === opt} onChange={() => setFormData({...formData, laundryService: opt})} />
                   <span className="text-sm font-bold">{opt}</span>
                 </label>
@@ -553,9 +553,9 @@ export default function NewListingPage() {
           </div>
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Cleaning</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomCleaning === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomCleaning === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input type="radio" name="cleaning" className="hidden" checked={formData.roomCleaning === opt} onChange={() => setFormData({...formData, roomCleaning: opt})} />
                   <span className="text-sm font-bold">{opt}</span>
                 </label>
@@ -564,9 +564,9 @@ export default function NewListingPage() {
           </div>
           <div>
             <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Parking</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.parking === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
+                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.parking === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
                   <input type="radio" name="parking" className="hidden" checked={formData.parking === opt} onChange={() => setFormData({...formData, parking: opt})} />
                   <span className="text-sm font-bold">{opt}</span>
                 </label>
@@ -576,12 +576,12 @@ export default function NewListingPage() {
         </div>
 
         <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Available Amenities of PG</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-10">
           {AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
+              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
                   {isSelected && <CheckCircle2 size={12} className="text-white" />}
                 </div>
                 <input 
@@ -597,12 +597,12 @@ export default function NewListingPage() {
         </div>
 
         <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Room Amenities of PG</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
           {ROOM_AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedRoomAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
+              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
+                <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
                   {isSelected && <CheckCircle2 size={12} className="text-white" />}
                 </div>
                 <input 

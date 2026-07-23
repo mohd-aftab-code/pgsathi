@@ -1,11 +1,37 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CITIES } from "@/constants/cities";
+import { db } from "@/lib/db";
 import { MapPin, ArrowRight } from "lucide-react";
+import { unstable_cache } from "next/cache";
 
-export default function CityGrid() {
-  // Only show top 6 priority cities on homepage
-  const topCities = CITIES.sort((a, b) => a.priority - b.priority).slice(0, 6);
+const getTopCities = unstable_cache(
+  async () => {
+    try {
+      return await db.city.findMany({
+        where: { isActive: true },
+        orderBy: { priority: "desc" },
+        take: 6,
+        include: {
+          _count: {
+            select: { localities: true }
+          }
+        }
+      });
+    } catch (error) {
+      console.error("[CityGrid] Failed to fetch top cities:", error);
+      return [];
+    }
+  },
+  ["top-cities-grid"],
+  { revalidate: 3600 }
+);
+
+export default async function CityGrid() {
+  const topCities = await getTopCities();
+
+  if (!topCities || topCities.length === 0) {
+    return null; // or a fallback UI
+  }
 
   return (
     <section className="bg-neutral-50 py-12 md:py-20">
@@ -28,9 +54,9 @@ export default function CityGrid() {
               className="group relative h-40 md:h-56 rounded-2xl overflow-hidden block shadow-sm hover:shadow-hover transition-all duration-300"
             >
               {/* Background Image */}
-              {city.image ? (
+              {city.imageUrl ? (
                 <Image 
-                  src={city.image} 
+                  src={city.imageUrl} 
                   alt={city.name}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
@@ -50,7 +76,7 @@ export default function CityGrid() {
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-white">{city.name}</h3>
                 <p className="text-sm text-neutral-300 mt-1 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                  {city.localities.length} localities
+                  {city._count?.localities || 0} localities
                 </p>
               </div>
             </Link>

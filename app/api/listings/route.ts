@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
         status: { in: ["ACTIVE", "TRIAL"] },
         endDate: { gt: new Date() }
       },
-      include: { plan: true }
+      include: { plan: true },
+      orderBy: { endDate: "desc" }
     });
 
     // Auto-start a 14-day Growth trial for accounts old enough to be grandfathered
