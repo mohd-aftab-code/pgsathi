@@ -180,6 +180,17 @@ export const CITIES = [
       "Navrangpura", "Satellite", "SG Highway", "Bopal",
       "Vastrapur", "Prahlad Nagar", "Maninagar", "Thaltej",
     ],
+  },
+  {
+    id: 17,
+    name: "Prayagraj",
+    slug: "prayagraj",
+    state: "Uttar Pradesh",
+    priority: 17,
+    localities: [
+      "Civil Lines", "Allahapur", "George Town", "Katra",
+      "Naini", "Jhunsi", "Dhoomanganj", "Phaphamau",
+    ],
   }
 ];
 export const CITY_SLUGS = CITIES.map((c) => c.slug);
