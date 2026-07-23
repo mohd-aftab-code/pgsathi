@@ -12,6 +12,7 @@ import {
   UsersRound,
   Sparkles,
   Lock,
+  CreditCard,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 import { AdSlot } from "./AdSlot";
@@ -49,7 +50,10 @@ function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
     },
     {
       category: "Account",
-      items: [{ name: "Settings", href: "/dashboard/owner/settings", icon: Settings, hideMobile: true }],
+      items: [
+        { name: "Subscription", href: "/dashboard/owner/subscription", icon: CreditCard, hideMobile: true },
+        { name: "Settings", href: "/dashboard/owner/settings", icon: Settings, hideMobile: true }
+      ],
     },
   ];
 }
@@ -69,31 +73,45 @@ export function OwnerSidebar({
   const hasManagerAccess = hasPaidPlan || trialDaysLeft > 0;
   const ownerNav = buildOwnerNav(hasManagerAccess);
   const showAds = tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE";
-  const planWidget = hasPaidPlan ? null : trialDaysLeft > 0 ? (
-    <div className="rounded-xl bg-white border border-violet-100 p-3 shadow-sm">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Sparkles size={13} className="text-violet-600 shrink-0" />
-        <p className="text-xs font-bold text-violet-900 whitespace-nowrap">Free Trial Active</p>
+  const displayTier = tier === "NONE" || tier === "STARTER" ? "Basic" : tier;
+  const isEnterprise = tier === "ENTERPRISE";
+
+  const planWidget = (
+    <div className={`rounded-xl bg-white border ${hasPaidPlan ? 'border-primary-100' : trialDaysLeft > 0 ? 'border-violet-100' : 'border-red-100'} p-3 shadow-sm`}>
+      <p className="text-[10px] text-neutral-500 font-bold uppercase mb-1">Current Plan</p>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <Sparkles size={14} className={hasPaidPlan ? 'text-primary-600' : trialDaysLeft > 0 ? 'text-violet-600' : 'text-neutral-600'} />
+        <p className={`text-sm font-bold ${hasPaidPlan ? 'text-primary-900' : trialDaysLeft > 0 ? 'text-violet-900' : 'text-neutral-900'}`}>
+          {displayTier} Plan
+        </p>
       </div>
-      <p className="text-[10px] text-violet-700/80 mb-2.5 whitespace-nowrap">
-        {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left
-      </p>
-      <Link
-        href="/dashboard/owner/subscription/upgrade"
-        className="block text-center text-xs font-bold bg-violet-500 text-white rounded-lg py-1.5 hover:bg-violet-600 transition-colors"
-      >
-        Upgrade
-      </Link>
-    </div>
-  ) : (
-    <div className="rounded-xl bg-white border border-red-100 p-3 shadow-sm">
-      <p className="text-xs font-bold text-red-700 mb-2 whitespace-nowrap">Trial Expired</p>
-      <Link
-        href="/dashboard/owner/subscription/upgrade"
-        className="block text-center text-xs font-bold bg-red-600 text-white rounded-lg py-1.5 hover:bg-red-700 transition-colors"
-      >
-        Upgrade Now
-      </Link>
+      
+      {!hasPaidPlan && trialDaysLeft > 0 && (
+        <p className="text-[10px] text-violet-700/80 mb-2.5 whitespace-nowrap">
+          {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left in Trial
+        </p>
+      )}
+      {!hasPaidPlan && trialDaysLeft <= 0 && (
+        <p className="text-[10px] text-red-700/80 mb-2.5 whitespace-nowrap">
+          Free Tier / Trial Expired
+        </p>
+      )}
+      {hasPaidPlan && !isEnterprise && <div className="h-2"></div>}
+      
+      {!isEnterprise && (
+        <Link
+          href="/dashboard/owner/subscription/upgrade"
+          className={`block text-center text-xs font-bold rounded-lg py-1.5 transition-colors ${
+            hasPaidPlan 
+              ? 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-100' 
+              : trialDaysLeft > 0 
+                ? 'bg-violet-500 text-white hover:bg-violet-600'
+                : 'bg-red-600 text-white hover:bg-red-700'
+          }`}
+        >
+          Upgrade Now
+        </Link>
+      )}
     </div>
   );
 

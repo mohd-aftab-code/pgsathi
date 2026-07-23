@@ -131,8 +131,8 @@ function RegisterContent() {
 
         <div className="w-full max-w-[420px]">
           {/* Heading */}
-          <div className="mb-7">
-            <h2 className="text-3xl font-extrabold text-neutral-900 tracking-tight mb-1.5">
+          <div className="mb-6 sm:mb-7">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 tracking-tight mb-1.5">
               Create your account
             </h2>
             <p className="text-neutral-500 text-sm">
@@ -141,15 +141,15 @@ function RegisterContent() {
           </div>
 
           {/* Role Selector */}
-          <div className="mb-6">
+          <div className="mb-5 sm:mb-6">
             <label className="block text-sm font-semibold text-neutral-700 mb-2">
               I am a...
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setRole("TENANT")}
-                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                   role === "TENANT"
                     ? "border-violet-500 bg-violet-50 shadow-md shadow-violet-100"
                     : "border-neutral-200 bg-white hover:border-neutral-300"
@@ -158,28 +158,28 @@ function RegisterContent() {
                 {role === "TENANT" && (
                   <CheckCircle2
                     size={16}
-                    className="absolute top-3 right-3 text-violet-600"
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 text-violet-600"
                     fill="currentColor"
                   />
                 )}
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${
                     role === "TENANT"
                       ? "bg-violet-500 text-white"
                       : "bg-neutral-100 text-neutral-500"
                   }`}
                 >
-                  <User size={20} />
+                  <User size={18} className="sm:w-5 sm:h-5" />
                 </div>
                 <div className="text-center">
                   <div
-                    className={`text-sm font-bold ${
+                    className={`text-xs sm:text-sm font-bold ${
                       role === "TENANT" ? "text-violet-700" : "text-neutral-700"
                     }`}
                   >
                     Tenant
                   </div>
-                  <div className="text-xs text-neutral-400 mt-0.5">
+                  <div className="text-[10px] sm:text-xs text-neutral-400 mt-0.5">
                     Looking for PG
                   </div>
                 </div>
@@ -188,7 +188,7 @@ function RegisterContent() {
               <button
                 type="button"
                 onClick={() => setRole("OWNER")}
-                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                   role === "OWNER"
                     ? "border-orange-500 bg-orange-50 shadow-md shadow-orange-100"
                     : "border-neutral-200 bg-white hover:border-neutral-300"
@@ -197,28 +197,28 @@ function RegisterContent() {
                 {role === "OWNER" && (
                   <CheckCircle2
                     size={16}
-                    className="absolute top-3 right-3 text-orange-500"
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 text-orange-500"
                     fill="currentColor"
                   />
                 )}
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${
                     role === "OWNER"
                       ? "bg-orange-500 text-white"
                       : "bg-neutral-100 text-neutral-500"
                   }`}
                 >
-                  <Building2 size={20} />
+                  <Building2 size={18} className="sm:w-5 sm:h-5" />
                 </div>
                 <div className="text-center">
                   <div
-                    className={`text-sm font-bold ${
+                    className={`text-xs sm:text-sm font-bold ${
                       role === "OWNER" ? "text-orange-600" : "text-neutral-700"
                     }`}
                   >
                     PG Owner
                   </div>
-                  <div className="text-xs text-neutral-400 mt-0.5">
+                  <div className="text-[10px] sm:text-xs text-neutral-400 mt-0.5">
                     Manage my PG
                   </div>
                 </div>
@@ -255,7 +255,7 @@ function RegisterContent() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
                   placeholder="John Doe"
                   required
                   autoFocus
@@ -280,7 +280,7 @@ function RegisterContent() {
                   maxLength={10}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                  className="w-full h-12 pl-24 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-24 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
                   placeholder="Enter 10-digit number"
                   required
                 />
@@ -298,7 +298,7 @@ function RegisterContent() {
                   type={showPass ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
                   placeholder="At least 6 characters"
                   required
                   minLength={6}
@@ -348,7 +348,7 @@ function RegisterContent() {
                   type={showConfirm ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full h-12 pl-11 pr-12 bg-white border-2 rounded-xl focus:ring-4 outline-none transition-all text-sm font-medium placeholder:text-neutral-400 ${
+                  className={`w-full h-11 sm:h-12 pl-11 pr-12 bg-white border-2 rounded-xl focus:ring-4 outline-none transition-all text-sm font-medium placeholder:text-neutral-400 ${
                     confirmPassword && confirmPassword !== password
                       ? "border-red-400 focus:border-red-500 focus:ring-red-500/10"
                       : confirmPassword && confirmPassword === password
@@ -378,7 +378,7 @@ function RegisterContent() {
             <button
               type="submit"
               disabled={loading || success}
-              className={`w-full h-12 font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2 text-white ${
+              className={`w-full h-11 sm:h-12 font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2 text-white text-sm sm:text-base ${
                 role === "OWNER"
                   ? "bg-orange-600 hover:bg-orange-700"
                   : "bg-primary-500 hover:bg-primary-600"
