@@ -22,7 +22,7 @@ const getTopCities = unstable_cache(
       return [];
     }
   },
-  ["top-cities-grid"],
+  ["top-cities-grid-v2"],
   { revalidate: 3600 }
 );
 

@@ -2,9 +2,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { User, Phone, Mail, Settings, Star } from "lucide-react";
+import { User, Phone, Mail, Settings } from "lucide-react";
 import EditEmailButton from "@/components/dashboard/EditEmailButton";
-import ReviewsToggle from "@/components/dashboard/ReviewsToggle";
 import LogoutButton from "@/components/common/LogoutButton";
 
 export default async function OwnerSettingsPage() {
@@ -13,13 +12,6 @@ export default async function OwnerSettingsPage() {
 
   const user = await db.user.findUnique({
     where: { id: Number(session.user.id) }
-  });
-
-  // Reviews are toggled per-owner (applied to all their listings at once) —
-  // read the current state off any one listing since reviews-toggle keeps them in sync.
-  const anyListing = await db.listing.findFirst({
-    where: { ownerId: Number(session.user.id) },
-    select: { reviewsEnabled: true },
   });
 
   return (
@@ -64,23 +56,6 @@ export default async function OwnerSettingsPage() {
               </div>
               <EditEmailButton currentEmail={user?.email ?? ""} />
             </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-neutral-200 rounded-xl p-4 sm:p-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center shrink-0">
-                <Star size={18} />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-neutral-900">Ratings & Reviews</h3>
-                <p className="text-xs text-neutral-500 mt-0.5 max-w-md">
-                  Show the review section and star rating to visitors on all your PG listings. Turn this off if you don't want reviews collected.
-                </p>
-              </div>
-            </div>
-            <ReviewsToggle initialEnabled={anyListing?.reviewsEnabled ?? true} />
           </div>
         </div>
 

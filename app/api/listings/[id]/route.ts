@@ -140,18 +140,25 @@ export async function PATCH(
 
     if (data.reviewsEnabled !== undefined) updateData.reviewsEnabled = data.reviewsEnabled;
 
-    // Once a listing has been verified and is live, further owner edits
-    // shouldn't yank it back into the review queue (and off the public site) —
-    // that used to force every small edit through re-verification. Instead we
-    // just flag it so the super admin can see something changed, and the admin
-    // clears the flag when they look it over (see /api/admin/verify-listing).
-    // Listings still awaiting first-time approval keep the old flow: any edit
-    // during that stage re-enters the queue.
-    if (existing.status === "ACTIVE") {
-      updateData.hasPendingChanges = true;
-    } else {
-      updateData.status = "PENDING";
-      updateData.isVerified = false;
+    // isActive/reviewsEnabled are display settings, not listing content — toggling
+    // them shouldn't send an already-verified PG back through moderation.
+    const SETTINGS_ONLY_KEYS = new Set(["isActive", "reviewsEnabled"]);
+    const isContentChange = Object.keys(data).some((key) => !SETTINGS_ONLY_KEYS.has(key));
+
+    if (isContentChange) {
+      // Once a listing has been verified and is live, further owner edits
+      // shouldn't yank it back into the review queue (and off the public site) —
+      // that used to force every small edit through re-verification. Instead we
+      // just flag it so the super admin can see something changed, and the admin
+      // clears the flag when they look it over (see /api/admin/verify-listing).
+      // Listings still awaiting first-time approval keep the old flow: any edit
+      // during that stage re-enters the queue.
+      if (existing.status === "ACTIVE") {
+        updateData.hasPendingChanges = true;
+      } else {
+        updateData.status = "PENDING";
+        updateData.isVerified = false;
+      }
     }
 
     const updated = await db.listing.update({

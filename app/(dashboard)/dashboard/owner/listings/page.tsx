@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PlusCircle, Building2, MapPin, MessageSquare, Eye } from "lucide-react";
 import { redirect } from "next/navigation";
 import ListingActions from "@/components/listings/ListingActions";
+import ListingReviewsToggle from "@/components/listings/ListingReviewsToggle";
 
 export const metadata = {
   title: "My Listings - Owner Dashboard",
@@ -97,6 +98,7 @@ export default async function OwnerListingsPage() {
                         <div className="text-xs font-semibold text-neutral-600 bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200 inline-block">
                           <span className="capitalize">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ").toLowerCase()}</span> • {listing.genderAllowed}
                         </div>
+                        <ListingReviewsToggle listingId={listing.id} initialEnabled={listing.reviewsEnabled} />
                       </div>
                     </td>
                     <td className="py-5 px-6 border-y border-neutral-100">
@@ -167,6 +169,7 @@ export default async function OwnerListingsPage() {
                     <div className="text-[10px] font-semibold text-neutral-600 bg-neutral-50 px-2 py-1 rounded-md border border-neutral-200">
                       <span className="capitalize">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ").toLowerCase()}</span> • {listing.genderAllowed}
                     </div>
+                    <ListingReviewsToggle listingId={listing.id} initialEnabled={listing.reviewsEnabled} />
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
