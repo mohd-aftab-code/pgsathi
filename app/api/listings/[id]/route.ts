@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { resolveCity } from "@/lib/geo";
+import { revalidateTag } from "next/cache";
 
 // ─── GET single listing ──────────────────────────────────────────
 export async function GET(
@@ -165,6 +166,12 @@ export async function PATCH(
       where: { id: listingId },
       data: updateData,
     });
+
+    // The public PG detail page caches this listing for 5 minutes (tagged
+    // `listing-${slug}`) — without this, an owner's edit (price, rules, photos,
+    // the reviews toggle, anything) would silently sit behind that cache instead
+    // of showing up right away.
+    revalidateTag(`listing-${updated.slug}`, { expire: 0 });
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error: any) {
