@@ -117,7 +117,14 @@ export default function AdminListingsTableWrapper({
                   />
                 </td>
                 <td className="py-4 px-6">
-                  <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="font-extrabold text-neutral-900 text-base">{listing.title}</div>
+                    {listing.hasPendingChanges && (
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded" title="Owner updated this listing after it was verified">
+                        Updated
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-neutral-700">
                     <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
                     <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
@@ -169,7 +176,14 @@ export default function AdminListingsTableWrapper({
               />
             </div>
             <div className="pr-8">
-              <div className="font-extrabold text-neutral-900 mb-1 text-base">{listing.title}</div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="font-extrabold text-neutral-900 text-base">{listing.title}</div>
+                {listing.hasPendingChanges && (
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded">
+                    Updated
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-700">
                 <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
                 <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>

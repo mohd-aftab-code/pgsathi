@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     if (!session || session.user.role !== "ADMIN") return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
 
     const cities = await db.city.findMany({
-      orderBy: { priority: "desc" },
+      orderBy: { priority: "asc" },
     });
 
     return NextResponse.json({ success: true, data: cities });

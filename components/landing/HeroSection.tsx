@@ -11,7 +11,7 @@ const getHeroData = unstable_cache(
       const [cities, showcase] = await Promise.all([
         db.city.findMany({
           where: { isActive: true },
-          orderBy: { priority: "desc" },
+          orderBy: { priority: "asc" },
         }),
         db.listing.findMany({
           where: { isActive: true, status: "ACTIVE", photos: { some: {} } },

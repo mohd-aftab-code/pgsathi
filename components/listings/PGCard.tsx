@@ -47,7 +47,8 @@ export default function PGCard({ pg }: PGCardProps) {
           </h3>
           <div className="text-right shrink-0">
             <div className="font-black text-lg sm:text-xl md:text-2xl text-primary-700 whitespace-nowrap leading-none">
-              ₹{pg.priceMin}
+              ₹{pg.priceMin?.toLocaleString()}
+              {pg.priceMax > pg.priceMin && <>&ndash;{pg.priceMax?.toLocaleString()}</>}
             </div>
             <div className="text-[9px] sm:text-[10px] md:text-xs text-neutral-500 font-medium">/month</div>
           </div>

@@ -161,6 +161,7 @@ export async function POST(req: NextRequest) {
         foodCharge: data.foodCharge,
         setupFee: data.setupFee,
         
+        foodIncluded: data.foodIncluded,
         noticePeriod: data.noticePeriod,
         gateClosingTime: data.gateClosingTime,
         rentLockIn: data.rentLockIn,

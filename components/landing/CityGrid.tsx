@@ -9,7 +9,7 @@ const getTopCities = unstable_cache(
     try {
       return await db.city.findMany({
         where: { isActive: true },
-        orderBy: { priority: "desc" },
+        orderBy: { priority: "asc" },
         take: 6,
         include: {
           _count: {

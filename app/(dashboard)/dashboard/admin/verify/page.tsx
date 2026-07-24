@@ -20,7 +20,9 @@ export default async function AdminListingsPage({
   if (currentTab === "active") statusFilter = "ACTIVE";
   if (currentTab === "inactive") statusFilter = "INACTIVE";
 
-  const whereClause: any = { status: statusFilter };
+  const whereClause: any = currentTab === "updated"
+    ? { status: "ACTIVE", hasPendingChanges: true }
+    : { status: statusFilter };
   if (query) {
     whereClause.title = { contains: query };
   }
@@ -60,13 +62,19 @@ export default async function AdminListingsPage({
           >
             Pending Review
           </Link>
-          <Link 
-            href={`?tab=active&query=${query}`} 
+          <Link
+            href={`?tab=active&query=${query}`}
             className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "active" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
           >
             Active PGs
           </Link>
-          <Link 
+          <Link
+            href={`?tab=updated&query=${query}`}
+            className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "updated" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+          >
+            Updated Since Verified
+          </Link>
+          <Link
             href={`?tab=inactive&query=${query}`} 
             className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "inactive" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
           >

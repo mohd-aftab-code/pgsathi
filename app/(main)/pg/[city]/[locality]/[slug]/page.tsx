@@ -11,28 +11,37 @@ import { unstable_cache } from "next/cache";
 import { auth } from "@/lib/auth";
 import ReviewSection from "@/components/listings/ReviewSection";
 
-const getListingBySlug = unstable_cache(
-  async (slug: string) => {
-    return db.listing.findUnique({
-      where: { slug, status: "ACTIVE", isActive: true },
-      include: {
-        city: true,
-        locality: true,
-        photos: { orderBy: { sortOrder: "asc" } },
-        amenities: { include: { amenity: true } },
-        reviews: {
-          where: { isApproved: true },
-          include: { user: { select: { name: true, avatar: true } } },
-          orderBy: { createdAt: "desc" },
-          take: 10,
+// Wrapped per-slug (rather than a single module-level unstable_cache) so the
+// cache tag can be tied to this specific listing — that's what lets
+// submitReviewAction's revalidateTag(`listing-${slug}`) bust just this page
+// the moment a review is submitted, instead of waiting out the 5min window.
+function getListingBySlug(slug: string) {
+  return unstable_cache(
+    async () => {
+      return db.listing.findUnique({
+        where: { slug, status: "ACTIVE", isActive: true },
+        include: {
+          city: true,
+          locality: true,
+          photos: { orderBy: { sortOrder: "asc" } },
+          amenities: { include: { amenity: true } },
+          reviews: {
+            where: { isApproved: true },
+            include: { user: { select: { name: true, avatar: true } } },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+          },
+          owner: { select: { name: true, phone: true, avatar: true } },
         },
-        owner: { select: { name: true, phone: true, avatar: true } },
-      },
-    });
-  },
-  ["pg-detail"],
-  { revalidate: 300 } // 5 minutes — listing details rarely change minute-to-minute
-);
+      });
+    },
+    ["pg-detail", slug],
+    {
+      revalidate: 300, // 5 minutes — listing details rarely change minute-to-minute
+      tags: [`listing-${slug}`],
+    }
+  )();
+}
 
 import { constructMetadata } from "@/lib/seo";
 
@@ -94,7 +103,7 @@ export default async function PGDetailPage(props: {
       "addressCountry": "IN"
     },
     "priceRange": `₹${pg.priceMin} - ₹${pg.priceMax}`,
-    ...(avgRating && approvedReviews.length > 0 ? {
+    ...(pg.reviewsEnabled && avgRating && approvedReviews.length > 0 ? {
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": avgRating,
@@ -184,7 +193,7 @@ export default async function PGDetailPage(props: {
                       ⭐ Featured
                     </span>
                   )}
-                  {avgRating && (
+                  {pg.reviewsEnabled && avgRating && (
                     <span className="text-xs font-bold px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 flex items-center gap-1">
                       <Star size={12} fill="currentColor" /> {avgRating} ({approvedReviews.length} reviews)
                     </span>
@@ -296,14 +305,16 @@ export default async function PGDetailPage(props: {
                 </div>
               ) : null}
 
-              {/* Reviews */}
-              <ReviewSection 
-                listingId={pg.id}
-                reviews={approvedReviews as any}
-                avgRating={Number(avgRating || 0)}
-                totalReviews={approvedReviews.length}
-                isLoggedIn={!!session?.user?.id}
-              />
+              {/* Reviews — owner-controlled via listing edit settings */}
+              {pg.reviewsEnabled && (
+                <ReviewSection
+                  listingId={pg.id}
+                  reviews={approvedReviews as any}
+                  avgRating={Number(avgRating || 0)}
+                  totalReviews={approvedReviews.length}
+                  isLoggedIn={!!session?.user?.id}
+                />
+              )}
             </div>
 
               {/* RIGHT — Sticky Contact Box */}

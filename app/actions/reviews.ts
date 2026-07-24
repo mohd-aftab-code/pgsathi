@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notify } from "@/lib/notifications";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 
 export async function submitReviewAction(listingId: number, rating: number, comment: string) {
   try {
@@ -13,6 +13,19 @@ export async function submitReviewAction(listingId: number, rating: number, comm
     }
 
     const userId = parseInt(session.user.id);
+
+    const targetListing = await db.listing.findUnique({
+      where: { id: listingId },
+      select: { ownerId: true, title: true, slug: true, reviewsEnabled: true }
+    });
+
+    if (!targetListing) {
+      return { error: "Listing not found." };
+    }
+
+    if (!targetListing.reviewsEnabled) {
+      return { error: "Reviews are turned off for this PG." };
+    }
 
     // Check if user already reviewed
     const existing = await db.review.findUnique({
@@ -50,16 +63,13 @@ export async function submitReviewAction(listingId: number, rating: number, comm
     });
 
     // Notify the owner of the new review
-    const reviewedListing = await db.listing.findUnique({ where: { id: listingId }, select: { ownerId: true, title: true } });
-    if (reviewedListing) {
-      await notify({
-        userId: reviewedListing.ownerId,
-        type: "REVIEW",
-        title: `New ${rating}★ review on ${reviewedListing.title}`,
-        message: comment ? `"${comment.slice(0, 100)}"` : null,
-        link: "/dashboard/owner/reviews",
-      });
-    }
+    await notify({
+      userId: targetListing.ownerId,
+      type: "REVIEW",
+      title: `New ${rating}★ review on ${targetListing.title}`,
+      message: comment ? `"${comment.slice(0, 100)}"` : null,
+      link: "/dashboard/owner/reviews",
+    });
 
     // Update listing stats if approved
     if (isApproved) {
@@ -81,7 +91,7 @@ export async function submitReviewAction(listingId: number, rating: number, comm
       });
     }
 
-    revalidatePath(`/pg`); // Catch-all for PG paths to update UI
+    updateTag(`listing-${targetListing.slug}`);
     return { success: true, message: isApproved ? "Review submitted successfully!" : "Review submitted and is pending approval." };
   } catch (error: any) {
     console.error("Submit review error:", error);

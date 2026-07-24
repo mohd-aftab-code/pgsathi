@@ -138,9 +138,21 @@ export async function PATCH(
     // Status toggle (only if explicitly passed)
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
 
-    // Reset status to PENDING for admin review
-    updateData.status = "PENDING";
-    updateData.isVerified = false;
+    if (data.reviewsEnabled !== undefined) updateData.reviewsEnabled = data.reviewsEnabled;
+
+    // Once a listing has been verified and is live, further owner edits
+    // shouldn't yank it back into the review queue (and off the public site) —
+    // that used to force every small edit through re-verification. Instead we
+    // just flag it so the super admin can see something changed, and the admin
+    // clears the flag when they look it over (see /api/admin/verify-listing).
+    // Listings still awaiting first-time approval keep the old flow: any edit
+    // during that stage re-enters the queue.
+    if (existing.status === "ACTIVE") {
+      updateData.hasPendingChanges = true;
+    } else {
+      updateData.status = "PENDING";
+      updateData.isVerified = false;
+    }
 
     const updated = await db.listing.update({
       where: { id: listingId },

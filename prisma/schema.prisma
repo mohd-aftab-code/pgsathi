@@ -126,6 +126,8 @@ model Listing {
   availableBeds       Int?
   status              ListingStatus         @default(DRAFT)
   isVerified          Boolean               @default(false)
+  hasPendingChanges   Boolean               @default(false)
+  reviewsEnabled      Boolean               @default(true)
   isFeatured          Boolean               @default(false)
   featuredUntil       DateTime?
   isActive            Boolean               @default(true)

@@ -27,7 +27,7 @@ const getSearchResults = unstable_cache(
       db.listing.count({ where }),
       db.city.findMany({
         where: { isActive: true },
-        orderBy: { priority: "desc" },
+        orderBy: { priority: "asc" },
       }),
     ]);
     return { listings, totalCount, cities };

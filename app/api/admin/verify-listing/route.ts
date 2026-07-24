@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
       data: {
         status,
         isVerified: !!isVerified,
-        isActive: status === "ACTIVE"
+        isActive: status === "ACTIVE",
+        hasPendingChanges: false
       },
       include: {
         city: true,
