@@ -57,6 +57,7 @@ model User {
   subscriptions      Subscription[]
   visits             VisitBooking[]     @relation("TenantVisits")
   notifications      Notification[]
+  partnerProfile     PartnerProfile?    @relation("PartnerUser")
 
   @@index([email])
   @@index([phone])
@@ -152,6 +153,10 @@ model Listing {
   setupFee            Int?
   alcoholAllowed      Boolean               @default(false)
   areaLocality        String?               @db.VarChar(200)
+  // Partner attribution — set once when a partner registers the PG and never
+  // changed. Nullable because PGs registered directly by owners have no partner.
+  partnerId           Int?
+  registeredVia       RegisteredVia         @default(SELF)
   buildingType        String?               @db.VarChar(20)
   cctvCoverage        String?               @db.VarChar(15)
   curfewTime          String?               @db.VarChar(10)
@@ -199,6 +204,9 @@ model Listing {
   city                City?                 @relation(fields: [cityId], references: [id])
   locality            Locality?             @relation(fields: [localityId], references: [id])
   owner               User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // SetNull: deleting a partner must never delete the PGs they brought in.
+  partner             PartnerProfile?       @relation("ListingPartner", fields: [partnerId], references: [id], onDelete: SetNull)
+  partnerEarnings     PartnerEarning[]
   moderation_logs     moderation_logs[]
   pgAnnouncements     PgAnnouncement[]
   pgComplaints        PgComplaint[]
@@ -221,6 +229,7 @@ model Listing {
   @@index([genderAllowed])
   @@index([isFeatured, featuredUntil])
   @@index([ownerId])
+  @@index([partnerId])
   @@index([slug])
   @@index([status, isVerified, isActive])
   @@index([isDraft, ownerId])
@@ -271,6 +280,164 @@ model ListingAmenity {
   @@map("listing_amenities")
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+//  PARTNER PORTAL — Refer & Earn
+//  A partner is a `User` with role PARTNER plus one profile row here. Every PG
+//  they register stores `Listing.partnerId` permanently, and every partner
+//  query MUST filter on it — that is the module's core isolation rule.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model PartnerProfile {
+  id            Int           @id @default(autoincrement())
+  userId        Int           @unique
+  partnerCode   String        @unique @db.VarChar(20) // shareable referral code
+  type          PartnerType   @default(FREELANCER)
+  status        PartnerStatus @default(PENDING) // self-signup starts PENDING
+  company       String?       @db.VarChar(150)
+  city          String?       @db.VarChar(100)
+  address       String?       @db.VarChar(300)
+  // Payout details — needed before a payout can be marked paid
+  panNumber     String?       @db.VarChar(20)
+  bankName      String?       @db.VarChar(120)
+  bankAccountNo String?       @db.VarChar(30)
+  bankIfsc      String?       @db.VarChar(15)
+  upiId         String?       @db.VarChar(80)
+  approvedAt    DateTime?
+  approvedBy    Int?
+  rejectReason  String?       @db.VarChar(300)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user     User                 @relation("PartnerUser", fields: [userId], references: [id], onDelete: Cascade)
+  listings Listing[]            @relation("ListingPartner")
+  earnings PartnerEarning[]
+  payouts  PartnerPayout[]
+  activity PartnerActivityLog[]
+  settings PartnerSetting?
+
+  @@index([status])
+  @@map("partner_profiles")
+}
+
+model PartnerSetting {
+  id             Int      @id @default(autoincrement())
+  partnerId      Int      @unique
+  notifyInApp    Boolean  @default(true)
+  notifyEmail    Boolean  @default(true)
+  notifyWhatsapp Boolean  @default(false)
+  theme          String   @default("SYSTEM") @db.VarChar(10)
+  language       String   @default("ENGLISH") @db.VarChar(10)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  partner PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_settings")
+}
+
+/// One row per partner-registered PG that converted to a paid plan.
+/// `amount` is set MANUALLY by the admin — there is deliberately no commission %.
+model PartnerEarning {
+  id             Int           @id @default(autoincrement())
+  partnerId      Int
+  listingId      Int
+  subscriptionId Int? // which paid subscription triggered this
+  amount         Int           @default(0) // ₹, admin-decided
+  status         EarningStatus @default(PENDING)
+  // Snapshots: the admin can change plan pricing later, so the earning must
+  // remember what the conversion was actually based on.
+  planNameSnapshot  String?    @db.VarChar(50)
+  planPriceSnapshot Int?
+  payoutId       Int?
+  approvedAt     DateTime?
+  approvedBy     Int?
+  paidAt         DateTime?
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  partner PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  listing Listing        @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  payout  PartnerPayout? @relation(fields: [payoutId], references: [id])
+
+  // Enforces the "one earning per PG" rule in the database itself, so a retry
+  // or double-click can never create duplicate money.
+  @@unique([partnerId, listingId])
+  @@index([partnerId, status])
+  @@index([listingId])
+  @@index([createdAt])
+  @@map("partner_earnings")
+}
+
+/// A batch payment to a partner; approved earnings are attached to it.
+model PartnerPayout {
+  id        Int          @id @default(autoincrement())
+  partnerId Int
+  amount    Int
+  method    String       @default("UPI") @db.VarChar(20)
+  reference String?      @db.VarChar(60) // UTR / txn ref
+  status    PayoutStatus @default(PROCESSING)
+  paidAt    DateTime?
+  notes     String?
+  createdBy Int?
+  createdAt DateTime     @default(now())
+
+  partner  PartnerProfile   @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  earnings PartnerEarning[]
+
+  @@index([partnerId, status])
+  @@map("partner_payouts")
+}
+
+model PartnerActivityLog {
+  id        Int      @id @default(autoincrement())
+  partnerId Int
+  action    String   @db.VarChar(160)
+  entity    String?  @db.VarChar(60)
+  entityId  Int?
+  meta      Json?
+  ip        String?  @db.VarChar(45)
+  createdAt DateTime @default(now())
+
+  partner PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@index([partnerId, createdAt])
+  @@map("partner_activity_logs")
+}
+
+/// Admin actions on money/partners, with before/after so every earning-amount
+/// change is traceable. Kept separate from PgAuditLog, which is owner-scoped.
+model AdminAuditLog {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  actor     String?  @db.VarChar(150)
+  action    String   @db.VarChar(160)
+  entity    String?  @db.VarChar(60)
+  entityId  Int?
+  before    Json?
+  after     Json?
+  ip        String?  @db.VarChar(45)
+  createdAt DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([entity, entityId])
+  @@map("admin_audit_logs")
+}
+
+/// Admin-togglable permission matrix. Code checks a permission key rather than
+/// hardcoding a role, so access can be tightened without a deploy.
+model RolePermission {
+  id         Int      @id @default(autoincrement())
+  role       String   @db.VarChar(20)
+  permission String   @db.VarChar(60)
+  allowed    Boolean  @default(true)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([role, permission])
+  @@map("role_permissions")
+}
+
 model Plan {
   id             Int            @id @default(autoincrement())
   name           String         @db.VarChar(50)
@@ -289,6 +456,11 @@ model Plan {
   badge          String?        @db.VarChar(30)   // small corner badge, e.g. "Unlimited"
   sortOrder      Int            @default(0)        // display order across pricing/upgrade
   capabilities   Json           @default("{}")     // { csvExport, csvImport, adsFree, staff, leads, pgManager }
+  // Partner commission: what a partner earns when an owner buys THIS plan.
+  // type NONE = admin sets each earning by hand; PERCENT = % of the plan price;
+  // FIXED = a flat ₹ amount. Admin-controlled from the Plans panel.
+  partnerCommissionType  String @default("NONE") @db.VarChar(10)
+  partnerCommissionValue Int    @default(0)
   razorpayPlanId String?        @db.VarChar(100)
   isActive       Boolean        @default(true)
   subscriptions  Subscription[]
@@ -936,6 +1108,44 @@ enum UserRole {
   TENANT
   OWNER
   ADMIN
+  PARTNER
+}
+
+// ─── Partner Portal (Refer & Earn) ──────────────────────────────────────────
+
+enum PartnerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum PartnerType {
+  FREELANCER
+  CHANNEL_PARTNER
+  MARKETING_EXECUTIVE
+  SALES_EXECUTIVE
+  SUB_BROKER
+}
+
+enum EarningStatus {
+  PENDING
+  APPROVED
+  PAID
+  CANCELLED
+}
+
+enum PayoutStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+/// How a listing entered the platform — lets partner-sourced PGs be reported on.
+enum RegisteredVia {
+  SELF
+  PARTNER
+  ADMIN
 }
 
 enum PGType {
@@ -1010,6 +1220,8 @@ enum NotificationType {
   REVIEW
   SUBSCRIPTION
   SYSTEM
+  PARTNER_PG
+  PARTNER_EARNING
 }
 
 enum VisitStatus {

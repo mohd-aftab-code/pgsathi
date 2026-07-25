@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notifyGoogleIndexingAPI } from "@/lib/google-indexing";
+import { notify } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,9 +29,30 @@ export async function POST(req: NextRequest) {
       },
       include: {
         city: true,
-        locality: true
+        locality: true,
+        // Partner attribution — so the partner who brought this PG in can be told
+        // what happened to it.
+        partner: { select: { userId: true } }
       }
     });
+
+    // Tell the partner their PG was approved or rejected. Non-fatal: a
+    // notification failure must never break the admin's moderation action.
+    if (listing.partner) {
+      const approved = status === "ACTIVE";
+      const rejected = status === "REJECTED";
+      if (approved || rejected) {
+        notify({
+          userId: listing.partner.userId,
+          type: "PARTNER_PG",
+          title: approved ? "Aapka PG approve ho gaya ✅" : "Aapka PG reject ho gaya",
+          message: approved
+            ? `${listing.title} ab live hai. Owner paid plan lega to aapki earning ban jayegi.`
+            : `${listing.title} approve nahi hua. Details ke liye support se sampark karein.`,
+          link: `/partner/pgs/${listing.id}`,
+        }).catch(console.error);
+      }
+    }
 
     // If listing is activated, notify Google Indexing API
     if (status === "ACTIVE" && listing.city && listing.locality) {

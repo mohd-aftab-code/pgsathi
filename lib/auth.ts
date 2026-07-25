@@ -197,6 +197,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.listingIds   = (user as any).listingIds;
           token.isManager    = true;
         }
+        // Partner-specific: resolve the profile id once, at sign-in, so every
+        // later request has it without a query and the client can never forge it.
+        // Approval status is deliberately NOT cached here — it is read fresh
+        // per request so an admin approval applies immediately.
+        if ((user as any).role === "PARTNER") {
+          const partnerUserId = parseInt(user.id as string, 10);
+          if (!Number.isNaN(partnerUserId)) {
+            const profile = await db.partnerProfile.findUnique({
+              where: { userId: partnerUserId },
+              select: { id: true },
+            });
+            if (profile) token.partnerId = profile.id;
+          }
+        }
       }
       return token;
     },
@@ -210,6 +224,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           (session.user as any).managerRole = token.managerRole;
           (session.user as any).listingIds  = token.listingIds;
           (session.user as any).isManager   = true;
+        }
+        if (token.partnerId) {
+          (session.user as any).partnerId = token.partnerId;
         }
       }
       return session;

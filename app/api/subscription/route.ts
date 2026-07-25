@@ -84,6 +84,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // 4. Partner earnings: if this owner has partner-registered PGs, this paid
+    //    activation is the "converts to paid" trigger. Creates one PENDING
+    //    earning per such PG (admin sets the amount). Non-fatal — a partner
+    //    accounting hiccup must never fail the owner's payment.
+    if (amount > 0) {
+      try {
+        const { createEarningsForPaidOwner } = await import("@/lib/partner-earnings");
+        await createEarningsForPaidOwner(parseInt(session.user.id), subscription.id);
+      } catch (e) {
+        console.error("[subscription] partner earning trigger failed (non-fatal):", e);
+      }
+    }
+
     return NextResponse.json({ success: true, data: subscription });
   } catch (error: any) {
     console.error("Subscription Error:", error);

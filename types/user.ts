@@ -1,4 +1,6 @@
-export type UserRole = "TENANT" | "OWNER" | "ADMIN";
+/** Must stay in sync with the Prisma `UserRole` enum (prisma/schema.prisma).
+ *  "MANAGER" is not a DB role — it is a session-only role for PgTeamMember logins. */
+export type UserRole = "TENANT" | "OWNER" | "ADMIN" | "PARTNER";
 
 export interface User {
   id: number;

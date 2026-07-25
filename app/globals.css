@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Dark mode is driven by a `.dark` class on <html>, not the OS setting, so the
+   Partner Portal can offer a real toggle. Tailwind v4 defaults `dark:` to
+   prefers-color-scheme; this overrides that. Safe for the rest of the app —
+   no other page uses `dark:` utilities, so nothing changes unless .dark is set. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ═══════════════════════════════════════════
    DESIGN TOKENS — Tailwind v4 Theme
    ═══════════════════════════════════════════ */

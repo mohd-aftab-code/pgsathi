@@ -29,6 +29,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         badge: body.badge !== undefined ? body.badge || null : undefined,
         sortOrder: body.sortOrder !== undefined ? parseInt(body.sortOrder) : undefined,
         capabilities: body.capabilities !== undefined ? (readCapabilities(body.capabilities) as object) : undefined,
+        partnerCommissionType: body.partnerCommissionType !== undefined ? (["NONE", "PERCENT", "FIXED"].includes(body.partnerCommissionType) ? body.partnerCommissionType : "NONE") : undefined,
+        partnerCommissionValue: body.partnerCommissionValue !== undefined ? Math.max(0, parseInt(body.partnerCommissionValue) || 0) : undefined,
         isActive: body.isActive !== undefined ? body.isActive : undefined,
       }
     });

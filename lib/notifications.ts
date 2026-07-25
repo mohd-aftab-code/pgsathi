@@ -14,7 +14,9 @@ export type NotifType =
   | "COMPLAINT"
   | "REVIEW"
   | "SUBSCRIPTION"
-  | "SYSTEM";
+  | "SYSTEM"
+  | "PARTNER_PG"
+  | "PARTNER_EARNING";
 
 export async function notify(input: {
   userId: number | null | undefined;

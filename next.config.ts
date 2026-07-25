@@ -85,7 +85,10 @@ const nextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
-  serverExternalPackages: ["@prisma/client", "prisma"],
+  // pdfkit loads its .afm font-metric files from its own package directory at
+  // runtime; bundling it breaks those paths and every PDF export fails. exceljs
+  // is listed for the same reason (large Node-only dependency).
+  serverExternalPackages: ["@prisma/client", "prisma", "pdfkit", "exceljs"],
 };
 
 export default nextConfig;

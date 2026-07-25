@@ -72,7 +72,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* For Owners */}
+          {/* For Owners + Partners */}
           <div>
             <h4 className="text-white font-semibold mb-5 text-base">Owners के लिए</h4>
             <ul className="flex flex-col gap-3">
@@ -88,6 +88,21 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+            </ul>
+
+            {/* Partner programme — the only entry point to /partner on the whole site */}
+            <h4 className="text-white font-semibold mt-8 mb-5 text-base">Partners के लिए</h4>
+            <ul className="flex flex-col gap-3">
+              <li>
+                <Link href="/partner" className="text-violet-300 hover:text-violet-200 text-sm font-medium transition-colors">
+                  Partner बनें — Refer &amp; Earn
+                </Link>
+              </li>
+              <li>
+                <Link href="/partner/login" className="text-slate-400 hover:text-violet-300 text-sm transition-colors">
+                  Partner Login
+                </Link>
+              </li>
             </ul>
           </div>
 

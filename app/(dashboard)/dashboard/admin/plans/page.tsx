@@ -27,6 +27,8 @@ export default function AdminPlansPage() {
     maxTenants: "",
     features: [] as Feature[],
     capabilities: { ...NO_CAPABILITIES } as PlanCapabilities,
+    partnerCommissionType: "NONE",
+    partnerCommissionValue: "0",
     isActive: true,
   });
 
@@ -61,6 +63,8 @@ export default function AdminPlansPage() {
         maxTenants: plan.maxTenants ? plan.maxTenants.toString() : "",
         features: Array.isArray(plan.features) ? plan.features : [],
         capabilities: readCapabilities(plan.capabilities),
+        partnerCommissionType: plan.partnerCommissionType ?? "NONE",
+        partnerCommissionValue: (plan.partnerCommissionValue ?? 0).toString(),
         isActive: plan.isActive,
       });
     } else {
@@ -79,6 +83,8 @@ export default function AdminPlansPage() {
         maxTenants: "",
         features: [],
         capabilities: { ...NO_CAPABILITIES },
+        partnerCommissionType: "NONE",
+        partnerCommissionValue: "0",
         isActive: true,
       });
     }
@@ -291,6 +297,45 @@ export default function AdminPlansPage() {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Partner commission — what a partner earns when an owner buys this plan. */}
+            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
+              <div className="mb-4 pb-4 border-b border-neutral-200">
+                <h3 className="text-lg font-bold text-neutral-900">Partner Commission</h3>
+                <p className="text-sm text-neutral-500">Owner ye plan le to partner ko kitna mile. Ye earning apne aap ban jaati hai (admin baad mein badal bhi sakta hai).</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">Commission type</label>
+                  <select className="w-full border rounded-xl p-2.5" value={formData.partnerCommissionType} onChange={e => setFormData({ ...formData, partnerCommissionType: e.target.value })}>
+                    <option value="NONE">None (admin manually set karega)</option>
+                    <option value="PERCENT">Percent of plan price (%)</option>
+                    <option value="FIXED">Fixed amount (₹)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    {formData.partnerCommissionType === "PERCENT" ? "Percent (%)" : formData.partnerCommissionType === "FIXED" ? "Amount (₹)" : "Value"}
+                  </label>
+                  <input
+                    type="number" min={0}
+                    disabled={formData.partnerCommissionType === "NONE"}
+                    className="w-full border rounded-xl p-2.5 disabled:bg-neutral-100 disabled:text-neutral-400"
+                    value={formData.partnerCommissionValue}
+                    onChange={e => setFormData({ ...formData, partnerCommissionValue: e.target.value })}
+                  />
+                </div>
+              </div>
+              {formData.partnerCommissionType !== "NONE" && formData.price && (
+                <p className="text-sm text-green-700 font-semibold mt-3">
+                  Is plan par partner ko milega:{" "}
+                  ₹{formData.partnerCommissionType === "PERCENT"
+                    ? Math.round((parseInt(formData.price || "0") * parseInt(formData.partnerCommissionValue || "0")) / 100)
+                    : parseInt(formData.partnerCommissionValue || "0")}
+                  {" "}per conversion
+                </p>
+              )}
             </div>
 
             <div className="md:col-span-2 flex items-center gap-4 mt-4">

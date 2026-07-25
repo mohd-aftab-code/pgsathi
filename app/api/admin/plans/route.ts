@@ -46,6 +46,8 @@ export async function POST(req: NextRequest) {
         badge: body.badge || null,
         sortOrder: body.sortOrder !== undefined ? parseInt(body.sortOrder) : 0,
         capabilities: readCapabilities(body.capabilities) as object,
+        partnerCommissionType: ["NONE", "PERCENT", "FIXED"].includes(body.partnerCommissionType) ? body.partnerCommissionType : "NONE",
+        partnerCommissionValue: body.partnerCommissionValue !== undefined ? Math.max(0, parseInt(body.partnerCommissionValue) || 0) : 0,
         isActive: body.isActive !== false,
       }
     });

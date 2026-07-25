@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { LayoutDashboard, ShieldCheck, Users, PieChart, Settings, TrendingUp, Star, Globe } from "lucide-react";
+import { LayoutDashboard, ShieldCheck, Users, PieChart, Settings, TrendingUp, Star, Globe, Handshake, IndianRupee, ShieldAlert } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
@@ -31,10 +31,13 @@ export default async function AdminDashboardLayout({
     { name: "Verify Listings", href: "/dashboard/admin/verify", icon: ShieldCheck },
     { name: "Plans", href: "/dashboard/admin/plans", icon: PieChart },
     { name: "Users", href: "/dashboard/admin/users", icon: Users },
+    { name: "Partners", href: "/dashboard/admin/partners", icon: Handshake },
+    { name: "Partner Earnings", href: "/dashboard/admin/partner-earnings", icon: IndianRupee },
     { name: "Sponsored", href: "/dashboard/admin/sponsored", icon: Star },
     { name: "Heatmap", href: "/dashboard/admin/heatmap", icon: TrendingUp },
     { name: "City CMS", href: "/dashboard/admin/cities", icon: Globe },
     { name: "Reports", href: "/dashboard/admin/reports", icon: PieChart },
+    { name: "Audit Logs", href: "/dashboard/admin/audit-logs", icon: ShieldAlert },
     { name: "Settings", href: "/dashboard/admin/settings", icon: Settings },
   ];
 

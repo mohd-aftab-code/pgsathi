@@ -124,6 +124,17 @@ export default function AdminListingsTableWrapper({
                         Updated
                       </span>
                     )}
+                    {/* Partner-sourced PGs earn the partner a commission once the
+                        owner goes paid — the admin should see that before approving. */}
+                    {listing.partner && (
+                      <Link
+                        href={`/dashboard/admin/partners/${listing.partner.id}`}
+                        className="text-[10px] font-extrabold uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1.5 py-0.5 rounded hover:bg-violet-200 transition-colors"
+                        title={`Registered by partner ${listing.partner.user?.name ?? ""} (${listing.partner.partnerCode})`}
+                      >
+                        Partner · {listing.partner.partnerCode}
+                      </Link>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-neutral-700">
                     <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
@@ -182,6 +193,14 @@ export default function AdminListingsTableWrapper({
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded">
                     Updated
                   </span>
+                )}
+                {listing.partner && (
+                  <Link
+                    href={`/dashboard/admin/partners/${listing.partner.id}`}
+                    className="text-[10px] font-extrabold uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1.5 py-0.5 rounded"
+                  >
+                    Partner · {listing.partner.partnerCode}
+                  </Link>
                 )}
               </div>
               <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-700">

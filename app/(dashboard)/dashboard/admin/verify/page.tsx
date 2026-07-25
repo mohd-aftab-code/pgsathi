@@ -34,6 +34,9 @@ export default async function AdminListingsPage({
         owner: { select: { name: true, phone: true } },
         city: true,
         locality: true,
+        // Who brought this PG in — the admin should know a listing is
+        // partner-sourced before approving it.
+        partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
       },
       orderBy: { createdAt: "desc" },
       skip: (currentPage - 1) * pageSize,
