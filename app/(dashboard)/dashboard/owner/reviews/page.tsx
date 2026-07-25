@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { Star, ShieldCheck, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { moderateReviewAction } from "@/app/actions/reviews";
 
 export const metadata = {
   title: "Reviews | PGSathi Owner Dashboard",
@@ -95,9 +96,21 @@ export default async function OwnerReviewsPage() {
                     
                     {!review.isApproved && (
                       <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                        <p className="text-xs font-semibold text-amber-800">
+                        <p className="text-xs font-semibold text-amber-800 mb-3">
                           This review is pending moderation as the user is not a verified tenant for this PG.
                         </p>
+                        <div className="flex items-center gap-2">
+                          <form action={async () => { "use server"; await moderateReviewAction(review.id, "APPROVE"); }}>
+                            <button type="submit" className="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-green-600 hover:bg-green-700 transition-colors">
+                              Approve
+                            </button>
+                          </form>
+                          <form action={async () => { "use server"; await moderateReviewAction(review.id, "REJECT"); }}>
+                            <button type="submit" className="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold text-neutral-700 bg-white border border-neutral-300 hover:bg-neutral-100 transition-colors">
+                              Reject
+                            </button>
+                          </form>
+                        </div>
                       </div>
                     )}
                   </div>

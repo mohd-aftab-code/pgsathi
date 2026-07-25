@@ -73,22 +73,7 @@ export async function submitReviewAction(listingId: number, rating: number, comm
 
     // Update listing stats if approved
     if (isApproved) {
-      const allApproved = await db.review.findMany({
-        where: { listingId, isApproved: true },
-        select: { rating: true }
-      });
-      
-      const totalReviews = allApproved.length;
-      const sum = allApproved.reduce((acc, curr) => acc + curr.rating, 0);
-      const avgRating = totalReviews > 0 ? (sum / totalReviews).toFixed(2) : 0;
-
-      await db.listing.update({
-        where: { id: listingId },
-        data: {
-          totalReviews,
-          avgRating: parseFloat(avgRating as string)
-        }
-      });
+      await recomputeListingRatingStats(listingId);
     }
 
     updateTag(`listing-${targetListing.slug}`);
@@ -96,5 +81,63 @@ export async function submitReviewAction(listingId: number, rating: number, comm
   } catch (error: any) {
     console.error("Submit review error:", error);
     return { error: "Failed to submit review. Please try again." };
+  }
+}
+
+async function recomputeListingRatingStats(listingId: number) {
+  const allApproved = await db.review.findMany({
+    where: { listingId, isApproved: true },
+    select: { rating: true }
+  });
+
+  const totalReviews = allApproved.length;
+  const sum = allApproved.reduce((acc, curr) => acc + curr.rating, 0);
+  const avgRating = totalReviews > 0 ? (sum / totalReviews).toFixed(2) : 0;
+
+  await db.listing.update({
+    where: { id: listingId },
+    data: {
+      totalReviews,
+      avgRating: parseFloat(avgRating as string)
+    }
+  });
+}
+
+// Reviews from guests who aren't tracked as a verified tenant (PgTenant) land
+// here awaiting the owner's manual sign-off — otherwise they'd be stuck
+// invisible forever with no way for the owner to let them through.
+export async function moderateReviewAction(reviewId: number, decision: "APPROVE" | "REJECT") {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { error: "You must be logged in." };
+    }
+
+    const review = await db.review.findUnique({
+      where: { id: reviewId },
+      include: { listing: { select: { id: true, ownerId: true, slug: true } } }
+    });
+
+    if (!review) {
+      return { error: "Review not found." };
+    }
+
+    const userId = parseInt(session.user.id);
+    if (review.listing.ownerId !== userId && session.user.role !== "ADMIN") {
+      return { error: "You don't have permission to moderate this review." };
+    }
+
+    if (decision === "REJECT") {
+      await db.review.delete({ where: { id: reviewId } });
+    } else {
+      await db.review.update({ where: { id: reviewId }, data: { isApproved: true } });
+      await recomputeListingRatingStats(review.listing.id);
+    }
+
+    updateTag(`listing-${review.listing.slug}`);
+    return { success: true };
+  } catch (error: any) {
+    console.error("Moderate review error:", error);
+    return { error: "Failed to update review. Please try again." };
   }
 }
