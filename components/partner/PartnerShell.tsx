@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
-  User, Settings, Handshake, LogOut, Menu, X,
+  User, Settings, Handshake, LogOut, X, Plus, LayoutGrid,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
@@ -24,7 +24,17 @@ const ACCOUNT = [
 ];
 
 /**
- * Portal chrome: fixed sidebar on desktop, slide-over drawer on mobile.
+ * The bottom bar holds five slots: two tabs, the centre Add-PG button, one tab,
+ * and More. Reports, Notifications and the account pages live in the More sheet.
+ */
+const TABS_LEFT = [NAV[0], NAV[1]];   // Dashboard, My PGs
+const TABS_RIGHT = [NAV[2]];          // Earnings
+
+/**
+ * Portal chrome: fixed sidebar on desktop, native-app bottom tab bar on mobile —
+ * the same pattern the Owner dashboard uses, so a partner who also owns a PG gets
+ * one consistent experience instead of two different navigation models.
+ *
  * Purely presentational — all data is fetched by the server pages it wraps.
  */
 export function PartnerShell({
@@ -85,6 +95,35 @@ export function PartnerShell({
     </nav>
   );
 
+  const Tab = ({ item }: { item: (typeof NAV)[number] }) => {
+    const active = isActive(item.href);
+    return (
+      <Link
+        href={item.href}
+        className="flex flex-col items-center justify-center flex-1 h-full gap-1 pb-1 pt-2"
+      >
+        <div
+          className={`w-10 h-9 rounded-lg grid place-items-center transition-colors ${
+            active ? "bg-primary-100 dark:bg-primary-900/40" : ""
+          }`}
+        >
+          <item.icon
+            size={20}
+            strokeWidth={active ? 2.5 : 1.8}
+            className={active ? "text-primary-700 dark:text-primary-300" : "text-neutral-500 dark:text-neutral-400"}
+          />
+        </div>
+        <span
+          className={`text-[10px] font-semibold transition-colors ${
+            active ? "text-primary-700 dark:text-primary-300" : "text-neutral-400 dark:text-neutral-500"
+          }`}
+        >
+          {item.name}
+        </span>
+      </Link>
+    );
+  };
+
   const Brand = () => (
     <Link href="/partner/dashboard" className="flex items-center gap-2.5 h-16 px-5 shrink-0">
       <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25">
@@ -118,39 +157,20 @@ export function PartnerShell({
         </div>
       </aside>
 
-      {/* ── Mobile drawer ───────────────────────────────────────── */}
-      {open && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="relative w-72 max-w-[85%] bg-white dark:bg-neutral-900 flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between pr-3">
-              <Brand />
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
-                className="w-9 h-9 grid place-items-center rounded-xl text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="flex-1 min-h-0 overflow-y-auto py-2">
-              <NavList />
-            </div>
-          </aside>
-        </div>
-      )}
-
       {/* ── Content ─────────────────────────────────────────────── */}
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800">
           <div className="h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
-            <button
-              onClick={() => setOpen(true)}
-              aria-label="Open menu"
-              className="lg:hidden w-9 h-9 grid place-items-center rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300"
-            >
-              <Menu size={18} />
-            </button>
+            {/* Mobile top app bar: brand + code. Navigation lives in the bottom bar. */}
+            <Link href="/partner/dashboard" className="lg:hidden flex items-center gap-2 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25 shrink-0">
+                <Handshake className="text-white" size={17} />
+              </div>
+              <div className="min-w-0">
+                <div className="font-extrabold text-neutral-900 dark:text-white text-sm leading-tight truncate">PGSathi</div>
+                <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
+              </div>
+            </Link>
 
             <div className="hidden lg:block text-sm text-neutral-500 dark:text-neutral-400">
               Partner Code{" "}
@@ -162,7 +182,8 @@ export function PartnerShell({
               <ThemeToggle />
               <Link
                 href="/api/auth/signout"
-                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-sm font-semibold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                aria-label="Logout"
+                className="inline-flex items-center gap-1.5 h-9 px-2.5 sm:px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-sm font-semibold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
               >
                 <LogOut size={15} />
                 <span className="hidden sm:inline">Logout</span>
@@ -171,8 +192,113 @@ export function PartnerShell({
           </div>
         </header>
 
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        {/* pb-28 keeps the last row clear of the fixed bottom bar on mobile. */}
+        <main className="p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-8">{children}</main>
       </div>
+
+      {/* ── Mobile bottom tab bar ───────────────────────────────── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="mx-1 rounded-t-3xl overflow-hidden bg-white/85 dark:bg-neutral-900/85 backdrop-blur-2xl border-t border-white/50 dark:border-neutral-700/50 shadow-[0_-8px_32px_rgba(0,0,0,0.08)]">
+          <div className="flex items-end justify-around px-1 h-[68px]">
+            {TABS_LEFT.map((item) => <Tab key={item.href} item={item} />)}
+
+            {/* Registering a PG is the partner's core action — give it the centre slot. */}
+            <Link
+              href="/partner/pgs/new"
+              aria-label="Naya PG register karein"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 pb-1 pt-2"
+            >
+              <div className="w-12 h-12 -mt-5 rounded-2xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/40 ring-4 ring-white dark:ring-neutral-900 active:scale-95 transition-transform">
+                <Plus className="text-white" size={22} strokeWidth={2.6} />
+              </div>
+              <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500">Add PG</span>
+            </Link>
+
+            {TABS_RIGHT.map((item) => <Tab key={item.href} item={item} />)}
+
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="More sections"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 pb-1 pt-2"
+            >
+              <div className="w-10 h-9 rounded-lg grid place-items-center">
+                <LayoutGrid size={20} className="text-neutral-500 dark:text-neutral-400" strokeWidth={1.8} />
+              </div>
+              <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500">More</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Mobile "More" sheet ─────────────────────────────────── */}
+      {open && (
+        <div
+          className="lg:hidden fixed inset-0 z-[60] flex flex-col justify-end bg-black/40 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-neutral-900 rounded-t-3xl overflow-hidden max-h-[85vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+          >
+            <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 grid place-items-center text-xs font-bold shrink-0">
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-neutral-900 dark:text-white truncate">{name}</div>
+                  <div className="text-[10px] font-bold tracking-widest text-primary-600 dark:text-primary-400">{partnerCode}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="w-9 h-9 grid place-items-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 shrink-0"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto p-4 flex flex-col gap-5">
+              {[{ label: "Main", items: NAV }, { label: "Account", items: ACCOUNT }].map((group) => (
+                <div key={group.label}>
+                  <p className="px-2 mb-2 text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
+                    {group.label}
+                  </p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {group.items.map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl transition-colors ${
+                            active
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300"
+                              : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                          }`}
+                        >
+                          <item.icon size={21} className={active ? "text-primary-600 dark:text-primary-400" : "text-neutral-400 dark:text-neutral-500"} />
+                          <span className="text-[9px] font-semibold text-center leading-tight">{item.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              <Link
+                href="/api/auth/signout"
+                className="flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-bold text-sm"
+              >
+                <LogOut size={16} /> Logout
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
