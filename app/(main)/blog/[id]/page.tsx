@@ -11,6 +11,7 @@ interface Props {
 }
 
 import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -58,7 +59,7 @@ export default async function BlogPostPage(props: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="bg-neutral-50 min-h-screen py-10 md:py-16">
         <div className="container-max section-padding">

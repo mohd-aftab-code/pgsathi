@@ -5,6 +5,7 @@ import { PopularLocalitiesWidget } from "@/components/common/PopularLocalitiesWi
 import { db } from "@/lib/db";
 
 import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -87,7 +88,7 @@ export default async function PgInCityPage(props: {
       {/* FAQ Schema Markup for Google Rich Snippets */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }}
       />
 
       <SearchPage searchParams={updatedSearchParams} />

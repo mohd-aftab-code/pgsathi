@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import PGCardSkeleton from "@/components/listings/PGCardSkeleton";
+import { safeJsonLd } from "@/lib/json-ld";
 
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
@@ -24,7 +25,7 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_SCHEMA) }}
       />
       <HeroSection />
       <CityGrid />

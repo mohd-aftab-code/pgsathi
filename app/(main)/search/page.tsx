@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { Metadata } from "next";
+import { safeJsonLd } from "@/lib/json-ld";
 
 const getSearchResults = unstable_cache(
   async (where: any, orderBy: any, page: number, itemsPerPage: number) => {
@@ -194,7 +195,7 @@ export default async function SearchPage(props: {
       {/* JSON-LD Schema Markup for Search Results */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }}
       />
       <div className="container-max section-padding">
 

@@ -1272,3 +1272,14 @@ enum VisitStatus {
   COMPLETED
   CANCELLED
 }
+
+/// Fallback rate-limit counters, used when Upstash Redis is not configured.
+/// Without this the limiter fails open and OTP/login have no limit at all.
+model RateLimit {
+  key       String   @id @db.VarChar(200)
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("rate_limits")
+}

@@ -44,6 +44,7 @@ function getListingBySlug(slug: string) {
 }
 
 import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export async function generateMetadata(props: {
   params: Promise<{ city: string; locality: string; slug: string }>;
@@ -154,8 +155,8 @@ export default async function PGDetailPage(props: {
   return (
     <>
       {/* Schema Markup */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(schemaData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }} />
       <ViewTracker listingId={pg.id} />
 
       <div className="bg-neutral-50 min-h-screen">
