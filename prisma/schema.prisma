@@ -242,6 +242,8 @@ model Listing {
   @@index([status, isVerified, isActive])
   @@index([isDraft, ownerId])
   @@index([qualityScore])
+  // City browse pages filter on both together; [status, …] alone can't serve it.
+  @@index([cityId, status])
   @@map("listings")
 }
 
@@ -755,6 +757,8 @@ model PgTenant {
   @@index([ownerId])
   @@index([userId])
   @@index([listingId])
+  // Every tenant read filters deletedAt; without this Postgres scanned the table.
+  @@index([deletedAt])
   @@index([status])
   @@map("pg_tenants")
 }

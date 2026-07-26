@@ -13,15 +13,24 @@ interface Prefill { name?: string; phone?: string; email?: string }
 export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[]; prefill?: Prefill }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [rooms, setRooms] = useState<{ id: number; name: string; listingId: number }[]>([]);
+  type RoomOpt = {
+    id: number; name: string; listingId: number; floor: string | null;
+    price: number; sharing: number; freeBeds: number; totalBeds: number;
+  };
+  const [rooms, setRooms] = useState<RoomOpt[]>([]);
   const [beds, setBeds] = useState<{ id: number; name: string; roomId: number; isOccupied: boolean }[]>([]);
   const [selectedListing, setSelectedListing] = useState("");
   const [selectedRoom, setSelectedRoom]       = useState("");
+  // Rent is a controlled field so picking a room can fill it from the room's
+  // preset price — while still leaving it editable for a one-off amount.
+  const [rent, setRent] = useState("");
+  const [rentFromRoom, setRentFromRoom] = useState(false);
 
   async function loadRooms(listingId: string) {
     setSelectedListing(listingId);
     setSelectedRoom("");
     setBeds([]);
+    setRentFromRoom(false);
     if (!listingId) { setRooms([]); return; }
     const res = await fetch(`/api/rooms?listingId=${listingId}`);
     const d   = await res.json();
@@ -30,10 +39,26 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
 
   async function loadBeds(roomId: string) {
     setSelectedRoom(roomId);
-    if (!roomId) { setBeds([]); return; }
+    if (!roomId) { setBeds([]); setRentFromRoom(false); return; }
+
+    // Pre-fill rent from the room's set price. Only overwrite while the value is
+    // still the one we filled in — a rent the user typed themselves is never
+    // silently replaced.
+    const room = rooms.find((r) => String(r.id) === roomId);
+    if (room && room.price > 0 && (rent === "" || rentFromRoom)) {
+      setRent(String(room.price));
+      setRentFromRoom(true);
+    }
+
     const res = await fetch(`/api/beds?roomId=${roomId}`);
     const d   = await res.json();
     setBeds((d.data ?? []).filter((b: any) => !b.isOccupied));
+  }
+
+  /** "Double Sharing" from a bed count — matches the Rooms screen's wording. */
+  function sharingLabel(n: number): string {
+    const names: Record<number, string> = { 1: "Single", 2: "Double", 3: "Triple", 4: "Four", 5: "Five", 6: "Six" };
+    return n === 0 ? "No beds" : `${names[n] ?? n} Sharing`;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -130,7 +155,25 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Monthly Rent (₹)</label>
-              <input name="monthlyRent" type="number" min="0" required className="input-base" placeholder="5000" />
+              <input
+                name="monthlyRent"
+                type="number"
+                min="0"
+                required
+                className="input-base"
+                placeholder="5000"
+                value={rent}
+                onChange={(e) => { setRent(e.target.value); setRentFromRoom(false); }}
+              />
+              {rentFromRoom ? (
+                <p className="text-[11px] text-primary-600 mt-1 font-semibold">
+                  Room ke set price se aaya — badalna ho to yahin edit kar dijiye.
+                </p>
+              ) : (
+                selectedRoom && (
+                  <p className="text-[11px] text-neutral-400 mt-1">Aapka apna amount — room ke price se alag.</p>
+                )
+              )}
             </div>
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Security Deposit (₹)</label>
@@ -183,7 +226,17 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
                   className="input-base"
                 >
                   <option value="">Select Room...</option>
-                  {rooms.map((r) => <option key={r.id} value={r.id}>Room {r.name}</option>)}
+                  {/* Sharing type and price come from how the room was set up in
+                      Rooms, so the person adding a tenant picks by what the room
+                      actually is rather than by number alone. */}
+                  {rooms.map((r) => (
+                    <option key={r.id} value={r.id} disabled={r.freeBeds === 0}>
+                      Room {r.name}
+                      {r.floor ? ` (${r.floor})` : ""} · {sharingLabel(r.sharing)}
+                      {r.price > 0 ? ` · ₹${r.price.toLocaleString("en-IN")}` : ""}
+                      {r.freeBeds === 0 ? " · FULL" : ` · ${r.freeBeds} bed khaali`}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}

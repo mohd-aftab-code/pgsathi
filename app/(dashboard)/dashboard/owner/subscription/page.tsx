@@ -1,9 +1,13 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CreditCard, CheckCircle2, ShieldCheck, Zap, AlertTriangle, CalendarDays, Phone, Mail } from "lucide-react";
+import { CreditCard, CheckCircle2, ShieldCheck, Zap, AlertTriangle, CalendarDays, Phone, Mail, Receipt } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { cycleLabel } from "@/lib/billing";
+
+const fmtDate = (d: Date | string) =>
+  new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 
 export const metadata = {
   title: "My Subscription - PGSathi",
@@ -19,9 +23,9 @@ export default async function OwnerSubscriptionPage() {
 
   // Fetch the active subscription
   const activeSub = await db.subscription.findFirst({
-    where: { 
-      userId, 
-      status: "ACTIVE" 
+    where: {
+      userId,
+      status: "ACTIVE"
     },
     include: {
       plan: true,
@@ -31,12 +35,62 @@ export default async function OwnerSubscriptionPage() {
     }
   });
 
+  // Every payment this owner has made. Reading from invoices rather than
+  // subscriptions means a renewal shows as its own line instead of overwriting
+  // the previous one.
+  const invoices = await db.invoice.findMany({
+    where: { subscription: { userId } },
+    orderBy: { invoiceDate: "desc" },
+    take: 24,
+    select: {
+      id: true, amount: true, status: true, invoiceDate: true, paidAt: true,
+      billingCycle: true, periodStart: true, periodEnd: true, razorpayPayId: true,
+      subscription: { select: { plan: { select: { name: true } } } },
+    },
+  });
+
+  // A payment that went through but left no active plan. This is the case an
+  // owner has no way to diagnose on their own — they were charged and nothing
+  // happened — so it gets called out explicitly with a way to reach support.
+  const paidButNotActive =
+    !activeSub && invoices.some((i) => i.status === "PAID" && i.amount > 0);
+
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">My Subscription</h1>
         <p className="text-neutral-500 mt-1">Manage your billing, view plan details, and upgrade.</p>
       </div>
+
+      {/* Charged but no live plan. The owner cannot fix this themselves and has
+          no way to even tell what went wrong, so say it plainly and give them a
+          direct line rather than leaving them to guess. */}
+      {paidButNotActive && (
+        <div className="mb-6 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} />
+            <div className="min-w-0">
+              <h3 className="font-bold text-amber-900">Payment hua hai, par plan abhi active nahi dikh raha</h3>
+              <p className="text-sm text-amber-800 mt-1">
+                Aapka payment record mein hai lekin koi plan chalu nahi hai. Aksar ye bas thodi der ka
+                matter hota hai — page refresh karke dekhiye. Phir bhi na chale to <b>paisa kaha nahi
+                jaata</b>, hamari team turant theek kar degi.
+              </p>
+              <p className="text-xs text-amber-700 mt-2">
+                Baat karte waqt niche wali payment history se date aur amount bata dijiyega — kaam jaldi ho jayega.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <a href="tel:+919696110243" className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold">
+                  <Phone size={14} /> +91 9696110243
+                </a>
+                <a href="mailto:pgsathi.support@gmail.com?subject=Payment%20hua%20par%20plan%20active%20nahi" className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border-2 border-amber-300 text-amber-800 text-sm font-bold">
+                  <Mail size={14} /> Email karein
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!activeSub ? (
         <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-neutral-200">
@@ -165,6 +219,88 @@ export default async function OwnerSubscriptionPage() {
 
         </div>
       )}
+
+      {/* Payment history. One row per payment, so a renewal is its own line and
+          the owner can always see exactly what they were charged and when. */}
+      <div className="mt-8 bg-white rounded-3xl border border-neutral-200 shadow-sm overflow-hidden">
+        <div className="px-5 sm:px-6 py-4 border-b border-neutral-100">
+          <h3 className="font-bold text-neutral-900">Payment History</h3>
+          <p className="text-xs text-neutral-500 mt-0.5">
+            Aapke saare payments. Kisi bhi dikkat par team ko yahi detail bata dijiye.
+          </p>
+        </div>
+
+        {invoices.length === 0 ? (
+          <div className="px-6 py-10 text-center">
+            <Receipt className="mx-auto text-neutral-300 mb-2" size={28} />
+            <p className="text-sm font-bold text-neutral-700">Abhi koi payment nahi</p>
+            <p className="text-xs text-neutral-500 mt-1">
+              Plan lene par har payment yahan record ho jayega.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[620px]">
+              <thead>
+                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
+                  <th className="px-5 sm:px-6 py-3 font-bold">Date</th>
+                  <th className="px-3 py-3 font-bold">Plan</th>
+                  <th className="px-3 py-3 font-bold">Period</th>
+                  <th className="px-3 py-3 font-bold text-right">Amount</th>
+                  <th className="px-5 sm:px-6 py-3 font-bold text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100">
+                {invoices.map((inv) => {
+                  const failed = inv.status !== "PAID" && inv.status !== "FREE";
+                  return (
+                    <tr key={inv.id} className="hover:bg-neutral-50">
+                      <td className="px-5 sm:px-6 py-3 text-neutral-700">
+                        {fmtDate(inv.paidAt ?? inv.invoiceDate)}
+                        {inv.razorpayPayId && (
+                          <div className="text-[10px] text-neutral-400 truncate max-w-[150px]">{inv.razorpayPayId}</div>
+                        )}
+                      </td>
+                      <td className="px-3 py-3 text-neutral-700">
+                        {inv.subscription.plan.name}
+                        <div className="text-[11px] text-neutral-400">{cycleLabel(inv.billingCycle)}</div>
+                      </td>
+                      <td className="px-3 py-3 text-neutral-500 text-xs">
+                        {inv.periodStart && inv.periodEnd
+                          ? `${fmtDate(inv.periodStart)} – ${fmtDate(inv.periodEnd)}`
+                          : "—"}
+                      </td>
+                      <td className="px-3 py-3 text-right font-bold text-neutral-900">
+                        ₹{inv.amount.toLocaleString("en-IN")}
+                      </td>
+                      <td className="px-5 sm:px-6 py-3 text-right">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                            failed
+                              ? "bg-red-50 text-red-700"
+                              : inv.amount === 0
+                                ? "bg-neutral-100 text-neutral-500"
+                                : "bg-green-50 text-green-700"
+                          }`}
+                        >
+                          {failed ? "FAILED" : inv.amount === 0 ? "FREE" : "PAID"}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {invoices.some((i) => i.status !== "PAID" && i.status !== "FREE") && (
+          <div className="px-5 sm:px-6 py-3 border-t border-neutral-100 bg-red-50/50 text-xs text-red-700">
+            Koi payment fail dikh raha hai? Agar aapke account se paisa kata hai to woh 5–7 working
+            din mein apne aap wapas aa jaata hai. Jaldi chahiye to team ko call kar lijiye.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react";
+import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
 import { PLANS, isValidPlanId, GST_RATE } from "@/lib/plans";
@@ -46,6 +46,9 @@ export default function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
+  // Inline, specific errors. A browser alert() gives no room to say what the
+  // owner should actually DO — and "paid but not activated" needs saying loudly.
+  const [error, setError] = useState<{ title: string; body: string; charged: boolean } | null>(null);
 
   const cycles = availableCycles(selectedPlan);
   // If the plan stops offering the selected cycle, fall back to what it does offer
@@ -78,7 +81,7 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(`Failed to create order: ${data.message}`);
+        setError({ title: "Payment shuru nahi ho paaya", body: data.message || "Order banane mein dikkat aayi. Thodi der baad dobara koshish kijiye.", charged: false });
         setPaymentStep("IDLE");
         setLoading(false);
         return;
@@ -118,14 +121,14 @@ export default function CheckoutPage() {
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (response: any) {
-        alert(`Payment Failed: ${response.error.description}`);
+        setError({ title: "Payment fail ho gaya", body: (response?.error?.description || "Bank ne payment reject kar diya.") + " Agar aapke account se paisa kata hai to 5-7 working din mein wapas aa jayega.", charged: true });
         setPaymentStep("IDLE");
         setLoading(false);
       });
       rzp.open();
 
     } catch (error) {
-      alert("Something went wrong initializing payment");
+      setError({ title: "Payment window nahi khul paayi", body: "Internet check karke dobara koshish kijiye. Aapse abhi tak koi paisa nahi liya gaya.", charged: false });
       setPaymentStep("IDLE");
       setLoading(false);
     }
@@ -151,12 +154,12 @@ export default function CheckoutPage() {
         }, 2000);
       } else {
         const data = await res.json();
-        alert(`Activation failed: ${data.message}`);
+        setError({ title: "Paisa kat gaya par plan chalu nahi hua", body: (data.message || "") + " Ghabraiye mat - payment record ho chuka hai. Subscription page kholiye, wahan payment history dikhegi. Plan phir bhi na chale to team ko call kar lijiye, paisa kahin nahi jaata.", charged: true });
         setPaymentStep("IDLE");
         setLoading(false);
       }
     } catch (error) {
-      alert("Failed to activate subscription after payment.");
+      setError({ title: "Paisa kat gaya par plan chalu nahi hua", body: "Payment ho chuka hai. Subscription page par jaakar payment history dekhiye. Plan na dikhe to team ko call kar lijiye - paisa kahin nahi jaata.", charged: true });
       setPaymentStep("IDLE");
       setLoading(false);
     }
@@ -184,6 +187,43 @@ export default function CheckoutPage() {
       <Link href="/dashboard/owner/subscription/upgrade" className="inline-flex items-center gap-2 text-neutral-500 hover:text-primary-600 mb-8 font-medium transition-colors">
         <ArrowLeft size={18} /> Back to Plans
       </Link>
+
+      {/* `charged` decides the tone: money moved means reassure and route to
+          support, money didn't means just let them retry. */}
+      {error && (
+        <div
+          className={`mb-6 rounded-2xl border-2 p-5 ${
+            error.charged ? "border-amber-300 bg-amber-50" : "border-red-200 bg-red-50"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle className={error.charged ? "text-amber-600 shrink-0 mt-0.5" : "text-red-500 shrink-0 mt-0.5"} size={20} />
+            <div className="min-w-0 flex-1">
+              <h3 className={`font-bold ${error.charged ? "text-amber-900" : "text-red-900"}`}>{error.title}</h3>
+              <p className={`text-sm mt-1 ${error.charged ? "text-amber-800" : "text-red-800"}`}>{error.body}</p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {error.charged ? (
+                  <>
+                    <Link href="/dashboard/owner/subscription" className="inline-flex items-center h-10 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold">
+                      Payment history dekhein
+                    </Link>
+                    <a href="tel:+919696110243" className="inline-flex items-center h-10 px-4 rounded-xl border-2 border-amber-300 text-amber-800 text-sm font-bold">
+                      +91 9696110243
+                    </a>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setError(null)}
+                    className="inline-flex items-center h-10 px-4 rounded-xl bg-neutral-900 hover:bg-black text-white text-sm font-bold"
+                  >
+                    Dobara koshish karein
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         {/* Left: Plan Details */}
