@@ -136,7 +136,12 @@ export default async function PartnerDashboardPage() {
         <section className="lg:col-span-2 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
             <h2 className="font-bold text-neutral-900 dark:text-white text-sm">Recent PGs</h2>
-            <Link href="/partner/pgs" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1">
+            {/* -my-2 keeps the header height unchanged while giving the link a
+                thumb-sized hit box. */}
+            <Link
+              href="/partner/pgs"
+              className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1 py-2 -my-2 px-1 -mx-1"
+            >
               View all <ArrowRight size={13} />
             </Link>
           </div>
