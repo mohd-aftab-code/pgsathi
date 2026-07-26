@@ -89,16 +89,22 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-neutral-200 pb-5">
-        <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 flex items-center gap-2">
-            <ShieldCheck className="text-blue-600" size={28} /> SaaS Client Management
-          </h1>
-          <p className="text-sm text-neutral-500 mt-1">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
+      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck size={22} />
+              <h1 className="text-2xl font-extrabold">SaaS Client Management</h1>
+            </div>
+            <p className="text-neutral-300 text-sm">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
+          </div>
+          <button
+            onClick={() => fetchData()}
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-colors shrink-0"
+          >
+            <RefreshCcw size={14} /> Refresh
+          </button>
         </div>
-        <button onClick={() => fetchData()} className="cursor-pointer btn-outline text-sm flex items-center gap-2">
-          <RefreshCcw size={14} /> Refresh
-        </button>
       </div>
 
       {/* Stats */}

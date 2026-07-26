@@ -24,14 +24,18 @@ export default async function AdminDashboardPage() {
 
     return (
     <div>
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Super Admin Overview</h1>
-          <p className="text-neutral-500 mt-1">Platform-wide statistics, revenue, and pending actions.</p>
-        </div>
-        <div className="flex items-center gap-2 text-sm font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200 shadow-sm">
-          <Activity size={16} className="text-green-500" />
-          System Status: Healthy
+      {/* Same dark header card every other admin screen uses — the admin had
+          four different header treatments across ten pages. */}
+      <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold mb-1">Super Admin Overview</h1>
+            <p className="text-neutral-300 text-sm">Platform-wide statistics, revenue, and pending actions.</p>
+          </div>
+          <div className="inline-flex items-center gap-2 text-sm font-bold text-green-300 bg-white/10 px-4 py-2 rounded-xl shrink-0">
+            <Activity size={16} className="text-green-400" />
+            System Status: Healthy
+          </div>
         </div>
       </div>
 

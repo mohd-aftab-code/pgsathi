@@ -49,11 +49,9 @@ export default async function AdminListingsPage({
 
   return (
     <div>
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Manage Listings</h1>
-          <p className="text-neutral-500 mt-1">Review, approve, edit, and delete PGs across the platform.</p>
-        </div>
+      <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+        <h1 className="text-2xl font-extrabold mb-1">Manage Listings</h1>
+        <p className="text-neutral-300 text-sm">Review, approve, edit, and delete PGs across the platform.</p>
       </div>
 
       {/* Tabs & Search */}
