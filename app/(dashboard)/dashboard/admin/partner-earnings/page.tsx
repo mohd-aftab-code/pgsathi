@@ -29,6 +29,7 @@ export default async function AdminPartnerEarningsPage({
       take: 100,
       select: {
         id: true, amount: true, status: true, createdAt: true, planNameSnapshot: true,
+        owner: { select: { name: true } },
         listing: { select: { title: true } },
         partner: { select: { partnerCode: true, user: { select: { name: true } } } },
       },
@@ -71,7 +72,7 @@ export default async function AdminPartnerEarningsPage({
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
                 <th className="px-5 py-3 font-bold">Partner</th>
-                <th className="px-3 py-3 font-bold">PG</th>
+                <th className="px-3 py-3 font-bold">Owner</th>
                 <th className="px-3 py-3 font-bold">Plan</th>
                 <th className="px-3 py-3 font-bold">Date</th>
                 <th className="px-3 py-3 font-bold text-right">Amount</th>
@@ -86,7 +87,7 @@ export default async function AdminPartnerEarningsPage({
                     <div className="font-semibold text-neutral-900">{e.partner.user.name}</div>
                     <div className="text-xs text-neutral-400 tracking-widest">{e.partner.partnerCode}</div>
                   </td>
-                  <td className="px-3 py-3 text-neutral-600 max-w-[180px] truncate">{e.listing.title}</td>
+                  <td className="px-3 py-3 text-neutral-600 max-w-[180px] truncate">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
                   <td className="px-3 py-3 text-neutral-600">{e.planNameSnapshot ?? "—"}</td>
                   <td className="px-3 py-3 text-neutral-500">{fmtDate(e.createdAt)}</td>
                   <td className="px-3 py-3 text-right font-bold text-neutral-900">{inr(e.amount)}</td>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRazorpayClient } from "@/lib/razorpay";
 import { auth } from "@/lib/auth";
 import { getServerPlanAmount } from "@/lib/plan-service";
+import { isValidCycle } from "@/lib/billing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,12 +11,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const { planId } = await req.json();
+    const { planId, billingCycle } = await req.json();
+    const cycle = isValidCycle(billingCycle) ? billingCycle : "MONTHLY";
 
-    // Amount comes from the DB plan (super-admin controlled), never the client.
-    const amount = typeof planId === "string" ? await getServerPlanAmount(planId) : null;
+    // Amount comes from the DB plan for the chosen cycle (super-admin controlled),
+    // never the client — and it must match what /api/subscription later records,
+    // or the customer is charged for one duration and given another.
+    const amount = typeof planId === "string" ? await getServerPlanAmount(planId, cycle) : null;
     if (amount === null) {
-      return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Invalid plan or duration" }, { status: 400 });
     }
     if (amount <= 0) {
       return NextResponse.json({ success: false, message: "This plan does not require payment" }, { status: 400 });
@@ -33,7 +37,7 @@ export async function POST(req: NextRequest) {
       amount: amount * 100, // Razorpay works in paise
       currency: "INR",
       receipt: `receipt_${Date.now()}_${session.user.id}`,
-      notes: { userId: session.user.id, planId },
+      notes: { userId: session.user.id, planId, billingCycle: cycle },
     };
 
     const order = await razorpay.orders.create(options);

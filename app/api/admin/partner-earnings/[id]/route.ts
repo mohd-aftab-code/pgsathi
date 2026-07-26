@@ -4,7 +4,8 @@
  *   action: "set_amount" | "approve" | "mark_paid" | "cancel"
  *
  * Every change records a before/after audit entry (this is the whole reason
- * admin_audit_logs exists). The amount is admin-decided — there is no commission.
+ * admin_audit_logs exists). Amounts are calculated from the plan's commission
+ * rate, but the admin can still override or cancel any individual earning.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
@@ -25,9 +26,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const earning = await db.partnerEarning.findUnique({
     where: { id: earningId },
-    select: { id: true, amount: true, status: true, partnerId: true, listing: { select: { title: true } }, partner: { select: { userId: true } } },
+    select: {
+      id: true, amount: true, status: true, partnerId: true,
+      owner: { select: { name: true } },
+      listing: { select: { title: true } },
+      partner: { select: { userId: true } },
+    },
   });
   if (!earning) return NextResponse.json({ success: false, message: "Earning nahi mili" }, { status: 404 });
+
+  // Commission is owner-level now, so the owner names the earning. Older per-PG
+  // rows have no owner, hence the listing fallback.
+  const subject = earning.owner?.name ?? earning.listing?.title ?? "Ye earning";
 
   // PAID and CANCELLED are terminal. The UI already hides the buttons, but the API
   // is the real boundary and a stale tab is enough to reach it — and each of these
@@ -60,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (Number.isNaN(amount) || amount < 0) return NextResponse.json({ success: false, message: "Sahi amount daalein" }, { status: 400 });
     data = { amount };
     auditAction = "earning.amount.updated";
-    partnerMsg = `${earning.listing.title} par aapki earning ₹${amount} set ki gayi.`;
+    partnerMsg = `${subject} par aapki earning ₹${amount} set ki gayi.`;
   } else if (action === "approve") {
     if (!(await can("ADMIN", PERMISSIONS.EARNINGS_APPROVE))) {
       return NextResponse.json({ success: false, message: "Permission denied" }, { status: 403 });
@@ -71,7 +81,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
     data = { status: "APPROVED", approvedAt: new Date(), approvedBy: admin.id };
     auditAction = "earning.approved";
-    partnerMsg = `${earning.listing.title} par ₹${earning.amount} ki earning approve ho gayi.`;
+    partnerMsg = `${subject} par ₹${earning.amount} ki earning approve ho gayi.`;
   } else if (action === "mark_paid") {
     if (!(await can("ADMIN", PERMISSIONS.EARNINGS_APPROVE))) {
       return NextResponse.json({ success: false, message: "Permission denied" }, { status: 403 });
@@ -82,7 +92,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
     // `data` stays empty — the PAID write happens inside the payout transaction below.
     auditAction = "earning.paid";
-    partnerMsg = `${earning.listing.title} par ₹${earning.amount} aapko pay kar diya gaya.`;
+    partnerMsg = `${subject} par ₹${earning.amount} aapko pay kar diya gaya.`;
   } else if (action === "cancel") {
     if (!(await can("ADMIN", PERMISSIONS.EARNINGS_SET_AMOUNT))) {
       return NextResponse.json({ success: false, message: "Permission denied" }, { status: 403 });

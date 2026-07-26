@@ -13,7 +13,10 @@
     "db:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",
     "db:studio": "prisma studio",
-    "db:seed": "node prisma/seed.js"
+    "db:seed": "node prisma/seed.js",
+    "db:apply": "node scripts/apply-migration.js",
+    "check:commission": "node scripts/check-recurring-commission.js",
+    "check:earnings": "node scripts/check-partner-earning-state.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -65,6 +68,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "playwright": "^1.62.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

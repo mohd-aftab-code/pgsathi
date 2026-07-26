@@ -21,6 +21,8 @@ export default function AdminPlansPage() {
     recommended: false,
     sortOrder: "0",
     price: "",
+    quarterlyPrice: "",
+    halfYearlyPrice: "",
     yearlyPrice: "",
     maxListings: "",
     maxPhotos: "",
@@ -57,6 +59,8 @@ export default function AdminPlansPage() {
         recommended: !!plan.recommended,
         sortOrder: (plan.sortOrder ?? 0).toString(),
         price: plan.price.toString(),
+        quarterlyPrice: plan.quarterlyPrice ? plan.quarterlyPrice.toString() : "",
+        halfYearlyPrice: plan.halfYearlyPrice ? plan.halfYearlyPrice.toString() : "",
         yearlyPrice: plan.yearlyPrice ? plan.yearlyPrice.toString() : "",
         maxListings: plan.maxListings.toString(),
         maxPhotos: plan.maxPhotos.toString(),
@@ -77,6 +81,8 @@ export default function AdminPlansPage() {
         recommended: false,
         sortOrder: (plans.length + 1).toString(),
         price: "",
+        quarterlyPrice: "",
+        halfYearlyPrice: "",
         yearlyPrice: "",
         maxListings: "",
         maxPhotos: "",
@@ -198,12 +204,28 @@ export default function AdminPlansPage() {
               </label>
             </div>
 
+            {/* Four billing cycles. Blank = that duration is not offered for this
+                plan, so owners never see it and it can't be bought. */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">Monthly Price (₹)</label>
               <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Yearly Price (₹)</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
+                3 Month Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
+              </label>
+              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.quarterlyPrice} onChange={e => setFormData({...formData, quarterlyPrice: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
+                6 Month Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
+              </label>
+              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.halfYearlyPrice} onChange={e => setFormData({...formData, halfYearlyPrice: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
+                Yearly Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
+              </label>
               <input type="number" className="w-full border rounded-xl p-2.5" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
             </div>
             <div>

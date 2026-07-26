@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { db } from "@/lib/db";
+import {
+  BILLING_CYCLES, CYCLE_META, cycleSavingPercent, effectiveMonthly,
+  isValidCycle, priceForCycle, type CycleId,
+} from "@/lib/billing";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -8,11 +12,22 @@ export const metadata: Metadata = {
   description: "Simple, transparent pricing for PG Owners. Choose the perfect plan for your PG business.",
 };
 
-export default async function PricingPage() {
+export default async function PricingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cycle?: string }>;
+}) {
   const plans = await db.plan.findMany({
     where: { isActive: true },
     orderBy: { price: "asc" },
   });
+
+  // Duration as a URL param keeps this a server component and makes the choice
+  // shareable — "here's the 6-month price" is a link you can send.
+  const { cycle: cycleParam } = await searchParams;
+  const cycle: CycleId = isValidCycle(cycleParam) ? cycleParam : "MONTHLY";
+  const paid = plans.filter((p) => p.price > 0);
+  const offered = BILLING_CYCLES.filter((c) => paid.some((p) => priceForCycle(p, c) !== null));
 
   return (
     <div className="bg-white min-h-screen">
@@ -38,6 +53,35 @@ export default async function PricingPage() {
           <p className="text-primary-100">Har size ke PG ke liye perfect plan. 15-din ka free trial, koi commitment nahi.</p>
         </div>
 
+        {/* Duration switcher — plain links, so the page stays a server component
+            and a "6-month pricing" URL can be shared as-is. */}
+        {offered.length > 1 && (
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex flex-wrap justify-center gap-1 p-1 rounded-2xl bg-white/15 backdrop-blur-sm">
+              {offered.map((c) => {
+                const on = c === cycle;
+                const best = Math.max(...paid.map((p) => cycleSavingPercent(p, c)));
+                return (
+                  <Link
+                    key={c}
+                    href={`/pricing?cycle=${c}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                      on ? "bg-white text-neutral-900 shadow-sm" : "text-white/80 hover:text-white"
+                    }`}
+                  >
+                    {CYCLE_META[c].label}
+                    {best > 0 && (
+                      <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${on ? "bg-green-100 text-green-700" : "bg-white/20 text-white"}`}>
+                        {best}% off
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 items-start">
           {plans.map((plan) => {
             const isPopular = plan.slug === 'pro';
@@ -58,14 +102,40 @@ export default async function PricingPage() {
                   <h4 className="text-2xl font-bold text-neutral-900 mb-2">{plan.name}</h4>
 
                   <div className="mb-6">
-                    <div className="flex items-start justify-center gap-1">
-                      <span className="text-2xl font-bold text-neutral-900 mt-2">₹</span>
-                      <span className="text-5xl font-black text-neutral-900 tracking-tight">{plan.price}</span>
-                    </div>
-                    <div className="text-neutral-500 font-medium mt-1">
-                      per month
-                      {plan.price > 0 && <span className="block text-xs text-neutral-400 font-semibold">GST included</span>}
-                    </div>
+                    {(() => {
+                      // Free plans have no cycles; paid plans show the selected one,
+                      // or say plainly that they don't offer it.
+                      const price = plan.price === 0 ? 0 : priceForCycle(plan, cycle);
+                      if (price === null) {
+                        return (
+                          <>
+                            <div className="text-3xl font-black text-neutral-300 tracking-tight">—</div>
+                            <div className="text-neutral-400 text-xs font-semibold mt-1">
+                              {CYCLE_META[cycle].label} par available nahi
+                            </div>
+                          </>
+                        );
+                      }
+                      const saving = plan.price > 0 ? cycleSavingPercent(plan, cycle) : 0;
+                      return (
+                        <>
+                          <div className="flex items-start justify-center gap-1">
+                            <span className="text-2xl font-bold text-neutral-900 mt-2">₹</span>
+                            <span className="text-5xl font-black text-neutral-900 tracking-tight">{price.toLocaleString("en-IN")}</span>
+                          </div>
+                          <div className="text-neutral-500 font-medium mt-1">
+                            {plan.price === 0 ? "free forever" : `per ${CYCLE_META[cycle].shortLabel.toLowerCase()}`}
+                            {plan.price > 0 && (
+                              <span className="block text-xs text-neutral-400 font-semibold">
+                                GST included
+                                {CYCLE_META[cycle].months > 1 && ` · ₹${effectiveMonthly(price, cycle).toLocaleString("en-IN")}/month`}
+                                {saving > 0 && ` · ${saving}% bachat`}
+                              </span>
+                            )}
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex flex-wrap justify-center gap-2 mb-2">
@@ -106,7 +176,7 @@ export default async function PricingPage() {
                   </ul>
 
                   <Link
-                    href={plan.price === 0 ? "/dashboard/owner/listings/new" : `/dashboard/owner/subscription/checkout?plan=${plan.slug}`}
+                    href={plan.price === 0 ? "/dashboard/owner/listings/new" : `/dashboard/owner/subscription/checkout?plan=${plan.slug}&cycle=${cycle}`}
                     className={`block w-full py-4 px-6 text-center rounded-xl font-black mt-10 transition-all shadow-sm ${
                       isPopular
                         ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-lg hover:-translate-y-0.5'

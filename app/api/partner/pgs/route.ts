@@ -166,6 +166,12 @@ export async function POST(req: NextRequest) {
       createdOwner = true;
     }
 
+    // Commission follows the OWNER, so the owner has to carry the attribution.
+    // First partner to touch them wins and it is never reassigned — that is what
+    // keeps payouts unambiguous when an owner ends up with two partners' PGs.
+    const { attributeOwnerToPartner } = await import("@/lib/partner-earnings");
+    await attributeOwnerToPartner(owner.id, ctx.partnerId);
+
     const slug = slugify(`${title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
 
     const num = (v: any) => (v === null || v === undefined || v === "" ? null : parseInt(String(v)) || null);

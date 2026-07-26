@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, CheckCircle2, Upload, User } from "lucide-react";
 import { LocationStep, validateLocation } from "@/components/listings/LocationStep";
@@ -63,6 +63,26 @@ export default function PartnerNewPgPage() {
   const router = useRouter();
   const [step, setStep] = useState<StepType>(1);
   const [form, setForm] = useState<FormData>(DEFAULT_FORM);
+
+  // Arriving from "Inka PG list karein" on the Owners page — pre-fill the owner
+  // so the partner isn't retyping details of someone they just registered.
+  const ownerParam = useSearchParams()?.get("owner");
+  const [prefilled, setPrefilled] = useState<string | null>(null);
+  useEffect(() => {
+    if (!ownerParam) return;
+    let alive = true;
+    fetch("/api/partner/owners")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive || !d?.success) return;
+        const o = (d.data as any[]).find((x) => String(x.id) === ownerParam);
+        if (!o) return;
+        setForm((f) => ({ ...f, ownerName: o.name, ownerPhone: o.phone ?? "", ownerEmail: o.email ?? "" }));
+        setPrefilled(o.name);
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [ownerParam]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -221,6 +241,11 @@ export default function PartnerNewPgPage() {
               <User size={18} className="text-primary-500" /> Owner ki details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {prefilled && (
+                <div className="sm:col-span-2 rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-200 dark:border-primary-900 px-3 py-2 text-xs text-primary-800 dark:text-primary-300">
+                  <b>{prefilled}</b> ke liye PG list ho raha hai — inka account pehle se bana hua hai.
+                </div>
+              )}
               <div><label className={lbl}>Owner ka naam *</label><input className={inp} value={form.ownerName} onChange={(e) => set({ ownerName: e.target.value })} placeholder="e.g. Suresh Gupta" /></div>
               <div><label className={lbl}>Owner ka phone *</label><input className={inp} type="tel" inputMode="numeric" maxLength={10} value={form.ownerPhone} onChange={(e) => set({ ownerPhone: e.target.value.replace(/\D/g, "").slice(0, 10) })} placeholder="10-digit number" /></div>
               <div className="md:col-span-2"><label className={lbl}>Owner ka email (optional)</label><input className={inp} type="email" value={form.ownerEmail} onChange={(e) => set({ ownerEmail: e.target.value })} placeholder="owner@example.com" /></div>

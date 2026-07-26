@@ -92,12 +92,26 @@ export async function buildReport(partnerId: number, type: ReportType): Promise<
     case "earnings": {
       const earnings = await db.partnerEarning.findMany({
         where: { partnerId }, orderBy: { createdAt: "desc" },
-        select: { amount: true, status: true, createdAt: true, paidAt: true, planNameSnapshot: true, listing: { select: { title: true } } },
+        select: {
+          amount: true, status: true, createdAt: true, paidAt: true,
+          planNameSnapshot: true, planPriceSnapshot: true,
+          owner: { select: { name: true } },
+          listing: { select: { title: true } },
+        },
       });
       return {
         title: "Earnings Report",
-        columns: ["PG", "Plan", "Amount (₹)", "Status", "Created", "Paid On"],
-        rows: earnings.map((e) => [e.listing.title, e.planNameSnapshot ?? "—", e.amount, e.status, fmtDate(e.createdAt), fmtDate(e.paidAt)]),
+        // Commission is owner-level; the PG column stays for older per-PG rows.
+        columns: ["Owner", "Plan", "Paid By Owner (₹)", "Commission (₹)", "Status", "Created", "Paid On"],
+        rows: earnings.map((e) => [
+          e.owner?.name ?? e.listing?.title ?? "—",
+          e.planNameSnapshot ?? "—",
+          e.planPriceSnapshot ?? 0,
+          e.amount,
+          e.status,
+          fmtDate(e.createdAt),
+          fmtDate(e.paidAt),
+        ]),
       };
     }
 

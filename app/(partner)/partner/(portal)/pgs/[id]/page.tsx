@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Phone, Mail, User, BadgeCheck, CircleDashed, CalendarClock, IndianRupee } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { can, PERMISSIONS } from "@/lib/permissions";
+import { commissionFor } from "@/lib/partner-earnings";
+import { cycleLabel } from "@/lib/billing";
 import { db } from "@/lib/db";
 import { EditPgForm } from "@/components/partner/EditPgForm";
 
@@ -41,22 +43,43 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
       endDate: { gt: new Date() },
       plan: { price: { gt: 0 } },
     },
-    include: { plan: { select: { name: true, price: true } } },
+    include: {
+      plan: { select: { name: true, price: true, partnerCommissionType: true, partnerCommissionValue: true } },
+    },
     orderBy: { endDate: "desc" },
   });
-  // Latest paid invoice for a "payment status" line.
-  const lastInvoice = sub
-    ? await db.invoice.findFirst({
-        where: { subscription: { userId: listing.ownerId }, status: "PAID" },
-        orderBy: { paidAt: "desc" },
-        select: { paidAt: true, amount: true },
-      })
+  // Commission is owner-level and recurring, so the money story for this PG is
+  // "every payment this owner has made", not one lifetime earning.
+  const earnings = await db.partnerEarning.findMany({
+    where: { partnerId: ctx.partnerId, ownerId: listing.ownerId },
+    orderBy: { createdAt: "desc" },
+    take: 12,
+    select: {
+      id: true, amount: true, status: true, createdAt: true,
+      planNameSnapshot: true, planPriceSnapshot: true,
+      invoice: { select: { billingCycle: true, periodStart: true, periodEnd: true } },
+    },
+  });
+  const earnedTotal = earnings.filter((e) => e.status !== "CANCELLED").reduce((s, e) => s + e.amount, 0);
+
+  // What the partner will earn on the owner's NEXT payment of this plan.
+  const nextCommission = sub ? commissionFor(sub.plan, sub.amount) : 0;
+  const rateLabel = sub
+    ? sub.plan.partnerCommissionType === "PERCENT"
+      ? `${sub.plan.partnerCommissionValue}%`
+      : sub.plan.partnerCommissionType === "FIXED"
+        ? "Fixed"
+        : "Admin-set"
     : null;
 
-  const earning = await db.partnerEarning.findFirst({
-    where: { partnerId: ctx.partnerId, listingId },
-    select: { amount: true, status: true },
-  });
+  // Legacy per-PG earnings (created before commission moved to the owner) have no
+  // ownerId, so they'd otherwise vanish from this page.
+  const legacyEarning = earnings.length === 0
+    ? await db.partnerEarning.findFirst({
+        where: { partnerId: ctx.partnerId, listingId },
+        select: { amount: true, status: true },
+      })
+    : null;
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
@@ -115,7 +138,7 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
             </div>
             <div className="text-sm text-neutral-600 dark:text-neutral-300 flex items-center gap-1.5">
               <IndianRupee size={15} className="text-neutral-400" />
-              {lastInvoice ? `Paid ₹${lastInvoice.amount}${lastInvoice.paidAt ? ` on ${fmtDate(lastInvoice.paidAt)}` : ""}` : `₹${sub.plan.price}/mo`}
+              ₹{sub.amount.toLocaleString("en-IN")} · {cycleLabel(sub.billingCycle)}
             </div>
           </div>
         ) : (
@@ -123,11 +146,55 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
             <CircleDashed size={16} /> Free plan — owner ne abhi koi paid plan nahi liya. Paid hone par aapki earning ban jayegi.
           </div>
         )}
-        {earning && (
+
+        {/* What the partner earns on this owner's plan, and on every renewal. */}
+        {sub && nextCommission > 0 && (
+          <div className="mt-4 rounded-xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 px-4 py-3">
+            <div className="text-xs text-primary-700 dark:text-primary-400 font-bold">Aapka commission</div>
+            <div className="text-2xl font-extrabold text-primary-700 dark:text-primary-300">
+              {rateLabel} = ₹{nextCommission.toLocaleString("en-IN")}
+            </div>
+            <div className="text-[11px] text-primary-600/80 dark:text-primary-400/70 mt-0.5">
+              Har payment par — jab tak owner plan chalu rakhta hai
+            </div>
+          </div>
+        )}
+
+        {/* Payment-wise history: one row per payment the owner has made. */}
+        {earnings.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-neutral-900 dark:text-white">Earning history</span>
+              <span className="text-sm font-extrabold text-neutral-900 dark:text-white">
+                Total ₹{earnedTotal.toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="space-y-1.5">
+              {earnings.map((e) => (
+                <div key={e.id} className="flex items-center justify-between gap-3 text-sm">
+                  <div className="min-w-0">
+                    <span className="text-neutral-700 dark:text-neutral-300">{fmtDate(e.createdAt)}</span>
+                    <span className="text-neutral-400 text-xs ml-2">
+                      {e.planNameSnapshot ?? "—"}
+                      {e.invoice ? ` · ${cycleLabel(e.invoice.billingCycle)}` : ""}
+                      {e.planPriceSnapshot ? ` · ₹${e.planPriceSnapshot.toLocaleString("en-IN")} paid` : ""}
+                    </span>
+                  </div>
+                  <div className="shrink-0 flex items-center gap-2">
+                    <span className="font-bold text-neutral-900 dark:text-white">₹{e.amount.toLocaleString("en-IN")}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">{e.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {legacyEarning && (
           <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 text-sm">
             <span className="text-neutral-500 dark:text-neutral-400">Is PG par aapki earning: </span>
-            <span className="font-bold text-neutral-900 dark:text-white">₹{earning.amount}</span>
-            <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">{earning.status}</span>
+            <span className="font-bold text-neutral-900 dark:text-white">₹{legacyEarning.amount}</span>
+            <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">{legacyEarning.status}</span>
           </div>
         )}
       </div>

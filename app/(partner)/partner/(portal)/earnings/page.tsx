@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IndianRupee, Clock, CheckCircle2, Wallet, TrendingUp, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { getEarningSummary, getEarningList } from "@/lib/partner-earnings";
+import { cycleLabel } from "@/lib/billing";
 import { StatCard } from "@/components/partner/StatCard";
 
 export const metadata = { title: "Earnings — Partner | PGSathi" };
@@ -98,7 +99,7 @@ export default async function PartnerEarningsPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
-                  <th className="px-5 py-3 font-bold">PG</th>
+                  <th className="px-5 py-3 font-bold">Owner</th>
                   <th className="px-3 py-3 font-bold hidden sm:table-cell">Plan</th>
                   <th className="px-3 py-3 font-bold hidden sm:table-cell">Date</th>
                   <th className="px-3 py-3 font-bold text-right">Amount</th>
@@ -108,13 +109,33 @@ export default async function PartnerEarningsPage({
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                 {list.rows.map((e) => (
                   <tr key={e.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors">
+                    {/* Commission is owner-level, so the owner names the row. Older
+                        per-PG earnings have no owner — fall back to the PG. */}
                     <td className="px-5 py-3">
-                      <Link href={`/partner/pgs/${e.listing.id}`} className="font-semibold text-neutral-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate max-w-[220px]">
-                        {e.listing.title}
-                      </Link>
-                      <span className="text-xs text-neutral-400">{e.listing.city?.name ?? "—"}</span>
+                      {e.owner ? (
+                        <>
+                          <span className="font-semibold text-neutral-900 dark:text-white block truncate max-w-[220px]">{e.owner.name}</span>
+                          <span className="text-xs text-neutral-400">
+                            {e.invoice?.periodStart && e.invoice?.periodEnd
+                              ? `${fmtDate(e.invoice.periodStart)} – ${fmtDate(e.invoice.periodEnd)}`
+                              : e.listing?.city?.name ?? "—"}
+                          </span>
+                        </>
+                      ) : e.listing ? (
+                        <>
+                          <Link href={`/partner/pgs/${e.listing.id}`} className="font-semibold text-neutral-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate max-w-[220px]">
+                            {e.listing.title}
+                          </Link>
+                          <span className="text-xs text-neutral-400">{e.listing.city?.name ?? "—"}</span>
+                        </>
+                      ) : (
+                        <span className="text-neutral-400">—</span>
+                      )}
                     </td>
-                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300 hidden sm:table-cell">{e.planNameSnapshot ?? "—"}</td>
+                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300 hidden sm:table-cell">
+                      {e.planNameSnapshot ?? "—"}
+                      {e.invoice && <span className="text-xs text-neutral-400 block">{cycleLabel(e.invoice.billingCycle)} · {inr(e.planPriceSnapshot ?? 0)}</span>}
+                    </td>
                     <td className="px-3 py-3 text-neutral-500 dark:text-neutral-400 hidden sm:table-cell">{fmtDate(e.createdAt)}</td>
                     <td className="px-3 py-3 text-right font-bold text-neutral-900 dark:text-white">{inr(e.amount)}</td>
                     <td className="px-5 py-3 text-right">

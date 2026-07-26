@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle, Clock, AlertCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { db } from "@/lib/db";
+import {
+  BILLING_CYCLES, CYCLE_META, cycleSavingPercent, effectiveMonthly,
+  isValidCycle, priceForCycle, type CycleId,
+} from "@/lib/billing";
 
 export const metadata = { title: "Upgrade to Premium — PGSathi" };
 
@@ -10,11 +14,22 @@ export const metadata = { title: "Upgrade to Premium — PGSathi" };
  * "Recommended" highlight, the corner badge, limits — is controlled by the
  * super-admin from the Plans panel. Nothing on this page is hardcoded.
  */
-export default async function UpgradePage() {
+export default async function UpgradePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cycle?: string }>;
+}) {
   const plans = await db.plan.findMany({
     where: { isActive: true, price: { gt: 0 } }, // paid plans only on the upgrade page
     orderBy: { sortOrder: "asc" },
   });
+
+  // Duration is a link, not client state — the page stays a server component and
+  // the choice survives a refresh or a shared URL.
+  const { cycle: cycleParam } = await searchParams;
+  const cycle: CycleId = isValidCycle(cycleParam) ? cycleParam : "MONTHLY";
+  // Only offer durations at least one plan actually prices.
+  const offered = BILLING_CYCLES.filter((c) => plans.some((p) => priceForCycle(p, c) !== null));
 
   return (
     <div className="max-w-7xl mx-auto py-8">
@@ -27,6 +42,34 @@ export default async function UpgradePage() {
           Apne PGs manage karte rehne aur lead phone numbers unlock karne ke liye ek plan chunein.
         </p>
       </div>
+
+      {/* Duration switcher — plain links, so this page stays a server component. */}
+      {offered.length > 1 && (
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex flex-wrap justify-center gap-1 p-1 rounded-2xl bg-neutral-100">
+            {offered.map((c) => {
+              const on = c === cycle;
+              const best = Math.max(...plans.map((p) => cycleSavingPercent(p, c)));
+              return (
+                <Link
+                  key={c}
+                  href={`/dashboard/owner/subscription/upgrade?cycle=${c}`}
+                  className={`relative px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                    on ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
+                  }`}
+                >
+                  {CYCLE_META[c].label}
+                  {best > 0 && (
+                    <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-green-100 text-green-700">
+                      {best}% off
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {plans.length === 0 ? (
         <div className="text-center text-neutral-500 py-12">No plans available right now. Please contact support.</div>
@@ -65,9 +108,33 @@ export default async function UpgradePage() {
                 )}
 
                 <div className="mb-4">
-                  <span className={`text-4xl font-extrabold ${rec ? "text-white" : "text-neutral-900"}`}>₹{plan.price}</span>
-                  <span className="text-neutral-500 font-medium">/mo</span>
-                  <span className="block text-xs text-neutral-400 font-semibold mt-0.5">GST included</span>
+                  {(() => {
+                    const price = priceForCycle(plan, cycle);
+                    // A plan that doesn't offer this duration says so instead of
+                    // silently showing the monthly price.
+                    if (price === null) {
+                      return (
+                        <>
+                          <span className={`text-2xl font-extrabold ${rec ? "text-white" : "text-neutral-400"}`}>—</span>
+                          <span className="block text-xs text-neutral-400 font-semibold mt-0.5">
+                            {CYCLE_META[cycle].label} par available nahi
+                          </span>
+                        </>
+                      );
+                    }
+                    const saving = cycleSavingPercent(plan, cycle);
+                    return (
+                      <>
+                        <span className={`text-4xl font-extrabold ${rec ? "text-white" : "text-neutral-900"}`}>₹{price.toLocaleString("en-IN")}</span>
+                        <span className="text-neutral-500 font-medium">/{CYCLE_META[cycle].shortLabel.toLowerCase()}</span>
+                        <span className="block text-xs text-neutral-400 font-semibold mt-0.5">
+                          GST included
+                          {CYCLE_META[cycle].months > 1 && ` · ₹${effectiveMonthly(price, cycle).toLocaleString("en-IN")}/month`}
+                          {saving > 0 && ` · ${saving}% bachat`}
+                        </span>
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {/* Limits straight from the admin-controlled plan row */}
@@ -101,7 +168,7 @@ export default async function UpgradePage() {
                 </ul>
 
                 <Link
-                  href={`/dashboard/owner/subscription/checkout?plan=${plan.slug}`}
+                  href={`/dashboard/owner/subscription/checkout?plan=${plan.slug}&cycle=${cycle}`}
                   className={
                     rec
                       ? "block w-full py-3 rounded-xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition shadow-lg shadow-primary-500/25 text-center"

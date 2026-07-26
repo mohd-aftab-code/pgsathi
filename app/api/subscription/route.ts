@@ -3,8 +3,12 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
 import { isValidPlanId, PLANS, PLAN_LIMITS } from "@/lib/plans";
+import { cycleEndDate, isValidCycle, priceForCycle, type CycleId } from "@/lib/billing";
 
 export async function POST(req: NextRequest) {
+  // Held outside the try so the P2002 handler below can identify the payment —
+  // the request body can only be read once.
+  let capturedPaymentId: string | null = null;
   try {
     const session = await auth();
 
@@ -12,11 +16,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const { planId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = await req.json();
+    const { planId, razorpayPaymentId, razorpayOrderId, razorpaySignature, billingCycle } = await req.json();
+    capturedPaymentId = typeof razorpayPaymentId === "string" ? razorpayPaymentId : null;
 
     if (!planId || typeof planId !== "string") {
       return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
     }
+
+    // Default to MONTHLY so existing callers that don't send a cycle keep working.
+    const cycle: CycleId = isValidCycle(billingCycle) ? billingCycle : "MONTHLY";
 
     // The plan (and therefore its price) is the DB row — super-admin controlled.
     // For a canonical slug whose row doesn't exist yet, seed it from the fallback.
@@ -40,8 +48,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Invalid plan" }, { status: 400 });
     }
 
-    // Amount is derived server-side from the DB plan price — never trust the client.
-    const amount = plan.price;
+    // Amount is derived server-side from the DB plan price for the chosen cycle —
+    // never trust the client. A null price means the plan doesn't offer that
+    // cycle, which must be rejected rather than silently billed as free.
+    const cyclePrice = priceForCycle(plan, cycle);
+    if (cyclePrice === null) {
+      return NextResponse.json(
+        { success: false, message: "Ye plan is duration par available nahi hai" },
+        { status: 400 },
+      );
+    }
+    const amount = cyclePrice;
 
     if (amount > 0) {
       if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
@@ -58,22 +75,53 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 30); // 30 days from now
+    const startDate = new Date();
+    const endDate = cycleEndDate(startDate, cycle);
 
-    const subscription = await db.subscription.create({
+    // Superseding the previous subscription and creating the new one must happen
+    // together. Without this an owner accumulates several live rows at once: a
+    // downgrade would leave the OLD, higher plan ACTIVE with a later endDate, and
+    // the "current plan" lookup (order by endDate desc) would keep granting the
+    // higher limits the owner has stopped paying for.
+    const userId = parseInt(session.user.id);
+    const subscription = await db.$transaction(async (tx) => {
+      await tx.subscription.updateMany({
+        where: { userId, status: { in: ["ACTIVE", "TRIAL", "PAST_DUE"] } },
+        data: { status: "EXPIRED", autoRenew: false },
+      });
+      return tx.subscription.create({
+        data: {
+          userId,
+          planId: plan.id,
+          status: "ACTIVE",
+          billingCycle: cycle,
+          amount,
+          startDate,
+          endDate,
+          razorpaySubId: razorpayOrderId || `sim_sub_${Date.now()}`,
+          razorpayOrderId: razorpayOrderId || `sim_order_${Date.now()}`,
+          razorpayPaymentId: razorpayPaymentId || `sim_pay_${Date.now()}`,
+        },
+      });
+    });
+
+    // Every payment gets an Invoice row. This is the billing record the owner,
+    // the admin and the partner all read from — and it is what partner commission
+    // is calculated against, so it must exist before the earning is created.
+    const invoice = await db.invoice.create({
       data: {
-        userId: parseInt(session.user.id),
-        planId: plan.id,
-        status: "ACTIVE",
-        billingCycle: "MONTHLY",
+        subscriptionId: subscription.id,
         amount,
-        startDate: new Date(),
-        endDate: endDate,
-        razorpaySubId: razorpayOrderId || `sim_sub_${Date.now()}`,
-        razorpayOrderId: razorpayOrderId || `sim_order_${Date.now()}`,
-        razorpayPaymentId: razorpayPaymentId || `sim_pay_${Date.now()}`,
-      }
+        status: amount > 0 ? "PAID" : "FREE",
+        razorpayOrderId: razorpayOrderId || null,
+        razorpayPayId: razorpayPaymentId || null,
+        invoiceDate: startDate,
+        paidAt: amount > 0 ? startDate : null,
+        billingCycle: cycle,
+        periodStart: startDate,
+        periodEnd: endDate,
+      },
+      select: { id: true },
     });
 
     // 3. Update User Role to OWNER if they were TENANT
@@ -84,14 +132,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 4. Partner earnings: if this owner has partner-registered PGs, this paid
-    //    activation is the "converts to paid" trigger. Creates one PENDING
-    //    earning per such PG (admin sets the amount). Non-fatal — a partner
-    //    accounting hiccup must never fail the owner's payment.
+    // 4. Partner commission for THIS payment. Recurring by construction — every
+    //    renewal writes a new invoice and earns again; stop renewing and it stops.
+    //    Non-fatal: a partner accounting hiccup must never fail the owner's payment.
     if (amount > 0) {
       try {
-        const { createEarningsForPaidOwner } = await import("@/lib/partner-earnings");
-        await createEarningsForPaidOwner(parseInt(session.user.id), subscription.id);
+        const { createEarningForInvoice } = await import("@/lib/partner-earnings");
+        await createEarningForInvoice(invoice.id);
       } catch (e) {
         console.error("[subscription] partner earning trigger failed (non-fatal):", e);
       }
@@ -99,6 +146,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: subscription });
   } catch (error: any) {
+    // P2002 on razorpayPaymentId means the webhook already recorded this exact
+    // payment. The customer is subscribed — reporting a failure here would be
+    // wrong and would push them to pay again.
+    if (error?.code === "P2002" && String(error?.meta?.target ?? "").includes("razorpayPaymentId") && capturedPaymentId) {
+      const existing = await db.subscription
+        .findFirst({ where: { razorpayPaymentId: capturedPaymentId } })
+        .catch(() => null);
+      return NextResponse.json({ success: true, data: existing, alreadyRecorded: true });
+    }
     console.error("Subscription Error:", error);
     return NextResponse.json({ success: false, message: error.message || "Internal server error" }, { status: 500 });
   }

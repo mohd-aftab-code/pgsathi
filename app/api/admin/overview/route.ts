@@ -53,6 +53,9 @@ export async function GET(req: NextRequest) {
         email: true,
         phone: true,
         createdAt: true,
+        // Which partner brought this owner in — a partner-sourced owner carries a
+        // commission liability on every payment, so the admin must see it here.
+        partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
         _count: {
           select: { listings: true, pgTenantsOwned: true, leads: true }
         },
@@ -91,6 +94,11 @@ export async function GET(req: NextRequest) {
         pgCount: o._count.listings,
         tenantCount: o._count.pgTenantsOwned,
         leadCount: o._count.leads,
+        // Flattened for the users table's Partner badge. Null for self-registered
+        // owners, which is most of them.
+        partner: o.partner
+          ? { id: o.partner.id, partnerCode: o.partner.partnerCode, name: o.partner.user.name }
+          : null,
         status,
         trialEndDate: trialEndDate.toISOString(),
         subscriptionEnd: hasSubscription ? o.subscriptions[0].endDate : null

@@ -5,13 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
-  User, Settings, Handshake, LogOut, X, Plus, LayoutGrid,
+  User, Users, Settings, Handshake, LogOut, X, Plus, LayoutGrid,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
 
 const NAV = [
   { name: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
+  { name: "Owners", href: "/partner/owners", icon: Users },
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
   { name: "Reports", href: "/partner/reports", icon: FileBarChart },
@@ -27,8 +28,8 @@ const ACCOUNT = [
  * The bottom bar holds five slots: two tabs, the centre Add-PG button, one tab,
  * and More. Reports, Notifications and the account pages live in the More sheet.
  */
-const TABS_LEFT = [NAV[0], NAV[1]];   // Dashboard, My PGs
-const TABS_RIGHT = [NAV[2]];          // Earnings
+const TABS_LEFT = [NAV[0], NAV[1]];   // Dashboard, Owners
+const TABS_RIGHT = [NAV[3]];          // Earnings
 
 /**
  * Portal chrome: fixed sidebar on desktop, native-app bottom tab bar on mobile —

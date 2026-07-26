@@ -3,6 +3,17 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { readCapabilities } from "@/lib/plan-capabilities";
 
+/**
+ * An optional per-cycle price. Absent from the body = leave alone; present but
+ * blank = the admin cleared it, so that cycle stops being offered (null).
+ */
+function optionalPrice(v: unknown): number | null | undefined {
+  if (v === undefined) return undefined;
+  if (v === null || v === "") return null;
+  const n = parseInt(String(v));
+  return Number.isNaN(n) ? null : n;
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
@@ -19,7 +30,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         name: body.name,
         slug: body.slug,
         price: body.price !== undefined ? parseInt(body.price) : undefined,
-        yearlyPrice: body.yearlyPrice !== undefined ? parseInt(body.yearlyPrice) : undefined,
+        // Optional cycles: a cleared field must become null ("not offered"), not
+        // NaN — parseInt("") is NaN, which Prisma rejects.
+        quarterlyPrice: optionalPrice(body.quarterlyPrice),
+        halfYearlyPrice: optionalPrice(body.halfYearlyPrice),
+        yearlyPrice: optionalPrice(body.yearlyPrice),
         maxListings: body.maxListings !== undefined ? parseInt(body.maxListings) : undefined,
         maxPhotos: body.maxPhotos !== undefined ? parseInt(body.maxPhotos) : undefined,
         maxTenants: body.maxTenants !== undefined ? parseInt(body.maxTenants) : undefined,

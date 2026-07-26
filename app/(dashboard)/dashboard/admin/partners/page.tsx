@@ -31,7 +31,9 @@ export default async function AdminPartnersPage({
       select: {
         id: true, partnerCode: true, type: true, status: true, city: true, createdAt: true,
         user: { select: { name: true, phone: true, email: true } },
-        _count: { select: { listings: true, earnings: true } },
+        // `owners` is the commission-bearing relation — a partner with many PGs
+        // but few owners generates far less than the PG count suggests.
+        _count: { select: { listings: true, earnings: true, owners: true } },
       },
     }),
     db.partnerProfile.groupBy({ by: ["status"], _count: { _all: true } }),
@@ -73,6 +75,7 @@ export default async function AdminPartnersPage({
                 <th className="px-5 py-3 font-bold">Partner</th>
                 <th className="px-3 py-3 font-bold">Type</th>
                 <th className="px-3 py-3 font-bold">Contact</th>
+                <th className="px-3 py-3 font-bold text-center">Owners</th>
                 <th className="px-3 py-3 font-bold text-center">PGs</th>
                 <th className="px-3 py-3 font-bold text-center">Earnings</th>
                 <th className="px-3 py-3 font-bold">Status</th>
@@ -93,6 +96,7 @@ export default async function AdminPartnersPage({
                     <div>{p.user.phone ?? "—"}</div>
                     <div className="text-xs text-neutral-400 truncate max-w-[160px]">{p.user.email}</div>
                   </td>
+                  <td className="px-3 py-3 text-center font-semibold text-neutral-700">{p._count.owners}</td>
                   <td className="px-3 py-3 text-center font-semibold text-neutral-700">{p._count.listings}</td>
                   <td className="px-3 py-3 text-center font-semibold text-neutral-700">{p._count.earnings}</td>
                   <td className="px-3 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[p.status]}`}>{p.status}</span></td>

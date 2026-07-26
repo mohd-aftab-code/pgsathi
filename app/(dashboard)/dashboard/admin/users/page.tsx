@@ -160,6 +160,16 @@ export default function AdminUsersPage() {
                   <td className="px-6 py-4">
                     <div className="font-bold text-neutral-900">{o.name}</div>
                     <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
+                    {/* Partner-sourced owners carry a commission on every payment —
+                        the admin needs to see that before touching their plan. */}
+                    {o.partner && (
+                      <a
+                        href={`/dashboard/admin/partners/${o.partner.id}`}
+                        className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 hover:bg-violet-200 tracking-wide"
+                      >
+                        Partner · {o.partner.partnerCode}
+                      </a>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-neutral-700">{o.pgCount}</td>
                   <td className="px-6 py-4 text-center font-semibold text-neutral-700">{o.tenantCount}</td>
@@ -237,6 +247,14 @@ export default function AdminUsersPage() {
                 <div>
                   <div className="font-bold text-neutral-900">{o.name}</div>
                   <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
+                  {o.partner && (
+                    <a
+                      href={`/dashboard/admin/partners/${o.partner.id}`}
+                      className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 tracking-wide"
+                    >
+                      Partner · {o.partner.partnerCode}
+                    </a>
+                  )}
                 </div>
                 <div>
                   {o.status === "FREE_TRIAL" && (

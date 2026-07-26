@@ -41,6 +41,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
         orderBy: { createdAt: "desc" },
         select: {
           id: true, amount: true, status: true, createdAt: true, planNameSnapshot: true, payoutId: true,
+          owner: { select: { name: true } },
           listing: { select: { title: true } },
         },
       },
@@ -50,10 +51,49 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
   });
   if (!partner) notFound();
 
+  // ── Business summary: what this partner is actually generating ──────────
+  // Commission follows the owner, so the owner list — not the PG list — is what
+  // drives collection and what is owed.
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const owners = await db.user.findMany({
+    where: { partnerId },
+    select: {
+      id: true,
+      _count: { select: { listings: true } },
+      subscriptions: {
+        where: { status: { in: ["ACTIVE", "TRIAL"] }, endDate: { gt: now } },
+        orderBy: { endDate: "desc" },
+        take: 1,
+        select: { amount: true, endDate: true, plan: { select: { name: true, price: true } } },
+      },
+    },
+  });
+  const ownerIds = owners.map((o) => o.id);
+  const paidOwners = owners.filter((o) => o.subscriptions[0] && o.subscriptions[0].plan.price > 0);
+  const totalOwnerPgs = owners.reduce((t, o) => t + o._count.listings, 0);
+  const renewingSoon = paidOwners.filter((o) => o.subscriptions[0]!.endDate <= in30Days).length;
+
+  // Money actually collected from this partner's owners this month.
+  const monthCollection = ownerIds.length
+    ? (await db.invoice.aggregate({
+        where: {
+          subscription: { userId: { in: ownerIds } },
+          status: "PAID",
+          invoiceDate: { gte: monthStart },
+        },
+        _sum: { amount: true },
+      }))._sum.amount ?? 0
+    : 0;
+
   const sum = (s: string[]) => partner.earnings.filter((e) => s.includes(e.status)).reduce((t, e) => t + e.amount, 0);
   const pending = sum(["PENDING"]);
   const approved = sum(["APPROVED"]);
   const paid = sum(["PAID"]);
+  // Everything not yet sent, regardless of approval stage — "kitna dena baaki hai".
+  const owed = pending + approved;
   // Approved-but-unpaid earnings are what a payout batch would cover.
   const payable = partner.earnings.filter((e) => e.status === "APPROVED" && !e.payoutId);
   const payableTotal = payable.reduce((t, e) => t + e.amount, 0);
@@ -99,6 +139,33 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
             <div className="text-xl font-bold text-neutral-900">{s.value}</div>
           </div>
         ))}
+      </div>
+
+      {/* Business summary — the whole money picture for this partner in one strip.
+          Collection is what the owners actually paid; owed is commission not yet sent. */}
+      <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+        <h2 className="font-bold text-neutral-900 text-sm mb-4">Business summary</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+          {[
+            { label: "Owners laaye", value: String(owners.length), sub: `${totalOwnerPgs} PG total` },
+            { label: "Paid owners", value: String(paidOwners.length), sub: `${owners.length - paidOwners.length} free par` },
+            { label: "Is mahine collection", value: inr(monthCollection), sub: "inke owners se" },
+            { label: "Commission banta", value: inr(pending + approved + paid), sub: "lifetime" },
+            { label: "Pay ho chuka", value: inr(paid), sub: `${partner.payouts.length} payout` },
+            { label: "Dena baaki", value: inr(owed), sub: owed > 0 ? `${inr(approved)} approve ho chuka` : "sab clear" },
+          ].map((s) => (
+            <div key={s.label}>
+              <div className="text-[11px] text-neutral-500">{s.label}</div>
+              <div className="text-lg font-extrabold text-neutral-900">{s.value}</div>
+              <div className="text-[11px] text-neutral-400">{s.sub}</div>
+            </div>
+          ))}
+        </div>
+        {renewingSoon > 0 && (
+          <div className="mt-4 pt-4 border-t border-neutral-100 text-sm text-neutral-600">
+            <b className="text-neutral-900">{renewingSoon}</b> owner ka plan agle 30 din mein renew hoga — har renewal par is partner ka commission dobara banega.
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -206,7 +273,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                 <table className="w-full text-sm min-w-[600px]">
                   <thead>
                     <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
-                      <th className="px-5 py-2.5 font-bold">PG</th>
+                      <th className="px-5 py-2.5 font-bold">Owner</th>
                       <th className="px-3 py-2.5 font-bold">Plan</th>
                       <th className="px-3 py-2.5 font-bold">Date</th>
                       <th className="px-3 py-2.5 font-bold text-right">Amount</th>
@@ -217,7 +284,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                   <tbody className="divide-y divide-neutral-100">
                     {partner.earnings.map((e) => (
                       <tr key={e.id} className="hover:bg-neutral-50">
-                        <td className="px-5 py-2.5 max-w-[180px] truncate text-neutral-800">{e.listing.title}</td>
+                        <td className="px-5 py-2.5 max-w-[180px] truncate text-neutral-800">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
                         <td className="px-3 py-2.5 text-neutral-600">{e.planNameSnapshot ?? "—"}</td>
                         <td className="px-3 py-2.5 text-neutral-500">{fmtDate(e.createdAt)}</td>
                         <td className="px-3 py-2.5 text-right font-bold text-neutral-900">{inr(e.amount)}</td>

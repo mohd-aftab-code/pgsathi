@@ -17,7 +17,10 @@ const bcrypt = require("bcryptjs");
 const BASE = "http://localhost:3000";
 const TAG = "ZZTMP-EARNFIX";
 const ADMIN_EMAIL = "zztmp-earnfix-admin@pgsathi.test";
-const ADMIN_PASS = "TmpAdmin123!";
+// Generated per run, never committed. This repository is public and the fixture
+// is a real ADMIN account on the live database — a hardcoded password here would
+// be a working admin login for anyone if the script died before its cleanup.
+const ADMIN_PASS = "Tmp" + require("crypto").randomBytes(9).toString("base64").replace(/[+/=]/g, "") + "1!";
 
 /* The dev server's Prisma client holds most of the 5-connection default pool, so a
    plain `new PrismaClient()` here just times out. Ask for a single connection

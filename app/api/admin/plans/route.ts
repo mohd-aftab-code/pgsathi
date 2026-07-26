@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
         name: body.name,
         slug: body.slug,
         price: parseInt(body.price),
+        // Blank/absent means the plan doesn't offer that cycle — store null, never 0,
+        // or the cycle would show up as free.
+        quarterlyPrice: body.quarterlyPrice ? parseInt(body.quarterlyPrice) : null,
+        halfYearlyPrice: body.halfYearlyPrice ? parseInt(body.halfYearlyPrice) : null,
         yearlyPrice: body.yearlyPrice ? parseInt(body.yearlyPrice) : null,
         maxListings: parseInt(body.maxListings),
         maxPhotos: parseInt(body.maxPhotos),

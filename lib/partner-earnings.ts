@@ -3,90 +3,131 @@
  * The earning lifecycle — the money mechanics of the Partner Portal.
  *
  * Rules:
- *  • An earning is created ONCE per PG, when that PG converts to a paid plan.
- *  • The amount is set MANUALLY by an admin — there is no commission %.
- *  • The UNIQUE(partnerId, listingId) DB constraint is the real guarantee that a
- *    PG can never generate two earnings; this code cooperates with it.
+ *  • Commission follows the OWNER, not the PG. One payment earns ONE commission
+ *    however many PGs that owner has — so the payout is always a fixed share of
+ *    money actually collected and can never exceed it.
+ *  • It is RECURRING: every payment (monthly / 3 / 6 / 12 month) earns again, for
+ *    as long as the owner keeps renewing. Stop renewing and it stops by itself,
+ *    because no invoice means no earning — there is no separate "cancel" path.
+ *  • The rate comes from the plan's admin-set commission (PERCENT / FIXED / NONE)
+ *    and is applied to the INVOICE amount, so a 6-month payment earns 6 months'
+ *    worth in one go.
+ *  • `PartnerEarning.invoiceId` is UNIQUE — that is what makes a retry, a
+ *    double-click or a replayed webhook unable to pay twice.
  */
 import "server-only";
 import { db } from "@/lib/db";
 import { notify } from "@/lib/notifications";
+import { cycleLabel } from "@/lib/billing";
+
+/** Commission owed on one payment, from the plan's admin-set rate. */
+export function commissionFor(
+  plan: { partnerCommissionType: string; partnerCommissionValue: number },
+  invoiceAmount: number,
+): number {
+  if (invoiceAmount <= 0) return 0;
+  if (plan.partnerCommissionType === "PERCENT") {
+    return Math.round((invoiceAmount * plan.partnerCommissionValue) / 100);
+  }
+  if (plan.partnerCommissionType === "FIXED") {
+    return plan.partnerCommissionValue;
+  }
+  return 0; // NONE — admin sets this earning by hand
+}
 
 /**
- * Called when an owner activates a paid subscription. Creates a PENDING,
- * ₹0 earning for every partner-registered PG of that owner that doesn't have one
- * yet. Admin sets the amount afterwards. Safe to call repeatedly — existing
- * earnings are skipped via the unique constraint.
+ * Creates the partner commission for one paid invoice.
  *
- * Returns the number of new earnings created.
+ * Idempotent: `invoiceId` is unique, so calling it twice for the same payment
+ * creates nothing the second time. That makes it safe to call from a webhook
+ * retry as well as from the checkout route.
+ *
+ * Returns the earning id, or null when no commission was due.
  */
-export async function createEarningsForPaidOwner(ownerId: number, subscriptionId?: number): Promise<number> {
-  const pgs = await db.listing.findMany({
-    where: { ownerId, partnerId: { not: null } },
-    select: { id: true, partnerId: true, title: true },
-  });
-  if (pgs.length === 0) return 0;
-
-  // Plan snapshot + commission config at conversion time, so a later price or
-  // commission change doesn't rewrite history.
-  const sub = subscriptionId
-    ? await db.subscription.findUnique({
-        where: { id: subscriptionId },
-        select: { plan: { select: { name: true, price: true, partnerCommissionType: true, partnerCommissionValue: true } } },
-      })
-    : null;
-
-  // Auto-compute the partner's earning from the plan's admin-set commission.
-  // NONE → ₹0 (admin sets it by hand later); PERCENT → % of price; FIXED → flat.
-  const plan = sub?.plan;
-  const autoAmount = !plan
-    ? 0
-    : plan.partnerCommissionType === "PERCENT"
-    ? Math.round((plan.price * plan.partnerCommissionValue) / 100)
-    : plan.partnerCommissionType === "FIXED"
-    ? plan.partnerCommissionValue
-    : 0;
-
-  let created = 0;
-  for (const pg of pgs) {
-    if (!pg.partnerId) continue;
-    try {
-      await db.partnerEarning.create({
-        data: {
-          partnerId: pg.partnerId,
-          listingId: pg.id,
-          subscriptionId: subscriptionId ?? null,
-          amount: autoAmount, // from plan commission; admin can still override
-          status: "PENDING",
-          planNameSnapshot: sub?.plan.name ?? null,
-          planPriceSnapshot: sub?.plan.price ?? null,
+export async function createEarningForInvoice(invoiceId: number): Promise<number | null> {
+  const invoice = await db.invoice.findUnique({
+    where: { id: invoiceId },
+    select: {
+      id: true,
+      amount: true,
+      billingCycle: true,
+      subscriptionId: true,
+      subscription: {
+        select: {
+          id: true,
+          plan: { select: { name: true, partnerCommissionType: true, partnerCommissionValue: true } },
+          user: { select: { id: true, name: true, partnerId: true } },
         },
-      });
-      created++;
+      },
+    },
+  });
+  if (!invoice) return null;
 
-      // Tell the partner a conversion happened (admin will set the amount).
-      const partner = await db.partnerProfile.findUnique({
-        where: { id: pg.partnerId },
-        select: { userId: true },
+  const owner = invoice.subscription.user;
+  // No partner brought this owner in — nothing to pay.
+  if (!owner.partnerId) return null;
+  // Free plans generate no commission.
+  if (invoice.amount <= 0) return null;
+
+  const amount = commissionFor(invoice.subscription.plan, invoice.amount);
+
+  // The earning is created even for a SUSPENDED partner: the referral genuinely
+  // happened and the money was genuinely collected, so the record should exist
+  // and the admin decides whether to cancel it. Silently dropping it would lose
+  // money a reinstated partner is owed.
+  try {
+    const earning = await db.partnerEarning.create({
+      data: {
+        partnerId: owner.partnerId,
+        ownerId: owner.id,
+        invoiceId: invoice.id,
+        subscriptionId: invoice.subscriptionId,
+        amount,
+        status: "PENDING",
+        planNameSnapshot: invoice.subscription.plan.name,
+        planPriceSnapshot: invoice.amount,
+      },
+      select: { id: true },
+    });
+
+    const partner = await db.partnerProfile.findUnique({
+      where: { id: owner.partnerId },
+      select: { userId: true },
+    });
+    if (partner) {
+      await notify({
+        userId: partner.userId,
+        type: "PARTNER_EARNING",
+        title: amount > 0 ? `Nayi earning — ₹${amount.toLocaleString("en-IN")} 🎉` : "Owner ne plan liya",
+        message:
+          amount > 0
+            ? `${owner.name} ne ${invoice.subscription.plan.name} (${cycleLabel(invoice.billingCycle)}) liya. Aapki earning ₹${amount.toLocaleString("en-IN")} bani (approval baaki).`
+            : `${owner.name} ne ${invoice.subscription.plan.name} liya. Admin aapki earning set karega.`,
+        link: "/partner/earnings",
       });
-      if (partner) {
-        await notify({
-          userId: partner.userId,
-          type: "PARTNER_EARNING",
-          title: "PG paid plan par gaya 🎉",
-          message:
-            autoAmount > 0
-              ? `${pg.title} ab paid plan par hai. Aapki earning ₹${autoAmount} ban gayi (approval baaki).`
-              : `${pg.title} ab paid plan par hai. Admin aapki earning set karega.`,
-          link: "/partner/earnings",
-        });
-      }
-    } catch (e: any) {
-      // P2002 = unique violation = an earning already exists for this PG. Expected.
-      if (e?.code !== "P2002") throw e;
     }
+
+    return earning.id;
+  } catch (e: any) {
+    // P2002 = this invoice already has an earning. Expected on a retry.
+    if (e?.code === "P2002") return null;
+    throw e;
   }
-  return created;
+}
+
+/**
+ * Records which partner an owner belongs to, the first time a partner touches
+ * them. Never overwrites an existing attribution — that stability is what keeps
+ * payouts unambiguous when an owner ends up with PGs from two partners.
+ *
+ * Returns true if this call is what set it.
+ */
+export async function attributeOwnerToPartner(ownerId: number, partnerId: number): Promise<boolean> {
+  const res = await db.user.updateMany({
+    where: { id: ownerId, partnerId: null },
+    data: { partnerId },
+  });
+  return res.count > 0;
 }
 
 export type EarningSummary = {
@@ -156,7 +197,9 @@ export async function getEarningList(partnerId: number, opts: { status?: string;
       take: pageSize,
       select: {
         id: true, amount: true, status: true, createdAt: true, paidAt: true,
-        planNameSnapshot: true,
+        planNameSnapshot: true, planPriceSnapshot: true,
+        owner: { select: { id: true, name: true } },
+        invoice: { select: { billingCycle: true, periodStart: true, periodEnd: true } },
         listing: { select: { id: true, title: true, city: { select: { name: true } } } },
       },
     }),

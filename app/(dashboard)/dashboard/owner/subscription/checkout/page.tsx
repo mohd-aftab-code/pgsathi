@@ -6,19 +6,30 @@ import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard } from "lucide-react
 import Link from "next/link";
 import Script from "next/script";
 import { PLANS, isValidPlanId, GST_RATE } from "@/lib/plans";
+import { availableCycles, cycleSavingPercent, effectiveMonthly, isValidCycle, type CycleId } from "@/lib/billing";
+
+type PlanShape = {
+  name: string;
+  price: number;
+  quarterlyPrice?: number | null;
+  halfYearlyPrice?: number | null;
+  yearlyPrice?: number | null;
+};
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const planId = searchParams?.get("plan") ?? "basic"; // any slug; the server validates at payment
+  const cycleParam = searchParams?.get("cycle");
 
   // Plan shown here comes from the DB (super-admin controlled). Start from the
   // hardcoded fallback so the first paint has a value, then replace with the
   // live DB row. The real charge is derived server-side, so display can't be gamed.
-  const fallback = isValidPlanId(planId)
+  const fallback: PlanShape = isValidPlanId(planId)
     ? { name: PLANS[planId].name, price: PLANS[planId].price }
     : { name: planId, price: 0 };
-  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: number }>(fallback);
+  const [selectedPlan, setSelectedPlan] = useState<PlanShape>(fallback);
+  const [cycle, setCycle] = useState<CycleId>(isValidCycle(cycleParam) ? cycleParam : "MONTHLY");
 
   useEffect(() => {
     let alive = true;
@@ -27,7 +38,7 @@ export default function CheckoutPage() {
       .then((d) => {
         if (!alive || !d?.success) return;
         const hit = (d.data as any[]).find((p) => p.slug === planId);
-        if (hit) setSelectedPlan({ name: hit.name, price: hit.price });
+        if (hit) setSelectedPlan(hit);
       })
       .catch(() => {});
     return () => { alive = false; };
@@ -36,13 +47,19 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"IDLE" | "PROCESSING" | "SUCCESS">("IDLE");
 
+  const cycles = availableCycles(selectedPlan);
+  // If the plan stops offering the selected cycle, fall back to what it does offer
+  // rather than showing a price the server would reject.
+  const active = cycles.find((c) => c.cycle === cycle) ?? cycles[0];
+  const effectiveCycle: CycleId = active?.cycle ?? "MONTHLY";
+
   // Listed prices are GST-inclusive — the breakdown is only for the invoice view.
-  const totalAmount = selectedPlan.price;
+  const totalAmount = active?.price ?? selectedPlan.price;
   const baseAmount = Math.round(totalAmount / (1 + GST_RATE));
   const gstAmount = totalAmount - baseAmount;
 
   const handlePayment = async () => {
-    if (selectedPlan.price === 0) {
+    if (totalAmount === 0) {
       // Free plan logic
       activateSubscription({});
       return;
@@ -56,7 +73,7 @@ export default function CheckoutPage() {
       const res = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId, billingCycle: effectiveCycle }),
       });
 
       const data = await res.json();
@@ -121,6 +138,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId,
+          billingCycle: effectiveCycle,
           ...paymentDetails
         }),
       });
@@ -151,7 +169,7 @@ export default function CheckoutPage() {
           <Check size={48} />
         </div>
         <h2 className="text-3xl font-extrabold text-neutral-900 mb-2">
-          {selectedPlan.price === 0 ? "Plan Activated!" : "Payment Successful!"}
+          {totalAmount === 0 ? "Plan Activated!" : "Payment Successful!"}
         </h2>
         <p className="text-neutral-500 text-lg">Your {selectedPlan.name} plan is now active.</p>
         <p className="text-neutral-400 text-sm mt-4">Redirecting to your dashboard...</p>
@@ -180,18 +198,53 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* Duration picker. Only cycles the plan actually prices are shown, so a
+              buyer can never pick something the server would reject. */}
+          {cycles.length > 1 && totalAmount > 0 && (
+            <div className="mb-6">
+              <p className="text-sm font-bold text-neutral-700 mb-2">Duration chunein</p>
+              <div className="grid grid-cols-2 gap-2">
+                {cycles.map(({ cycle: c, price, meta }) => {
+                  const saving = cycleSavingPercent(selectedPlan, c);
+                  const isOn = c === effectiveCycle;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCycle(c)}
+                      className={`relative text-left rounded-2xl border-2 p-3 transition-colors ${
+                        isOn ? "border-primary-500 bg-primary-50" : "border-neutral-200 hover:border-neutral-300"
+                      }`}
+                    >
+                      {saving > 0 && (
+                        <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-green-100 text-green-700">
+                          {saving}% off
+                        </span>
+                      )}
+                      <div className={`text-sm font-bold ${isOn ? "text-primary-700" : "text-neutral-800"}`}>{meta.label}</div>
+                      <div className="text-lg font-extrabold text-neutral-900">₹{price.toLocaleString("en-IN")}</div>
+                      {meta.months > 1 && (
+                        <div className="text-[11px] text-neutral-500">₹{effectiveMonthly(price, c).toLocaleString("en-IN")}/month</div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="bg-neutral-50 rounded-2xl p-4 sm:p-6 mb-6 border border-neutral-100">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-neutral-800 text-lg">{selectedPlan.name} Plan</span>
-              <span className="font-extrabold text-neutral-900 text-lg">₹{selectedPlan.price}</span>
+              <span className="font-extrabold text-neutral-900 text-lg">₹{totalAmount.toLocaleString("en-IN")}</span>
             </div>
             <div className="text-sm text-neutral-500 flex justify-between">
-              <span>Duration: {selectedPlan.price === 0 ? "Free" : "1 Month"}</span>
-              <span>{selectedPlan.price === 0 ? "No charges" : "Billed once"}</span>
+              <span>Duration: {totalAmount === 0 ? "Free" : active?.meta.label ?? "1 Month"}</span>
+              <span>{totalAmount === 0 ? "No charges" : "Billed once"}</span>
             </div>
           </div>
 
-          {selectedPlan.price > 0 && (
+          {totalAmount > 0 && (
             <div className="space-y-3 text-sm text-neutral-600 border-t border-neutral-100 pt-6">
               <div className="flex justify-between">
                 <span>Taxable value</span>
@@ -215,7 +268,7 @@ export default function CheckoutPage() {
         {/* Right: Payment Gateway */}
         <div>
           <h2 className="text-2xl font-bold text-neutral-900 mb-6">
-            {selectedPlan.price === 0 ? "Activate Your Plan" : "Complete Payment"}
+            {totalAmount === 0 ? "Activate Your Plan" : "Complete Payment"}
           </h2>
 
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200 relative overflow-hidden">
@@ -223,15 +276,15 @@ export default function CheckoutPage() {
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in">
                 <Loader2 size={40} className="animate-spin text-primary-600 mb-4" />
                 <p className="font-bold text-neutral-800">
-                  {selectedPlan.price === 0 ? "Activating your plan..." : "Opening Secure Payment..."}
+                  {totalAmount === 0 ? "Activating your plan..." : "Opening Secure Payment..."}
                 </p>
-                {selectedPlan.price > 0 && (
+                {totalAmount > 0 && (
                   <p className="text-sm text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
                 )}
               </div>
             )}
 
-            {selectedPlan.price === 0 ? (
+            {totalAmount === 0 ? (
               <div className="mb-6 bg-primary-50 p-4 rounded-xl border border-primary-100 flex items-start gap-3">
                 <ShieldCheck className="text-primary-600 shrink-0 mt-0.5" size={20} />
                 <div>
@@ -254,12 +307,12 @@ export default function CheckoutPage() {
               disabled={loading}
               className="w-full h-14 bg-neutral-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
-              {selectedPlan.price === 0 ? "Activate Free Plan" : `Pay ₹${totalAmount} via Razorpay`}
+              {totalAmount === 0 ? "Activate Free Plan" : `Pay ₹${totalAmount} via Razorpay`}
             </button>
 
             <div className="flex items-center justify-center gap-2 mt-6 text-xs text-neutral-400 font-medium">
               <ShieldCheck size={14} />
-              {selectedPlan.price === 0 ? "No card or payment details needed" : "100% Secure Encrypted Payment"}
+              {totalAmount === 0 ? "No card or payment details needed" : "100% Secure Encrypted Payment"}
             </div>
           </div>
         </div>
