@@ -3,7 +3,7 @@
  */
 "use client";
 import { useState, useEffect } from "react";
-import { UserCheck, Plus, IndianRupee } from "lucide-react";
+import { UserCheck, Plus, IndianRupee, Check } from "lucide-react";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import toast from "react-hot-toast";
@@ -24,7 +24,9 @@ export default function StaffPage() {
   const [staffEnabled, setStaffEnabled] = useState<boolean>(false);
 
   // New staff form
-  const [form, setForm] = useState({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "" });
+  const [form, setForm] = useState({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "", listingIds: [] as number[] });
+  // The owner's PGs, so a manager can be limited to specific ones.
+  const [myListings, setMyListings] = useState<{ id: number; title: string }[]>([]);
   
   // Payout form
   const [payForm, setPayForm] = useState({ amount: "", forMonth: currentMonth(), method: "CASH", note: "" });
@@ -36,6 +38,7 @@ export default function StaffPage() {
       const d   = await res.json();
       setStaff(d.data ?? []);
       setStaffEnabled(!!d.staffEnabled);
+      setMyListings(Array.isArray(d.listings) ? d.listings : []);
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ export default function StaffPage() {
       if (!d.success) throw new Error(d.message);
       toast.success("Staff member added!");
       setShowModal(false);
-      setForm({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "" });
+      setForm({ name: "", role: "CLEANER", phone: "", salary: "", joinDate: today(), email: "", password: "", listingIds: [] });
       fetchStaff();
     } catch (err: any) { toast.error(err.message); } finally { setSaving(false); }
   }
@@ -163,16 +166,71 @@ export default function StaffPage() {
                 <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="input-base" />
               </div>
               {form.role === "MANAGER" && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold mb-1">Email (Login) *</label>
-                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="input-base" required />
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1">Email (Login) *</label>
+                      <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="input-base" required />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1">Password *</label>
+                      <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="input-base" required />
+                    </div>
                   </div>
+
+                  {/* Which PGs this manager may work in. Nothing ticked = all PGs,
+                      which is how every existing manager already behaves. */}
                   <div>
-                    <label className="block text-xs font-semibold mb-1">Password *</label>
-                    <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="input-base" required />
+                    <label className="block text-xs font-semibold mb-1">
+                      Kaunse PG ka manager hai?
+                      <span className="text-neutral-400 font-normal ml-1">
+                        (kuch na chunein to sabhi PG ka access milega)
+                      </span>
+                    </label>
+                    {myListings.length === 0 ? (
+                      <p className="text-xs text-neutral-400 py-2">Abhi koi PG nahi hai.</p>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-1">
+                        {myListings.map((l) => {
+                          const on = form.listingIds.includes(l.id);
+                          return (
+                            <button
+                              key={l.id}
+                              type="button"
+                              onClick={() =>
+                                setForm({
+                                  ...form,
+                                  listingIds: on
+                                    ? form.listingIds.filter((x) => x !== l.id)
+                                    : [...form.listingIds, l.id],
+                                })
+                              }
+                              className={`flex items-center gap-2 text-left px-3 py-2 rounded-xl border-2 text-xs font-semibold transition-colors ${
+                                on
+                                  ? "border-primary-500 bg-primary-50 text-primary-700"
+                                  : "border-neutral-200 text-neutral-600 hover:border-neutral-300"
+                              }`}
+                            >
+                              <span
+                                className={`w-4 h-4 rounded grid place-items-center shrink-0 border-2 ${
+                                  on ? "bg-primary-500 border-primary-500 text-white" : "border-neutral-300"
+                                }`}
+                              >
+                                {on && <Check size={11} strokeWidth={3} />}
+                              </span>
+                              <span className="truncate">{l.title}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <p className="text-[11px] text-neutral-400 mt-1.5">
+                      {form.listingIds.length === 0
+                        ? "Sabhi PG ka access milega."
+                        : `${form.listingIds.length} PG ka access — baaki PG inhe dikhenge hi nahi.`}
+                    </p>
                   </div>
-                </div>
+                </>
               )}
             </div>
             <div className="mt-5 flex gap-3">

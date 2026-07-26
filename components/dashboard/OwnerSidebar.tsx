@@ -8,11 +8,11 @@ import {
   MessageSquare,
   Settings,
   Layers,
-  Boxes,
   UsersRound,
   Sparkles,
   Lock,
   CreditCard,
+  BedDouble,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 import { AdSlot } from "./AdSlot";
@@ -37,7 +37,9 @@ function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
           href: hasManagerAccess ? "/dashboard/manager" : "/dashboard/owner/subscription/upgrade",
           icon: hasManagerAccess ? Layers : Lock,
         },
-        { name: "Inventory", href: "/dashboard/owner/inventory", icon: Boxes, hideMobile: true },
+        // Read-only occupancy report. Rooms and beds are entered in PG Manager;
+        // the owner just needs to see where things stand.
+        { name: "Bed Report", href: "/dashboard/owner/inventory", icon: BedDouble, hideMobile: true },
       ],
     },
     {

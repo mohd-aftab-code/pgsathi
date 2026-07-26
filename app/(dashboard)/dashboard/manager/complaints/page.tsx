@@ -3,7 +3,7 @@
  */
 import { Wrench } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManagerAccess } from "@/lib/manager-auth";
+import { requireManagerAccess, listingScope } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { formatDate } from "@/lib/manage-utils";
@@ -15,7 +15,7 @@ export default async function ComplaintsPage({
   searchParams,
 }: { searchParams: Promise<{ status?: string; listingId?: string }> }) {
   const sp    = await searchParams;
-  const { userId } = await requireManagerAccess();
+  const { userId, allowedListingIds } = await requireManagerAccess();
   const status   = sp.status ?? "";
   const listingId = sp.listingId ? parseInt(sp.listingId) : undefined;
 
@@ -31,7 +31,7 @@ export default async function ComplaintsPage({
         tenant:  { select: { id: true, name: true } },
       },
     }),
-    db.listing.findMany({ where: { ownerId: userId }, select: { id: true, title: true } }),
+    db.listing.findMany({ where: { ownerId: userId, ...listingScope({ allowedListingIds }, "id") }, select: { id: true, title: true } }),
   ]);
 
   return (

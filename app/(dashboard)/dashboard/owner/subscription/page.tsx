@@ -1,10 +1,9 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CreditCard, CheckCircle2, ShieldCheck, Zap, AlertTriangle, CalendarDays } from "lucide-react";
+import { CreditCard, CheckCircle2, ShieldCheck, Zap, AlertTriangle, CalendarDays, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { CancelSubscriptionButton } from "@/components/manage/CancelSubscriptionButton";
 
 export const metadata = {
   title: "My Subscription - PGSathi",
@@ -134,7 +133,33 @@ export default async function OwnerSubscriptionPage() {
                   <div className="text-xs text-neutral-500">Razorpay Secured</div>
                 </div>
               </div>
-              <CancelSubscriptionButton />
+              {/* Self-service cancellation removed — a subscription is not ended
+                  from here. Anything to do with billing goes through the team so
+                  it can be checked and handled properly. */}
+              <div className="border-t border-neutral-100 pt-4">
+                <p className="text-sm font-bold text-neutral-900 mb-1">Plan ya billing me koi problem?</p>
+                <p className="text-xs text-neutral-500 mb-3">
+                  Plan yahan se cancel nahi hota. Koi bhi sawaal ya dikkat ho to hamari team se
+                  seedha baat karein — hum turant help karenge.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="tel:+919696110243"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-colors"
+                  >
+                    <Phone size={15} /> Call karein
+                  </a>
+                  <a
+                    href="mailto:pgsathi.support@gmail.com?subject=Subscription%20Support"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl border-2 border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold transition-colors"
+                  >
+                    <Mail size={15} /> Email karein
+                  </a>
+                </div>
+                <p className="text-[11px] text-neutral-400 mt-2.5">
+                  Support: +91 9696110243 · pgsathi.support@gmail.com
+                </p>
+              </div>
             </div>
           </div>
 

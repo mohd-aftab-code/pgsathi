@@ -251,7 +251,10 @@ export default async function OwnerDashboardPage({
   const kpis = [
     { label: "Occupancy", value: occupancyPct !== null ? `${occupancyPct}%` : "—",
       sub: totalBeds > 0 ? `${occupiedBeds}/${totalBeds} beds filled` : "Set up rooms & beds",
-      icon: BedDouble, color: "blue", href: "/dashboard/owner/inventory", bar: occupancyPct },
+      // Rooms and beds are set up in PG Manager, where tenants are assigned to
+      // them — the owner-side inventory screen was a second place to do the same
+      // thing, so the card now points at the one that matters.
+      icon: BedDouble, color: "blue", href: "/dashboard/manager/rooms", bar: occupancyPct },
     { label: "Rent Collected", value: formatINR(collectedRent),
       sub: `${collectionPct}% of ${formatINR(expectedRent)}`,
       icon: IndianRupee, color: "green", href: "/dashboard/manager/payments", bar: collectionPct },

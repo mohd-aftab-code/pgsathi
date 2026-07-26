@@ -38,7 +38,21 @@ export async function GET(req: NextRequest) {
       return s;
     });
 
-    return NextResponse.json({ success: true, data: enrichedStaff, tier: ctx.tier, staffEnabled: ctx.capabilities.staff });
+    // The owner's PGs, so the Add-Staff form can offer a per-PG access picker
+    // without a second round trip.
+    const listings = await db.listing.findMany({
+      where: { ownerId: ctx.userId },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, title: true },
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: enrichedStaff,
+      listings,
+      tier: ctx.tier,
+      staffEnabled: ctx.capabilities.staff,
+    });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
@@ -88,7 +102,19 @@ export async function POST(req: NextRequest) {
       }
 
       const passwordHash = await bcryptjs.hash(data.password, 10);
-      
+
+      // Which PGs this manager may work in. Verified against the owner's own
+      // listings so a crafted request can't grant access to someone else's PG.
+      // An empty array means "all of this owner's PGs" — the historic default.
+      const requested: number[] = Array.isArray(data.listingIds)
+        ? data.listingIds.map((n: unknown) => parseInt(String(n))).filter((n: number) => !Number.isNaN(n))
+        : [];
+      const owned = await db.listing.findMany({
+        where: { id: { in: requested }, ownerId: ctx.userId },
+        select: { id: true },
+      });
+      const allowed = owned.map((l) => l.id);
+
       await db.pgTeamMember.create({
         data: {
           ownerId: ctx.userId,
@@ -97,7 +123,7 @@ export async function POST(req: NextRequest) {
           passwordHash: passwordHash,
           role: "MANAGER",
           active: true,
-          listingIds: "[]", // full access by default
+          listingIds: JSON.stringify(allowed),
         }
       });
     }

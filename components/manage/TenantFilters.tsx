@@ -79,6 +79,9 @@ export function TenantFilters({
         <option value="ACTIVE">Active</option>
         <option value="NOTICE">Notice</option>
         <option value="VACATED">Vacated</option>
+        {/* Tenants who have left. Their records are kept, not deleted, so this is
+            the history view — payments and stay dates stay intact. */}
+        <option value="PAST">Past tenants (history)</option>
       </select>
 
       <select

@@ -140,6 +140,12 @@ export async function getManageContext() {
     role = session.user.role ?? "OWNER";
   }
 
+  // Which PGs this session may touch. The owner always sees all of theirs; a
+  // manager sees only the ones assigned to them. `null` means "no restriction"
+  // and is what callers should treat as full access — an empty array would
+  // otherwise be ambiguous with "assigned to nothing".
+  const allowedListingIds = await resolveAllowedListings(session, userId, isManager);
+
   const [tier, trial, capabilities] = await Promise.all([
     getPlanTier(userId),
     isTrialActive(userId),
@@ -155,7 +161,55 @@ export async function getManageContext() {
     hasPaidPlan: isPaidTier(tier),
     hasAccess: isPaidTier(tier) || trial.active,
     capabilities,
+    allowedListingIds,
+    isManager: !!isManager,
   };
+}
+
+/**
+ * The listing ids this session is limited to, or null for no limit.
+ *
+ * Read from the DB rather than the JWT so that revoking a manager's access to a
+ * PG takes effect on their very next request instead of whenever their token
+ * happens to refresh.
+ */
+export async function resolveAllowedListings(
+  session: any,
+  ownerId: number,
+  isManager: boolean,
+): Promise<number[] | null> {
+  if (!isManager) return null; // the owner sees every PG they own
+
+  const email = session.user?.email;
+  if (!email) return [];
+
+  const member = await db.pgTeamMember.findUnique({
+    where: { email },
+    select: { listingIds: true, active: true, ownerId: true },
+  });
+  if (!member || !member.active || member.ownerId !== ownerId) return [];
+
+  try {
+    const parsed = JSON.parse(member.listingIds ?? "[]");
+    if (!Array.isArray(parsed) || parsed.length === 0) return null; // "[]" = all PGs
+    return parsed.map((n: unknown) => parseInt(String(n))).filter((n) => !Number.isNaN(n));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * A Prisma `where` fragment that scopes a query to the PGs this session may see.
+ * Pass the name of the listing-id column on the model being queried.
+ *
+ *   where: { ownerId: ctx.userId, ...listingScope(ctx, "listingId") }
+ */
+export function listingScope(
+  ctx: { allowedListingIds: number[] | null },
+  field: string = "listingId",
+): Record<string, unknown> {
+  if (ctx.allowedListingIds === null) return {};
+  return { [field]: { in: ctx.allowedListingIds } };
 }
 
 /** Logs an audit entry for an owner action. Never throws. */

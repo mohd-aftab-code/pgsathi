@@ -5,7 +5,9 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPlanTier, isTrialActive, isPaidTier, getPlanCapabilities } from "@/lib/manage-auth";
+import {
+  getPlanTier, isTrialActive, isPaidTier, getPlanCapabilities, resolveAllowedListings,
+} from "@/lib/manage-auth";
 
 /**
  * Checks that the current user is a logged-in MANAGER.
@@ -37,10 +39,14 @@ export async function requireManagerAccess() {
     ownerId = parseInt(session.user.id);
   }
 
-  const [tier, trial, capabilities] = await Promise.all([
+  const [tier, trial, capabilities, allowedListingIds] = await Promise.all([
     getPlanTier(ownerId),
     isTrialActive(ownerId),
     getPlanCapabilities(ownerId),
+    // Which PGs this session may work in: null for the owner (all of theirs),
+    // or the specific ids assigned to this manager. Read fresh from the DB so
+    // revoking a PG takes effect on the next request, not on token refresh.
+    resolveAllowedListings(session, ownerId, isManager),
   ]);
   const hasPaidPlan = isPaidTier(tier);
   const hasAccess = hasPaidPlan || trial.active;
@@ -61,8 +67,9 @@ export async function requireManagerAccess() {
     email: session.user.email ?? "",
     managerRole,
     isOwner,
-    isManager
+    isManager,
+    allowedListingIds,
   };
 }
 
-export { logPgAudit } from "@/lib/manage-auth";
+export { logPgAudit, listingScope } from "@/lib/manage-auth";

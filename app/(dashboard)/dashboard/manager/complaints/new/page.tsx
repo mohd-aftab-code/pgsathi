@@ -5,17 +5,17 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { requireManagerAccess } from "@/lib/manager-auth";
+import { requireManagerAccess, listingScope } from "@/lib/manager-auth";
 import { db } from "@/lib/db";
 import { LogComplaintForm } from "./LogComplaintForm";
 
 export default async function NewComplaintPage() {
-  const { userId } = await requireManagerAccess();
+  const { userId, allowedListingIds } = await requireManagerAccess();
 
   // Fetch listings and active tenants to populate dropdowns
   const [listings, tenants] = await Promise.all([
     db.listing.findMany({
-      where: { ownerId: userId },
+      where: { ownerId: userId, ...listingScope({ allowedListingIds }, "id") },
       select: { id: true, title: true },
     }),
     db.pgTenant.findMany({

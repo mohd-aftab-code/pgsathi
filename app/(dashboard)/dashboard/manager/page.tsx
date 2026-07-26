@@ -25,7 +25,7 @@ export default async function ManagerDashboardPage({
 }: {
   searchParams: Promise<{ listingId?: string }>;
 }) {
-  const { userId: ownerId, name: managerName, isOwner } = await requireManagerAccess();
+  const { userId: ownerId, name: managerName, isOwner, allowedListingIds } = await requireManagerAccess();
   const sp = await searchParams;
   const listingId = sp.listingId ? parseInt(sp.listingId) : undefined;
 

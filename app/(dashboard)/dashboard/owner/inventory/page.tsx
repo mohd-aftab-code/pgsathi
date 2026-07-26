@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Building2, BedDouble, Users, CheckCircle2, ArrowRight, PlusCircle, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "Manage Inventory - PGSathi",
+  title: "Bed Inventory Report - PGSathi",
 };
 
 export default async function InventoryPage() {
@@ -33,7 +33,19 @@ export default async function InventoryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Bed Inventory</h1>
-          <p className="text-neutral-500 mt-1">Track which beds are vacant or occupied across every property.</p>
+          <p className="text-neutral-500 mt-1">
+            Har property mein kitne bed khaali aur kitne bhare hain — ek nazar mein.
+          </p>
+          {/* This screen is read-only on purpose. Rooms and beds are created in PG
+              Manager, where tenants are assigned to them, so there is only ever one
+              place to enter the data. */}
+          <p className="text-xs text-neutral-400 mt-1.5">
+            Ye report hai. Room aur bed add karne ke liye{" "}
+            <Link href="/dashboard/manager/rooms" className="font-bold text-primary-600 hover:underline">
+              PG Manager → Rooms
+            </Link>{" "}
+            par jaayein.
+          </p>
         </div>
         <Link
           href="/dashboard/owner/listings/new"
@@ -90,7 +102,7 @@ export default async function InventoryPage() {
             return (
               <Link
                 key={listing.id}
-                href={`/dashboard/owner/inventory/${listing.id}`}
+                href={`/dashboard/manager/rooms?listingId=${listing.id}`}
                 className="bg-white rounded-2xl border border-neutral-100 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary-200 transition-all duration-300 group flex flex-col sm:flex-row sm:items-center gap-5"
               >
                 <div className="w-full sm:w-20 h-32 sm:h-20 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200">

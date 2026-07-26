@@ -6,17 +6,17 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManagerAccess, logPgAudit } from "@/lib/manager-auth";
+import { requireManagerAccess, logPgAudit, listingScope } from "@/lib/manager-auth";
 import { AddTenantForm } from "./AddTenantForm";
 
 export const metadata = { title: "Add Tenant — PG Manager" };
 
 export default async function AddTenantPage({ searchParams }: { searchParams: Promise<{ name?: string; phone?: string; email?: string }> }) {
-  const { userId } = await requireManagerAccess();
+  const { userId, allowedListingIds } = await requireManagerAccess();
   const sp = await searchParams;
 
   const listings = await db.listing.findMany({
-    where: { ownerId: userId },
+    where: { ownerId: userId, ...listingScope({ allowedListingIds }, "id") },
     select: { id: true, title: true },
   });
 

@@ -4,7 +4,7 @@
  */
 import { BedDouble, AlertCircle, Users, CheckCircle } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManagerAccess } from "@/lib/manager-auth";
+import { requireManagerAccess, listingScope } from "@/lib/manager-auth";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { AddRoomModal } from "@/components/manage/AddRoomModal";
 import { DeleteRoomBtn } from "@/components/manage/DeleteRoomBtn";
@@ -82,11 +82,15 @@ function RoomCard({ room }: { room: any }) {
 
 export default async function RoomsPage({ searchParams }: { searchParams: Promise<{ listingId?: string }> }) {
   const sp = await searchParams;
-  const { userId } = await requireManagerAccess();
+  const { userId, allowedListingIds } = await requireManagerAccess();
   const listingId = sp.listingId ? parseInt(sp.listingId) : undefined;
 
-  const where: any = { ownerId: userId };
-  if (listingId) where.id = listingId;
+  // Scope first, then narrow. A ?listingId= for a PG this manager isn't assigned
+  // to must return nothing rather than overriding the restriction.
+  const where: any = { ownerId: userId, ...listingScope({ allowedListingIds }, "id") };
+  if (listingId) {
+    where.id = allowedListingIds === null || allowedListingIds.includes(listingId) ? listingId : -1;
+  }
 
   const listings = await db.listing.findMany({
     where,
@@ -106,7 +110,7 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
     },
   });
 
-  const allOwnerListings = await db.listing.findMany({ where: { ownerId: userId }, select: { id: true, title: true } });
+  const allOwnerListings = await db.listing.findMany({ where: { ownerId: userId, ...listingScope({ allowedListingIds }, "id") }, select: { id: true, title: true } });
 
   const totalBeds  = listings.reduce((s, l) => s + l.rooms.reduce((bs, r) => bs + r.beds.length, 0), 0);
   const occupied   = listings.reduce((s, l) => s + l.rooms.reduce((bs, r) => bs + r.beds.filter(b => b.isOccupied).length, 0), 0);

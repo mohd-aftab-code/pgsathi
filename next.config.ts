@@ -48,6 +48,14 @@ const nextConfig = {
         destination: '/dashboard/manager',
         permanent: true,
       },
+      // The owner keeps a read-only bed report at /dashboard/owner/inventory, but
+      // room/bed ENTRY moved into PG Manager so there is only one place to add
+      // them. Old per-property entry links land there.
+      {
+        source: '/dashboard/owner/inventory/:id',
+        destination: '/dashboard/manager/rooms',
+        permanent: true,
+      },
       {
         source: '/dashboard/owner/manage/:path*',
         destination: '/dashboard/manager/:path*',

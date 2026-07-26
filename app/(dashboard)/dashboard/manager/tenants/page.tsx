@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireManagerAccess } from "@/lib/manager-auth";
+import { requireManagerAccess, listingScope } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
 import { EmptyState } from "@/components/manage/EmptyState";
 import { formatINR, formatDate, initials, currentMonth } from "@/lib/manage-utils";
@@ -20,7 +20,7 @@ export default async function TenantsPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string; listingId?: string; page?: string }>;
 }) {
-  const { userId, capabilities } = await requireManagerAccess();
+  const { userId, capabilities, allowedListingIds } = await requireManagerAccess();
   const sp         = await searchParams;
   const q          = sp.q ?? "";
   const status     = sp.status ?? "";
@@ -29,8 +29,13 @@ export default async function TenantsPage({
   const limit      = 20;
   const month      = currentMonth();
 
-  const where: any = { ownerId: userId, deletedAt: null };
-  if (status) where.status = status;
+  // A tenant who leaves is soft-deleted, never removed — `?status=PAST` is how
+  // that history is read back. Everything else shows only current tenants.
+  const showingPast = status === "PAST";
+  const where: any = { ownerId: userId, deletedAt: showingPast ? { not: null } : null };
+  if (status && !showingPast) where.status = status;
+  // A manager restricted to certain PGs must not see tenants from the others.
+  Object.assign(where, listingScope({ allowedListingIds }));
   if (listingId) where.listingId = listingId;
   if (q) where.OR = [
     { name:  { contains: q, mode: "insensitive" } },
@@ -47,7 +52,7 @@ export default async function TenantsPage({
       },
     }),
     db.pgTenant.count({ where }),
-    db.listing.findMany({ where: { ownerId: userId }, select: { id: true, title: true } }),
+    db.listing.findMany({ where: { ownerId: userId, ...listingScope({ allowedListingIds }, "id") }, select: { id: true, title: true } }),
   ]);
 
   const pages = Math.ceil(total / limit);
@@ -83,7 +88,11 @@ export default async function TenantsPage({
             <Users className="text-violet-600" size={20} />
             Tenant Directory
           </h1>
-          <p className="text-xs text-neutral-500 mt-1 font-medium">{total} total tenants across all properties</p>
+          <p className="text-xs text-neutral-500 mt-1 font-medium">
+            {showingPast
+              ? `${total} past tenants — inka record safe hai`
+              : `${total} total tenants across all properties`}
+          </p>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
           <TenantFilters q={q} status={status} listingId={listingId} listings={listings} />
