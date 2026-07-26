@@ -28,6 +28,16 @@ export async function GET(req: NextRequest) {
       db.notification.count({ where: { userId: uid, isRead: false } }),
     ]);
 
+    // Opportunistic cleanup: delete read notifications older than 30 days.
+    // Runs ~1% of requests so it never adds visible latency. The notification
+    // table has no TTL, so without this it grows indefinitely per user.
+    if (Math.random() < 0.01) {
+      const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      db.notification
+        .deleteMany({ where: { userId: uid, isRead: true, createdAt: { lt: cutoff } } })
+        .catch(() => {});
+    }
+
     return NextResponse.json({ success: true, items, unreadCount });
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 });

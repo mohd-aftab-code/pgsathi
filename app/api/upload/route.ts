@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadImage } from "@/lib/cloudinary";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+    // Per-user upload rate limit: 20 images per hour.
+    // Prevents a single account from burning unlimited Cloudinary bandwidth.
+    const rl = await checkRateLimit(`upload:${session.user.id}`, 20, 3600);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { success: false, message: "Too many uploads. Please try again later." },
+        { status: 429 }
+      );
     }
 
     const formData = await req.formData();

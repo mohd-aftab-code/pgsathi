@@ -1,12 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
 
-// Accept either the plain server-side name or the NEXT_PUBLIC_ variant —
-// this project's Vercel env has historically used both across environments.
+// ⚠️  NEVER use NEXT_PUBLIC_ variants here — those vars are bundled into the
+// browser JS bundle and visible to anyone who opens DevTools. API keys exposed
+// that way can be used to upload/delete files on your Cloudinary account.
+// Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in your
+// Vercel / server env (no NEXT_PUBLIC_ prefix).
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY || process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
+  secure:     true,
 });
 
 export { cloudinary };

@@ -1,11 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 type AllowedRole = "TENANT" | "OWNER";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // IP-based rate limit: 5 registrations per hour per IP.
+    // Prevents account spam and phone-number enumeration.
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const rl = await checkRateLimit(`register:${ip}`, 5, 3600);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { success: false, message: "Too many registration attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { name, phone, password, role } = body as {
       name?: string;
@@ -74,3 +86,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

@@ -4,6 +4,7 @@
  * Only GROWTH and PRO plan subscribers get access.
  */
 import "server-only";
+import { cache } from "react";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -48,8 +49,14 @@ export async function isTrialActive(userId: number): Promise<{ active: boolean; 
   };
 }
 
-/** Returns the active plan tier for a given userId. "NONE" if no active sub. */
-export async function getPlanTier(userId: number): Promise<PlanTier> {
+/**
+ * Returns the active plan tier for a given userId. "NONE" if no active sub.
+ *
+ * Wrapped with React cache() so multiple callers in the same server render
+ * (e.g. layout + page) share a single Postgres round-trip instead of each
+ * issuing their own query.
+ */
+export const getPlanTier = cache(async (userId: number): Promise<PlanTier> => {
   const sub = await db.subscription.findFirst({
     where: {
       userId,
@@ -69,14 +76,16 @@ export async function getPlanTier(userId: number): Promise<PlanTier> {
   if (slug.includes("PRO")) return "PRO";
   if (slug.includes("GROWTH") || slug.includes("BASIC")) return "GROWTH";
   return "STARTER";
-}
+});
 
 /**
  * The feature switches for a user's active plan — the DB-driven replacement for
  * hardcoded `tier === "PRO"` gates. No active plan → nothing unlocked. During a
  * trial the trial plan's own capabilities apply (same as its tier did before).
+ *
+ * Wrapped with React cache() — same reasoning as getPlanTier.
  */
-export async function getPlanCapabilities(userId: number): Promise<PlanCapabilities> {
+export const getPlanCapabilities = cache(async (userId: number): Promise<PlanCapabilities> => {
   const sub = await db.subscription.findFirst({
     where: { userId, status: { in: ["ACTIVE", "TRIAL"] }, endDate: { gt: new Date() } },
     include: { plan: true },
@@ -84,7 +93,7 @@ export async function getPlanCapabilities(userId: number): Promise<PlanCapabilit
   });
   if (!sub) return NO_CAPABILITIES;
   return readCapabilities(sub.plan.capabilities);
-}
+});
 
 /**
  * Checks that the current user is a logged-in OWNER with an active

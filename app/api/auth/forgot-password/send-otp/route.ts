@@ -49,6 +49,15 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    // Opportunistic sweep — delete expired OTPs older than 24 h so the table
+    // cannot grow without bound. Runs ~2 % of the time so it never adds visible
+    // latency even in busy windows. Fire-and-forget: never blocks the response.
+    if (Math.random() < 0.02) {
+      db.otpCode
+        .deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 86_400_000) } } })
+        .catch(() => {});
+    }
+
     // 4. Send OTP via Fast2SMS
     const sent = await sendOTP(phone, otp);
 

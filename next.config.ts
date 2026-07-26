@@ -24,7 +24,37 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
-          }
+          },
+          // HSTS — force HTTPS for 1 year after first visit; includeSubDomains
+          // covers partner.pgsathi.in etc. Only safe once SSL is confirmed permanent.
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+          // Content Security Policy — blocks XSS by allowlisting sources.
+          // 'unsafe-inline' in style-src is needed for Tailwind's runtime styles.
+          // Update img-src / connect-src if you add new third-party services.
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              // scripts: self + inline (Next.js hydration) + known CDNs
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://maps.googleapis.com https://www.googletagmanager.com",
+              // styles: self + inline (Tailwind)
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // fonts
+              "font-src 'self' https://fonts.gstatic.com",
+              // images: self + Cloudinary + Google avatars + maps + misc
+              "img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://streetviewpixels-pa.googleapis.com https://upload.wikimedia.org https://i.pravatar.cc https://images.unsplash.com",
+              // API calls: self + Razorpay + Mapbox
+              "connect-src 'self' https://api.razorpay.com https://api.mapbox.com https://*.mapbox.com",
+              // iframes: Razorpay checkout modal
+              "frame-src https://api.razorpay.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
         ],
       },
     ];
