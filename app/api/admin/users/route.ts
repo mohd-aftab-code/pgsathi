@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { cycleEndDate, isValidCycle, priceForCycle, type CycleId } from "@/lib/billing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (!admin || admin.role !== "ADMIN") return NextResponse.json({ success: false }, { status: 403 });
 
     const data = await req.json();
-    const { action, userId, days, planId } = data; // action: 'extend_trial' | 'activate_plan'
+    const { action, userId, days, planId, billingCycle } = data; // action: 'extend_trial' | 'activate_plan'
 
     if (!userId || !action) {
       return NextResponse.json({ success: false, message: "Missing params" }, { status: 400 });
@@ -40,30 +41,92 @@ export async function POST(req: NextRequest) {
     }
     
     if (action === "activate_plan") {
-      // Manually activate a plan (bypassing payment)
+      // Manually activate a plan (bypassing payment).
+      //
+      // This must do everything a real payment does, not just insert a
+      // subscription row. An admin-granted plan is still a conversion: the owner
+      // gets the plan, so their partner has earned commission on it. Previously
+      // this wrote only the subscription — no invoice, no commission — so a
+      // partner's dashboard stayed empty and the plan looked broken.
       const targetPlanId = planId ? parseInt(planId) : 1; // Default to basic plan if none specified
-      
+      const uid = parseInt(userId);
+
       const plan = await db.plan.findUnique({ where: { id: targetPlanId } });
       if (!plan) return NextResponse.json({ success: false, message: "Plan not found" }, { status: 404 });
 
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1); // default 1 month
+      const cycle: CycleId = isValidCycle(billingCycle) ? billingCycle : "MONTHLY";
+      const amount = priceForCycle(plan, cycle);
+      if (amount === null) {
+        return NextResponse.json({ success: false, message: "Ye plan is duration par available nahi hai" }, { status: 400 });
+      }
 
-      await db.subscription.create({
-        data: {
-          userId: parseInt(userId),
-          planId: plan.id,
-          status: "ACTIVE",
-          billingCycle: "MONTHLY",
-          amount: plan.price,
-          startDate,
-          endDate,
-          autoRenew: false
-        }
+      const startDate = new Date();
+      const endDate = cycleEndDate(startDate, cycle);
+
+      const invoiceId = await db.$transaction(async (tx) => {
+        // Same supersede rule as checkout — never leave two live plans, or a
+        // downgrade keeps granting the older, higher plan's limits.
+        await tx.subscription.updateMany({
+          where: { userId: uid, status: { in: ["ACTIVE", "TRIAL", "PAST_DUE"] } },
+          data: { status: "EXPIRED", autoRenew: false },
+        });
+
+        const sub = await tx.subscription.create({
+          data: {
+            userId: uid,
+            planId: plan.id,
+            status: "ACTIVE",
+            billingCycle: cycle,
+            amount,
+            startDate,
+            endDate,
+            autoRenew: false,
+          },
+          select: { id: true },
+        });
+
+        // Marked ADMIN_GRANTED, not PAID — no money actually changed hands, and
+        // the owner's payment history should say so honestly.
+        const inv = await tx.invoice.create({
+          data: {
+            subscriptionId: sub.id,
+            amount,
+            status: amount > 0 ? "ADMIN_GRANTED" : "FREE",
+            invoiceDate: startDate,
+            paidAt: startDate,
+            billingCycle: cycle,
+            periodStart: startDate,
+            periodEnd: endDate,
+          },
+          select: { id: true },
+        });
+
+        await tx.user.updateMany({ where: { id: uid, role: "TENANT" }, data: { role: "OWNER" } });
+        return inv.id;
       });
-      
-      return NextResponse.json({ success: true, message: `Plan ${plan.name} activated for 1 month` });
+
+      // Outside the transaction: a commission hiccup must not undo the plan.
+      let commission = 0;
+      if (amount > 0) {
+        try {
+          const { createEarningForInvoice } = await import("@/lib/partner-earnings");
+          const earningId = await createEarningForInvoice(invoiceId);
+          if (earningId) {
+            const e = await db.partnerEarning.findUnique({ where: { id: earningId }, select: { amount: true } });
+            commission = e?.amount ?? 0;
+          }
+        } catch (e) {
+          console.error("[admin activate_plan] partner earning failed (non-fatal):", e);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        message:
+          `${plan.name} (${cycle}) activated` +
+          (commission > 0 ? ` — partner commission ₹${commission.toLocaleString("en-IN")} ban gaya` : ""),
+        data: { invoiceId, amount, commission },
+      });
     }
 
     if (action === "delete") {
