@@ -61,12 +61,11 @@ export function DashboardSidebar({
     <>
       {/* ── Desktop Rail — fixed flush to the left edge ─────── */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-violet-300 border-r border-violet-400 w-64">
-        {/* Brand mark */}
+        {/* Brand mark — vertical logo */}
         {/* Brand shrinks on short laptops so the nav keeps its room. */}
-        <Link href={brandHref} className="flex items-center h-16 [@media(min-height:800px)]:h-20 shrink-0 border-b border-violet-400 gap-2.5 px-4">
+        <Link href={brandHref} className="flex items-center justify-center h-20 [@media(min-height:800px)]:h-24 shrink-0 border-b border-violet-400 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-icon.png" alt="PGSathi" className="w-9 h-9 [@media(min-height:800px)]:w-11 [@media(min-height:800px)]:h-11 object-contain shrink-0 transition-all" />
-          <span className="text-neutral-900 font-bold text-lg whitespace-nowrap">PGSathi</span>
+          <img src="/logo-vertical.png" alt="PGSathi" className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all" />
         </Link>
 
         {backLink && (

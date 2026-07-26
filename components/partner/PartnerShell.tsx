@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
-  User, Users, Settings, Handshake, LogOut, X, Plus, LayoutGrid,
+  User, Users, Settings, LogOut, X, Plus, LayoutGrid,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
@@ -126,14 +126,9 @@ export function PartnerShell({
   };
 
   const Brand = () => (
-    <Link href="/partner/dashboard" className="flex items-center gap-2.5 h-16 px-5 shrink-0">
-      <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25">
-        <Handshake className="text-white" size={18} />
-      </div>
-      <div>
-        <div className="font-extrabold text-neutral-900 dark:text-white text-sm leading-tight">PGSathi</div>
-        <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider">Partner</div>
-      </div>
+    <Link href="/partner/dashboard" className="flex items-center justify-center h-20 px-4 shrink-0 border-b border-neutral-200 dark:border-neutral-800">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logo-vertical.png" alt="PGSathi" className="h-14 w-auto object-contain" />
     </Link>
   );
 
@@ -162,15 +157,11 @@ export function PartnerShell({
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800">
           <div className="h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
-            {/* Mobile top app bar: brand + code. Navigation lives in the bottom bar. */}
+            {/* Mobile top app bar: logo + code. Navigation lives in the bottom bar. */}
             <Link href="/partner/dashboard" className="lg:hidden flex items-center gap-2 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25 shrink-0">
-                <Handshake className="text-white" size={17} />
-              </div>
-              <div className="min-w-0">
-                <div className="font-extrabold text-neutral-900 dark:text-white text-sm leading-tight truncate">PGSathi</div>
-                <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-vertical.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
+              <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
             </Link>
 
             <div className="hidden lg:block text-sm text-neutral-500 dark:text-neutral-400">
