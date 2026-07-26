@@ -19,6 +19,9 @@ export default function LogoutButton({ className }: { className?: string }) {
       aria-label="Log out"
     >
       <LogOut size={18} />
+      {/* Only shows when a caller opts into a labelled shape; the default
+          icon-only button is unaffected. */}
+      {className?.includes("w-full") && <span>Logout</span>}
     </button>
   );
 }

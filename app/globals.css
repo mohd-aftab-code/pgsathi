@@ -91,7 +91,11 @@
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.025em;
-    color: var(--color-neutral-900);
+    /* `inherit`, not a fixed colour. Setting the colour here applies it directly
+       to the element, which beats a `text-white` (or any colour) utility on an
+       ancestor — so every heading inside a dark card rendered invisible. Body
+       already sets neutral-900, so headings still look identical by default. */
+    color: inherit;
   }
 
   a {
