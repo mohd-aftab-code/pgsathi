@@ -244,8 +244,14 @@ export default async function SearchPage(props: {
                 <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">🔍</span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">No PGs found</h3>
-                <p className="text-neutral-500 mb-6">We couldn't find any listings matching your criteria. Try adjusting your filters.</p>
+                <h3 className="text-xl font-bold mb-2">
+                  No PGs found {citySlug && citySlug !== "all" ? `in ${citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")}` : ""}
+                </h3>
+                <p className="text-neutral-500 mb-6">
+                  {citySlug && citySlug !== "all" && !queryParam && !budget && !amenitiesStr && !gender 
+                    ? "We are currently expanding our network and will be launching in this city very soon!"
+                    : "We couldn't find any listings matching your criteria. Try adjusting your filters."}
+                </p>
                 <Link href="/search" className="inline-block bg-primary-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-600 transition-colors">
                   Clear Filters
                 </Link>

@@ -50,11 +50,12 @@ export function getThumbnailUrl(url: string, width = 400, height = 300): string 
   // Don't try to transform external URLs like Google Maps or Unsplash
   if (!url.includes("cloudinary.com")) return url;
 
-  return cloudinary.url(url, {
-    width,
-    height,
-    crop: "fill",
-    quality: "auto",
-    fetch_format: "webp",
-  });
+  // Since `url` is a full secure_url, cloudinary.url() doesn't inject transformations properly.
+  // We can manually inject the transformation parameters after "/upload/".
+  if (url.includes("/upload/")) {
+    const transformations = `c_fill,h_${height},w_${width},q_auto,f_auto`;
+    return url.replace("/upload/", `/upload/${transformations}/`);
+  }
+
+  return url;
 }
