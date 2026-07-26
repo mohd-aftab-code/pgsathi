@@ -11,6 +11,7 @@ import {
   FileText,
   Receipt,
   BellRing,
+  Bell,
   Megaphone,
   BarChart3,
   ShieldCheck,
@@ -55,6 +56,9 @@ function buildManagerNav(messEnabled: boolean, expensesEnabled: boolean): Sideba
     {
       category: "System",
       items: [
+        // The notifications page existed with no link anywhere in the sidebar —
+        // a manager received notifications but had no way to open them.
+        { name: "Notifications", href: "/dashboard/manager/notifications", icon: Bell, hideMobile: true },
         { name: "Reminders", href: "/dashboard/manager/reminders", icon: BellRing, hideMobile: true },
         { name: "Announcements", href: "/dashboard/manager/announcements", icon: Megaphone, hideMobile: true },
         { name: "Reports", href: "/dashboard/manager/reports", icon: BarChart3, ownerOnly: true, hideMobile: true },
