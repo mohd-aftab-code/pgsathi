@@ -10,20 +10,12 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { db } from "@/lib/db";
+import { generateOwnerPassword } from "@/lib/owner-credentials";
 import { requirePartnerApi, logPartnerActivity } from "@/lib/partner-auth";
 
 export const runtime = "nodejs";
 
-function generatePassword(): string {
-  const letters = "abcdefghjkmnpqrstuvwxyz";
-  const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
-  const digits = "23456789";
-  const pick = (set: string, n: number) =>
-    Array.from({ length: n }, () => set[crypto.randomInt(set.length)]).join("");
-  return `${pick(upper, 1)}${pick(letters, 4)}${pick(digits, 3)}`;
-}
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const ctx = await requirePartnerApi();
@@ -46,7 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   });
   if (!owner) return NextResponse.json({ success: false, message: "Owner nahi mila" }, { status: 404 });
 
-  const password = generatePassword();
+  const password = generateOwnerPassword();
   await db.user.update({ where: { id: owner.id }, data: { passwordHash: await bcrypt.hash(password, 10) } });
 
   await logPartnerActivity(ctx.partnerId, "owner.password_reset", { entity: "User", entityId: owner.id });

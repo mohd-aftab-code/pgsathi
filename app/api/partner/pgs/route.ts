@@ -17,6 +17,8 @@ import { resolveCity } from "@/lib/geo";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { PGType } from "@prisma/client";
 import slugify from "slugify";
+import bcrypt from "bcryptjs";
+import { generateOwnerPassword } from "@/lib/owner-credentials";
 
 const VALID_ROOM_TYPES: PGType[] = ["SINGLE_ROOM", "DOUBLE_SHARING", "TRIPLE_SHARING", "DORMITORY", "STUDIO", "ENTIRE_FLAT"];
 
@@ -148,18 +150,23 @@ export async function POST(req: NextRequest) {
     // attach the PG to it (never overwrite their name/role).
     let owner = await db.user.findUnique({ where: { phone: ownerPhone }, select: { id: true, role: true } });
     let createdOwner = false;
+    // Returned to the partner exactly once, for a brand-new owner only. Without
+    // it the owner had no way to log in at all — so they could never see their
+    // PG, never buy a plan, and the whole flow stopped at registration.
+    let ownerPassword: string | null = null;
     if (!owner) {
       const email = ownerEmailInput || `owner_${ownerPhone}@pgsathi.in`;
       const emailTaken = await db.user.findUnique({ where: { email }, select: { id: true } });
+      ownerPassword = generateOwnerPassword();
       owner = await db.user.create({
         data: {
           name: ownerName,
           phone: ownerPhone,
           // Fall back to a phone-based email if the chosen one is taken.
           email: emailTaken ? `owner_${ownerPhone}@pgsathi.in` : email,
+          passwordHash: await bcrypt.hash(ownerPassword, 10),
           role: "OWNER",
           isVerified: true,
-          // No password: the owner sets one later via forgot-password / OTP.
         },
         select: { id: true, role: true },
       });
@@ -249,7 +256,14 @@ export async function POST(req: NextRequest) {
       message: createdOwner
         ? "PG register ho gaya. Owner ka account bhi ban gaya. Admin approval ke baad live hoga."
         : "PG register ho gaya. Admin approval ke baad live hoga.",
-      data: { id: listing.id, createdOwner },
+      data: {
+        id: listing.id,
+        createdOwner,
+        // Hand-over details. The password is hashed in the database and can
+        // never be read back — if the partner loses it they must issue a new one
+        // from /partner/owners.
+        ownerLogin: createdOwner ? { name: ownerName, phone: ownerPhone, password: ownerPassword } : null,
+      },
     }, { status: 201 });
   } catch (error: any) {
     console.error("[PARTNER_PG_CREATE]", error);

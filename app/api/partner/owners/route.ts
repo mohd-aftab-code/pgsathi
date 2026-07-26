@@ -5,33 +5,19 @@
  *
  * The partner registers the OWNER first, then lists PGs under them. The owner
  * gets a real account with a real password straight away, so the partner can
- * hand over "phone + password" and the owner logs in immediately — no email
- * link, no OTP round-trip.
+ * hand over "phone + password" and the owner logs in immediately.
  *
  * Commission follows the owner (see lib/partner-earnings), so creating the owner
  * here is what establishes the partner's claim on every future payment.
  */
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { db } from "@/lib/db";
+import { generateOwnerPassword } from "@/lib/owner-credentials";
 import { requirePartnerApi, logPartnerActivity } from "@/lib/partner-auth";
 import { attributeOwnerToPartner } from "@/lib/partner-earnings";
 
 export const runtime = "nodejs";
-
-/**
- * A password a person can read out over the phone: no look-alike characters
- * (0/O, 1/l/I), and a shape that survives being written on paper.
- */
-function generatePassword(): string {
-  const letters = "abcdefghjkmnpqrstuvwxyz";
-  const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
-  const digits = "23456789";
-  const pick = (set: string, n: number) =>
-    Array.from({ length: n }, () => set[crypto.randomInt(set.length)]).join("");
-  return `${pick(upper, 1)}${pick(letters, 4)}${pick(digits, 3)}`;
-}
 
 export async function GET() {
   const ctx = await requirePartnerApi();
@@ -116,7 +102,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const password = generatePassword();
+  const password = generateOwnerPassword();
   const fallbackEmail = `owner_${phone}@pgsathi.in`;
   const emailTaken = emailInput
     ? await db.user.findUnique({ where: { email: emailInput }, select: { id: true } })

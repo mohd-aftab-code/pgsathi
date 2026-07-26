@@ -86,7 +86,8 @@ export default function PartnerNewPgPage() {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [done, setDone] = useState<{ createdOwner: boolean } | null>(null);
+  const [done, setDone] = useState<{ createdOwner: boolean; ownerLogin?: { name: string; phone: string; password: string } | null } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const set = (patch: Partial<FormData>) => setForm((f) => ({ ...f, ...patch }));
 
@@ -170,7 +171,7 @@ export default function PartnerNewPgPage() {
       });
       const d = await res.json();
       if (!d.success) { setError(d.message || "PG register nahi ho paya"); setLoading(false); return; }
-      setDone({ createdOwner: d.data?.createdOwner });
+      setDone({ createdOwner: d.data?.createdOwner, ownerLogin: d.data?.ownerLogin ?? null });
     } catch { setError("Kuch gadbad ho gayi. Dobara try karein."); setLoading(false); }
   }
 
@@ -200,6 +201,49 @@ export default function PartnerNewPgPage() {
         </div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">PG register ho gaya 🎉</h1>
         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Admin approval ke baad live hoga.{done.createdOwner && " Owner ka account bhi ban gaya."}</p>
+
+        {/* Shown once, right here. The password is hashed in the database and can
+            never be read back — without handing it over now, the owner cannot log
+            in, cannot see their PG, and cannot buy a plan. */}
+        {done.ownerLogin && (
+          <div className="max-w-md mx-auto mb-6 rounded-2xl border-2 border-primary-200 dark:border-primary-900 bg-primary-50 dark:bg-primary-950/40 p-5 text-left">
+            <p className="font-bold text-primary-900 dark:text-primary-200 mb-1">
+              {done.ownerLogin.name} ko ye login de dijiye
+            </p>
+            <p className="text-xs text-primary-700 dark:text-primary-400 mb-4">
+              Ye password <b>sirf abhi</b> dikhega. Iske bina owner login nahi kar payega —
+              na apna PG dekh payega, na plan le payega.
+            </p>
+
+            {[
+              { k: "Phone (login ID)", v: done.ownerLogin.phone },
+              { k: "Password", v: done.ownerLogin.password },
+            ].map((row) => (
+              <div key={row.k} className="rounded-xl bg-white dark:bg-neutral-900 border border-primary-100 dark:border-neutral-700 px-4 py-2.5 mb-2">
+                <div className="text-[11px] text-neutral-500 dark:text-neutral-400">{row.k}</div>
+                <div className="text-lg font-extrabold tracking-wide text-neutral-900 dark:text-white">{row.v}</div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => {
+                const l = done.ownerLogin!;
+                navigator.clipboard
+                  ?.writeText(
+                    `PGSathi login\nPhone: ${l.phone}\nPassword: ${l.password}\n${window.location.origin}/login`,
+                  )
+                  .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+              }}
+              className="w-full h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm transition-colors"
+            >
+              {copied ? "Copy ho gaya ✓" : "Login details copy karein"}
+            </button>
+            <p className="text-[11px] text-primary-700/80 dark:text-primary-400/70 mt-2">
+              Bhool jaayein to <b>Owners</b> page se naya password bana sakte hain.
+            </p>
+          </div>
+        )}
         <div className="flex gap-3 justify-center">
           <Link href="/partner/pgs" className="h-11 px-5 leading-[2.75rem] rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm">My PGs dekhein</Link>
           <button onClick={() => { setDone(null); setForm(DEFAULT_FORM); setStep(1); }} className="h-11 px-5 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm">Ek aur add karein</button>
