@@ -3,32 +3,32 @@ import Link from "next/link";
 
 const FAQS = [
   {
-    q: "Kya PGSathi par PG dhoondhna sach mein zero brokerage hai?",
-    a: "Haan. Tenants se hum kabhi koi fees nahi lete — search se le kar owner ka number lene tak, sab free hai. PG owners apni listing aur leads ke liye subscribe karte hain, isi se platform chalta hai. Aapko kisi bhi stage par brokerage nahi deni padti.",
+    q: "Is finding a PG on PGSathi really zero brokerage?",
+    a: "Yes. We never charge any fees from tenants — from searching to getting the owner's number, everything is completely free. PG owners subscribe for listings and leads, which keeps the platform running. You do not pay brokerage at any stage.",
   },
   {
-    q: "Listings verify kaise hoti hain?",
-    a: "Har naya PG hamari team review karti hai listing live hone se pehle — address, photos, aur owner details check hoti hain. Verified listings pe ek \"VERIFIED\" badge dikhta hai, taaki aap bharosa kar ke aage badh sakein.",
+    q: "How are the listings verified?",
+    a: "Our team reviews every new PG before the listing goes live — we check the address, photos, and owner details. Verified listings have a \"VERIFIED\" badge, so you can proceed with confidence.",
   },
   {
-    q: "PG owner se contact kaise karu?",
-    a: "Kisi bhi listing pe \"Contact Owner\" ya WhatsApp button milega — direct owner ke phone number pe connect hote ho, koi bichauliya nahi. Aap call bhi kar sakte ho ya visit book kar sakte ho.",
+    q: "How do I contact the PG owner?",
+    a: "You will find a \"Contact Owner\" or WhatsApp button on every listing — you connect directly to the owner's phone number, with no middlemen. You can also call or book a visit.",
   },
   {
-    q: "Kya main PGSathi ke through rent online pay kar sakta hoon?",
-    a: "Abhi PGSathi ek discovery platform hai — hum aapko sahi PG dhoondhne aur owner se seedha connect karne mein madad karte hain. Rent payment aap owner ke saath directly settle karte ho (cash, UPI, ya jo bhi tareeka aap dono decide karo).",
+    q: "Can I pay rent online through PGSathi?",
+    a: "Currently, PGSathi is a discovery platform — we help you find the right PG and connect directly with the owner. You settle rent payments directly with the owner (cash, UPI, or whatever method you both decide).",
   },
   {
-    q: "Agar PG photos mein jaisa dikha waisa nahi nikla to?",
-    a: "Hum listings verify karte hain, lekin final decision lene se pehle hamesha ek physical visit zaroor karein — har listing pe visit book karne ka option hota hai. Koi mismatch lage to hume report karein, hum listing ko dobara review karte hain.",
+    q: "What if the PG doesn't look like the photos?",
+    a: "We verify listings, but always make a physical visit before making a final decision — every listing has an option to book a visit. If you find a mismatch, report it to us, and we will review the listing again.",
   },
   {
-    q: "Girls ke liye PGs kitni safe hain?",
-    a: "Girls PGs alag se filter kiye ja sakte hain, aur zyada tar mein warden/security ka setup hota hai — details har listing page pe milengi. Hum recommend karte hain ki final decision se pehle khud visit zaroor karein aur owner se safety measures directly poochh lein.",
+    q: "How safe are the PGs for girls?",
+    a: "Girls' PGs can be filtered separately, and most have a warden/security setup — details are available on every listing page. We recommend you visit yourself and ask the owner directly about safety measures before making a final decision.",
   },
   {
-    q: "Main PG owner hoon — apni property kaise list karu?",
-    a: "\"List Your PG\" pe click karo, apni property ke details aur photos daalo — basic listing free hai. Zyada leads aur poora PG-management dashboard chahiye to paid plans available hain, jinme 15 din ka free trial bhi milta hai.",
+    q: "I am a PG owner — how do I list my property?",
+    a: "Click on \"List Your PG\", enter your property details and photos — basic listing is free. For more leads and a complete PG-management dashboard, paid plans are available, which include a 15-day free trial.",
   },
 ];
 
@@ -42,17 +42,17 @@ export default function FAQ() {
             <div className="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-5">
               <MessageCircleQuestion size={22} />
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 tracking-tight mb-4" style={{ textWrap: "balance" }}>
+            <h2 className="section-title mb-4">
               Common Questions
             </h2>
             <p className="text-neutral-500 leading-relaxed mb-6 max-w-sm">
-              Kuch cheezein jo log PGSathi use karne se pehle poochte hain. Kuch aur poochna hai?
+              Some things people ask before using PGSathi. Have any other questions?
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-colors"
             >
-              Humse contact karein →
+              Contact Us →
             </Link>
           </div>
 

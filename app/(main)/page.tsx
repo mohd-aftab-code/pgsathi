@@ -1,6 +1,7 @@
 import HeroSection from "@/components/landing/HeroSection";
 import CityGrid from "@/components/landing/CityGrid";
 import HowItWorks from "@/components/landing/HowItWorks";
+import TrustSection from "@/components/landing/TrustSection";
 import FeaturedListings from "@/components/landing/FeaturedListings";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
@@ -14,9 +15,9 @@ const FAQ_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Kya PGSathi par PG dhoondhna sach mein zero brokerage hai?", "acceptedAnswer": { "@type": "Answer", "text": "Haan. Tenants se hum kabhi koi fees nahi lete — search se le kar owner ka number lene tak, sab free hai." } },
-    { "@type": "Question", "name": "Listings verify kaise hoti hain?", "acceptedAnswer": { "@type": "Answer", "text": "Har naya PG hamari team review karti hai listing live hone se pehle — address, photos, aur owner details check hoti hain." } },
-    { "@type": "Question", "name": "PG owner se contact kaise karu?", "acceptedAnswer": { "@type": "Answer", "text": "Kisi bhi listing pe Contact Owner ya WhatsApp button milega — direct owner ke phone number pe connect hote ho, koi bichauliya nahi." } },
+    { "@type": "Question", "name": "Is finding a PG on PGSathi really zero brokerage?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We never charge any fees from tenants — from searching to getting the owner's number, everything is completely free." } },
+    { "@type": "Question", "name": "How are the listings verified?", "acceptedAnswer": { "@type": "Answer", "text": "Our team reviews every new PG before the listing goes live — we check the address, photos, and owner details." } },
+    { "@type": "Question", "name": "How do I contact the PG owner?", "acceptedAnswer": { "@type": "Answer", "text": "You will find a 'Contact Owner' or 'WhatsApp' button on every listing — you connect directly to the owner's phone number, with no middlemen." } },
   ],
 };
 
@@ -30,6 +31,7 @@ export default function Home() {
       <HeroSection />
       <CityGrid />
       <HowItWorks />
+      <TrustSection />
 
       {/* Featured PGs Section */}
       <Suspense fallback={
@@ -67,7 +69,7 @@ export default function Home() {
               </div>
 
               <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold mb-5 text-white tracking-tight leading-[1.15]" style={{ textWrap: "balance" }}>
-                PG Owner hain? PGSathi par list karein.
+                Are you a PG Owner? List on PGSathi.
               </h2>
               <p className="text-primary-200/70 text-base md:text-lg mb-9 max-w-xl leading-relaxed">
                 Join 10,000+ owners getting verified leads directly on WhatsApp — manage tenants and rent from one dashboard, zero commission.
