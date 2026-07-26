@@ -40,7 +40,7 @@ export default function PartnerForgotPasswordPage() {
       setInfo("OTP aapke phone par bhej diya gaya hai.");
       setStep("OTP");
     } catch {
-      setError("Kuch gadbad ho gayi. Dobara try karein.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function PartnerForgotPasswordPage() {
       }
       setStep("DONE");
     } catch {
-      setError("Kuch gadbad ho gayi. Dobara try karein.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,13 +97,13 @@ export default function PartnerForgotPasswordPage() {
               </div>
               <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">Password badal gaya</h1>
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                Ab naye password se login kar sakte hain.
+                You can now login with your new password.
               </p>
               <Link
                 href="/partner/login"
                 className="block w-full h-12 leading-[3rem] rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/25 transition"
               >
-                Login karein
+                Login
               </Link>
             </div>
           ) : (
@@ -112,7 +112,7 @@ export default function PartnerForgotPasswordPage() {
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
                 {step === "PHONE"
                   ? "Apna registered phone number daalein — OTP bhejenge."
-                  : "OTP aur naya password daalein."}
+                  : "Enter OTP and new password."}
               </p>
 
               {error && (
@@ -147,7 +147,7 @@ export default function PartnerForgotPasswordPage() {
                     type="submit" disabled={loading}
                     className="w-full h-12 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white font-bold shadow-lg shadow-primary-500/25 transition flex items-center justify-center gap-2"
                   >
-                    {loading ? <><Loader2 size={18} className="animate-spin" /> Bhej rahe hain…</> : "OTP bhejein"}
+                    {loading ? <><Loader2 size={18} className="animate-spin" /> Sending...</> : "Send OTP"}
                   </button>
                 </form>
               ) : (
@@ -176,7 +176,7 @@ export default function PartnerForgotPasswordPage() {
                     type="submit" disabled={loading}
                     className="w-full h-12 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white font-bold shadow-lg shadow-primary-500/25 transition flex items-center justify-center gap-2"
                   >
-                    {loading ? <><Loader2 size={18} className="animate-spin" /> Reset kar rahe hain…</> : "Password reset karein"}
+                    {loading ? <><Loader2 size={18} className="animate-spin" /> Resetting...</> : "Reset Password"}
                   </button>
                   <button
                     type="button"

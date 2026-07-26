@@ -91,7 +91,7 @@ export default async function PartnerPgsPage({
           href="/partner/pgs/new"
           className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5"
         >
-          <Plus size={17} /> PG Register karein
+          <Plus size={17} /> PG Register
         </Link>
       </div>
 
@@ -107,7 +107,7 @@ export default async function PartnerPgsPage({
           </p>
           {!q && !status && (
             <Link href="/partner/pgs/new" className="inline-flex items-center gap-1.5 mt-3 text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline">
-              <Plus size={15} /> Pehla PG register karein
+              <Plus size={15} /> Register your first PG
             </Link>
           )}
         </div>

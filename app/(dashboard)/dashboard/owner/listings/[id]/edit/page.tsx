@@ -198,7 +198,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
     // Shared with the new-listing page so both reject the same things
     if (step === 2) return validateLocation(formData);
     if (step === 5) {
-      if (formData.photos.length === 0) return "Kam se kam ek photo upload karein.";
+      if (formData.photos.length === 0) return "Please upload at least one photo.";
       if (!formData.priceMin || !formData.priceMax) return "Price range daalein.";
     }
     return null;

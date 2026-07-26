@@ -41,7 +41,7 @@ export default async function PricingPage({
           </div>
           <h1 className="text-5xl font-extrabold mb-4">PGSathi</h1>
           <p className="text-xl text-primary-100 mb-8">India's Smartest PG Management Platform</p>
-          <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-4">Tenants laao. PG manage karo.<br/>Sab ek jagah.</h2>
+          <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-4">Get tenants. Manage your PG.<br/>All in one place.</h2>
           <p className="text-lg text-primary-200">Marketplace Leads + PG Management SaaS + Tenant App</p>
         </div>
       </div>
@@ -50,7 +50,7 @@ export default async function PricingPage({
       <div className="max-w-7xl mx-auto px-6 -mt-32 relative z-10 pb-24">
         <div className="text-center mb-12">
           <h3 className="text-3xl font-bold text-white mb-2">Plans & Pricing</h3>
-          <p className="text-primary-100">Har size ke PG ke liye perfect plan. 15-din ka free trial, koi commitment nahi.</p>
+          <p className="text-primary-100">Perfect plans for every PG size. 15-day free trial, no commitment.</p>
         </div>
 
         {/* Duration switcher — plain links, so the page stays a server component
@@ -111,7 +111,7 @@ export default async function PricingPage({
                           <>
                             <div className="text-3xl font-black text-neutral-300 tracking-tight">—</div>
                             <div className="text-neutral-400 text-xs font-semibold mt-1">
-                              {CYCLE_META[cycle].label} par available nahi
+                              Not available on {CYCLE_META[cycle].label}
                             </div>
                           </>
                         );
@@ -129,7 +129,7 @@ export default async function PricingPage({
                               <span className="block text-xs text-neutral-400 font-semibold">
                                 GST included
                                 {CYCLE_META[cycle].months > 1 && ` · ₹${effectiveMonthly(price, cycle).toLocaleString("en-IN")}/month`}
-                                {saving > 0 && ` · ${saving}% bachat`}
+                                {saving > 0 && ` · ${saving}% savings`}
                               </span>
                             )}
                           </div>
@@ -194,7 +194,7 @@ export default async function PricingPage({
       
       {/* Footer Info */}
       <div className="text-center pb-12 text-neutral-500 text-sm">
-        <p>Sabhi paid plans mein 15-din ka free trial. Cancel anytime. Annual plans mein 30% tak ki savings.</p>
+        <p>All paid plans include a 15-day free trial. Cancel anytime. Save up to 30% on annual plans.</p>
         <p className="mt-2 font-bold text-neutral-900">Secure payments via Razorpay / UPI | 30-day money-back guarantee</p>
       </div>
     </div>

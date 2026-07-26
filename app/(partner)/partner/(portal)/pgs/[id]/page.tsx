@@ -210,7 +210,7 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
               <div className="flex items-center gap-2 text-neutral-700 dark:text-neutral-300"><Mail size={15} className="text-neutral-400" /> {listing.owner.email}</div>
             </>
           ) : (
-            <div className="text-xs text-neutral-400">Contact details aapke plan mein available nahi hain.</div>
+            <div className="text-xs text-neutral-400">Contact details are not available in your plan.</div>
           )}
         </div>
       </div>

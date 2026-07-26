@@ -38,7 +38,7 @@ export default async function PartnerEarningsPage({
     { label: "Paid", value: inr(summary.paid), sub: `${summary.count.paid} received`, Icon: Wallet, tone: "green" as const },
     { label: "Net Earnings", value: inr(summary.net), sub: "lifetime", Icon: IndianRupee, accent: true },
     { label: "This Month", value: inr(summary.thisMonth), sub: `pichla: ${inr(summary.lastMonth)}`, Icon: Calendar, tone: "violet" as const },
-    { label: "Lifetime", value: inr(summary.lifetime), sub: "cancelled ke alawa", Icon: TrendingUp, tone: "green" as const },
+    { label: "Lifetime", value: inr(summary.lifetime), sub: "excluding cancelled", Icon: TrendingUp, tone: "green" as const },
   ];
 
   const tab = (label: string, val: string) => (

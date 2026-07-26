@@ -39,14 +39,14 @@ export default function PartnerLoginPage() {
       // portal — an owner/tenant must not land on partner URLs.
       const session = await fetch("/api/auth/session").then((r) => r.json()).catch(() => null);
       if (session?.user?.role !== "PARTNER") {
-        setError("Ye partner account nahi hai. Owner/tenant login ke liye main login page use karein.");
+        setError("This is not a partner account. For Owner/tenant login, please use the main login page.");
         setLoading(false);
         return;
       }
 
       window.location.href = "/partner/dashboard";
     } catch {
-      setError("Kuch gadbad ho gayi. Dobara try karein.");
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   }
@@ -67,7 +67,7 @@ export default function PartnerLoginPage() {
         <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xl p-7 sm:p-8">
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-1">Welcome back</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-            Apne partner account mein login karein.
+            Login to your partner account.
           </p>
 
           {error && (
@@ -149,13 +149,13 @@ export default function PartnerLoginPage() {
           <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-6">
             Partner account nahi hai?{" "}
             <Link href="/partner/signup" className="font-bold text-primary-600 dark:text-primary-400 hover:underline">
-              Register karein
+              Register
             </Link>
           </p>
         </div>
 
         <p className="text-center text-xs text-neutral-400 dark:text-neutral-500 mt-6">
-          PG owner ya tenant hain?{" "}
+          Are you a PG owner or tenant?{" "}
           <Link href="/login" className="font-semibold hover:underline">Main login</Link>
         </p>
       </div>

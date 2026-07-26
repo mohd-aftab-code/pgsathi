@@ -21,7 +21,7 @@ export default async function PartnerNotificationsPage() {
       <div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Notifications</h1>
         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-          {unread > 0 ? `${unread} unread` : "Sab padh liya ✓"}
+          {unread > 0 ? `${unread} unread` : "All read ✓"}
         </p>
       </div>
       <PartnerNotificationsFeed

@@ -60,20 +60,20 @@ function StatusScreen({
           Icon: Clock,
           tone: "amber",
           title: "Approval pending",
-          body: "Aapka partner account review mein hai. Admin approve karte hi aapko poora dashboard mil jayega — usually 24 ghante ke andar.",
+          body: "Aapka partner account review mein hai. Admin approve karte hi aapko poora dashboard mil jayega — usually within 24 hours.",
         }
       : status === "REJECTED"
       ? {
           Icon: XCircle,
           tone: "red",
           title: "Application reject ho gayi",
-          body: reason || "Aapki application approve nahi ho payi. Zyada jaankari ke liye support se sampark karein.",
+          body: reason || "Your application could not be approved. Please contact support for more information.",
         }
       : {
           Icon: Ban,
           tone: "red",
           title: "Account suspended",
-          body: "Aapka partner account abhi suspend hai. Support se sampark karein.",
+          body: "Your partner account is currently suspended. Please contact support.",
         };
 
   const toneCls =

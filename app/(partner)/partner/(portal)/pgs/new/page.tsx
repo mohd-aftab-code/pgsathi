@@ -64,7 +64,7 @@ export default function PartnerNewPgPage() {
   const [step, setStep] = useState<StepType>(1);
   const [form, setForm] = useState<FormData>(DEFAULT_FORM);
 
-  // Arriving from "Inka PG list karein" on the Owners page — pre-fill the owner
+  // Arriving from "List their PG" on the Owners page — pre-fill the owner
   // so the partner isn't retyping details of someone they just registered.
   const ownerParam = useSearchParams()?.get("owner");
   const [prefilled, setPrefilled] = useState<string | null>(null);
@@ -108,7 +108,7 @@ export default function PartnerNewPgPage() {
         if (d.success) uploaded.push({ url: d.url, publicId: d.publicId });
       }
       setForm((f) => ({ ...f, photos: [...f.photos, ...uploaded] }));
-    } catch { setError("Photo upload nahi hua. Dobara try karein."); } finally { setUploading(false); }
+    } catch { setError("Photo upload failed. Please try again."); } finally { setUploading(false); }
   }
 
   function validateStep(s: StepType): string | null {
@@ -121,7 +121,7 @@ export default function PartnerNewPgPage() {
     }
     if (s === 2) return validateLocation(form as any);
     if (s === 5) {
-      if (form.photos.length === 0) return "Kam se kam ek photo upload karein.";
+      if (form.photos.length === 0) return "Please upload at least one photo.";
       for (const rt of form.roomTypes) if (!form.roomPrices[rt]?.rent) return "Har room type ka rent daalein.";
     }
     return null;
@@ -172,7 +172,7 @@ export default function PartnerNewPgPage() {
       const d = await res.json();
       if (!d.success) { setError(d.message || "PG register nahi ho paya"); setLoading(false); return; }
       setDone({ createdOwner: d.data?.createdOwner, ownerLogin: d.data?.ownerLogin ?? null });
-    } catch { setError("Kuch gadbad ho gayi. Dobara try karein."); setLoading(false); }
+    } catch { setError("Something went wrong. Please try again."); setLoading(false); }
   }
 
   // ── shared styling (matches owner form, dark-aware) ──
@@ -200,7 +200,7 @@ export default function PartnerNewPgPage() {
           <CheckCircle2 className="text-green-600 dark:text-green-400" size={32} />
         </div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">PG register ho gaya 🎉</h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Admin approval ke baad live hoga.{done.createdOwner && " Owner ka account bhi ban gaya."}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Will be live after admin approval.{done.createdOwner && " Owner account also created."}</p>
 
         {/* Shown once, right here. The password is hashed in the database and can
             never be read back — without handing it over now, the owner cannot log
@@ -237,16 +237,16 @@ export default function PartnerNewPgPage() {
               }}
               className="w-full h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm transition-colors"
             >
-              {copied ? "Copy ho gaya ✓" : "Login details copy karein"}
+              {copied ? "Copied ✓" : "Copy login details"}
             </button>
             <p className="text-[11px] text-primary-700/80 dark:text-primary-400/70 mt-2">
-              Bhool jaayein to <b>Owners</b> page se naya password bana sakte hain.
+              If forgotten, a new password can be created from the <b>Owners</b> page.
             </p>
           </div>
         )}
         <div className="flex gap-3 justify-center">
           <Link href="/partner/pgs" className="h-11 px-5 leading-[2.75rem] rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm">My PGs dekhein</Link>
-          <button onClick={() => { setDone(null); setForm(DEFAULT_FORM); setStep(1); }} className="h-11 px-5 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm">Ek aur add karein</button>
+          <button onClick={() => { setDone(null); setForm(DEFAULT_FORM); setStep(1); }} className="h-11 px-5 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm">Add another</button>
         </div>
       </div>
     );
@@ -257,7 +257,7 @@ export default function PartnerNewPgPage() {
       <Link href="/partner/pgs" className="inline-flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white mb-5">
         <ArrowLeft size={16} /> My PGs
       </Link>
-      <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-6">PG Register karein</h1>
+      <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-6">PG Register</h1>
 
       {/* Step indicator */}
       <div className="flex w-full mb-8 overflow-x-auto pb-2">
@@ -287,7 +287,7 @@ export default function PartnerNewPgPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {prefilled && (
                 <div className="sm:col-span-2 rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-200 dark:border-primary-900 px-3 py-2 text-xs text-primary-800 dark:text-primary-300">
-                  <b>{prefilled}</b> ke liye PG list ho raha hai — inka account pehle se bana hua hai.
+                  <b>{prefilled}</b> PG is being listed for — their account already exists.
                 </div>
               )}
               <div><label className={lbl}>Owner ka naam *</label><input className={inp} value={form.ownerName} onChange={(e) => set({ ownerName: e.target.value })} placeholder="e.g. Suresh Gupta" /></div>
@@ -422,14 +422,14 @@ export default function PartnerNewPgPage() {
               <div className="w-14 h-14 bg-white dark:bg-neutral-800 rounded-full grid place-items-center shadow-sm mb-3 text-primary-500">
                 {uploading ? <Loader2 className="animate-spin" size={24} /> : <Upload size={24} />}
               </div>
-              <p className="font-bold text-neutral-900 dark:text-white">{uploading ? "Uploading…" : "Photos upload karein"}</p>
+              <p className="font-bold text-neutral-900 dark:text-white">{uploading ? "Uploading…" : "Upload Photos"}</p>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Multiple high-quality images</p>
             </label>
           </div>
 
           <div className={card}>
             <h3 className="text-lg font-black text-neutral-900 dark:text-white mb-1">Pricing per Room Type</h3>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-5 pb-3 border-b border-neutral-100 dark:border-neutral-800">Har room type ka rent aur deposit set karein.</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-5 pb-3 border-b border-neutral-100 dark:border-neutral-800">Set rent and deposit for each room type.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
               {form.roomTypes.map((rt) => (
                 <div key={rt} className="border-2 border-neutral-100 dark:border-neutral-800 rounded-2xl p-4 bg-neutral-50/30 dark:bg-neutral-800/40">

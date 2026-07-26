@@ -4,11 +4,11 @@ import { Home, Search } from "lucide-react";
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center container-max section-padding">
-      <div className="text-center max-w-md">
-        <p className="text-7xl font-extrabold text-primary-700">404</p>
-        <h1 className="mt-4 text-2xl font-bold text-neutral-900">Page not found</h1>
-        <p className="mt-2 text-neutral-500">
-          Ye page exist nahi karta ya move ho chuka hai. Chalo aapko sahi jagah pahunchate hain.
+      <div className="max-w-md mx-auto text-center px-4">
+        <h1 className="text-9xl font-black text-primary-100 dark:text-primary-900 mb-4">404</h1>
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Page not found</h2>
+        <p className="text-neutral-500 dark:text-neutral-400 mb-8">
+          This page doesn't exist or has been moved. Let's get you to the right place.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/" className="btn-primary inline-flex items-center justify-center gap-2">

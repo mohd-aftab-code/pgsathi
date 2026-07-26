@@ -17,7 +17,7 @@ export default async function PartnerSettingsPage() {
     <div className="max-w-2xl mx-auto space-y-5">
       <div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Settings</h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">Notification preferences aur account.</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">Notification preferences and account.</p>
       </div>
 
       <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
@@ -27,7 +27,7 @@ export default async function PartnerSettingsPage() {
 
       <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-1">Account</h2>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Password badalna ho to logout karke "Forgot password" use karein.</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">To change your password, logout and use "Forgot password".</p>
         <Link href="/api/auth/signout" className="inline-flex items-center gap-1.5 h-11 px-5 rounded-xl border-2 border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/40">
           <LogOut size={15} /> Logout
         </Link>

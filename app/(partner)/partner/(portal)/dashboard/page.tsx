@@ -38,10 +38,10 @@ export default async function PartnerDashboardPage() {
 
   const cards = [
     { label: "Total PG Registered", value: String(stats.totalPgs), sub: `${stats.thisMonthRegistrations} is mahine`, Icon: Building2, tone: "violet" as const, href: "/partner/pgs" },
-    { label: "Active PGs", value: String(stats.activePgs), sub: "live aur verified", Icon: CheckCircle2, tone: "green" as const, href: "/partner/pgs?status=ACTIVE" },
+    { label: "Active PGs", value: String(stats.activePgs), sub: "live and verified", Icon: CheckCircle2, tone: "green" as const, href: "/partner/pgs?status=ACTIVE" },
     { label: "Free Plan PGs", value: String(stats.freePlanPgs), sub: "abhi convert nahi hue", Icon: CircleDashed, tone: "slate" as const, href: "/partner/pgs" },
     { label: "Paid Plan PGs", value: String(stats.paidPlanPgs), sub: `${stats.conversionRate}% conversion`, Icon: BadgeCheck, tone: "blue" as const, href: "/partner/pgs" },
-    { label: "Revenue Generated", value: inr(stats.revenueGenerated), sub: "platform ke liye", Icon: TrendingUp, tone: "green" as const, href: "/partner/reports?type=revenue" },
+    { label: "Revenue Generated", value: inr(stats.revenueGenerated), sub: "for the platform", Icon: TrendingUp, tone: "green" as const, href: "/partner/reports?type=revenue" },
     { label: "Pending Earnings", value: inr(stats.pendingEarnings), sub: "payout ka intezaar", Icon: Clock, tone: "amber" as const, href: "/partner/earnings?status=PENDING" },
     { label: "Net Earnings", value: inr(stats.netEarnings), sub: `${inr(stats.paidEarnings)} mil chuke`, Icon: IndianRupee, accent: true, href: "/partner/earnings" },
     { label: "Renewal Due", value: String(stats.renewalDue), sub: "agle 30 din mein", Icon: CalendarClock, tone: "red" as const, href: "/partner/reports?type=renewal" },
@@ -57,14 +57,14 @@ export default async function PartnerDashboardPage() {
             {greeting}, {ctx.name.split(" ")[0]} 👋
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Aapke registered PGs aur earnings ka poora hisaab.
+            Complete summary of your registered PGs and earnings.
           </p>
         </div>
         <Link
           href="/partner/pgs/new"
           className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5"
         >
-          <Plus size={17} /> PG Register karein
+          <Plus size={17} /> PG Register
         </Link>
       </div>
 
@@ -156,7 +156,7 @@ export default async function PartnerDashboardPage() {
                 Pehla PG add karein — paid hone par earning ban jayegi.
               </p>
               <Link href="/partner/pgs/new" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline">
-                <Plus size={15} /> PG Register karein
+                <Plus size={15} /> PG Register
               </Link>
             </div>
           ) : (

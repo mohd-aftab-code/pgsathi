@@ -21,7 +21,7 @@ export default async function PartnerReportsPage({
     <div className="space-y-5">
       <div className="print:hidden">
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Reports</h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">Report chunein, preview dekhein, CSV download karein ya PDF print karein.</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">Choose a report, preview, download CSV, or print PDF.</p>
       </div>
 
       {/* Report type selector */}
@@ -75,7 +75,7 @@ export default async function PartnerReportsPage({
 
         {data.rows.length === 0 ? (
           <div className="py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">
-            Is report ke liye abhi koi data nahi.
+            No data available for this report yet.
           </div>
         ) : (
           <div className="overflow-x-auto">

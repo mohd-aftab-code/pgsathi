@@ -141,7 +141,7 @@ export default function NewListingPage() {
     // Shared with the edit page so both reject the same things in the same words
     if (step === 2) return validateLocation(formData);
     if (step === 5) {
-      if (formData.photos.length === 0) return "Kam se kam ek photo upload karein.";
+      if (formData.photos.length === 0) return "Please upload at least one photo.";
       for (const rt of formData.roomTypes) {
         if (!formData.roomPrices[rt]?.rent) return "Har selected room type ka monthly rent daalein.";
       }

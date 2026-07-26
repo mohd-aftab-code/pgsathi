@@ -45,7 +45,7 @@ export default function PartnerSignupPage() {
       }
       setDone({ partnerCode: d.partnerCode });
     } catch {
-      setError("Kuch gadbad ho gayi. Dobara try karein.");
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   }
@@ -60,8 +60,8 @@ export default function PartnerSignupPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">Application submitted</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-            Aapka partner account ban gaya hai. Admin approval ke baad aap login kar payenge —
-            usually 24 ghante ke andar.
+            Your partner account has been created. You can login after admin approval —
+            usually within 24 hours.
           </p>
           <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 px-4 py-3 mb-6">
             <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">
@@ -101,7 +101,7 @@ export default function PartnerSignupPage() {
         <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xl p-7 sm:p-8">
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-1">Partner banein</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-            PG register karein aur har paid conversion par earning paayein.
+            Register PGs and earn on every paid conversion.
           </p>
 
           {error && (
@@ -135,7 +135,7 @@ export default function PartnerSignupPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">Aap kaun hain? *</label>
+              <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">Who are you? *</label>
               <select className={`${inputCls} cursor-pointer`} value={form.type} onChange={(e) => set("type", e.target.value)}>
                 {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -180,10 +180,10 @@ export default function PartnerSignupPage() {
                 disabled={loading}
                 className="w-full h-12 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white font-bold shadow-lg shadow-primary-500/25 transition-all flex items-center justify-center gap-2"
               >
-                {loading ? <><Loader2 size={18} className="animate-spin" /> Submitting…</> : <>Register karein <ArrowRight size={17} /></>}
+                {loading ? <><Loader2 size={18} className="animate-spin" /> Submitting…</> : <>Register <ArrowRight size={17} /></>}
               </button>
               <p className="text-[11px] text-neutral-400 dark:text-neutral-500 text-center mt-3">
-                Registration ke baad admin approval zaroori hai.
+                Admin approval is required after registration.
               </p>
             </div>
           </form>
