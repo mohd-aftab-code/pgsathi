@@ -58,37 +58,26 @@ export function DashboardSidebar({
 
   return (
     <>
-      {/* ── Desktop Rail — premium dark gradient ─────── */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col w-64"
-        style={{
-          background: "linear-gradient(180deg, #3b0764 0%, #4c1d95 30%, #5b21b6 70%, #4c1d95 100%)",
-          borderRight: "1px solid rgba(167,139,250,0.15)",
-          boxShadow: "4px 0 32px rgba(109,40,217,0.18)",
-        }}
-      >
-        {/* Subtle background texture */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-violet-400/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 -left-16 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl" />
-        </div>
+      {/* ── Desktop Rail — clean violet, original style ─────── */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-violet-300 border-r border-violet-400 w-64">
 
         {/* Brand mark */}
         <Link
           href={brandHref}
-          className="relative z-10 flex items-center justify-center h-20 shrink-0 border-b border-white/10 px-4 hover:bg-white/5 transition-colors"
+          className="flex items-center justify-center h-20 [@media(min-height:800px)]:h-24 shrink-0 border-b border-violet-400 px-4 hover:bg-violet-200/40 transition-colors"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-vertical.png"
             alt="PGSathi"
-            className="h-14 w-auto object-contain transition-all brightness-110"
+            className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all"
           />
         </Link>
 
         {backLink && (
           <Link
             href={backLink.href}
-            className="relative z-10 flex items-center h-9 mx-3 mt-3 rounded-lg px-3 gap-3 text-violet-200/70 hover:bg-white/10 hover:text-white transition-colors shrink-0"
+            className="flex items-center h-9 mx-3 mt-3 rounded-md px-3 gap-3 text-neutral-600 hover:bg-white/50 hover:text-neutral-900 transition-colors shrink-0"
           >
             <ArrowLeft size={16} className="shrink-0" />
             <span className="text-sm font-semibold whitespace-nowrap">{backLink.label}</span>
@@ -96,14 +85,14 @@ export function DashboardSidebar({
         )}
 
         {/* Nav + footer scroll container */}
-        <div className="relative z-10 flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col scrollbar-hide">
-          <nav className="flex flex-col px-3 py-3">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col scrollbar-hide">
+          <nav className="flex flex-col px-3 py-2 [@media(min-height:800px)]:py-3">
             {visibleGroups.map((group, gi) => (
-              <div key={group.category} className={gi > 0 ? "mt-4" : ""}>
-                <p className="px-3 mb-1.5 text-[10px] font-bold text-violet-300/50 uppercase tracking-widest whitespace-nowrap">
+              <div key={group.category} className={gi > 0 ? "mt-2 [@media(min-height:800px)]:mt-3" : ""}>
+                <p className="px-3 mb-1 text-[11px] font-bold text-neutral-500 uppercase tracking-wide whitespace-nowrap">
                   {group.category}
                 </p>
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item);
@@ -111,21 +100,14 @@ export function DashboardSidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center h-9 rounded-xl px-3 gap-3 text-sm transition-all duration-200 ${
+                        className={`flex items-center h-8 rounded-md px-3 gap-3 text-sm transition-colors ${
                           active
-                            ? "bg-white text-violet-700 font-bold shadow-lg shadow-violet-900/30"
-                            : "text-violet-100/80 font-medium hover:bg-white/12 hover:text-white"
+                            ? "bg-white text-violet-700 font-bold shadow-sm"
+                            : "text-neutral-700 font-semibold hover:bg-white/60 hover:text-neutral-900"
                         }`}
                       >
-                        <Icon
-                          size={16}
-                          strokeWidth={active ? 2.5 : 2}
-                          className={`shrink-0 transition-colors ${active ? "text-violet-600" : ""}`}
-                        />
+                        <Icon size={17} strokeWidth={2} className="shrink-0" />
                         <span className="whitespace-nowrap">{item.name}</span>
-                        {active && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0" />
-                        )}
                       </Link>
                     );
                   })}
@@ -134,7 +116,7 @@ export function DashboardSidebar({
             ))}
           </nav>
 
-          {footer && <div className="mt-auto px-3 pt-2 pb-4 relative z-10">{footer}</div>}
+          {footer && <div className="mt-auto px-3 pt-2 pb-3">{footer}</div>}
         </div>
       </aside>
 
