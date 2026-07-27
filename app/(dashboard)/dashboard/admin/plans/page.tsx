@@ -160,9 +160,9 @@ export default function AdminPlansPage() {
 
   return (
     <div>
-      <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10 text-white">Subscription Plans</h1>
-        <p className="text-neutral-300 relative z-10">Manage pricing tiers for PG Owners.</p>
+      <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+        <h1 className="text-2xl font-extrabold mb-1 relative z-10 text-white">Subscription Plans</h1>
+        <p className="text-neutral-300 text-sm relative z-10">Manage pricing tiers for PG Owners.</p>
         <button 
           onClick={() => handleOpenForm()}
           className="cursor-pointer mt-6 bg-white text-neutral-900 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-100 transition-colors"

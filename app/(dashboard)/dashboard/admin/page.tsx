@@ -58,7 +58,7 @@ export default async function AdminDashboardPage({
       <div className="space-y-5">
 
         {/* ── Header ─────────────────────────────────────────── */}
-        <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
+        <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h1 className="text-xl font-extrabold mb-0.5">Super Admin Overview</h1>

@@ -49,7 +49,7 @@ export default async function AdminListingsPage({
 
   return (
     <div>
-      <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+      <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
         <h1 className="text-2xl font-extrabold mb-1">Manage Listings</h1>
         <p className="text-neutral-300 text-sm">Review, approve, edit, and delete PGs across the platform.</p>
       </div>
