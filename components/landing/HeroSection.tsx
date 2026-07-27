@@ -63,15 +63,15 @@ export default async function HeroSection() {
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
               <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-500" />
-              For Tenants & PG Owners
+              India's #1 PG Platform
             </div>
 
             <h1
               className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
-              Find your PG, or Fill your PG —{" "}
-              <span className="text-primary-700">Zero Brokerage.</span>
+              Discover Verified PGs & <br className="hidden lg:block" />
+              <span className="text-primary-700">Manage Your PG Business.</span>
             </h1>
 
             <div className="flex flex-col sm:flex-col gap-3 sm:gap-3 text-sm md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
@@ -81,7 +81,7 @@ export default async function HeroSection() {
                 </div>
                 <p className="leading-snug">
                   <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-primary-700 transition-colors">For Tenants:</strong> 
-                  <span className="text-neutral-500 sm:text-neutral-600"> Search verified PGs & contact owners directly. No brokers.</span>
+                  <span className="text-neutral-500 sm:text-neutral-600"> Find verified PGs. No brokers.</span>
                 </p>
               </Link>
               
@@ -91,7 +91,7 @@ export default async function HeroSection() {
                 </div>
                 <p className="leading-snug">
                   <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-emerald-700 transition-colors">For Owners:</strong> 
-                  <span className="text-neutral-500 sm:text-neutral-600"> List your PG for free, get direct WhatsApp leads.</span>
+                  <span className="text-neutral-500 sm:text-neutral-600"> Generate leads & manage your PG easily.</span>
                 </p>
               </Link>
             </div>

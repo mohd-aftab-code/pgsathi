@@ -28,11 +28,11 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi — Zero Brokerage PG in Metro, Tier 2 & Tier 3 Cities",
+    default: "PGSathi — Verified PGs & Complete PG Management Platform",
     template: "%s | PGSathi",
   },
   description:
-    "India's #1 verified platform for finding zero brokerage PGs, hostels, and rooms for rent directly from owners. Discover premium Boys, Girls, and Co-ed PGs across India's Metros and Tier 2/Tier 3 cities.",
+    "India's #1 verified platform for finding the best PGs, hostels, and rooms for rent. For PG Owners: Generate direct verified leads and manage your PG business with our powerful CRM.",
   alternates: {
     canonical: "https://pgsathi.in",
   },
@@ -43,22 +43,22 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi — Zero Brokerage PGs in India",
+    title: "PGSathi — Verified PGs & Complete PG Management Platform",
     description:
-      "Find 100% verified PGs in Delhi, Noida, and Gurgaon without paying 1 month's rent as brokerage. Connect directly with owners.",
+      "Find 100% verified premium PGs in India. PG Owners can list for free, get direct WhatsApp leads, and manage their PG properties easily.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PGSathi — Find Your Perfect Zero Brokerage PG",
+        alt: "PGSathi — Verified PGs & Complete PG Management",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PGSathi — Verified PGs in India",
-    description: "Connect directly with owners. No brokers. No hidden fees.",
+    title: "PGSathi — Verified PGs & PG Management Software",
+    description: "Discover top-rated verified PGs. For Owners: Generate leads and manage your entire PG business.",
     images: ["/og-image.jpg"],
   },
   robots: {

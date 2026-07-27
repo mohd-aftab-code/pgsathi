@@ -5,9 +5,16 @@ import Footer from "@/components/common/Footer";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
-  title: "Partner Programme — Refer & Earn | PGSathi",
-  description:
-    "PGSathi Partner Programme — Start your own business. Onboard PGs and earn guaranteed commissions on every paid conversion.",
+  title: "Partner Programme — Refer PGs & Earn Money Online | PGSathi",
+  description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners in your city and earn guaranteed lifetime commissions on every paid conversion.",
+  alternates: {
+    canonical: "https://pgsathi.in/partner",
+  },
+  openGraph: {
+    title: "Partner Programme — Refer PGs & Earn Money Online | PGSathi",
+    description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners and earn guaranteed lifetime commissions.",
+    url: "https://pgsathi.in/partner",
+  },
 };
 
 const STEPS = [

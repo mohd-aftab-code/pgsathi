@@ -21,6 +21,19 @@ const FAQ_SCHEMA = {
   ],
 };
 
+export const metadata = {
+  title: "Verified PGs & Hostels in India | PGSathi",
+  description: "PGSathi is India's most trusted platform to find 100% verified Boys, Girls, and Co-ed PGs. PG Owners can list their properties, generate verified leads, and manage their business efficiently.",
+  alternates: {
+    canonical: "https://pgsathi.in/",
+  },
+  openGraph: {
+    title: "Verified PGs & Hostels in India | PGSathi",
+    description: "Find 100% verified PGs or list your property to generate direct tenant leads. Complete PG discovery and management platform.",
+    url: "https://pgsathi.in/",
+  },
+};
+
 export default function Home() {
   return (
     <>

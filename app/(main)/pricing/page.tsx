@@ -8,8 +8,16 @@ import {
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Pricing Plans - PGSathi",
-  description: "Simple, transparent pricing for PG Owners. Choose the perfect plan for your PG business.",
+  title: "PG Management Software Pricing - PGSathi CRM Plans",
+  description: "Simple, transparent pricing for PG Owners. Manage your PG business, tenants, and rent with PGSathi's powerful CRM. Try the 15-day free trial.",
+  alternates: {
+    canonical: "https://pgsathi.in/pricing",
+  },
+  openGraph: {
+    title: "PG Management Software Pricing - PGSathi CRM Plans",
+    description: "Simple, transparent pricing for PG Owners. Manage your PG business, tenants, and rent with PGSathi's powerful CRM.",
+    url: "https://pgsathi.in/pricing",
+  },
 };
 
 export default async function PricingPage({
