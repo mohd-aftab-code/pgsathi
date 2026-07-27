@@ -14,7 +14,7 @@ const getHeroData = unstable_cache(
           orderBy: { priority: "asc" },
         }),
         db.listing.findMany({
-          where: { isActive: true, status: "ACTIVE", photos: { some: {} } },
+          where: { isActive: true, status: "ACTIVE" },
           take: 2,
           include: {
             city: true,
@@ -125,12 +125,14 @@ export default async function HeroSection() {
             {showcase[0] && (
               <ShowcaseCard
                 listing={showcase[0]}
+                fallbackPhoto={FALLBACK_PHOTOS[0]}
                 className="absolute top-0 right-0 w-[280px] -rotate-2 z-10"
               />
             )}
             {showcase[1] && (
               <ShowcaseCard
                 listing={showcase[1]}
+                fallbackPhoto={FALLBACK_PHOTOS[1]}
                 className="absolute bottom-0 left-0 w-[280px] rotate-2"
               />
             )}
@@ -160,24 +162,27 @@ export default async function HeroSection() {
   );
 }
 
-function ShowcaseCard({ listing, className }: { listing: any; className: string }) {
-  const photo = listing.photos?.[0]?.url;
+const FALLBACK_PHOTOS = [
+  "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=560&q=80",
+  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=560&q=80",
+];
+
+function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: any; fallbackPhoto: string; className: string }) {
+  const photo = listing.photos?.[0]?.url || fallbackPhoto;
   return (
     <Link
       href={`/pg/${listing.city?.slug}/${listing.locality?.slug || "all"}/${listing.slug}`}
       className={`block bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden hover:-translate-y-1 hover:rotate-0 transition-all duration-300 ${className}`}
     >
       <div className="relative h-36 bg-neutral-100">
-        {photo && (
-          <Image
-            src={photo}
-            alt={listing.title}
-            fill
-            sizes="280px"
-            priority
-            className="object-cover"
-          />
-        )}
+        <Image
+          src={photo}
+          alt={listing.title}
+          fill
+          sizes="280px"
+          priority
+          className="object-cover"
+        />
         <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur text-[10px] font-bold text-primary-700 px-2 py-1 rounded-lg flex items-center gap-1">
           <ShieldCheck size={11} /> VERIFIED
         </div>
