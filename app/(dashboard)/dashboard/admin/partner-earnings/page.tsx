@@ -14,19 +14,22 @@ const statusStyle: Record<string, string> = {
 export default async function AdminPartnerEarningsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; page?: string }>;
 }) {
   const sp = await searchParams;
   const status = sp.status ?? "PENDING";
+  const page = Math.max(1, parseInt(sp?.page ?? "1") || 1);
+  const pageSize = 15;
 
   const where: any = {};
   if (status && status !== "ALL") where.status = status;
 
-  const [earnings, sums] = await Promise.all([
+  const [earnings, totalCount, sums] = await Promise.all([
     db.partnerEarning.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      take: 100,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
       select: {
         id: true, amount: true, status: true, createdAt: true, planNameSnapshot: true,
         owner: { select: { name: true } },
@@ -34,16 +37,17 @@ export default async function AdminPartnerEarningsPage({
         partner: { select: { partnerCode: true, user: { select: { name: true } } } },
       },
     }),
+    db.partnerEarning.count({ where }),
     db.partnerEarning.groupBy({ by: ["status"], _sum: { amount: true }, _count: { _all: true } }),
   ]);
 
-  const sumBy = (s: string) => sums.find((x) => x.status === s)?._sum.amount ?? 0;
-  const cntBy = (s: string) => sums.find((x) => x.status === s)?._count._all ?? 0;
+  const sumBy = (s: string) => sums.find((x: any) => x.status === s)?._sum.amount ?? 0;
+  const cntBy = (s: string) => sums.find((x: any) => x.status === s)?._count._all ?? 0;
 
   const tab = (label: string, val: string) => (
     <a href={`/dashboard/admin/partner-earnings?status=${val}`}
       className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-1.5 ${status === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50"}`}>
-      {label} <span className={`text-xs ${status === val ? "text-white/70" : "text-neutral-400"}`}>{cntBy(val) || (val === "ALL" ? sums.reduce((s, x) => s + x._count._all, 0) : 0)}</span>
+      {label} <span className={`text-xs ${status === val ? "text-white/70" : "text-neutral-400"}`}>{cntBy(val) || (val === "ALL" ? sums.reduce((s: any, x: any) => s + x._count._all, 0) : 0)}</span>
     </a>
   );
 
@@ -81,7 +85,7 @@ export default async function AdminPartnerEarningsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
-              {earnings.map((e) => (
+              {earnings.map((e: any) => (
                 <tr key={e.id} className="hover:bg-neutral-50">
                   <td className="px-5 py-3">
                     <div className="font-semibold text-neutral-900">{e.partner.user.name}</div>
@@ -97,6 +101,33 @@ export default async function AdminPartnerEarningsPage({
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalCount > pageSize && (
+        <div className="flex items-center justify-between bg-white border border-neutral-200/80 rounded-2xl px-5 py-3">
+          <span className="text-xs text-neutral-500 font-medium">
+            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of {totalCount} earnings
+          </span>
+          <div className="flex gap-2">
+            {page > 1 && (
+              <a
+                href={`?status=${status}&page=${page - 1}`}
+                className="px-3 py-1.5 text-xs font-bold border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+              >
+                ← Prev
+              </a>
+            )}
+            {page < Math.ceil(totalCount / pageSize) && (
+              <a
+                href={`?status=${status}&page=${page + 1}`}
+                className="px-3 py-1.5 text-xs font-bold border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+              >
+                Next →
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -164,7 +164,9 @@ export default function AdminUsersPage() {
               {data.owners.map((o: any) => (
                 <tr key={o.id} className="hover:bg-neutral-50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-bold text-neutral-900">{o.name}</div>
+                    <a href={`/dashboard/admin/users/${o.id}`} className="font-bold text-neutral-900 hover:text-violet-700 transition-colors">
+                      {o.name}
+                    </a>
                     <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
                     {/* Partner-sourced owners carry a commission on every payment —
                         the admin needs to see that before touching their plan. */}

@@ -54,14 +54,14 @@ export async function POST(req: NextRequest) {
       const plan = await db.plan.findUnique({ where: { id: targetPlanId } });
       if (!plan) return NextResponse.json({ success: false, message: "Plan not found" }, { status: 404 });
 
-      const cycle: CycleId = isValidCycle(billingCycle) ? billingCycle : "MONTHLY";
-      const amount = priceForCycle(plan, cycle);
+      const cycle = (isValidCycle(billingCycle) ? billingCycle : "MONTHLY") as import("@prisma/client").BillingCycle;
+      const amount = priceForCycle(plan, cycle as import("@prisma/client").BillingCycle | "MONTHLY" | "QUARTERLY" | "HALF_YEARLY" | "YEARLY" as any);
       if (amount === null) {
         return NextResponse.json({ success: false, message: "Ye plan is duration par available nahi hai" }, { status: 400 });
       }
 
       const startDate = new Date();
-      const endDate = cycleEndDate(startDate, cycle);
+      const endDate = cycleEndDate(startDate, cycle as any);
 
       const invoiceId = await db.$transaction(async (tx) => {
         // Same supersede rule as checkout — never leave two live plans, or a
@@ -94,7 +94,6 @@ export async function POST(req: NextRequest) {
             status: amount > 0 ? "ADMIN_GRANTED" : "FREE",
             invoiceDate: startDate,
             paidAt: startDate,
-            billingCycle: cycle,
             periodStart: startDate,
             periodEnd: endDate,
           },
@@ -127,6 +126,21 @@ export async function POST(req: NextRequest) {
           (commission > 0 ? ` — partner commission ₹${commission.toLocaleString("en-IN")} ban gaya` : ""),
         data: { invoiceId, amount, commission },
       });
+    }
+
+    if (action === "ban") {
+      const user = await db.user.findUnique({ where: { id: parseInt(userId) }, select: { isActive: true } });
+      if (!user) return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
+      await db.user.update({ where: { id: parseInt(userId) }, data: { isActive: !user.isActive } });
+      return NextResponse.json({ success: true, message: user.isActive ? "User banned." : "User unbanned." });
+    }
+
+    if (action === "change_role") {
+      const { newRole } = data;
+      const validRoles = ["ADMIN", "OWNER", "TENANT"];
+      if (!validRoles.includes(newRole)) return NextResponse.json({ success: false, message: "Invalid role" }, { status: 400 });
+      await db.user.update({ where: { id: parseInt(userId) }, data: { role: newRole as import("@prisma/client").UserRole } });
+      return NextResponse.json({ success: true, message: `Role changed to ${newRole}` });
     }
 
     if (action === "delete") {

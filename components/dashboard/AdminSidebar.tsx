@@ -2,7 +2,7 @@
 
 import {
   LayoutDashboard, ShieldCheck, Users, PieChart, Settings, Handshake,
-  IndianRupee, ShieldAlert, Wallet, FileBarChart,
+  IndianRupee, ShieldAlert, Wallet, FileBarChart, MapPin, Activity,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 
@@ -25,7 +25,10 @@ const NAV: SidebarNavGroup[] = [
   },
   {
     category: "Moderation",
-    items: [{ name: "Verify", href: "/dashboard/admin/verify", icon: ShieldCheck }],
+    items: [
+      { name: "Verify Listings", href: "/dashboard/admin/verify", icon: ShieldCheck },
+      { name: "Cities", href: "/dashboard/admin/cities", icon: MapPin, hideMobile: true },
+    ],
   },
   {
     category: "People",
@@ -46,7 +49,7 @@ const NAV: SidebarNavGroup[] = [
     category: "System",
     items: [
       { name: "Reports", href: "/dashboard/admin/reports", icon: FileBarChart, hideMobile: true },
-      { name: "Audit Logs", href: "/dashboard/admin/audit-logs", icon: ShieldAlert, hideMobile: true },
+      { name: "Audit Logs", href: "/dashboard/admin/audit-logs", icon: Activity, hideMobile: true },
       { name: "Settings", href: "/dashboard/admin/settings", icon: Settings, hideMobile: true },
     ],
   },

@@ -1,51 +1,356 @@
 import { db } from "@/lib/db";
-import { PieChart, TrendingUp, Users, Home } from "lucide-react";
+import { format, subMonths, startOfMonth } from "date-fns";
+import {
+  TrendingUp, Users, Building2, IndianRupee, MapPin,
+  MessageSquare, CheckCircle2, Clock, XCircle, Star,
+} from "lucide-react";
+import Link from "next/link";
+
+export const metadata = { title: "Reports — Admin | PGSathi" };
+
+const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
 export default async function AdminReportsPage() {
-  const totalUsers = await db.user.count();
-  const totalListings = await db.listing.count();
-  const activeListings = await db.listing.count({ where: { status: "ACTIVE" } });
-  
-  // pgTypes query removed
+  const now = new Date();
+
+  // Build 6-month buckets
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = startOfMonth(subMonths(now, 5 - i));
+    return { label: format(d, "MMM yy"), start: d, end: startOfMonth(subMonths(now, 4 - i)) };
+  });
+
+  const [
+    totalUsers, totalOwners, totalTenants,
+    totalListings, activeListings, pendingListings, inactiveListings,
+    totalLeads, totalReviews,
+    subscriptions,
+    cityCounts,
+    monthlyUsers,
+    monthlyLeads,
+    monthlyListings,
+  ] = await Promise.all([
+    db.user.count(),
+    db.user.count({ where: { role: "OWNER" } }),
+    db.user.count({ where: { role: "TENANT" } }),
+    db.listing.count(),
+    db.listing.count({ where: { status: "ACTIVE" } }),
+    db.listing.count({ where: { status: "PENDING" } }),
+    db.listing.count({ where: { status: "INACTIVE" } }),
+    db.lead.count(),
+    db.review.count(),
+    db.subscription.findMany({
+      where: { status: "ACTIVE" },
+      select: { amount: true, startDate: true, billingCycle: true, plan: { select: { name: true } } },
+    }),
+    db.city.findMany({
+      where: { isActive: true },
+      select: { name: true, state: true, _count: { select: { listings: true } } },
+      orderBy: { listings: { _count: "desc" } },
+      take: 10,
+    }),
+    // Monthly signups
+    Promise.all(months.map((m) =>
+      db.user.count({ where: { createdAt: { gte: m.start, lt: m.end } } })
+    )),
+    // Monthly leads
+    Promise.all(months.map((m) =>
+      db.lead.count({ where: { createdAt: { gte: m.start, lt: m.end } } })
+    )),
+    // Monthly listings added
+    Promise.all(months.map((m) =>
+      db.listing.count({ where: { createdAt: { gte: m.start, lt: m.end } } })
+    )),
+  ]);
+
+  const totalRevenue = subscriptions.reduce((s, sub) => s + sub.amount, 0);
+  const monthlyRevenue = subscriptions.filter((s) => s.billingCycle === "MONTHLY").reduce((a, s) => a + s.amount, 0);
+
+  // Plan distribution
+  const planDist: Record<string, number> = {};
+  for (const sub of subscriptions) {
+    const name = sub.plan?.name ?? "Unknown";
+    planDist[name] = (planDist[name] ?? 0) + 1;
+  }
+
+  const chartData = months.map((m, i) => ({
+    label: m.label,
+    users: monthlyUsers[i],
+    leads: monthlyLeads[i],
+    listings: monthlyListings[i],
+  }));
+
+  const maxUsers = Math.max(...chartData.map((d) => d.users), 1);
+  const maxLeads = Math.max(...chartData.map((d) => d.leads), 1);
+  const maxListings = Math.max(...chartData.map((d) => d.listings), 1);
 
   return (
-    <div>
-      <div className="mb-8 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <h1 className="text-3xl font-extrabold mb-2 relative z-10 text-white">Analytics & Reports</h1>
-        <p className="text-neutral-300 relative z-10">High-level platform metrics and insights.</p>
-      </div>
+    <div className="space-y-6">
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
-          <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-            <Users size={24} />
-          </div>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <div className="text-3xl font-black text-neutral-900">{totalUsers}</div>
-            <div className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">Total Users</div>
+            <h1 className="text-xl font-extrabold mb-0.5">Analytics & Reports</h1>
+            <p className="text-neutral-400 text-xs">Platform-wide metrics — {format(now, "MMMM yyyy")}</p>
           </div>
-        </div>
-
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
-          <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
-            <Home size={24} />
-          </div>
-          <div>
-            <div className="text-3xl font-black text-neutral-900">{totalListings}</div>
-            <div className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">Total PGs</div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-neutral-200 flex items-center gap-4">
-          <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
-            <TrendingUp size={24} />
-          </div>
-          <div>
-            <div className="text-3xl font-black text-neutral-900">{activeListings}</div>
-            <div className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">Active PGs</div>
+          <div className="flex gap-2 flex-wrap">
+            <a
+              href="/api/admin/reports/export?type=users"
+              className="text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+            >
+              Export Users CSV
+            </a>
+            <a
+              href="/api/admin/reports/export?type=listings"
+              className="text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+            >
+              Export Listings CSV
+            </a>
           </div>
         </div>
       </div>
+
+      {/* KPI Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total Users", value: totalUsers, sub: `${totalOwners} owners · ${totalTenants} tenants`, icon: Users, color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
+          { label: "Total PGs", value: totalListings, sub: `${activeListings} active · ${pendingListings} pending`, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
+          { label: "Active Revenue", value: inr(totalRevenue), sub: `${subscriptions.length} active plans`, icon: IndianRupee, color: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
+          { label: "Total Leads", value: totalLeads.toLocaleString(), sub: `${totalReviews} platform reviews`, icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
+        ].map((s) => (
+          <div key={s.label} className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-200/80">
+            <div className="flex items-start justify-between mb-3">
+              <div className={`p-2.5 rounded-xl border ${s.bg}`}>
+                <s.icon size={18} className={s.color} />
+              </div>
+            </div>
+            <div className="text-2xl font-black text-neutral-900">{s.value}</div>
+            <div className="text-xs font-medium text-neutral-500 mt-0.5">{s.label}</div>
+            <div className="text-[11px] text-neutral-400 mt-1">{s.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Listing Status Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
+            <Building2 size={15} className="text-violet-600" /> Listing Status Breakdown
+          </h2>
+          <div className="space-y-3">
+            {[
+              { label: "Active", count: activeListings, total: totalListings, color: "bg-emerald-500", textColor: "text-emerald-700", badgeBg: "bg-emerald-50 border-emerald-100", icon: CheckCircle2 },
+              { label: "Pending Review", count: pendingListings, total: totalListings, color: "bg-amber-500", textColor: "text-amber-700", badgeBg: "bg-amber-50 border-amber-100", icon: Clock },
+              { label: "Inactive", count: inactiveListings, total: totalListings, color: "bg-neutral-400", textColor: "text-neutral-600", badgeBg: "bg-neutral-50 border-neutral-200", icon: XCircle },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-neutral-700">
+                    <s.icon size={13} className={s.textColor} /> {s.label}
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.badgeBg} ${s.textColor}`}>
+                    {s.count}
+                  </span>
+                </div>
+                <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${s.color} transition-all`}
+                    style={{ width: `${totalListings > 0 ? (s.count / totalListings) * 100 : 0}%` }}
+                  />
+                </div>
+                <div className="text-[10px] text-neutral-400 mt-0.5">
+                  {totalListings > 0 ? Math.round((s.count / totalListings) * 100) : 0}% of total
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Subscription / Plan Distribution */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
+            <IndianRupee size={15} className="text-violet-600" /> Subscription Breakdown
+          </h2>
+          {Object.keys(planDist).length === 0 ? (
+            <div className="text-center py-8 text-neutral-400 text-sm">No active subscriptions</div>
+          ) : (
+            <div className="space-y-3">
+              {Object.entries(planDist)
+                .sort((a, b) => b[1] - a[1])
+                .map(([plan, count]) => (
+                  <div key={plan}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-neutral-700">{plan}</span>
+                      <span className="text-xs font-bold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-full">{count}</span>
+                    </div>
+                    <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-violet-500"
+                        style={{ width: `${(count / subscriptions.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              <div className="pt-2 border-t border-neutral-100">
+                <div className="flex justify-between text-xs">
+                  <span className="text-neutral-500 font-medium">Monthly Revenue</span>
+                  <span className="font-bold text-violet-700">{inr(monthlyRevenue)}</span>
+                </div>
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-neutral-500 font-medium">Total Active Revenue</span>
+                  <span className="font-bold text-emerald-700">{inr(totalRevenue)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Breakdown */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
+            <Users size={15} className="text-blue-600" /> User Breakdown
+          </h2>
+          <div className="space-y-3">
+            {[
+              { label: "PG Owners", count: totalOwners, color: "bg-violet-500", pct: totalUsers > 0 ? (totalOwners / totalUsers) * 100 : 0 },
+              { label: "Tenants", count: totalTenants, color: "bg-blue-500", pct: totalUsers > 0 ? (totalTenants / totalUsers) * 100 : 0 },
+              { label: "Admins", count: totalUsers - totalOwners - totalTenants, color: "bg-red-400", pct: totalUsers > 0 ? ((totalUsers - totalOwners - totalTenants) / totalUsers) * 100 : 0 },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-neutral-700">{s.label}</span>
+                  <span className="text-xs font-bold text-neutral-600">{s.count}</span>
+                </div>
+                <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${s.color}`} style={{ width: `${s.pct}%` }} />
+                </div>
+              </div>
+            ))}
+            <div className="pt-2 border-t border-neutral-100 flex justify-between text-xs">
+              <span className="text-neutral-500 font-medium">Total Users</span>
+              <span className="font-bold text-neutral-800">{totalUsers}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Monthly Trend Charts (bar chart using CSS) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* New Users */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-1">New Users / Month</h2>
+          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
+          <div className="flex items-end gap-2 h-28">
+            {chartData.map((d) => (
+              <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-[9px] font-bold text-blue-600">{d.users}</span>
+                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                  <div
+                    className="bg-blue-500 rounded-t-md w-full transition-all"
+                    style={{ height: `${(d.users / maxUsers) * 100}%`, marginTop: "auto" }}
+                  />
+                </div>
+                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* New Leads */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-1">Leads / Month</h2>
+          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
+          <div className="flex items-end gap-2 h-28">
+            {chartData.map((d) => (
+              <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-[9px] font-bold text-amber-600">{d.leads}</span>
+                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                  <div
+                    className="bg-amber-500 rounded-t-md w-full"
+                    style={{ height: `${(d.leads / maxLeads) * 100}%`, marginTop: "auto" }}
+                  />
+                </div>
+                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* New Listings */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
+          <h2 className="text-sm font-bold text-neutral-900 mb-1">New PGs Added / Month</h2>
+          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
+          <div className="flex items-end gap-2 h-28">
+            {chartData.map((d) => (
+              <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-[9px] font-bold text-emerald-600">{d.listings}</span>
+                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                  <div
+                    className="bg-emerald-500 rounded-t-md w-full"
+                    style={{ height: `${(d.listings / maxListings) * 100}%`, marginTop: "auto" }}
+                  />
+                </div>
+                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* City-wise PG Distribution */}
+      <div className="bg-white rounded-2xl shadow-sm border border-neutral-200/80 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <MapPin size={15} className="text-violet-600" />
+            <h2 className="text-sm font-bold text-neutral-900">Top Cities by PG Count</h2>
+          </div>
+          <Link href="/dashboard/admin/cities" className="text-xs font-bold text-violet-600 hover:underline">
+            Manage Cities →
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-[10px] uppercase tracking-wider text-neutral-400 bg-neutral-50 border-b border-neutral-100">
+                <th className="px-5 py-2.5 font-bold">#</th>
+                <th className="px-3 py-2.5 font-bold">City</th>
+                <th className="px-3 py-2.5 font-bold">State</th>
+                <th className="px-3 py-2.5 font-bold">PGs Listed</th>
+                <th className="px-3 py-2.5 font-bold">Distribution</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-50">
+              {cityCounts.map((city, i) => (
+                <tr key={city.name} className="hover:bg-neutral-50/70 transition-colors">
+                  <td className="px-5 py-3 text-xs font-bold text-neutral-400">#{i + 1}</td>
+                  <td className="px-3 py-3 font-semibold text-neutral-800 text-sm">{city.name}</td>
+                  <td className="px-3 py-3 text-xs text-neutral-500">{city.state}</td>
+                  <td className="px-3 py-3">
+                    <span className="text-sm font-black text-violet-700">{city._count.listings}</span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden" style={{ width: "100px" }}>
+                        <div
+                          className="h-full bg-violet-500 rounded-full"
+                          style={{ width: `${activeListings > 0 ? (city._count.listings / (cityCounts[0]._count.listings || 1)) * 100 : 0}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-neutral-400">
+                        {totalListings > 0 ? Math.round((city._count.listings / totalListings) * 100) : 0}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {cityCounts.length === 0 && (
+                <tr><td colSpan={5} className="text-center py-8 text-neutral-400 text-sm">No cities found.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 }
