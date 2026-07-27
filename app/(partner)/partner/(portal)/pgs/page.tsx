@@ -153,16 +153,29 @@ export default async function PartnerPgsPage({
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
             {listings.map((l) => (
-              <Link key={l.id} href={`/partner/pgs/${l.id}`} className="block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <span className="font-semibold text-neutral-900 dark:text-white">{l.title}</span>
+              <Link key={l.id} href={`/partner/pgs/${l.id}`} className="block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm active:scale-[0.99] transition-transform">
+                {/* Title + Status */}
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <span className="font-bold text-neutral-900 dark:text-white leading-tight flex-1">{l.title}</span>
                   <span className={`text-[10px] font-bold px-2 py-1 rounded-md shrink-0 ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
                 </div>
-                <div className="text-xs text-neutral-500 dark:text-neutral-400 flex flex-wrap gap-x-3 gap-y-1">
-                  <span className="flex items-center gap-1"><MapPin size={11} /> {l.city?.name ?? "—"}</span>
-                  <span>Owner: {l.owner?.name ?? "—"}</span>
-                  <span>₹{l.priceMin}</span>
-                  <span className={paidOwners.has(l.ownerId) ? "text-green-600 dark:text-green-400 font-semibold" : ""}>{paidOwners.has(l.ownerId) ? "PAID" : "FREE"}</span>
+                {/* Details grid */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                  <div className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
+                    <MapPin size={11} className="shrink-0" />
+                    <span className="truncate">{l.city?.name ?? "—"}</span>
+                  </div>
+                  <div className="text-neutral-600 dark:text-neutral-300 font-semibold">
+                    ₹{l.priceMin}{l.priceMax > l.priceMin ? `–${l.priceMax}` : ""}
+                  </div>
+                  <div className="text-neutral-500 dark:text-neutral-400 truncate">
+                    {l.owner?.name ?? "—"}
+                  </div>
+                  <div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block ${paidOwners.has(l.ownerId) ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
+                      {paidOwners.has(l.ownerId) ? "PAID" : "FREE"}
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}

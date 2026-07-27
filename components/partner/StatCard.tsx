@@ -44,7 +44,7 @@ export function StatCard({
     <>
       <div className="flex items-start justify-between gap-2 mb-3">
         <span
-          className={`text-xs sm:text-sm font-medium leading-tight ${
+          className={`text-xs font-medium leading-tight ${
             accent ? "text-primary-100" : "text-neutral-500 dark:text-neutral-400"
           }`}
         >
@@ -58,7 +58,7 @@ export function StatCard({
           <Icon size={16} />
         </div>
       </div>
-      <div className={`text-xl sm:text-2xl font-bold truncate ${accent ? "text-white" : "text-neutral-900 dark:text-white"}`}>
+      <div className={`text-lg sm:text-2xl font-bold break-all leading-tight ${accent ? "text-white" : "text-neutral-900 dark:text-white"}`}>
         {value}
       </div>
       {sub && (

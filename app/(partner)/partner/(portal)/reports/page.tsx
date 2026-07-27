@@ -78,26 +78,47 @@ export default async function PartnerReportsPage({
             No data available for this report yet.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[560px]">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
-                  {data.columns.map((c) => (
-                    <th key={c} className="px-4 py-2.5 font-bold whitespace-nowrap">{c}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {data.rows.map((row, i) => (
-                  <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40">
-                    {row.map((cell, j) => (
-                      <td key={j} className="px-4 py-2.5 text-neutral-700 dark:text-neutral-300 whitespace-nowrap">{cell}</td>
+          <>
+            {/* ── Desktop table ─────────────────────────────────── */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm min-w-[560px]">
+                <thead>
+                  <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
+                    {data.columns.map((c) => (
+                      <th key={c} className="px-4 py-2.5 font-bold whitespace-nowrap">{c}</th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                  {data.rows.map((row, i) => (
+                    <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40">
+                      {row.map((cell, j) => (
+                        <td key={j} className="px-4 py-2.5 text-neutral-700 dark:text-neutral-300 whitespace-nowrap">{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ── Mobile cards ──────────────────────────────────── */}
+            <div className="sm:hidden divide-y divide-neutral-100 dark:divide-neutral-800">
+              {data.rows.map((row, i) => (
+                <div key={i} className="p-4 space-y-2.5">
+                  {data.columns.map((col, j) => (
+                    <div key={col} className="flex items-start justify-between gap-3">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 shrink-0 pt-0.5">
+                        {col}
+                      </span>
+                      <span className={`text-sm text-right break-all ${j === 0 ? "font-bold text-neutral-900 dark:text-white" : "text-neutral-600 dark:text-neutral-300"}`}>
+                        {row[j]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

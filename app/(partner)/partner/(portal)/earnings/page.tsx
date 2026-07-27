@@ -44,7 +44,7 @@ export default async function PartnerEarningsPage({
   const tab = (label: string, val: string) => (
     <Link
       href={val ? `/partner/earnings?status=${val}` : "/partner/earnings"}
-      className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center transition-colors ${
+      className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center transition-colors shrink-0 ${
         status === val
           ? "bg-primary-500 text-white"
           : "border-2 border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
@@ -75,7 +75,7 @@ export default async function PartnerEarningsPage({
         {cards.map((c) => <StatCard key={c.label} {...c} />)}
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap no-scrollbar">
         {tab("All", "")}
         {tab("Pending", "PENDING")}
         {tab("Approved", "APPROVED")}
@@ -95,13 +95,14 @@ export default async function PartnerEarningsPage({
         </div>
       ) : (
         <>
-          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
+          {/* ── Desktop table ───────────────────────────────────── */}
+          <div className="hidden sm:block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
-                  <th className="px-5 py-3 font-bold">Owner</th>
-                  <th className="px-3 py-3 font-bold hidden sm:table-cell">Plan</th>
-                  <th className="px-3 py-3 font-bold hidden sm:table-cell">Date</th>
+                  <th className="px-5 py-3 font-bold">Owner / PG</th>
+                  <th className="px-3 py-3 font-bold">Plan</th>
+                  <th className="px-3 py-3 font-bold">Date</th>
                   <th className="px-3 py-3 font-bold text-right">Amount</th>
                   <th className="px-5 py-3 font-bold text-right">Status</th>
                 </tr>
@@ -109,8 +110,6 @@ export default async function PartnerEarningsPage({
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                 {list.rows.map((e) => (
                   <tr key={e.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors">
-                    {/* Commission is owner-level, so the owner names the row. Older
-                        per-PG earnings have no owner — fall back to the PG. */}
                     <td className="px-5 py-3">
                       {e.owner ? (
                         <>
@@ -132,11 +131,11 @@ export default async function PartnerEarningsPage({
                         <span className="text-neutral-400">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300 hidden sm:table-cell">
+                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300">
                       {e.planNameSnapshot ?? "—"}
                       {e.invoice && <span className="text-xs text-neutral-400 block">{cycleLabel(e.invoice.billingCycle)} · {inr(e.planPriceSnapshot ?? 0)}</span>}
                     </td>
-                    <td className="px-3 py-3 text-neutral-500 dark:text-neutral-400 hidden sm:table-cell">{fmtDate(e.createdAt)}</td>
+                    <td className="px-3 py-3 text-neutral-500 dark:text-neutral-400">{fmtDate(e.createdAt)}</td>
                     <td className="px-3 py-3 text-right font-bold text-neutral-900 dark:text-white">{inr(e.amount)}</td>
                     <td className="px-5 py-3 text-right">
                       <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[e.status] ?? statusStyle.PENDING}`}>{e.status}</span>
@@ -145,6 +144,48 @@ export default async function PartnerEarningsPage({
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* ── Mobile cards ──────────────────────────────────────── */}
+          <div className="sm:hidden space-y-3">
+            {list.rows.map((e) => (
+              <div key={e.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm">
+                {/* Row 1: Name + Amount */}
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0 flex-1">
+                    {e.owner ? (
+                      <>
+                        <div className="font-bold text-neutral-900 dark:text-white truncate">{e.owner.name}</div>
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                          {e.invoice?.periodStart && e.invoice?.periodEnd
+                            ? `${fmtDate(e.invoice.periodStart)} – ${fmtDate(e.invoice.periodEnd)}`
+                            : e.listing?.city?.name ?? "—"}
+                        </div>
+                      </>
+                    ) : e.listing ? (
+                      <>
+                        <div className="font-bold text-neutral-900 dark:text-white truncate">{e.listing.title}</div>
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{e.listing.city?.name ?? "—"}</div>
+                      </>
+                    ) : (
+                      <div className="font-bold text-neutral-400">—</div>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-lg font-extrabold text-neutral-900 dark:text-white">{inr(e.amount)}</div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1 ${statusStyle[e.status] ?? statusStyle.PENDING}`}>{e.status}</span>
+                  </div>
+                </div>
+                {/* Row 2: Plan + Date */}
+                <div className="flex items-center gap-3 pt-2.5 border-t border-neutral-100 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400">
+                  <span className="font-semibold text-neutral-700 dark:text-neutral-300 truncate flex-1">
+                    {e.planNameSnapshot ?? "—"}
+                    {e.invoice && ` · ${cycleLabel(e.invoice.billingCycle)}`}
+                  </span>
+                  <span className="shrink-0">{fmtDate(e.createdAt)}</span>
+                </div>
+              </div>
+            ))}
           </div>
 
           {list.totalPages > 1 && (

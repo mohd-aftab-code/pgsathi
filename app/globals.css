@@ -443,3 +443,12 @@
 .mobile-app-nav {
   display: none !important;
 }
+
+/* Utility: hide scrollbar but keep scroll functionality */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -101,7 +101,7 @@ export default async function PartnerDashboardPage() {
       {/* ── Performance summary ───────────────────────────────── */}
       <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Performance Summary</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="font-semibold text-neutral-600 dark:text-neutral-400">Conversion</span>
@@ -162,32 +162,36 @@ export default async function PartnerDashboardPage() {
           ) : (
             <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
               {recentPgs.map((pg) => (
-                <div key={pg.id} className="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-                  <div className="min-w-0">
-                    <div className="font-semibold text-neutral-900 dark:text-white text-sm truncate">{pg.title}</div>
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                      {pg.city ?? "—"} · {timeAgo(pg.createdAt)}
+                <div key={pg.id} className="px-4 sm:px-5 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                  {/* Mobile: stacked layout */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-neutral-900 dark:text-white text-sm truncate">{pg.title}</div>
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                        {pg.city ?? "—"} · {timeAgo(pg.createdAt)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={`text-[10px] font-bold px-2 py-1 rounded-md ${
-                        pg.plan === "PAID"
-                          ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400"
-                          : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
-                      }`}
-                    >
-                      {pg.plan}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-1 rounded-md ${
-                        pg.status === "ACTIVE"
-                          ? "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
-                          : "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
-                      }`}
-                    >
-                      {pg.status}
-                    </span>
+                    {/* Badges: stack vertically on very small, side by side on sm+ */}
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 shrink-0">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                          pg.plan === "PAID"
+                            ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400"
+                            : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+                        }`}
+                      >
+                        {pg.plan}
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                          pg.status === "ACTIVE"
+                            ? "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
+                            : "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
+                        }`}
+                      >
+                        {pg.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
