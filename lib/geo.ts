@@ -65,6 +65,43 @@ export async function lookupPinGeo(
  * in the right town rather than failing outright.
  */
 /**
+ * Google Geocoding — used when GOOGLE_MAPS_API_KEY is set.
+ *
+ * This is the one that actually resolves a normal Indian postal address. Both
+ * free geocoders return zero hits for strings like "2nd St, Mahaveer Nagar-II,
+ * … Kota, Rajasthan 324005"; Google returns the building. Returns null with no
+ * key, so the free path below stays in charge until one is configured.
+ */
+async function lookupGoogle(
+  q: string,
+): Promise<{ lat: number; lng: number; label: string; coarse: boolean } | null> {
+  const key = process.env.GOOGLE_MAPS_API_KEY;
+  if (!key) return null;
+  try {
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(q)}&region=in&key=${key}`,
+      { signal: AbortSignal.timeout(7000), next: { revalidate: 60 * 60 * 24 * 7 } },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.status !== "OK" || !data.results?.[0]) return null;
+
+    const r = data.results[0];
+    // Google says outright how precise the match is, so we can report it
+    // honestly instead of guessing from which query happened to hit.
+    const coarse = ["APPROXIMATE", "GEOMETRIC_CENTER"].includes(r.geometry?.location_type ?? "");
+    return {
+      lat: r.geometry.location.lat,
+      lng: r.geometry.location.lng,
+      label: r.formatted_address,
+      coarse,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Photon (Komoot) — free, no key, and unlike Nominatim it matches the locality
  * and landmark names Indian addresses are actually written with.
  * Returns null on any failure so the caller falls through to Nominatim.
@@ -145,9 +182,22 @@ export async function geocodeAddress(parts: {
   ).filter((a) => a.q && a.q.length > 3);
 
   for (const { q, precision } of attempts) {
-    // Photon first — it matches Indian locality and landmark names that
-    // Nominatim returns nothing for. Nominatim stays as the fallback because it
-    // is better at formal postal strings when they do exist in OSM.
+    // Google first when a key exists — it is the only one that resolves a full
+    // Indian postal address, which is the whole reason the pin used to land on
+    // the PIN-code centre.
+    const googleHit = await lookupGoogle(`${q}, India`);
+    if (googleHit) {
+      return {
+        lat: googleHit.lat,
+        lng: googleHit.lng,
+        label: googleHit.label,
+        precision: googleHit.coarse && precision === "exact" ? "area" : precision,
+      };
+    }
+
+    // Photon next — it matches Indian locality and landmark names that
+    // Nominatim returns nothing for. Nominatim stays as the last fallback
+    // because it is better at formal postal strings when they exist in OSM.
     const photonHit = await lookupPhoton(`${q}, India`);
     if (photonHit) {
       return {

@@ -41,7 +41,7 @@ const nextConfig = {
               // scripts: self + inline (Next.js hydration) + known CDNs
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://maps.googleapis.com https://www.googletagmanager.com",
               // styles: self + inline (Tailwind)
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com",
               // fonts
               "font-src 'self' https://fonts.gstatic.com",
               // images: self + Cloudinary + Google avatars + maps + misc
@@ -51,9 +51,9 @@ const nextConfig = {
               // as a blank grey box with a broken marker. Both the bare host and
               // the a/b/c subdomains are listed because Leaflet's {s} template
               // rotates between them.
-              "img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://streetviewpixels-pa.googleapis.com https://upload.wikimedia.org https://i.pravatar.cc https://images.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
+              "img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://streetviewpixels-pa.googleapis.com https://upload.wikimedia.org https://i.pravatar.cc https://images.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com",
               // API calls: self + Razorpay + Mapbox
-              "connect-src 'self' https://api.razorpay.com https://api.mapbox.com https://*.mapbox.com",
+              "connect-src 'self' https://api.razorpay.com https://api.mapbox.com https://*.mapbox.com https://maps.googleapis.com",
               // iframes: Razorpay checkout modal
               "frame-src https://api.razorpay.com",
               "object-src 'none'",
