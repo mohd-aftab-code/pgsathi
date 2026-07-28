@@ -34,9 +34,18 @@ export type LocationValue = {
 export function LocationStep({
   value,
   onChange,
+  simpleAddress = false,
 }: {
   value: LocationValue;
   onChange: (patch: Partial<LocationValue>) => void;
+  /**
+   * Collapses Area/Mohalla, Building and Landmark into a single Address box.
+   * The partner form uses this: a partner is filling the form on someone else's
+   * behalf, often over the phone, and three separate location boxes is where
+   * they stall. State + city + PIN + the map pin already place the PG, so the
+   * rest is detail a tenant reads, not data the system needs split up.
+   */
+  simpleAddress?: boolean;
 }) {
   const [pinStatus, setPinStatus] = useState<"idle" | "loading" | "ok" | "fail">("idle");
   const [pinMessage, setPinMessage] = useState("");
@@ -215,26 +224,28 @@ export function LocationStep({
             )}
           </div>
 
-          <div>
-            {label(4, "Area / Mohalla", false)}
-            {/* India Post only lists post offices, not every mohalla — so this is
-                a text field first, with those names offered as suggestions. */}
-            <SearchableSelect
-              options={areas.map((a) => a.name)}
-              value={value.areaLocality}
-              onChange={(v) => {
-                const match = areas.find((a) => a.name === v);
-                onChange({ areaLocality: v, localityId: match?.id ? String(match.id) : "" });
-              }}
-              disabled={value.pincode.length !== 6}
-              disabledText="Pehle PIN code daalein…"
-              placeholder="Apna mohalla likhein"
-              customHint="ye naam save hoga"
-            />
-            <p className="text-[11px] text-neutral-400 mt-1">
-              Apne mohalle ka naam likh dein — list mein ho ya na ho, wahi save hoga.
-            </p>
-          </div>
+          {!simpleAddress && (
+            <div>
+              {label(4, "Area / Mohalla", false)}
+              {/* India Post only lists post offices, not every mohalla — so this is
+                  a text field first, with those names offered as suggestions. */}
+              <SearchableSelect
+                options={areas.map((a) => a.name)}
+                value={value.areaLocality}
+                onChange={(v) => {
+                  const match = areas.find((a) => a.name === v);
+                  onChange({ areaLocality: v, localityId: match?.id ? String(match.id) : "" });
+                }}
+                disabled={value.pincode.length !== 6}
+                disabledText="Pehle PIN code daalein…"
+                placeholder="Apna mohalla likhein"
+                customHint="ye naam save hoga"
+              />
+              <p className="text-[11px] text-neutral-400 mt-1">
+                Apne mohalle ka naam likh dein — list mein ho ya na ho, wahi save hoga.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* PIN feedback sits under the row so the grid stays aligned */}
@@ -252,36 +263,52 @@ export function LocationStep({
           </div>
         )}
 
-        {/* Row 3 — Address + Landmark */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-          <div>
-            {/* Optional, not required: area + city + PIN + the map pin already
-                locate the PG. This only sharpens it for tenants who are coming
-                to visit, so it must never block a listing. */}
-            <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-              Makaan / Building <span className="text-neutral-400 font-normal">(optional)</span>
-            </label>
-            <input
-              type="text"
-              className={inputCls}
-              placeholder="e.g. 42, Gandhi Road"
+        {/* Row 3 — Address (+ Landmark on the full form only) */}
+        {simpleAddress ? (
+          <div className="mb-5">
+            <label className="block text-xs font-bold text-neutral-700 mb-1.5">Address</label>
+            <textarea
+              rows={2}
+              className={inputCls + " resize-none"}
+              placeholder="e.g. 42, Gandhi Road, Civil Lines — Apollo Hospital ke saamne"
               value={value.address}
               onChange={(e) => onChange({ address: e.target.value })}
             />
+            <p className="text-[11px] text-neutral-400 mt-1">
+              Poora address ek hi jagah likh dijiye — mohalla aur landmark bhi isi mein.
+            </p>
           </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-              Landmark <span className="text-neutral-400 font-normal">(optional)</span>
-            </label>
-            <input
-              type="text"
-              className={inputCls}
-              placeholder="e.g. Apollo Hospital ke saamne"
-              value={value.landmark}
-              onChange={(e) => onChange({ landmark: e.target.value })}
-            />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div>
+              {/* Optional, not required: area + city + PIN + the map pin already
+                  locate the PG. This only sharpens it for tenants who are coming
+                  to visit, so it must never block a listing. */}
+              <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+                Makaan / Building <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                className={inputCls}
+                placeholder="e.g. 42, Gandhi Road"
+                value={value.address}
+                onChange={(e) => onChange({ address: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+                Landmark <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                className={inputCls}
+                placeholder="e.g. Apollo Hospital ke saamne"
+                value={value.landmark}
+                onChange={(e) => onChange({ landmark: e.target.value })}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Map — built from everything above */}
         <div className="border-t border-neutral-100 pt-5">
@@ -353,6 +380,7 @@ export function LocationStep({
           <LocationPicker
             latitude={value.latitude}
             longitude={value.longitude}
+            searchCity={value.cityName}
             onChange={(lat, lng) => {
               onChange({ latitude: lat, longitude: lng });
               setGeoStatus("ok");

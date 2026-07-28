@@ -338,6 +338,7 @@ export default function PartnerNewPgPage() {
         <LocationStep
           value={{ stateName: form.stateName, cityName: form.cityName, pincode: form.pincode, areaLocality: form.areaLocality, localityId: form.localityId, address: form.address, landmark: form.landmark, latitude: form.latitude, longitude: form.longitude }}
           onChange={(patch) => set(patch as any)}
+          simpleAddress
         />
       )}
 

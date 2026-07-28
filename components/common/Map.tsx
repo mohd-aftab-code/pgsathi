@@ -23,7 +23,10 @@ const DEFAULT_CENTER: [number, number] = [20.5937, 78.9629];
 interface MapProps {
   position: [number, number] | null;
   onChange: (lat: number, lng: number) => void;
-  onAddressFound: (address: string) => void;
+  /** Full geocoder response — consumers read .display_name and .address off it. */
+  onAddressFound: (data: any) => void;
+  /** City already chosen in the form, appended to searches for local results. */
+  searchCity?: string;
 }
 
 // Component to fly map to a new position
@@ -44,7 +47,8 @@ function MapEvents({
 }: {
   setMarkerPos: (pos: [number, number]) => void;
   onChange: (lat: number, lng: number) => void;
-  onAddressFound: (address: string) => void;
+  /** Full geocoder response — consumers read .display_name and .address off it. */
+  onAddressFound: (data: any) => void;
 }) {
   useMapEvents({
     click(e) {
@@ -53,10 +57,7 @@ function MapEvents({
       // Call onChange IMMEDIATELY so lat/lng is saved even if geocoding is slow
       onChange(lat, lng);
       // Then async reverse geocode for address
-      fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-        { headers: { "Accept-Language": "en" } }
-      )
+      fetch(`/api/geo/reverse?lat=${lat}&lng=${lng}`)
         .then((r) => r.json())
         .then((data) => { if (data.display_name) onAddressFound(data); })
         .catch(() => {});
@@ -65,7 +66,7 @@ function MapEvents({
   return null;
 }
 
-export default function Map({ position, onChange, onAddressFound }: MapProps) {
+export default function Map({ position, onChange, onAddressFound, searchCity }: MapProps) {
   const [markerPos, setMarkerPos] = useState<[number, number]>(position || DEFAULT_CENTER);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -91,10 +92,7 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
           // Call onChange IMMEDIATELY for lat/lng
           onChange(lat, lng);
           // Then reverse geocode for address
-          fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-            { headers: { "Accept-Language": "en" } }
-          )
+          fetch(`/api/geo/reverse?lat=${lat}&lng=${lng}`)
             .then((r) => r.json())
             .then((data) => { if (data.display_name) onAddressFound(data); })
             .catch(() => {});
@@ -170,31 +168,46 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
     searchTimeout.current = setTimeout(async () => {
       setSearching(true);
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(value)}&format=json&limit=5&countrycodes=in`,
-          { headers: { "Accept-Language": "en" } }
-        );
-        const data = await res.json();
-        setSearchResults(data);
+        // Through our own server, not Nominatim directly: the browser has no way
+        // to send the User-Agent Nominatim's policy requires, so direct calls got
+        // throttled and the box appeared to hang. The server route also puts
+        // Photon in front, which actually matches place names typed by hand.
+        // Append the city the form already has. Geocoders rank by fame, so a
+        // bare "Civil Lines" returns Delhi even when searching from Prayagraj —
+        // and no amount of coordinate bias fixes that, because the local match
+        // is never in the results to begin with. Putting the city in the query
+        // is what actually finds it.
+        const alreadyHasCity =
+          searchCity && value.toLowerCase().includes(searchCity.toLowerCase());
+        const q = searchCity && !alreadyHasCity ? `${value}, ${searchCity}` : value;
+
+        const params = new URLSearchParams({ q });
+        // Coordinate bias on top, to order what does come back.
+        if (markerPos) params.set("near", `${markerPos[0]},${markerPos[1]}`);
+
+        const res = await fetch(`/api/geo/search?${params}`);
+        const d = await res.json();
+        setSearchResults(d?.data ?? []);
         setShowResults(true);
       } catch {
         setSearchResults([]);
       } finally {
         setSearching(false);
       }
-    }, 500);
+    }, 350);
   };
 
   const handleSelectResult = (result: any) => {
-    const lat = parseFloat(result.lat);
-    const lng = parseFloat(result.lon);
+    const lat = Number(result.lat);
+    const lng = Number(result.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
     setMarkerPos([lat, lng]);
-    setSearchQuery(result.display_name);
+    setSearchQuery(result.label);
     setShowResults(false);
     setSearchResults([]);
     // Call onChange immediately for lat/lng, then address
     onChange(lat, lng);
-    onAddressFound(result);
+    onAddressFound({ display_name: result.label });
   };
 
   return (
@@ -254,7 +267,7 @@ export default function Map({ position, onChange, onAddressFound }: MapProps) {
                   <div className="flex items-start gap-2">
                     <MapPin size={14} className="text-primary-500 mt-0.5 shrink-0" />
                     <span className="text-sm text-neutral-700 line-clamp-2">
-                      {result.display_name}
+                      {result.label}
                     </span>
                   </div>
                 </button>
