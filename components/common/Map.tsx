@@ -11,9 +11,12 @@ import { parseMapInput, isShortMapLink } from "@/lib/map-link";
 if (typeof window !== "undefined") {
   delete (L.Icon.Default.prototype as any)._getIconUrl;
   L.Icon.Default.mergeOptions({
-    iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    // Served from /public, not unpkg. The CSP has no reason to allow a CDN for
+    // three small PNGs, and a blocked (or slow) CDN is why the pin used to
+    // render as a broken image.
+    iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+    iconUrl: "/leaflet/marker-icon.png",
+    shadowUrl: "/leaflet/marker-shadow.png",
   });
 }
 

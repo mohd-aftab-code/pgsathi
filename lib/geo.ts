@@ -64,6 +64,40 @@ export async function lookupPinGeo(
  * to progressively coarser queries so a typo in the street still lands the pin
  * in the right town rather than failing outright.
  */
+/**
+ * Photon (Komoot) — free, no key, and unlike Nominatim it matches the locality
+ * and landmark names Indian addresses are actually written with.
+ * Returns null on any failure so the caller falls through to Nominatim.
+ */
+async function lookupPhoton(
+  q: string,
+): Promise<{ lat: number; lng: number; label: string; coarse: boolean } | null> {
+  try {
+    const res = await fetch(
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=1&lang=en`,
+      {
+        signal: AbortSignal.timeout(7000),
+        headers: { "User-Agent": "PGSathi/1.0 (listing-form)" },
+        next: { revalidate: 60 * 60 * 24 * 7 },
+      },
+    );
+    if (!res.ok) return null;
+    const f = (await res.json())?.features?.[0];
+    if (!f?.geometry?.coordinates || f.properties?.countrycode !== "IN") return null;
+
+    const p = f.properties;
+    const label = [p.name, p.street, p.district, p.city || p.county, p.state, p.postcode]
+      .filter(Boolean)
+      .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
+      .join(", ");
+    // A city/state-level answer to a street query is not a doorstep match.
+    const coarse = ["city", "state", "county", "country", "region"].includes(String(p.type ?? ""));
+    return { lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], label, coarse };
+  } catch {
+    return null;
+  }
+}
+
 export async function geocodeAddress(parts: {
   address?: string;
   area?: string;
@@ -72,19 +106,58 @@ export async function geocodeAddress(parts: {
   pincode?: string;
 }): Promise<{ lat: number; lng: number; label: string; precision: "exact" | "area" | "city" } | null> {
   const { address, area, city, state, pincode } = parts;
+
+  /**
+   * A full Indian postal address matches nothing in either free geocoder — a
+   * real one like "2nd St, Mahaveer Nagar-II, Mahaveer Nagar Housing Board
+   * Colony, Mahaveer Nagar, Kota, Rajasthan 324005" returns zero hits, which is
+   * why the pin used to drop on the PIN-code centre instead. Trimming the
+   * leading house/street parts one at a time gets to a fragment that does match
+   * ("Mahaveer Nagar, Kota"), which lands in the right neighbourhood rather
+   * than the middle of the city.
+   */
+  const addressFragments: string[] = [];
+  if (address) {
+    const segs = address.split(",").map((s) => s.trim()).filter(Boolean);
+    // Full string, then drop one leading segment at a time, keeping at least two.
+    for (let start = 0; start < segs.length - 1 && start < 4; start++) {
+      const frag = segs.slice(start).join(", ");
+      if (frag.length > 3) addressFragments.push(frag);
+    }
+  }
+
   // Ordered most specific → least. Which one hits tells us how much to trust the
   // pin, which the form shows to the owner so a coarse match isn't mistaken for
   // their doorstep.
   const attempts = (
     [
-      { q: [address, area, city, state, pincode].filter(Boolean).join(", "), precision: "exact" },
-      { q: [area, city, state, pincode].filter(Boolean).join(", "), precision: "area" },
-      { q: [city, state, pincode].filter(Boolean).join(", "), precision: "city" },
-      { q: [pincode, city].filter(Boolean).join(", "), precision: "city" },
-    ] as const
+      ...addressFragments.map((frag, i) => ({
+        q: [frag, city, state].filter(Boolean).join(", "),
+        // Only the untrimmed address counts as a doorstep match; once we start
+        // dropping segments we are locating the locality, and the form should
+        // say so rather than implying the pin is exact.
+        precision: (i === 0 ? "exact" : "area") as "exact" | "area",
+      })),
+      { q: [area, city, state, pincode].filter(Boolean).join(", "), precision: "area" as const },
+      { q: [city, state, pincode].filter(Boolean).join(", "), precision: "city" as const },
+      { q: [pincode, city].filter(Boolean).join(", "), precision: "city" as const },
+    ]
   ).filter((a) => a.q && a.q.length > 3);
 
   for (const { q, precision } of attempts) {
+    // Photon first — it matches Indian locality and landmark names that
+    // Nominatim returns nothing for. Nominatim stays as the fallback because it
+    // is better at formal postal strings when they do exist in OSM.
+    const photonHit = await lookupPhoton(`${q}, India`);
+    if (photonHit) {
+      return {
+        lat: photonHit.lat,
+        lng: photonHit.lng,
+        label: photonHit.label,
+        precision: photonHit.coarse && precision === "exact" ? "area" : precision,
+      };
+    }
+
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${q}, India`)}&format=json&limit=1&addressdetails=1`,

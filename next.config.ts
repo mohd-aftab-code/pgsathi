@@ -45,7 +45,13 @@ const nextConfig = {
               // fonts
               "font-src 'self' https://fonts.gstatic.com",
               // images: self + Cloudinary + Google avatars + maps + misc
-              "img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://streetviewpixels-pa.googleapis.com https://upload.wikimedia.org https://i.pravatar.cc https://images.unsplash.com",
+              //
+              // The OpenStreetMap tile hosts are required — without them every
+              // tile request on the listing map is blocked and the map renders
+              // as a blank grey box with a broken marker. Both the bare host and
+              // the a/b/c subdomains are listed because Leaflet's {s} template
+              // rotates between them.
+              "img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://streetviewpixels-pa.googleapis.com https://upload.wikimedia.org https://i.pravatar.cc https://images.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
               // API calls: self + Razorpay + Mapbox
               "connect-src 'self' https://api.razorpay.com https://api.mapbox.com https://*.mapbox.com",
               // iframes: Razorpay checkout modal
