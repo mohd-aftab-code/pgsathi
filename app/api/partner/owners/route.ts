@@ -16,7 +16,7 @@ import { db } from "@/lib/db";
 import { generateOwnerPassword } from "@/lib/owner-credentials";
 import { requirePartnerApi, logPartnerActivity } from "@/lib/partner-auth";
 import { attributeOwnerToPartner } from "@/lib/partner-earnings";
-import { sendOwnerInviteEmail } from "@/lib/email";
+import { sendOwnerInviteEmail, sendAdminNewUserNotificationEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -129,11 +129,15 @@ export async function POST(req: NextRequest) {
     meta: { name: owner.name, phone: owner.phone },
   });
 
-  if (!owner.email.includes("@pgsathi.in")) {
+  if (owner.email && !owner.email.includes("@pgsathi.in")) {
     sendOwnerInviteEmail(owner.email, owner.name, undefined, phone, password).catch(e => {
       console.error("[OWNER_INVITE_EMAIL_ERROR]", e);
     });
   }
+
+  sendAdminNewUserNotificationEmail(owner.name, "OWNER (via Partner)", owner.phone || "", owner.email || "").catch(e => {
+    console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
+  });
 
   // The password is returned exactly once, here. It is hashed in the database and
   // can never be read back — a partner who loses it must issue a new one.

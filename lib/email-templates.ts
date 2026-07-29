@@ -330,3 +330,23 @@ export function getSubscriptionExpiryEmail(name: string, daysLeft: number) {
   `;
   return baseTemplate(content, `Your PGSathi subscription expires in ${daysLeft} day(s)`);
 }
+
+export function getAdminNewUserNotificationEmail(name: string, role: string, phone: string, email: string) {
+  const content = `
+    <h2>New User Registration 🔔</h2>
+    <p>A new <strong>${role}</strong> has just registered on PGSathi.</p>
+    
+    <div class="card">
+      <p style="margin-bottom: 12px; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">User Details</p>
+      <p style="margin-bottom: 8px; font-size: 16px;"><strong>Role:</strong> ${role}</p>
+      <p style="margin-bottom: 8px; font-size: 16px;"><strong>Name:</strong> ${name}</p>
+      <p style="margin-bottom: 8px; font-size: 16px;"><strong>Phone:</strong> ${phone}</p>
+      <p style="margin-bottom: 0; font-size: 16px;"><strong>Email:</strong> ${email}</p>
+    </div>
+    
+    <div class="btn-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in'}/dashboard/admin/users" class="btn">View in Admin Dashboard</a>
+    </div>
+  `;
+  return baseTemplate(content, `New ${role} registration: ${name}`);
+}

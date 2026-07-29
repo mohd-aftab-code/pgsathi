@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { sendPartnerApplicationReceivedEmail, sendAdminNewUserNotificationEmail } from "@/lib/email";
 import type { PartnerType } from "@prisma/client";
 
 const VALID_TYPES: PartnerType[] = [
@@ -120,6 +121,14 @@ export async function POST(req: NextRequest) {
       await tx.partnerSetting.create({ data: { partnerId: profile.id } });
 
       return profile;
+    });
+
+    sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
+      console.error("[PARTNER_APP_EMAIL_ERROR]", e);
+    });
+
+    sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
+      console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
     });
 
     return NextResponse.json(

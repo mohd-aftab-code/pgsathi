@@ -11,7 +11,8 @@ import {
   getListingStatusEmail,
   getPayoutEmail,
   getSubscriptionActiveEmail,
-  getSubscriptionExpiryEmail
+  getSubscriptionExpiryEmail,
+  getAdminNewUserNotificationEmail
 } from "./email-templates";
 
 const FROM = process.env.FROM_EMAIL || "hello@pgsathi.in";
@@ -192,5 +193,17 @@ export async function sendSubscriptionExpiryEmail(
     to,
     subject: `Action Required: Subscription expires in ${daysLeft} day(s)`,
     html: getSubscriptionExpiryEmail(name, daysLeft),
+  });
+}
+
+// Send notification to admin when a new user registers
+export async function sendAdminNewUserNotificationEmail(name: string, role: string, phone: string, email: string) {
+  const adminEmail = process.env.ADMIN_EMAIL || "pgsathi.support@gmail.com";
+  
+  await transporter.sendMail({
+    from: FROM,
+    to: adminEmail,
+    subject: `New ${role} Registration: ${name}`,
+    html: getAdminNewUserNotificationEmail(name, role, phone, email),
   });
 }

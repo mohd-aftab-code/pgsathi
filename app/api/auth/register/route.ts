@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { sendWelcomeEmail, sendPartnerApplicationReceivedEmail } from "@/lib/email";
+import { sendWelcomeEmail, sendPartnerApplicationReceivedEmail, sendAdminNewUserNotificationEmail } from "@/lib/email";
 
 type AllowedRole = "TENANT" | "OWNER" | "PARTNER";
 
@@ -130,6 +130,10 @@ export async function POST(req: NextRequest) {
         console.error("[WELCOME_EMAIL_ERROR]", e);
       });
     }
+
+    sendAdminNewUserNotificationEmail(name.trim(), userRole, phone, email.trim().toLowerCase()).catch((e) => {
+      console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
+    });
 
     return NextResponse.json(
       { success: true, message: "Registration successful" },
