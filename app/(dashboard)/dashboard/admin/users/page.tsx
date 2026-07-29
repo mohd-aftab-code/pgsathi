@@ -296,31 +296,31 @@ export default function AdminUsersPage() {
                   <div className="text-xs font-bold text-neutral-700">{o.leadCount}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
+              <div className="flex flex-wrap items-center gap-1.5 mt-1">
                 <button 
                   onClick={() => handleImpersonate(o.id, o.name)}
-                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-orange-100 text-orange-700 hover:bg-orange-200 transition text-center"
+                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-bold px-1.5 py-1.5 rounded bg-orange-100 text-orange-700 hover:bg-orange-200 transition text-center"
                 >
                   Login
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition text-center"
+                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-bold px-1.5 py-1.5 rounded bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition text-center"
                 >
                   +7D
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "activate_plan")} 
-                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition text-center"
+                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-bold px-1.5 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition text-center"
                 >
                   Pro
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "delete")} 
-                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-red-100 text-red-700 hover:bg-red-200 transition text-center"
+                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-bold px-1.5 py-1.5 rounded bg-red-100 text-red-700 hover:bg-red-200 transition text-center"
                 >
                   Del
                 </button>
