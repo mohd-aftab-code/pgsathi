@@ -120,6 +120,12 @@ export default function Home() {
                 >
                   Learn More
                 </Link>
+                <Link
+                  href="/pg-management-software"
+                  className="text-primary-300 hover:text-white px-6 py-2 font-bold transition-colors flex items-center justify-center text-sm underline-offset-4 hover:underline"
+                >
+                  Explore PG Software
+                </Link>
               </div>
             </div>
           </div>

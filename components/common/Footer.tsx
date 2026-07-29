@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin } from "lucide-react";
 import logoImg from "@/app/assets/logo/logo.png";
+import { CITIES } from "@/constants/cities";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -156,6 +157,46 @@ export default function Footer() {
             </ul>
           </div>
 
+        </div>
+      </div>
+
+      {/* SEO Popular Searches Block */}
+      <div className="border-t border-slate-800 bg-[#0f172a]">
+        <div className="container-max section-padding py-10 text-slate-400">
+          <h3 className="text-slate-300 font-bold mb-4 flex items-center gap-2">
+            <MapPin size={16} className="text-violet-500" />
+            Top PG Locations in India
+          </h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs sm:text-sm">
+            {CITIES.filter(c => c.priority <= 15).map(city => (
+              <div key={city.slug} className="flex gap-4">
+                <Link href={`/pg-in-${city.slug}`} className="hover:text-violet-400 transition-colors">
+                  PG in {city.name}
+                </Link>
+                <Link href={`/boys-pg-in-${city.slug}`} className="hover:text-blue-400 transition-colors hidden sm:inline">
+                  Boys PG in {city.name}
+                </Link>
+                <Link href={`/girls-pg-in-${city.slug}`} className="hover:text-pink-400 transition-colors hidden sm:inline">
+                  Girls PG in {city.name}
+                </Link>
+              </div>
+            ))}
+          </div>
+          
+          <h3 className="text-slate-300 font-bold mb-4 mt-8 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Trending Searches
+          </h3>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs sm:text-sm">
+            <Link href="/pg-management-software" className="hover:text-emerald-400 transition-colors font-medium">PG Management Software</Link>
+            <Link href="/pg-management-software" className="hover:text-emerald-400 transition-colors">Cloud CRM for PG</Link>
+            <Link href="/for-owners" className="hover:text-emerald-400 transition-colors">Free PG Listing</Link>
+            <Link href="/search" className="hover:text-violet-400 transition-colors">Zero Brokerage PGs</Link>
+            <Link href="/search?gender=BOYS" className="hover:text-violet-400 transition-colors">Best Boys Hostels</Link>
+            <Link href="/search?gender=GIRLS" className="hover:text-violet-400 transition-colors">Safe Girls PGs</Link>
+            <Link href="/search?gender=COED" className="hover:text-violet-400 transition-colors">Co-living Spaces in India</Link>
+            <Link href="/partner-program" className="hover:text-emerald-400 transition-colors">Earn Money Referring PGs</Link>
+          </div>
         </div>
       </div>
 

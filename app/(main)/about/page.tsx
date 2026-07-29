@@ -131,6 +131,11 @@ export default function AboutPage() {
                     </div>
                   </li>
                 </ul>
+                <div className="mt-10">
+                  <Link href="/pg-management-software" className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-violet-500/25">
+                    Explore PG Management Software
+                  </Link>
+                </div>
               </div>
               
               <div className="bg-neutral-800/50 border border-neutral-700 backdrop-blur-md rounded-3xl p-6 shadow-2xl">

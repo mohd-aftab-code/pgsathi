@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Info, Phone } from "lucide-react";
+import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Info, Phone, Building } from "lucide-react";
 
 import logoImg from "@/app/assets/logo/logo.png";
 
@@ -34,6 +34,9 @@ export default function Navbar({ user }: { user?: any }) {
             </Link>
             <Link href="/about" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Info size={16} /> About Us
+            </Link>
+            <Link href="/pg-management-software" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
+              <Building size={16} /> Software
             </Link>
             <Link href="/contact" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Phone size={16} /> Contact
@@ -72,6 +75,9 @@ export default function Navbar({ user }: { user?: any }) {
           </Link>
           <Link href="/about" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Info size={18} className="text-primary-600" /> About Us
+          </Link>
+          <Link href="/pg-management-software" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
+            <Building size={18} className="text-primary-600" /> PG Software
           </Link>
           <Link href="/contact" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Phone size={18} className="text-primary-600" /> Contact
