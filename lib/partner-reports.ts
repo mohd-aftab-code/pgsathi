@@ -24,11 +24,11 @@ const PAID_SUB = () => ({
 });
 
 export const REPORTS: { type: ReportType; label: string; desc: string }[] = [
-  { type: "pg", label: "PG Report", desc: "Saare registered PGs, status aur plan ke saath" },
-  { type: "revenue", label: "Revenue Report", desc: "Aapke laaye owners se platform revenue" },
-  { type: "renewal", label: "Renewal Report", desc: "Agle 30 din mein renew hone wale PGs" },
-  { type: "earnings", label: "Earnings Report", desc: "Har earning ka amount aur status" },
-  { type: "monthly", label: "Monthly Report", desc: "Mahine-wise registrations aur earnings" },
+  { type: "pg", label: "PG Report", desc: "All registered PGs, with status and plan" },
+  { type: "revenue", label: "Revenue Report", desc: "Platform revenue from your owners" },
+  { type: "renewal", label: "Renewal Report", desc: "PGs renewing in the next 30 days" },
+  { type: "earnings", label: "Earnings Report", desc: "Amount and status of each earning" },
+  { type: "monthly", label: "Monthly Report", desc: "Month-wise registrations and earnings" },
 ];
 
 export async function buildReport(partnerId: number, type: ReportType): Promise<ReportData> {

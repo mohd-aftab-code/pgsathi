@@ -168,11 +168,11 @@ export default function GoogleMapPicker({
     const direct = parseMapInput(value);
     if (direct) {
       place(direct.lat, direct.lng);
-      setNote("✓ Google Maps location set ho gayi");
+      setNote("✓ Google Maps location set");
       return;
     }
     if (isShortMapLink(value)) {
-      setNote("Google link khol rahe hain…");
+      setNote("Opening Google link…");
       try {
         const r = await fetch("/api/geo/resolve-link", {
           method: "POST",
@@ -181,10 +181,10 @@ export default function GoogleMapPicker({
         }).then((x) => x.json());
         if (r.success) {
           place(r.latitude, r.longitude);
-          setNote("✓ Google Maps location set ho gayi");
-        } else setNote(r.message || "Is link se location nahi mili");
+          setNote("✓ Google Maps location set");
+        } else setNote(r.message || "Could not find location from this link");
       } catch {
-        setNote("Link kholne mein dikkat aayi");
+        setNote("Failed to open link");
       }
     }
   };
@@ -194,9 +194,9 @@ export default function GoogleMapPicker({
       <div className="w-full h-full grid place-items-center bg-neutral-50 text-center p-6">
         <div>
           <MapPin className="mx-auto text-neutral-300 mb-2" size={28} />
-          <p className="text-sm font-bold text-neutral-700">Google Map load nahi hua</p>
+          <p className="text-sm font-bold text-neutral-700">Google Map failed to load</p>
           <p className="text-xs text-neutral-500 mt-1">
-            API key galat ho sakti hai, ya us key par Maps JavaScript API enabled nahi hai.
+            API key might be invalid, or Maps JavaScript API is not enabled for it.
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function GoogleMapPicker({
             ref={inputEl}
             type="text"
             disabled={status !== "ready"}
-            placeholder={searchCity ? `${searchCity} mein jagah dhoondhein…` : "Jagah ka naam ya Google Maps link"}
+            placeholder={searchCity ? `${searchCity} search for a place…` : "Place name or Google Maps link"}
             onChange={(e) => {
               const v = e.target.value;
               if (parseMapInput(v) || isShortMapLink(v)) handlePaste(v);
@@ -229,7 +229,7 @@ export default function GoogleMapPicker({
 
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
         <span className="bg-neutral-900/85 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap backdrop-blur-sm">
-          📍 Pin ko drag karke apne PG par rakhein
+          📍 Drag the pin to your PG's location
         </span>
       </div>
     </div>

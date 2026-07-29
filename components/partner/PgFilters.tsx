@@ -43,7 +43,7 @@ export function PgFilters({ q, status }: { q: string; status: string }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onBlur={() => { if (search !== q) navigate({ q: search }); }}
-          placeholder="Naam, address ya PIN se dhoondhein…"
+          placeholder="Search by name, address or PIN…"
           className="w-full h-10 pl-9 pr-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none"
         />
       </form>

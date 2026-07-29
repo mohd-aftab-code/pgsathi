@@ -29,7 +29,7 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
       const d = await res.json();
       if (!d.success) alert(d.message || "Action failed");
       else { setPayOpen(false); router.refresh(); }
-    } catch { alert("Kuch gadbad ho gayi"); } finally { setBusy(""); }
+    } catch { alert("Something went wrong"); } finally { setBusy(""); }
   }
 
   const spin = (a: string) => busy === a;
@@ -70,7 +70,7 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
           {spin("mark_paid") ? <Loader2 size={12} className="animate-spin" /> : <Wallet size={13} />} Mark Paid
         </button>
       )}
-      <button onClick={() => { if (confirm("Ye earning cancel karein?")) post("cancel"); }} disabled={!!busy} className="inline-flex items-center gap-1 h-8 px-2 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 disabled:opacity-50">
+      <button onClick={() => { if (confirm("Cancel this earning?")) post("cancel"); }} disabled={!!busy} className="inline-flex items-center gap-1 h-8 px-2 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 disabled:opacity-50">
         {spin("cancel") ? <Loader2 size={12} className="animate-spin" /> : <X size={13} />}
       </button>
 
@@ -78,13 +78,13 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setPayOpen(false)}>
           <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl text-left" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Payment record karein</h3>
+              <h3 className="font-bold text-neutral-900">Record Payment</h3>
               <button onClick={() => setPayOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100"><X size={16} /></button>
             </div>
 
             <div className="p-5 space-y-4">
               <div className="rounded-xl bg-neutral-50 border border-neutral-200 px-4 py-3">
-                <div className="text-xs text-neutral-500">Is earning ka payment</div>
+                <div className="text-xs text-neutral-500">Payment for this earning</div>
                 <div className="text-2xl font-extrabold text-neutral-900">₹{amount.toLocaleString("en-IN")}</div>
               </div>
 
@@ -104,13 +104,13 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
               </div>
 
               <p className="text-[11px] text-neutral-400">
-                Ye record karta hai ki paisa bhej diya gaya. Actual transfer aapko apne bank/UPI se karna hoga.
+                This records that the money has been sent. You must make the actual transfer via your bank/UPI.
               </p>
 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => setPayOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700">Cancel</button>
                 <button onClick={() => post("mark_paid", { method, reference })} disabled={!!busy} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {spin("mark_paid") ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Paid confirm karein"}
+                  {spin("mark_paid") ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Confirm Payment"}
                 </button>
               </div>
             </div>

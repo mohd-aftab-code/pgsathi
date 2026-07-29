@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
 import { isValidPlanId, PLANS, PLAN_LIMITS } from "@/lib/plans";
 import { cycleEndDate, isValidCycle, priceForCycle, type CycleId } from "@/lib/billing";
+import { sendSubscriptionActiveEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   // Held outside the try so the P2002 handler below can identify the payment —
@@ -142,6 +143,17 @@ export async function POST(req: NextRequest) {
       } catch (e) {
         console.error("[subscription] partner earning trigger failed (non-fatal):", e);
       }
+    }
+
+    const userObj = await db.user.findUnique({
+      where: { id: userId },
+      select: { name: true, email: true }
+    });
+    
+    if (userObj?.email && plan?.name) {
+      sendSubscriptionActiveEmail(userObj.email, userObj.name, plan.name, amount).catch((e) => {
+        console.error("[SUBSCRIPTION_ACTIVE_EMAIL_ERROR]", e);
+      });
     }
 
     return NextResponse.json({ success: true, data: subscription });

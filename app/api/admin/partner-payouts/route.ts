@@ -15,6 +15,7 @@ import { db } from "@/lib/db";
 import { getAdmin, adminAudit } from "@/lib/admin-audit";
 import { can, PERMISSIONS } from "@/lib/permissions";
 import { notify } from "@/lib/notifications";
+import { sendPayoutEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const admin = await getAdmin();
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   const partner = await db.partnerProfile.findUnique({
     where: { id: partnerId },
-    select: { id: true, userId: true, partnerCode: true },
+    select: { id: true, userId: true, partnerCode: true, user: { select: { name: true, email: true } } },
   });
   if (!partner) return NextResponse.json({ success: false, message: "Partner nahi mila" }, { status: 404 });
 
@@ -92,6 +93,12 @@ export async function POST(req: NextRequest) {
     message: `${payable.length} earning(s) ka payment ${method} se kar diya gaya${reference ? ` (ref: ${reference})` : ""}.`,
     link: "/partner/earnings",
   });
+
+  if (partner.user?.email) {
+    sendPayoutEmail(partner.user.email, partner.user.name, total, method, reference || undefined).catch((e) => {
+      console.error("[PAYOUT_EMAIL_ERROR]", e);
+    });
+  }
 
   return NextResponse.json({
     success: true,

@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { getAdmin, adminAudit } from "@/lib/admin-audit";
 import { can, PERMISSIONS } from "@/lib/permissions";
 import { notify } from "@/lib/notifications";
+import { sendPartnerStatusEmail } from "@/lib/email";
 import type { PartnerStatus } from "@prisma/client";
 
 const VALID: PartnerStatus[] = ["PENDING", "APPROVED", "REJECTED", "SUSPENDED"];
@@ -31,7 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const existing = await db.partnerProfile.findUnique({
     where: { id: partnerId },
-    select: { id: true, status: true, userId: true, user: { select: { name: true } } },
+    select: { id: true, status: true, userId: true, user: { select: { name: true, email: true } } },
   });
   if (!existing) return NextResponse.json({ success: false, message: "Partner nahi mila" }, { status: 404 });
 
@@ -43,7 +44,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       approvedBy: status === "APPROVED" ? admin.id : undefined,
       rejectReason: status === "REJECTED" ? String(body.reason ?? "").slice(0, 300) || null : null,
     },
-    select: { status: true },
+    select: { status: true, rejectReason: true },
   });
 
   await adminAudit({
@@ -56,13 +57,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     after: { status: updated.status },
   });
 
-  // Tell the partner.
   const msg =
     status === "APPROVED" ? "Aapka partner account approve ho gaya! Ab poora dashboard use kar sakte hain."
     : status === "REJECTED" ? "Aapki partner application approve nahi ho payi."
     : status === "SUSPENDED" ? "Aapka partner account suspend kar diya gaya hai."
     : "Aapke account ka status update hua hai.";
   await notify({ userId: existing.userId, type: "SYSTEM", title: "Partner account update", message: msg, link: "/partner/dashboard" });
+
+  // Email Notification
+  if (existing.user.email) {
+    sendPartnerStatusEmail(existing.user.email, existing.user.name, status, updated.rejectReason || undefined).catch((e) => {
+      console.error("[PARTNER_STATUS_EMAIL_ERROR]", e);
+    });
+  }
 
   return NextResponse.json({ success: true, message: `Partner ${status.toLowerCase()} ho gaya` });
 }

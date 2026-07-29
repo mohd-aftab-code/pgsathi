@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { sendWelcomeEmail } from "@/lib/email";
+import { sendWelcomeEmail, sendPartnerApplicationReceivedEmail } from "@/lib/email";
 
 type AllowedRole = "TENANT" | "OWNER" | "PARTNER";
 
@@ -121,9 +121,15 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole).catch((e) => {
-      console.error("[WELCOME_EMAIL_ERROR]", e);
-    });
+    if (userRole === "PARTNER") {
+      sendPartnerApplicationReceivedEmail(email.trim().toLowerCase(), name.trim()).catch((e) => {
+        console.error("[PARTNER_APP_EMAIL_ERROR]", e);
+      });
+    } else {
+      sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole).catch((e) => {
+        console.error("[WELCOME_EMAIL_ERROR]", e);
+      });
+    }
 
     return NextResponse.json(
       { success: true, message: "Registration successful" },

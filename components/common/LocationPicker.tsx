@@ -67,7 +67,7 @@ export default function LocationPicker({
               one action that actually matters is never missed. */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none">
             <span className="bg-neutral-900/85 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap backdrop-blur-sm">
-              {position ? "📍 Pin ko drag karke apne PG par rakhein" : "📍 Map pe apni jagah par click karein"}
+              {position ? "📍 Drag the pin to your PG's location" : "📍 Click on the map to set your location"}
             </span>
           </div>
         </>

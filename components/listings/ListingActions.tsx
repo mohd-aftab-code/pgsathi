@@ -16,7 +16,7 @@ export default function ListingActions({ listingId, listingSlug, status }: Listi
   const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("Kya aap sach mein is listing ko delete karna chahte hain? Yeh action undo nahi ho sakta.")) return;
+    if (!confirm("Are you sure you want to delete this listing? This action cannot be undone.")) return;
 
     setDeleting(true);
     try {
@@ -27,7 +27,7 @@ export default function ListingActions({ listingId, listingSlug, status }: Listi
       if (data.success) {
         router.refresh(); // Re-fetch page data
       } else {
-        alert(data.message || "Delete karne mein problem aayi.");
+        alert(data.message || "Problem occurred while deleting.");
       }
     } catch {
       alert("Network error. Please try again.");

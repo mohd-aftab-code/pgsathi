@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notifyGoogleIndexingAPI } from "@/lib/google-indexing";
 import { notify } from "@/lib/notifications";
+import { sendListingStatusEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,18 +31,27 @@ export async function POST(req: NextRequest) {
       include: {
         city: true,
         locality: true,
+        owner: { select: { name: true, email: true } },
         // Partner attribution — so the partner who brought this PG in can be told
         // what happened to it.
-        partner: { select: { userId: true } }
+        partner: { select: { userId: true, user: { select: { name: true, email: true } } } }
       }
     });
 
-    // Tell the partner their PG was approved or rejected. Non-fatal: a
-    // notification failure must never break the admin's moderation action.
-    if (listing.partner) {
-      const approved = status === "ACTIVE";
-      const rejected = status === "REJECTED";
-      if (approved || rejected) {
+    const approved = status === "ACTIVE";
+    const rejected = status === "REJECTED";
+
+    if (approved || rejected) {
+      // Email Owner
+      if (listing.owner?.email) {
+        sendListingStatusEmail(listing.owner.email, listing.owner.name, listing.title, status, false).catch((e) => {
+          console.error("[LISTING_STATUS_EMAIL_OWNER_ERROR]", e);
+        });
+      }
+
+      // Tell the partner their PG was approved or rejected. Non-fatal: a
+      // notification failure must never break the admin's moderation action.
+      if (listing.partner) {
         notify({
           userId: listing.partner.userId,
           type: "PARTNER_PG",
@@ -51,6 +61,12 @@ export async function POST(req: NextRequest) {
             : `${listing.title} approve nahi hua. Details ke liye support se sampark karein.`,
           link: `/partner/pgs/${listing.id}`,
         }).catch(console.error);
+
+        if (listing.partner.user?.email) {
+          sendListingStatusEmail(listing.partner.user.email, listing.partner.user.name, listing.title, status, true).catch((e) => {
+            console.error("[LISTING_STATUS_EMAIL_PARTNER_ERROR]", e);
+          });
+        }
       }
     }
 

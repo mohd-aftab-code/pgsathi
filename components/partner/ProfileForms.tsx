@@ -20,9 +20,9 @@ function useSave(section: string) {
         body: JSON.stringify({ section, ...payload }),
       });
       const d = await res.json();
-      if (!d.success) setError(d.message || "Save nahi hua");
+      if (!d.success) setError(d.message || "Save failed");
       else { setSaved(true); setTimeout(() => setSaved(false), 2500); }
-    } catch { setError("Kuch gadbad ho gayi"); } finally { setSaving(false); }
+    } catch { setError("Something went wrong"); } finally { setSaving(false); }
   }
   return { save, saving, saved, error };
 }
@@ -42,7 +42,7 @@ export function ProfileForm({ initial }: { initial: { name: string; company: str
     <form onSubmit={(e) => { e.preventDefault(); save(f); }} className="space-y-4">
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <div className="grid sm:grid-cols-2 gap-4">
-        <div><label className={lbl}>Naam</label><input className={inp} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><label className={lbl}>Name</label><input className={inp} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
         <div><label className={lbl}>Company</label><input className={inp} value={f.company} onChange={(e) => setF({ ...f, company: e.target.value })} /></div>
         <div><label className={lbl}>City</label><input className={inp} value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })} /></div>
         <div><label className={lbl}>Address</label><input className={inp} value={f.address} onChange={(e) => setF({ ...f, address: e.target.value })} /></div>
@@ -65,7 +65,7 @@ export function PayoutForm({ initial }: { initial: { panNumber: string; bankName
         <div><label className={lbl}>Account Number</label><input className={inp} value={f.bankAccountNo} onChange={(e) => setF({ ...f, bankAccountNo: e.target.value })} /></div>
         <div><label className={lbl}>IFSC</label><input className={inp} value={f.bankIfsc} onChange={(e) => setF({ ...f, bankIfsc: e.target.value })} placeholder="HDFC0001234" /></div>
       </div>
-      <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Payout in details par bhejenge. Sahi bharein.</p>
+      <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Payout will be sent to these details. Fill them correctly.</p>
       <SaveBtn saving={saving} saved={saved} />
     </form>
   );
@@ -76,9 +76,9 @@ export function SettingsForm({ initial }: { initial: { notifyInApp: boolean; not
   const { save, saving, saved, error } = useSave("settings");
   const toggle = (k: keyof typeof f) => setF((s) => ({ ...s, [k]: !s[k] }));
   const rows: { k: keyof typeof f; label: string; desc: string }[] = [
-    { k: "notifyInApp", label: "In-app notifications", desc: "Portal ke andar alerts" },
-    { k: "notifyEmail", label: "Email notifications", desc: "Zaroori updates email par" },
-    { k: "notifyWhatsapp", label: "WhatsApp notifications", desc: "WhatsApp par alerts (jald aayega)" },
+    { k: "notifyInApp", label: "In-app notifications", desc: "Alerts inside the portal" },
+    { k: "notifyEmail", label: "Email notifications", desc: "Important updates on email" },
+    { k: "notifyWhatsapp", label: "WhatsApp notifications", desc: "Alerts on WhatsApp (coming soon)" },
   ];
   return (
     <form onSubmit={(e) => { e.preventDefault(); save(f); }} className="space-y-4">

@@ -74,28 +74,28 @@ export function OwnerManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       }).then((r) => r.json());
-      if (!d.success) { setError(d.message || "Owner register nahi hua"); return; }
+      if (!d.success) { setError(d.message || "Owner registration failed"); return; }
       setFormOpen(false);
       setForm({ name: "", phone: "", email: "", city: "" });
       if (d.data?.password) setIssued({ name: d.data.name, phone: d.data.phone, password: d.data.password });
       else alert(d.message);
       load();
     } catch {
-      setError("Kuch gadbad ho gayi");
+      setError("Something went wrong");
     } finally {
       setBusy(false);
     }
   }
 
   async function resetPassword(o: Owner) {
-    if (!confirm(`${o.name} ka naya password banayein? Purana kaam karna band ho jayega.`)) return;
+    if (!confirm(`Create new password for ${o.name}? The old one will stop working.`)) return;
     const d = await fetch(`/api/partner/owners/${o.id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "reset_password" }),
     }).then((r) => r.json()).catch(() => null);
     if (d?.success) setIssued({ name: d.data.name, phone: d.data.phone, password: d.data.password });
-    else alert(d?.message ?? "Reset nahi hua");
+    else alert(d?.message ?? "Reset failed");
   }
 
   const filtered = owners.filter(
@@ -106,16 +106,16 @@ export function OwnerManager() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Mere Owners</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">My Owners</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-            Pehle owner register karein, phir unke PG list karein. Commission owner ke har payment par milta hai.
+            Register owners first, then list their PGs. Commission is earned on every payment made by the owner.
           </p>
         </div>
         <button
           onClick={() => { setFormOpen(true); setError(""); }}
           className="inline-flex items-center gap-1.5 h-11 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold shadow-lg shadow-primary-500/25 transition-colors"
         >
-          <UserPlus size={16} /> Naya Owner
+          <UserPlus size={16} /> New Owner
         </button>
       </div>
 
@@ -125,7 +125,7 @@ export function OwnerManager() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Naam ya phone se dhoondein"
+            placeholder="Search by name or phone"
             className="w-full h-11 pl-9 pr-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-sm text-neutral-900 dark:text-white"
           />
         </div>
@@ -137,11 +137,11 @@ export function OwnerManager() {
         <div className="rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 p-10 text-center">
           <UserPlus className="mx-auto text-neutral-300 dark:text-neutral-600 mb-3" size={32} />
           <p className="font-bold text-neutral-700 dark:text-neutral-200">
-            {owners.length === 0 ? "Abhi koi owner nahi" : "Koi match nahi mila"}
+            {owners.length === 0 ? "No owners yet" : "No match found"}
           </p>
           {owners.length === 0 && (
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              "Naya Owner" se shuru karein — uske baad unke PG list kar sakte hain.
+              Start with "New Owner" — after that you can list their PGs.
             </p>
           )}
         </div>
@@ -176,13 +176,13 @@ export function OwnerManager() {
                   href={`/partner/pgs/new?owner=${o.id}`}
                   className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-xs font-bold hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
                 >
-                  <Plus size={14} /> Inka PG list karein
+                  <Plus size={14} /> List their PG
                 </Link>
                 <button
                   onClick={() => resetPassword(o)}
                   className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-bold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                 >
-                  <KeyRound size={14} /> Naya password
+                  <KeyRound size={14} /> New password
                 </button>
               </div>
             </div>
@@ -195,13 +195,13 @@ export function OwnerManager() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setFormOpen(false)}>
           <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
-              <h3 className="font-bold text-neutral-900 dark:text-white">Naya Owner register karein</h3>
+              <h3 className="font-bold text-neutral-900 dark:text-white">Register New Owner</h3>
               <button onClick={() => setFormOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"><X size={16} /></button>
             </div>
             <form onSubmit={submit} className="p-5 space-y-3">
               {error && <div className="rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</div>}
               {[
-                { k: "name", label: "Owner ka poora naam", ph: "e.g. Ramesh Gupta", req: true },
+                { k: "name", label: "Owner's full name", ph: "e.g. Ramesh Gupta", req: true },
                 { k: "phone", label: "Phone number", ph: "10-digit", req: true },
                 { k: "email", label: "Email (optional)", ph: "owner@example.com", req: false },
                 { k: "city", label: "City (optional)", ph: "e.g. Allahabad", req: false },
@@ -218,12 +218,12 @@ export function OwnerManager() {
                 </div>
               ))}
               <p className="text-[11px] text-neutral-400">
-                Account banate hi password ban jayega aur ek baar screen par dikhega — wahi owner ko de dena.
+                A password will be generated and shown on screen once — provide this to the owner.
               </p>
               <div className="flex gap-2 pt-1">
                 <button type="button" onClick={() => setFormOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 font-bold text-sm text-neutral-700 dark:text-neutral-300">Cancel</button>
                 <button type="submit" disabled={busy} className="flex-1 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {busy ? <><Loader2 size={15} className="animate-spin" /> Ban raha…</> : "Register karein"}
+                  {busy ? <><Loader2 size={15} className="animate-spin" /> Creating…</> : "Register"}
                 </button>
               </div>
             </form>
@@ -237,11 +237,11 @@ export function OwnerManager() {
           <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl">
             <div className="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center gap-2">
               <ShieldCheck className="text-green-600" size={18} />
-              <h3 className="font-bold text-neutral-900 dark:text-white">{issued.name} ke login details</h3>
+              <h3 className="font-bold text-neutral-900 dark:text-white">{issued.name}'s login details</h3>
             </div>
             <div className="p-5 space-y-4">
               <div className="rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 px-3 py-2 text-sm text-amber-800 dark:text-amber-300">
-                Ye password <b>sirf abhi</b> dikhega. Abhi copy karke owner ko de dein — baad mein dekha nahi ja sakta.
+                This password is shown <b>only once</b>. Copy it now and give it to the owner — it cannot be viewed later.
               </div>
 
               {[
@@ -261,14 +261,14 @@ export function OwnerManager() {
 
               <CopyButton
                 text={`PGSathi login\nPhone: ${issued.phone}\nPassword: ${issued.password}\n${typeof window !== "undefined" ? window.location.origin : "https://pgsathi.in"}/login`}
-                label="Dono ek saath copy karein"
+                label="Copy both together"
               />
 
               <button
                 onClick={() => setIssued(null)}
                 className="w-full h-11 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm"
               >
-                Copy kar liya — band karein
+                Copied — Close
               </button>
             </div>
           </div>

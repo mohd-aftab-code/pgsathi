@@ -115,7 +115,7 @@ export default function Map({ position, onChange, onAddressFound, searchCity }: 
     if (direct) {
       setMarkerPos([direct.lat, direct.lng]);
       onChange(direct.lat, direct.lng);
-      setLinkNote("✓ Google Maps location set ho gayi");
+      setLinkNote("✓ Google Maps location set");
       setShowResults(false);
       setSearchResults([]);
       return true;
@@ -123,7 +123,7 @@ export default function Map({ position, onChange, onAddressFound, searchCity }: 
 
     if (isShortMapLink(value)) {
       setSearching(true);
-      setLinkNote("Google link khol rahe hain…");
+      setLinkNote("Opening Google link…");
       try {
         const res = await fetch("/api/geo/resolve-link", {
           method: "POST",
@@ -134,14 +134,14 @@ export default function Map({ position, onChange, onAddressFound, searchCity }: 
         if (d.success) {
           setMarkerPos([d.latitude, d.longitude]);
           onChange(d.latitude, d.longitude);
-          setLinkNote("✓ Google Maps location set ho gayi");
+          setLinkNote("✓ Google Maps location set");
           setShowResults(false);
           setSearchResults([]);
           return true;
         }
-        setLinkNote(d.message || "Is link se location nahi mili");
+        setLinkNote(d.message || "Could not find location from this link");
       } catch {
-        setLinkNote("Link kholne mein dikkat aayi");
+        setLinkNote("Failed to open link");
       } finally {
         setSearching(false);
       }
@@ -242,7 +242,7 @@ export default function Map({ position, onChange, onAddressFound, searchCity }: 
                 }
               }}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
-              placeholder="Google Maps link paste karein, ya address search karein"
+              placeholder="Paste Google Maps link, or search address"
               className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
             />
           </div>

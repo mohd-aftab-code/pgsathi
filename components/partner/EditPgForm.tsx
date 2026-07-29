@@ -32,10 +32,10 @@ export function EditPgForm({
         body: JSON.stringify(form),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Update nahi hua"); setSaving(false); return; }
+      if (!d.success) { setError(d.message || "Update failed"); setSaving(false); return; }
       setOpen(false);
       router.refresh();
-    } catch { setError("Kuch gadbad ho gayi"); } finally { setSaving(false); }
+    } catch { setError("Something went wrong"); } finally { setSaving(false); }
   }
 
   const inp = "w-full h-11 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none";
@@ -53,13 +53,13 @@ export function EditPgForm({
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !saving && setOpen(false)}>
       <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
-          <h3 className="font-bold text-neutral-900 dark:text-white">PG edit karein</h3>
+          <h3 className="font-bold text-neutral-900 dark:text-white">Edit PG</h3>
           <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"><X size={16} /></button>
         </div>
         <form onSubmit={save} className="p-5 space-y-4">
           {error && <div className="rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-3 py-2 text-sm text-red-700 dark:text-red-300">{error}</div>}
           <div>
-            <label className={lbl}>PG ka naam</label>
+            <label className={lbl}>PG Name</label>
             <input className={inp} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           </div>
           <div>
@@ -77,7 +77,7 @@ export function EditPgForm({
             </div>
           </div>
           <div>
-            <label className={lbl}>Kiske liye</label>
+            <label className={lbl}>For Whom</label>
             <div className="grid grid-cols-3 gap-2">
               {[["BOYS", "Boys"], ["GIRLS", "Girls"], ["COED", "Co-living"]].map(([v, l]) => (
                 <button type="button" key={v} onClick={() => setForm({ ...form, genderAllowed: v })}

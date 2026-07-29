@@ -74,7 +74,7 @@ export function LocationStep({
       if (!data.success) {
         setPinStatus("fail");
         setPinCity(null);
-        setPinMessage(data.message || "Is PIN ki jaankari nahi mili — area khud likh dein.");
+        setPinMessage(data.message || "Could not find details for this PIN — please type the area.");
         setAreas([]);
         return;
       }
@@ -92,7 +92,7 @@ export function LocationStep({
     } catch {
       setPinStatus("fail");
       setPinCity(null);
-      setPinMessage("Network issue — area khud likh dein, kaam chal jayega.");
+      setPinMessage("Network issue — please type the area manually.");
       setAreas([]);
     }
   }
@@ -148,9 +148,9 @@ export function LocationStep({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl p-5 md:p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-900 mb-1">Aapka PG kahan hai?</h3>
+        <h3 className="text-lg font-bold text-neutral-900 mb-1">Where is your PG located?</h3>
         <p className="text-xs text-neutral-500 mb-5 pb-4 border-b border-neutral-100">
-          Har field type karke bhi dhoondh sakte hain. Map aakhir mein khud ban jayega.
+          You can type to search in every field. The map will automatically update at the end.
         </p>
 
         {/* Row 1 — State + City */}
@@ -161,8 +161,8 @@ export function LocationStep({
               options={STATE_NAMES}
               value={value.stateName}
               onChange={(v) => onChange({ stateName: v, cityName: "" })}
-              placeholder="Type karein, e.g. Uttar"
-              customHint="ye state list mein nahi hai"
+              placeholder="Type e.g. Uttar"
+              customHint="this state is not in the list"
             />
           </div>
           <div>
@@ -172,9 +172,9 @@ export function LocationStep({
               value={value.cityName}
               onChange={(v) => onChange({ cityName: v })}
               disabled={!value.stateName}
-              disabledText="Pehle state chunein…"
-              placeholder="Type karein, e.g. Hath"
-              customHint="ye city list mein nahi hai — yahi save hogi"
+              disabledText="Select state first…"
+              placeholder="Type e.g. Hath"
+              customHint="this city is not in the list — it will be saved as typed"
             />
           </div>
         </div>
@@ -185,7 +185,7 @@ export function LocationStep({
             {label(3, "PIN Code")}
             {!value.cityName ? (
               <div className="h-11 px-3 rounded-lg border-2 border-neutral-200 bg-neutral-50 flex items-center text-sm text-neutral-400 cursor-not-allowed">
-                Pehle city chunein…
+                Select city first…
               </div>
             ) : (
               <div className="relative">
@@ -237,12 +237,12 @@ export function LocationStep({
                   onChange({ areaLocality: v, localityId: match?.id ? String(match.id) : "" });
                 }}
                 disabled={value.pincode.length !== 6}
-                disabledText="Pehle PIN code daalein…"
-                placeholder="Apna mohalla likhein"
-                customHint="ye naam save hoga"
+                disabledText="Enter PIN code first…"
+                placeholder="Type your area/mohalla"
+                customHint="this name will be saved"
               />
               <p className="text-[11px] text-neutral-400 mt-1">
-                Apne mohalle ka naam likh dein — list mein ho ya na ho, wahi save hoga.
+                Type your area name — whether it's in the list or not, it will be saved.
               </p>
             </div>
           )}
@@ -252,11 +252,11 @@ export function LocationStep({
         {value.cityName && (pinStatus !== "idle" || pinMessage) && (
           <div className="-mt-1 mb-4">
             {pinStatus === "ok" && !cityMismatch && (
-              <p className="text-[11px] font-medium text-green-700">✓ {pinCity?.city}, {pinCity?.state} — sahi hai</p>
+              <p className="text-[11px] font-medium text-green-700">✓ {pinCity?.city}, {pinCity?.state} — looks good</p>
             )}
             {cityMismatch && (
               <p className="text-[11px] font-medium text-amber-700">
-                Dhyan dein: ye PIN <strong>{pinCity?.city}</strong> ka hai, aapne <strong>{value.cityName}</strong> chuna hai — ek baar check kar lein.
+                Note: this PIN is for <strong>{pinCity?.city}</strong>, but you selected <strong>{value.cityName}</strong> — please verify.
               </p>
             )}
             {pinStatus === "fail" && <p className="text-[11px] font-medium text-amber-700">{pinMessage}</p>}
@@ -270,12 +270,12 @@ export function LocationStep({
             <textarea
               rows={2}
               className={inputCls + " resize-none"}
-              placeholder="e.g. 42, Gandhi Road, Civil Lines — Apollo Hospital ke saamne"
+              placeholder="e.g. 42, Gandhi Road, Civil Lines — opposite Apollo Hospital"
               value={value.address}
               onChange={(e) => onChange({ address: e.target.value })}
             />
             <p className="text-[11px] text-neutral-400 mt-1">
-              Poora address ek hi jagah likh dijiye — mohalla aur landmark bhi isi mein.
+              Write the complete address in one place, including area and landmark.
             </p>
           </div>
         ) : (
@@ -285,7 +285,7 @@ export function LocationStep({
                   locate the PG. This only sharpens it for tenants who are coming
                   to visit, so it must never block a listing. */}
               <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                Makaan / Building <span className="text-neutral-400 font-normal">(optional)</span>
+                House / Building <span className="text-neutral-400 font-normal">(optional)</span>
               </label>
               <input
                 type="text"
@@ -302,7 +302,7 @@ export function LocationStep({
               <input
                 type="text"
                 className={inputCls}
-                placeholder="e.g. Apollo Hospital ke saamne"
+                placeholder="e.g. opposite Apollo Hospital"
                 value={value.landmark}
                 onChange={(e) => onChange({ landmark: e.target.value })}
               />
@@ -315,16 +315,16 @@ export function LocationStep({
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div>
               <h4 className="font-bold text-neutral-800 text-sm flex items-center gap-1.5">
-                <MapPin className="text-primary-500" size={15} /> Location confirm karein
+                <MapPin className="text-primary-500" size={15} /> Confirm location
               </h4>
               <p className="text-[11px] text-neutral-500 mt-0.5">
-                {locationReady ? "Pin galat ho to drag karke sahi kar dein." : "Address bharne ke baad ye button dabayein."}
+                {locationReady ? "Drag the pin to adjust if it's incorrect." : "Click this button after filling the address."}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {locationReady && (
                 <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
-                  <CheckCircle2 size={11} /> Set hai
+                  <CheckCircle2 size={11} /> Set
                 </span>
               )}
               <button
@@ -334,9 +334,9 @@ export function LocationStep({
                 className="bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
               >
                 {geoStatus === "loading" ? (
-                  <><Loader2 size={13} className="animate-spin" /> Dhoondh rahe hain…</>
+                  <><Loader2 size={13} className="animate-spin" /> Searching…</>
                 ) : (
-                  <><MapPin size={13} /> Map par dikhayein</>
+                  <><MapPin size={13} /> Show on map</>
                 )}
               </button>
             </div>
@@ -345,7 +345,7 @@ export function LocationStep({
           {geoStatus === "fail" && (
             <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 text-xs text-amber-800">
               <AlertCircle size={14} className="shrink-0 mt-0.5" />
-              <span>Is address se location nahi mili. Neeche map pe apni jagah par click kar dein.</span>
+              <span>Could not find location from this address. Click on your location on the map below.</span>
             </div>
           )}
 
@@ -366,11 +366,11 @@ export function LocationStep({
                 <AlertCircle size={14} className="shrink-0 mt-0.5" />
               )}
               <span>
-                <strong>Map yahan set hua:</strong> {geoHit.label}
+                <strong>Map set to:</strong> {geoHit.label}
                 {geoHit.precision !== "exact" && (
                   <>
-                    {" "}— ye {geoHit.precision === "city" ? "poore city" : "aapke area"} ka centre hai, aapke PG ki
-                    exact jagah nahi. <strong>Neeche pin ko drag karke apne PG par rakh dein.</strong>
+                    {" "}— this is the center of the {geoHit.precision === "city" ? "entire city" : "area"}, not your PG's
+                    exact location. <strong>Drag the pin below to your PG's location.</strong>
                   </>
                 )}
               </span>
@@ -405,12 +405,12 @@ export function LocationStep({
 
 /** Shared validation so both pages reject the same things with the same words. */
 export function validateLocation(v: LocationValue): string | null {
-  if (!v.stateName.trim()) return "State chunein.";
-  if (!v.cityName.trim()) return "City chunein.";
-  if (v.pincode.length !== 6) return "6-digit PIN code daalein.";
+  if (!v.stateName.trim()) return "Select state.";
+  if (!v.cityName.trim()) return "Select city.";
+  if (v.pincode.length !== 6) return "Enter a 6-digit PIN code.";
   // Street address is deliberately optional — state/city/PIN plus the map pin
   // are enough to place the PG, and requiring it only blocked owners.
   if (!v.latitude || !v.longitude)
-    return "Location set nahi hui — 'Map par dikhayein' dabayein ya map pe pin karein.";
+    return "Location not set — click 'Show on map' or pin it on the map.";
   return null;
 }

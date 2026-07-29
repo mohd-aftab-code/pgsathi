@@ -46,17 +46,17 @@ export function buildRentReminderLink(opts: ReminderOptions): string {
     : "";
 
   const message = [
-    `Namaste ${opts.tenantName} ji 🙏`,
+    `Hello ${opts.tenantName} 🙏`,
     ``,
-    `${opts.propertyName} ki taraf se aapko yaad dilana chahte hain:`,
+    `We would like to remind you on behalf of ${opts.propertyName}:`,
     ``,
     `📅 Month: *${fmtMonth(opts.month)}*`,
     `💰 Rent due: *${fmtINR(opts.amount)}*`,
     opts.dueDay ? `📆 Due date: ${opts.dueDay} ${fmtMonth(opts.month).split(" ")[0]}` : "",
     upiLine,
     ``,
-    `Kripya jald se jald payment kar dein.`,
-    `Shukriya! 🙏`,
+    `Please make the payment as soon as possible.`,
+    `Thank you! 🙏`,
     ``,
     `— ${opts.ownerName}`,
   ]

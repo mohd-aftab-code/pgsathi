@@ -48,7 +48,7 @@ const EmptyState = ({ text }: { text: string }) => (
 
 export function RegistrationsChart({ data }: { data: Point[] }) {
   const t = useChartTheme();
-  if (!data.some((d) => d.registrations > 0)) return <EmptyState text="Abhi koi PG register nahi hua" />;
+  if (!data.some((d) => d.registrations > 0)) return <EmptyState text="No PGs registered yet" />;
 
   return (
     <div className="h-[220px] w-full">
@@ -67,7 +67,7 @@ export function RegistrationsChart({ data }: { data: Point[] }) {
 
 export function EarningsChart({ data }: { data: Point[] }) {
   const t = useChartTheme();
-  if (!data.some((d) => d.earnings > 0)) return <EmptyState text="Abhi koi earning nahi bani" />;
+  if (!data.some((d) => d.earnings > 0)) return <EmptyState text="No earnings yet" />;
 
   return (
     <div className="h-[220px] w-full">

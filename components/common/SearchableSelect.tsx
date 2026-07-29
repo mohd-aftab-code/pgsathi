@@ -17,11 +17,11 @@ export function SearchableSelect({
   options,
   value,
   onChange,
-  placeholder = "Chunein…",
+  placeholder = "Select…",
   disabledText,
   disabled = false,
   allowCustom = true,
-  customHint = "list mein nahi hai — yahi likha rahega",
+  customHint = "Not in list — keeping as typed",
   className = "",
 }: {
   options: string[];
@@ -142,8 +142,8 @@ export function SearchableSelect({
           {filtered.length === 0 && (
             <li className="px-3 py-2 text-sm text-neutral-500">
               {allowCustom
-                ? <>Koi match nahi — <strong>&ldquo;{query.trim()}&rdquo;</strong> hi save hoga</>
-                : "Koi match nahi mila"}
+                ? <>No match found — saving as <strong>&ldquo;{query.trim()}&rdquo;</strong></>
+                : "No match found"}
             </li>
           )}
           {filtered.map((o, i) => (

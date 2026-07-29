@@ -52,8 +52,8 @@ export function PartnerNotificationsFeed({ initial, initialUnread }: { initial: 
         <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 grid place-items-center mx-auto mb-3">
           <Bell className="text-neutral-400" size={22} />
         </div>
-        <p className="font-semibold text-neutral-700 dark:text-neutral-300">Koi notification nahi</p>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">PG approve hone ya earning update par yahan dikhega.</p>
+        <p className="font-semibold text-neutral-700 dark:text-neutral-300">No notifications</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Updates on PG approvals and earnings will appear here.</p>
       </div>
     );
   }
@@ -63,7 +63,7 @@ export function PartnerNotificationsFeed({ initial, initialUnread }: { initial: 
       {unread > 0 && (
         <div className="flex justify-end">
           <button onClick={markAll} className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-sm font-semibold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800">
-            <CheckCheck size={15} /> Sab padha hua mark karein
+            <CheckCheck size={15} /> Mark all as read
           </button>
         </div>
       )}

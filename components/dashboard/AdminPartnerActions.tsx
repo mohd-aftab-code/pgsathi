@@ -12,7 +12,7 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
   async function act(newStatus: string) {
     let reason: string | undefined;
     if (newStatus === "REJECTED") {
-      reason = window.prompt("Reject reason (partner ko dikhega):") ?? undefined;
+      reason = window.prompt("Reject reason (visible to partner):") ?? undefined;
       if (reason === undefined) return;
     }
     setBusy(newStatus);
@@ -26,7 +26,7 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
       if (!d.success) alert(d.message || "Action failed");
       else router.refresh();
     } catch {
-      alert("Kuch gadbad ho gayi");
+      alert("Something went wrong");
     } finally {
       setBusy("");
     }

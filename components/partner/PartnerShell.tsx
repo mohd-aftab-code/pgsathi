@@ -197,7 +197,7 @@ export function PartnerShell({
             {/* Registering a PG is the partner's core action — give it the centre slot. */}
             <Link
               href="/partner/pgs/new"
-              aria-label="Naya PG register karein"
+              aria-label="Register new PG"
               className="flex flex-col items-center justify-center flex-1 h-full gap-1 pb-1 pt-2"
             >
               <div className="w-12 h-12 -mt-5 rounded-2xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/40 ring-4 ring-white dark:ring-neutral-900 active:scale-95 transition-transform">

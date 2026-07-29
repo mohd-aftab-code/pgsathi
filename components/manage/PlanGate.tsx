@@ -22,8 +22,8 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
         PG Manager — Paid Feature
       </h1>
       <p className="mt-3 max-w-md text-neutral-500">
-        Aapka current plan <strong>{currentPlan}</strong> hai. PG Manager dashboard access
-        karne ke liye <strong>Growth</strong> ya <strong>Pro</strong> plan lena hoga.
+        Your current plan is <strong>{currentPlan}</strong>. To access the PG Manager dashboard,
+        you need to upgrade to the <strong>Growth</strong> or <strong>Pro</strong> plan.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 max-w-xl w-full">

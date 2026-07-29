@@ -21,6 +21,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { db } from "@/lib/db";
 import { cycleEndDate, isValidCycle, priceForCycle, type CycleId } from "@/lib/billing";
+import { sendSubscriptionActiveEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
 
     const plan = await db.plan.findUnique({
       where: { slug: planSlug },
-      select: { id: true, price: true, quarterlyPrice: true, halfYearlyPrice: true, yearlyPrice: true },
+      select: { id: true, name: true, price: true, quarterlyPrice: true, halfYearlyPrice: true, yearlyPrice: true },
     });
     if (!plan) {
       console.error("[webhook] unknown plan slug", planSlug);
@@ -131,6 +132,17 @@ export async function POST(req: NextRequest) {
       await createEarningForInvoice(invoiceId);
     } catch (e) {
       console.error("[webhook] partner earning failed (non-fatal):", e);
+    }
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: { name: true, email: true },
+    });
+
+    if (user?.email && plan?.name) {
+      sendSubscriptionActiveEmail(user.email, user.name, plan.name, amount).catch((e) => {
+        console.error("[WEBHOOK_SUBSCRIPTION_EMAIL_ERROR]", e);
+      });
     }
 
     return NextResponse.json({ success: true, recorded: true });

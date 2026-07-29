@@ -5,7 +5,13 @@ import {
   getWelcomeOwnerEmail, 
   getWelcomePartnerEmail, 
   getOwnerInviteEmail,
-  getLeadNotificationEmail
+  getLeadNotificationEmail,
+  getPartnerApplicationReceivedEmail,
+  getPartnerStatusEmail,
+  getListingStatusEmail,
+  getPayoutEmail,
+  getSubscriptionActiveEmail,
+  getSubscriptionExpiryEmail
 } from "./email-templates";
 
 const FROM = process.env.FROM_EMAIL || "hello@pgsathi.in";
@@ -91,5 +97,100 @@ export async function sendOwnerInviteEmail(
     to,
     subject,
     html: getOwnerInviteEmail(name, loginId, tempPass, pgTitle),
+  });
+}
+
+// Send partner application received email
+export async function sendPartnerApplicationReceivedEmail(to: string, name: string) {
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: "Application Received - PGSathi Partner Program",
+    html: getPartnerApplicationReceivedEmail(name),
+  });
+}
+
+// Send partner status update (Approve/Reject/Suspend)
+export async function sendPartnerStatusEmail(
+  to: string,
+  name: string,
+  status: string,
+  rejectReason?: string
+) {
+  const subject = status === "APPROVED" 
+    ? "Welcome to the PGSathi Partner Program! 🎉"
+    : `Your PGSathi Partner Account Status: ${status}`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject,
+    html: getPartnerStatusEmail(name, status, rejectReason),
+  });
+}
+
+// Send listing status update (Approve/Reject)
+export async function sendListingStatusEmail(
+  to: string,
+  name: string,
+  pgTitle: string,
+  status: string,
+  isPartner: boolean = false
+) {
+  const subject = status === "ACTIVE"
+    ? `Your PG "${pgTitle}" is now LIVE! 🎉`
+    : `Update required for "${pgTitle}"`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject,
+    html: getListingStatusEmail(name, pgTitle, status, isPartner),
+  });
+}
+
+
+// Send payout completion email
+export async function sendPayoutEmail(
+  to: string,
+  name: string,
+  amount: number,
+  method: string,
+  reference?: string
+) {
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `Payout Processed: ₹${amount.toLocaleString('en-IN')}`,
+    html: getPayoutEmail(name, amount, method, reference),
+  });
+}
+
+// Send subscription active email
+export async function sendSubscriptionActiveEmail(
+  to: string,
+  name: string,
+  planName: string,
+  amount: number
+) {
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: "Your Subscription is Active! 🚀",
+    html: getSubscriptionActiveEmail(name, planName, amount),
+  });
+}
+
+// Send subscription expiry reminder email
+export async function sendSubscriptionExpiryEmail(
+  to: string,
+  name: string,
+  daysLeft: number
+) {
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `Action Required: Subscription expires in ${daysLeft} day(s)`,
+    html: getSubscriptionExpiryEmail(name, daysLeft),
   });
 }

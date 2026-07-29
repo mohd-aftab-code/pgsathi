@@ -36,16 +36,16 @@ export function CreatePayoutButton({
         body: JSON.stringify({ partnerId, method, reference }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Payout nahi bana"); setBusy(false); return; }
+      if (!d.success) { setError(d.message || "Payout failed"); setBusy(false); return; }
       setOpen(false);
       router.refresh();
-    } catch { setError("Kuch gadbad ho gayi"); } finally { setBusy(false); }
+    } catch { setError("Something went wrong"); } finally { setBusy(false); }
   }
 
   if (count === 0) {
     return (
       <button disabled className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-neutral-100 text-neutral-400 text-sm font-bold cursor-not-allowed">
-        <Wallet size={15} /> Payout karein
+        <Wallet size={15} /> Create Payout
       </button>
     );
   }
@@ -63,7 +63,7 @@ export function CreatePayoutButton({
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setOpen(false)}>
           <div className="w-full max-w-md bg-white rounded-2xl shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Payout record karein</h3>
+              <h3 className="font-bold text-neutral-900">Record Payout</h3>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100"><X size={16} /></button>
             </div>
 
@@ -72,14 +72,14 @@ export function CreatePayoutButton({
 
               {!hasPayoutDetails && (
                 <div className="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">
-                  Is partner ne payout details (UPI/bank) nahi bhare hain. Confirm kar lein ki paisa kahan bhejna hai.
+                  This partner has not provided payout details (UPI/bank). Please confirm where to send the money.
                 </div>
               )}
 
               <div className="rounded-xl bg-neutral-50 border border-neutral-200 px-4 py-3">
                 <div className="text-xs text-neutral-500">Total payout</div>
                 <div className="text-2xl font-extrabold text-neutral-900">₹{amount.toLocaleString("en-IN")}</div>
-                <div className="text-xs text-neutral-500 mt-0.5">{count} approved earning(s) is batch mein</div>
+                <div className="text-xs text-neutral-500 mt-0.5">{count} approved earning(s) in this batch</div>
               </div>
 
               <div>
@@ -98,13 +98,13 @@ export function CreatePayoutButton({
               </div>
 
               <p className="text-[11px] text-neutral-400">
-                Ye record karta hai ki paisa bhej diya gaya. Actual transfer aapko apne bank/UPI se karna hoga.
+                This records that the money has been sent. You must make the actual transfer via your bank/UPI.
               </p>
 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => setOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700">Cancel</button>
                 <button onClick={submit} disabled={busy} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {busy ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Payout confirm karein"}
+                  {busy ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Confirm Payout"}
                 </button>
               </div>
             </div>

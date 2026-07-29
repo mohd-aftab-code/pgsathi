@@ -15,7 +15,7 @@ export function WhatsAppReminderBtn({ phone, tenantName, amount, month, type = "
   const intlPhone = rawPhone?.startsWith("91") ? rawPhone : `91${rawPhone}`;
 
   const message = encodeURIComponent(
-    `Hi ${tenantName}! 👋\n\nYe ek friendly reminder hai ki aapka *${type} for ${month}* abhi tak pending hai.\n\n💰 Amount Due: *₹${amount.toLocaleString("en-IN")}*\n\nPlease jald se jald payment kar dein. Dhanyawad! 🙏\n\n— PGSathi CRM`
+    `Hi ${tenantName}! 👋\n\nThis is a friendly reminder that your *${type} for ${month}* is still pending.\n\n💰 Amount Due: *₹${amount.toLocaleString("en-IN")}*\n\nPlease make the payment as soon as possible. Thank you! 🙏\n\n— PGSathi CRM`
   );
 
   const waUrl = `https://wa.me/${intlPhone}?text=${message}`;

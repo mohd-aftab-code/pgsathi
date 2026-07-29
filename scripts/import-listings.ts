@@ -1,6 +1,6 @@
 /**
  * PgSathi — Bulk Import Script
- * JSON se seedha database mein listings import karo
+ * Import listings directly from JSON to database
  * Run: npx tsx scripts/import-listings.ts
  */
 
@@ -12,7 +12,7 @@ const db = new PrismaClient();
 
 // ─── CONFIG ──────────────────────────────────────────────────
 const JSON_FILE = path.join(process.cwd(), "pg_cleaned_import.json");
-const ADMIN_EMAIL = "aftab@pgsathi.in"; // Admin user jo owner banega
+const ADMIN_EMAIL = "aftab@pgsathi.in"; // Admin user who will become owner
 
 // Default price ranges by city
 const DEFAULT_PRICES: Record<string, { min: number; max: number }> = {
@@ -44,11 +44,11 @@ async function main() {
   const listings: any[] = JSON.parse(raw);
   console.log(`📦 Total records in JSON: ${listings.length}`);
 
-  // 2. Admin user — DB se confirmed id:4
+  // 2. Admin user — confirmed id:4 from DB
   const adminUser = { id: 4, email: "admin@pgsathi.in" };
   console.log(`✅ Admin owner: ${adminUser.email} (id: ${adminUser.id})`);
 
-  // 3. City map — DB se confirmed IDs
+  // 3. City map — confirmed IDs from DB
   const cityMap: Record<string, number> = {
     noida:   9,   // Noida
     delhi:   2,   // Delhi
@@ -100,8 +100,8 @@ async function main() {
           priceMin:      prices.min,
           priceMax:      prices.max,
           avgRating:     pg.rating > 0 ? pg.rating : 0,
-          status:        "PENDING",  // Admin manually approve karega
-          isActive:      false,      // Jab tak approve na ho, hide rahega
+          status:        "PENDING",  // Admin manually approves
+          isActive:      false,      // Kept hidden until approved
           isVerified:    false,
           isFeatured:    false,
           metaTitle:     metaTitle.slice(0, 160),
@@ -163,9 +163,9 @@ async function main() {
   console.log(`📦 Total     : ${listings.length}`);
   console.log("=".repeat(50));
   console.log("\n📋 Next Steps:");
-  console.log("  1. Admin dashboard pe jao: /dashboard/admin/listings");
-  console.log("  2. PENDING listings bulk approve karo");
-  console.log("  3. isActive = true karo taaki public dikhe");
+  console.log("  1. Go to admin dashboard: /dashboard/admin/listings");
+  console.log("  2. Bulk approve PENDING listings");
+  console.log("  3. Set isActive = true to make them public");
 
   await db.$disconnect();
 }
