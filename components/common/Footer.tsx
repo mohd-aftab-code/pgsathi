@@ -84,7 +84,7 @@ export default function Footer() {
           {/* For Partners */}
           <div>
             <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
               For Partners
             </h4>
             <ul className="flex flex-col gap-3">
@@ -108,7 +108,7 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
               Company
             </h4>
             <ul className="flex flex-col gap-3">
@@ -133,7 +133,7 @@ export default function Footer() {
           {/* For Tenants */}
           <div>
             <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
               For Tenants
             </h4>
             <ul className="flex flex-col gap-3">

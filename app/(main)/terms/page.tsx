@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
       {/* Header Section */}
       <div className="bg-primary-900 pt-24 pb-32 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-10"></div>
-        <div className="container-max max-w-4xl mx-auto relative z-10">
+        <div className="container-max relative z-10">
           <div className="flex items-center gap-2 text-primary-300 text-sm font-medium mb-6">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight size={14} />
@@ -29,8 +29,8 @@ export default function TermsOfServicePage() {
       </div>
 
       {/* Content Section */}
-      <div className="container-max max-w-4xl mx-auto px-4 sm:px-6 -mt-20 relative z-20">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100">
+      <div className="container-max px-4 sm:px-6 -mt-20 relative z-20 mb-20">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100 max-w-5xl mx-auto">
           
           <div className="prose prose-lg prose-neutral max-w-none prose-headings:font-bold prose-headings:text-neutral-900 prose-p:text-neutral-600 prose-a:text-primary-600 prose-li:text-neutral-600">
             <p className="lead text-xl text-neutral-500 font-medium mb-10">
@@ -58,6 +58,10 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">3. Property Listings and Payments</h2>
                 <p>Owners are solely responsible for the accuracy of their listings, including pricing, amenities, and availability. Any agreements or rent payments made between tenants and owners are strictly between those two parties. PGSathi is not liable for any financial disputes, refunds, or damages arising from the rental agreement.</p>
+                <ul className="list-disc pl-5 space-y-3 mt-4 text-neutral-600">
+                  <li><strong>Rent Collection:</strong> We provide tools to record rent, but we do not process direct rent transactions between tenants and owners.</li>
+                  <li><strong>Listing Visibility:</strong> We do not guarantee a specific number of leads or tenants. Ranking depends on completeness and premium status.</li>
+                </ul>
               </section>
 
               <section>
@@ -77,7 +81,12 @@ export default function TermsOfServicePage() {
 
               <section>
                 <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">6. Changes to Terms</h2>
-                <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. What constitutes a material change will be determined at our sole discretion. We will notify users of any significant changes.</p>
+                <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. What constitutes a material change will be determined at our sole discretion. We will notify users of any significant changes via email or dashboard notifications.</p>
+              </section>
+
+              <section>
+                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">7. Governing Law & Jurisdiction</h2>
+                <p>These Terms shall be governed and construed in accordance with the laws of India, without regard to its conflict of law provisions. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. Any disputes arising out of these terms shall be subject to the exclusive jurisdiction of the courts located in Delhi, India.</p>
               </section>
             </div>
             

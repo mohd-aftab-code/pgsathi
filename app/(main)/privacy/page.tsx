@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
       {/* Header Section */}
       <div className="bg-primary-900 pt-24 pb-32 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-10"></div>
-        <div className="container-max max-w-4xl mx-auto relative z-10">
+        <div className="container-max relative z-10">
           <div className="flex items-center gap-2 text-primary-300 text-sm font-medium mb-6">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight size={14} />
@@ -29,8 +29,8 @@ export default function PrivacyPolicyPage() {
       </div>
 
       {/* Content Section */}
-      <div className="container-max max-w-4xl mx-auto px-4 sm:px-6 -mt-20 relative z-20">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100">
+      <div className="container-max px-4 sm:px-6 -mt-20 relative z-20 mb-20">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100 max-w-5xl mx-auto">
           
           <div className="prose prose-lg prose-neutral max-w-none prose-headings:font-bold prose-headings:text-neutral-900 prose-p:text-neutral-600 prose-a:text-primary-600 prose-li:text-neutral-600">
             <p className="lead text-xl text-neutral-500 font-medium mb-10">
@@ -58,20 +58,34 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">3. How We Use Your Personal Data</h2>
                 <p>We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
-                <ul>
+                <ul className="list-disc pl-5 space-y-3 mt-4 text-neutral-600">
                   <li>Where we need to perform the contract we are about to enter into or have entered into with you (e.g., connecting tenants with owners).</li>
                   <li>Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.</li>
-                  <li>Where we need to comply with a legal obligation.</li>
+                  <li>Where we need to comply with a legal or regulatory obligation.</li>
+                  <li>To manage our relationship with you which will include notifying you about changes to our terms or privacy policy.</li>
+                  <li>To administer and protect our business and this website (including troubleshooting, data analysis, testing, system maintenance, support, reporting and hosting of data).</li>
+                  <li>To deliver relevant website content and advertisements to you and measure or understand the effectiveness of the advertising we serve to you.</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">4. Data Security</h2>
+                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">4. Disclosures of Your Personal Data</h2>
+                <p>We may have to share your personal data with the parties set out below for the purposes outlined in this policy:</p>
+                <ul className="list-disc pl-5 space-y-3 mt-4 text-neutral-600">
+                  <li><strong>Internal Third Parties:</strong> Other companies in the PGSathi Group acting as joint controllers or processors.</li>
+                  <li><strong>External Third Parties:</strong> Service providers acting as processors based in India who provide IT and system administration services.</li>
+                  <li><strong>Professional Advisers:</strong> Acting as processors or joint controllers including lawyers, bankers, auditors, and insurers.</li>
+                  <li><strong>Regulators and other authorities:</strong> Acting as processors or joint controllers who require reporting of processing activities in certain circumstances.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">5. Data Security</h2>
                 <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorised way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know.</p>
               </section>
 
               <section>
-                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">5. Contact Us & Grievance Officer</h2>
+                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">6. Contact Us & Grievance Officer</h2>
                 <p>If you have any questions about this privacy policy or our privacy practices, please contact us in the following ways:</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

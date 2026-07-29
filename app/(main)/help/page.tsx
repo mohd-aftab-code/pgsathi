@@ -12,7 +12,7 @@ export default function HelpCenterPage() {
       {/* ── Header ── */}
       <section className="bg-primary-900 py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay"></div>
-        <div className="container-max relative z-10">
+        <div className="container-max section-padding relative z-10">
           <h1 className="text-3xl md:text-5xl font-black text-white mb-6">How can we help you?</h1>
           <div className="max-w-2xl mx-auto relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={24} />
@@ -66,7 +66,7 @@ export default function HelpCenterPage() {
 
       {/* ── Contact Section ── */}
       <section className="bg-white border-t border-neutral-200 py-16 text-center">
-        <div className="container-max">
+        <div className="container-max section-padding">
           <h2 className="text-2xl font-bold text-neutral-900 mb-4">Can't find what you're looking for?</h2>
           <p className="text-neutral-600 mb-8 max-w-xl mx-auto">
             Our support team is always here to help. Reach out to us via email or phone.

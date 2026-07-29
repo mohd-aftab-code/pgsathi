@@ -12,7 +12,7 @@ export default function RefundPolicyPage() {
       {/* Header Section */}
       <div className="bg-primary-900 pt-24 pb-32 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-10"></div>
-        <div className="container-max max-w-4xl mx-auto relative z-10">
+        <div className="container-max relative z-10">
           <div className="flex items-center gap-2 text-primary-300 text-sm font-medium mb-6">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight size={14} />
@@ -29,8 +29,8 @@ export default function RefundPolicyPage() {
       </div>
 
       {/* Content Section */}
-      <div className="container-max max-w-4xl mx-auto px-4 sm:px-6 -mt-20 relative z-20">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100">
+      <div className="container-max px-4 sm:px-6 -mt-20 relative z-20 mb-20">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl shadow-neutral-200/50 border border-neutral-100 max-w-5xl mx-auto">
           
           <div className="prose prose-lg prose-neutral max-w-none prose-headings:font-bold prose-headings:text-neutral-900 prose-p:text-neutral-600 prose-a:text-primary-600 prose-li:text-neutral-600">
             <p className="lead text-xl text-neutral-500 font-medium mb-10">
@@ -41,6 +41,10 @@ export default function RefundPolicyPage() {
               <section>
                 <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">1. Token Amount & Booking Cancellations</h2>
                 <p>When you book a visit or reserve a bed/room through PGSathi, the token amount is generally non-refundable unless specified otherwise by the PG Owner. If the PG owner cancels your booking due to unavailability, you are entitled to a full refund of your token amount.</p>
+                <ul className="list-disc pl-5 space-y-3 mt-4 text-neutral-600">
+                  <li><strong>Tenant Cancellation:</strong> If you cancel your booking after paying a token, the PG owner reserves the right to forfeit the token amount as compensation for holding the bed.</li>
+                  <li><strong>Owner Cancellation:</strong> If the owner fails to provide the accommodation as promised, they are liable to refund the token amount in full.</li>
+                </ul>
               </section>
 
               <section>
@@ -59,8 +63,9 @@ export default function RefundPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">4. Failed Transactions</h2>
+                <h2 className="text-2xl border-b border-neutral-100 pb-3 mb-6">4. Failed Transactions & Technical Errors</h2>
                 <p>If a transaction fails but money is deducted from your account, it will automatically be refunded to the original payment method within 5-7 business days by our payment gateway partner.</p>
+                <p className="mt-2 text-sm text-neutral-500">Note: PGSathi does not hold failed transaction funds. They are automatically reversed by the banking network (NPCI/Visa/Mastercard) and your bank.</p>
               </section>
 
               <section>
