@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
- * POST — completes an email-based password reset for Admin/Manager accounts.
+ * POST — completes an email-based password reset for all accounts.
  * See ./send-otp-email/route.ts for how the OTP gets sent.
  */
 export async function POST(req: NextRequest) {

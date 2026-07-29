@@ -13,16 +13,19 @@ import {
   EyeOff,
   User,
   Building2,
+  Handshake,
+  Mail,
   ArrowRight,
   Loader2,
   CheckCircle2,
 } from "lucide-react";
 
-type Role = "TENANT" | "OWNER";
+type Role = "TENANT" | "OWNER" | "PARTNER";
 
 function RegisterContent() {
   const [role, setRole] = useState<Role>("TENANT");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,6 +41,7 @@ function RegisterContent() {
     if (phone.length !== 10) { setError("Please enter a valid 10-digit phone number"); return; }
     if (password.length < 6) { setError("Password must be at least 6 characters long"); return; }
     if (password !== confirmPassword) { setError("Passwords do not match"); return; }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address"); return; }
 
     setLoading(true);
     setError("");
@@ -45,12 +49,20 @@ function RegisterContent() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone, password, role }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone, password, role }),
       });
       const data = await res.json();
 
       if (data.success) {
         setSuccess(true);
+        if (role === "PARTNER") {
+          // Partners require admin approval, don't auto login
+          setTimeout(() => {
+            window.location.href = "/login?partner_registered=true";
+          }, 2000);
+          return;
+        }
+
         // Auto-login
         const loginRes = await signIn("credentials", {
           phone,
@@ -97,7 +109,7 @@ function RegisterContent() {
           ]}
           footer="© 2026 PGSathi. Your data stays private."
         />
-      ) : (
+      ) : role === "OWNER" ? (
         <AuthBrandPanel
           eyebrow="For PG Owners"
           headline="Fill your PG"
@@ -107,6 +119,19 @@ function RegisterContent() {
             { value: "10,000+", label: "PG owners onboard" },
             { value: "0%", label: "Commission on leads" },
             { value: "15 days", label: "Free CRM trial" },
+          ]}
+          footer="© 2026 PGSathi. Your data stays private."
+        />
+      ) : (
+        <AuthBrandPanel
+          eyebrow="For Partners"
+          headline="Earn with"
+          accentWord="PGSathi."
+          subtext="Register PGs and earn on every paid conversion."
+          stats={[
+            { value: "₹500+", label: "Per Conversion" },
+            { value: "Unlimited", label: "Earning Potential" },
+            { value: "Transparent", label: "Payouts" },
           ]}
           footer="© 2026 PGSathi. Your data stays private."
         />
@@ -145,7 +170,7 @@ function RegisterContent() {
             <label className="block text-sm font-semibold text-neutral-700 mb-2">
               I am a...
             </label>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setRole("TENANT")}
@@ -223,6 +248,45 @@ function RegisterContent() {
                   </div>
                 </div>
               </button>
+
+              <button
+                type="button"
+                onClick={() => setRole("PARTNER")}
+                className={`relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                  role === "PARTNER"
+                    ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
+                    : "border-neutral-200 bg-white hover:border-neutral-300"
+                }`}
+              >
+                {role === "PARTNER" && (
+                  <CheckCircle2
+                    size={16}
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 text-blue-500"
+                    fill="currentColor"
+                  />
+                )}
+                <div
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${
+                    role === "PARTNER"
+                      ? "bg-blue-500 text-white"
+                      : "bg-neutral-100 text-neutral-500"
+                  }`}
+                >
+                  <Handshake size={18} className="sm:w-5 sm:h-5" />
+                </div>
+                <div className="text-center">
+                  <div
+                    className={`text-xs sm:text-sm font-bold ${
+                      role === "PARTNER" ? "text-blue-600" : "text-neutral-700"
+                    }`}
+                  >
+                    Partner
+                  </div>
+                  <div className="text-[10px] sm:text-xs text-neutral-400 mt-0.5">
+                    Earn with us
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
 
@@ -259,6 +323,24 @@ function RegisterContent() {
                   placeholder="John Doe"
                   required
                   autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-11 sm:h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  placeholder="you@example.com"
+                  required
                 />
               </div>
             </div>
@@ -381,13 +463,15 @@ function RegisterContent() {
               className={`w-full h-11 sm:h-12 font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2 text-white text-sm sm:text-base ${
                 role === "OWNER"
                   ? "bg-orange-600 hover:bg-orange-700"
+                  : role === "PARTNER"
+                  ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-primary-500 hover:bg-primary-600"
               }`}
             >
               {loading ? (
                 <><Loader2 size={18} className="animate-spin" /> Creating account...</>
               ) : (
-                <><span>Create {role === "OWNER" ? "Owner" : ""} Account</span><ArrowRight size={16} /></>
+                <><span>Create {role === "OWNER" ? "Owner" : role === "PARTNER" ? "Partner" : ""} Account</span><ArrowRight size={16} /></>
               )}
             </button>
           </form>

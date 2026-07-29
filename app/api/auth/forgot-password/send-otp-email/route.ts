@@ -4,8 +4,7 @@ import { sendOtpEmail } from "@/lib/email";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
- * POST — forgot-password OTP for email-login accounts (Admin + Manager).
- * Regular tenant/owner phone-based reset is unaffected — see ./send-otp/route.ts.
+ * POST — forgot-password OTP for email-based reset for all accounts (Owner, Tenant, Partner, Admin, Manager).
  */
 export async function POST(req: NextRequest) {
   try {
@@ -25,17 +24,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Too many OTP requests. Please try again later" }, { status: 429 });
     }
 
-    // Admin accounts live in `User`, Managers live in `PgTeamMember` — check both.
-    const admin = await db.user.findFirst({ where: { email, role: "ADMIN" } });
-    const manager = admin ? null : await db.pgTeamMember.findFirst({ where: { email } });
+    // Check all roles in User, plus Managers in PgTeamMember
+    const user = await db.user.findFirst({ where: { email } });
+    const manager = user ? null : await db.pgTeamMember.findFirst({ where: { email } });
 
     // Always return success even if the email isn't found — don't leak account existence.
-    if (!admin && !manager) {
+    if (!user && !manager) {
       return NextResponse.json({ success: true, message: "If that email is registered, an OTP has been sent" });
     }
 
-    const accountType = admin ? "ADMIN" : "MANAGER";
-    const name = admin ? admin.name : manager!.name;
+    const accountType = user ? "USER" : "MANAGER";
+    const name = user ? user.name : manager!.name;
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date();
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     await db.otpCode.create({
       data: {
-        userId: admin ? admin.id : null,
+        userId: user ? user.id : null,
         email,
         accountType,
         code: otp,

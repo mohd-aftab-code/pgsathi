@@ -1,27 +1,59 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import { 
+  getOtpEmail, 
+  getWelcomeTenantEmail, 
+  getWelcomeOwnerEmail, 
+  getWelcomePartnerEmail, 
+  getOwnerInviteEmail,
+  getLeadNotificationEmail
+} from "./email-templates";
 
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy");
 const FROM = process.env.FROM_EMAIL || "hello@pgsathi.in";
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT || "587"),
+  secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+// Send generic welcome email
+export async function sendWelcomeEmail(to: string, name: string, role: string) {
+  let html = "";
+  let subject = "Welcome to PGSathi!";
+  
+  if (role === "TENANT") {
+    html = getWelcomeTenantEmail(name);
+    subject = "Welcome to PGSathi - Find your perfect PG today!";
+  } else if (role === "OWNER") {
+    html = getWelcomeOwnerEmail(name);
+    subject = "Welcome to PGSathi - Grow your PG business with zero brokerage";
+  } else if (role === "PARTNER") {
+    html = getWelcomePartnerEmail(name);
+    subject = "Welcome to PGSathi Partner Program - Start earning today!";
+  } else {
+    // Fallback if other roles
+    return;
+  }
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject,
+    html,
+  });
+}
 
 // Send OTP email
 export async function sendOtpEmail(to: string, otp: string, name: string) {
-  await resend.emails.send({
+  await transporter.sendMail({
     from: FROM,
     to,
     subject: `${otp} - Your PGSathi OTP`,
-    html: `
-      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2 style="color: #6d28d9;">PGSathi — OTP Verification</h2>
-        <p>Hi ${name},</p>
-        <p>Your one-time password is:</p>
-        <div style="background: #f5f3ff; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
-          <span style="font-size: 36px; font-weight: 800; color: #6d28d9; letter-spacing: 8px;">${otp}</span>
-        </div>
-        <p style="color: #64748b; font-size: 14px;">This OTP expires in 5 minutes. Do not share it with anyone.</p>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-        <p style="color: #94a3b8; font-size: 12px;">PGSathi — Apna PG, Apna Sathi</p>
-      </div>
-    `,
+    html: getOtpEmail(name, otp),
   });
 }
 
@@ -34,27 +66,11 @@ export async function sendLeadNotification(
   pgTitle: string,
   pgSlug: string
 ) {
-  await resend.emails.send({
+  await transporter.sendMail({
     from: FROM,
     to: ownerEmail,
     subject: `New Lead for "${pgTitle}" — PGSathi`,
-    html: `
-      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2 style="color: #6d28d9;">🎉 New Lead Received!</h2>
-        <p>Hi ${ownerName},</p>
-        <p>Someone is interested in your PG listing <strong>"${pgTitle}"</strong>.</p>
-        <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0;">
-          <p style="margin: 0 0 8px;"><strong>Name:</strong> ${tenantName}</p>
-          <p style="margin: 0;"><strong>Phone:</strong> <a href="tel:${tenantPhone}" style="color: #6d28d9;">${tenantPhone}</a></p>
-        </div>
-        <a href="https://wa.me/91${tenantPhone}" style="display: inline-block; background: #25D366; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 16px;">
-          WhatsApp करें
-        </a>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/owner/leads" style="color: #6d28d9;">Dashboard में सभी leads देखें →</a></p>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-        <p style="color: #94a3b8; font-size: 12px;">PGSathi — Apna PG, Apna Sathi</p>
-      </div>
-    `,
+    html: getLeadNotificationEmail(ownerName, tenantName, tenantPhone, pgTitle, pgSlug),
   });
 }
 
@@ -62,36 +78,18 @@ export async function sendLeadNotification(
 export async function sendOwnerInviteEmail(
   to: string,
   name: string,
-  pgTitle: string,
+  pgTitle: string | undefined,
   loginId: string,
   tempPass: string
 ) {
-  await resend.emails.send({
+  const subject = pgTitle 
+    ? `Claim your PG Listing "${pgTitle}" on PGSathi`
+    : `Your PGSathi Owner Account Credentials`;
+
+  await transporter.sendMail({
     from: FROM,
     to,
-    subject: `Claim your PG Listing "${pgTitle}" on PGSathi`,
-    html: `
-      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2 style="color: #6d28d9;">Welcome to PGSathi!</h2>
-        <p>Hi ${name},</p>
-        <p>Your PG <strong>"${pgTitle}"</strong> has been pre-listed on India's fastest growing zero-brokerage platform.</p>
-        <p>You can now log in to your Owner Dashboard to manage photos, pricing, and view tenant leads.</p>
-        
-        <div style="background: #f5f3ff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; margin: 24px 0;">
-          <p style="margin: 0 0 8px; font-size: 14px; color: #475569;">Your Login Credentials:</p>
-          <p style="margin: 0 0 8px;"><strong>Email (Login ID):</strong> ${loginId}</p>
-          <p style="margin: 0;"><strong>Password:</strong> ${tempPass}</p>
-        </div>
-
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/login" style="display: inline-block; background: #6d28d9; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 24px; text-align: center; width: 100%; box-sizing: border-box;">
-          Log In to Dashboard
-        </a>
-        
-        <p style="color: #64748b; font-size: 14px;">For security reasons, we recommend changing your password after your first login.</p>
-        
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-        <p style="color: #94a3b8; font-size: 12px;">PGSathi Support Team<br/>Apna PG, Apna Sathi</p>
-      </div>
-    `,
+    subject,
+    html: getOwnerInviteEmail(name, loginId, tempPass, pgTitle),
   });
 }

@@ -6,6 +6,7 @@ import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
 import { Home, ArrowRight, Lock, CheckCircle, Phone, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 
 type Mode = "PHONE" | "EMAIL";
 
@@ -117,45 +118,38 @@ export default function ForgotPasswordPage() {
   const btnCls = "w-full h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-70 flex justify-center items-center gap-2";
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      {/* Left - Branding */}
-      <div className="hidden md:flex flex-col justify-center w-1/2 bg-primary-950 text-white p-12 lg:p-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}></div>
-        <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2 mb-12 group">
-            <Image
-              src={logoImg}
-              alt="PGSathi Logo"
-              width={160}
-              height={56}
-              priority
-              className="h-14 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform"
-            />
-          </Link>
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
-            Securely reset your password.
-          </h1>
-          <p className="text-primary-200 text-lg">
-            We use secure OTP verification to ensure that only you can access and recover your account.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen flex bg-neutral-50">
+      <AuthBrandPanel
+        eyebrow="Account Recovery"
+        headline="Get back in"
+        accentWord="securely."
+        subtext="Reset your password using OTP sent to your phone or email. Quick, secure, and hassle-free."
+        stats={[
+          { value: "100%", label: "Secure" },
+          { value: "2FA", label: "Enabled" },
+          { value: "24/7", label: "Support" },
+        ]}
+        footer="© 2026 PGSathi. Your data stays private."
+      />
 
       {/* Right - Form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 md:px-12 lg:px-24 relative">
-        <div className="w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:px-10 lg:px-16 relative">
+        {/* Mobile Logo */}
+        <Link
+          href="/"
+          className="lg:hidden flex items-center gap-2.5 mb-8 group"
+        >
+          <Image
+            src={logoImg}
+            alt="PGSathi Logo"
+            width={140}
+            height={48}
+            priority
+            className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform"
+          />
+        </Link>
 
-          {/* Mobile Logo */}
-          <Link href="/" className="flex md:hidden items-center gap-2 mb-8 justify-center group">
-            <Image
-              src={logoImg}
-              alt="PGSathi Logo"
-              width={140}
-              height={48}
-              priority
-              className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform"
-            />
-          </Link>
+        <div className="w-full max-w-[420px]">
 
           {step === "IDENTIFIER" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
@@ -166,7 +160,7 @@ export default function ForgotPasswordPage() {
                 <p className="text-neutral-500 text-sm">
                   {mode === "PHONE"
                     ? "Enter your registered phone number to receive a 6-digit OTP via SMS."
-                    : "Enter the email your account (Admin or Manager) logs in with — we'll send a 6-digit OTP there."}
+                    : "Enter your registered email address — we'll send a 6-digit OTP there."}
                 </p>
               </div>
 
@@ -188,7 +182,7 @@ export default function ForgotPasswordPage() {
                     mode === "EMAIL" ? "bg-white shadow-sm text-primary-700" : "text-neutral-500 hover:text-neutral-700"
                   }`}
                 >
-                  <Mail size={14} /> Email (Admin/Manager)
+                  <Mail size={14} /> Email
                 </button>
               </div>
 

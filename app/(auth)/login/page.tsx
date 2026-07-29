@@ -115,7 +115,7 @@ function LoginContent() {
   };
 
   const tabs: { id: Tab; label: string; icon: React.ElementType; desc: string }[] = [
-    { id: "user", label: "User / Owner", icon: User, desc: "Login with phone number" },
+    { id: "user", label: "Tenant / Owner / Partner", icon: User, desc: "Login with phone number" },
     { id: "manager", label: "Manager / Staff", icon: Building2, desc: "PG staff sub-login" },
   ];
 
@@ -193,7 +193,7 @@ function LoginContent() {
             {tab === "user" && <User size={14} className="text-violet-600 shrink-0" />}
             {tab === "manager" && <Building2 size={14} className="text-violet-600 shrink-0" />}
             <p className="text-xs text-violet-700 font-medium">
-              {tab === "user" && "For tenants & PG owners. Login with your registered phone number."}
+              {tab === "user" && "For tenants, PG owners, and partners. Login with your registered phone number."}
               {tab === "manager" && "For PG staff. Use your manager email provided by your PG owner."}
             </p>
           </div>
@@ -203,6 +203,14 @@ function LoginContent() {
             <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm mb-5 font-medium animate-slide-down">
               <span className="text-lg leading-none mt-0.5">⚠️</span>
               <span>{error}</span>
+            </div>
+          )}
+
+          {/* Partner Registration Success */}
+          {searchParams?.get("partner_registered") === "true" && !error && (
+            <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 text-blue-700 p-3.5 rounded-xl text-sm mb-5 font-medium animate-slide-down">
+              <span className="text-lg leading-none mt-0.5">🎉</span>
+              <span>Partner account created successfully! You can now log in.</span>
             </div>
           )}
 
