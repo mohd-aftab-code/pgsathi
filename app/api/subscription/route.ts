@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
     });
     
     if (userObj?.email && plan?.name) {
-      sendSubscriptionActiveEmail(userObj.email, userObj.name, plan.name, amount).catch((e) => {
+      await sendSubscriptionActiveEmail(userObj.email, userObj.name, plan.name, amount).catch((e) => {
         console.error("[SUBSCRIPTION_ACTIVE_EMAIL_ERROR]", e);
       });
     }

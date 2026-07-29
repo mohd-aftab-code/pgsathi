@@ -130,12 +130,12 @@ export async function POST(req: NextRequest) {
   });
 
   if (owner.email && !owner.email.includes("@pgsathi.in")) {
-    sendOwnerInviteEmail(owner.email, owner.name, undefined, phone, password).catch(e => {
+    await sendOwnerInviteEmail(owner.email, owner.name, undefined, phone, password).catch(e => {
       console.error("[OWNER_INVITE_EMAIL_ERROR]", e);
     });
   }
 
-  sendAdminNewUserNotificationEmail(owner.name, "OWNER (via Partner)", owner.phone || "", owner.email || "").catch(e => {
+  await sendAdminNewUserNotificationEmail(owner.name, "OWNER (via Partner)", owner.phone || "", owner.email || "").catch(e => {
     console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
   });
 

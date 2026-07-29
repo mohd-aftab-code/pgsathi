@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (user?.email && plan?.name) {
-      sendSubscriptionActiveEmail(user.email, user.name, plan.name, amount).catch((e) => {
+      await sendSubscriptionActiveEmail(user.email, user.name, plan.name, amount).catch((e) => {
         console.error("[WEBHOOK_SUBSCRIPTION_EMAIL_ERROR]", e);
       });
     }

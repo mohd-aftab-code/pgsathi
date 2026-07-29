@@ -122,16 +122,16 @@ export async function POST(req: NextRequest) {
     }
 
     if (userRole === "PARTNER") {
-      sendPartnerApplicationReceivedEmail(email.trim().toLowerCase(), name.trim()).catch((e) => {
+      await sendPartnerApplicationReceivedEmail(email.trim().toLowerCase(), name.trim()).catch((e) => {
         console.error("[PARTNER_APP_EMAIL_ERROR]", e);
       });
     } else {
-      sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole).catch((e) => {
+      await sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole).catch((e) => {
         console.error("[WELCOME_EMAIL_ERROR]", e);
       });
     }
 
-    sendAdminNewUserNotificationEmail(name.trim(), userRole, phone, email.trim().toLowerCase()).catch((e) => {
+    await sendAdminNewUserNotificationEmail(name.trim(), userRole, phone, email.trim().toLowerCase()).catch((e) => {
       console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
     });
 

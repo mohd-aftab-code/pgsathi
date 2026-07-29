@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Email Notification
   if (existing.user.email) {
-    sendPartnerStatusEmail(existing.user.email, existing.user.name, status, updated.rejectReason || undefined).catch((e) => {
+    await sendPartnerStatusEmail(existing.user.email, existing.user.name, status, updated.rejectReason || undefined).catch((e) => {
       console.error("[PARTNER_STATUS_EMAIL_ERROR]", e);
     });
   }

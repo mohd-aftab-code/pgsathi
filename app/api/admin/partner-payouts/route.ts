@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (partner.user?.email) {
-    sendPayoutEmail(partner.user.email, partner.user.name, total, method, reference || undefined).catch((e) => {
+    await sendPayoutEmail(partner.user.email, partner.user.name, total, method, reference || undefined).catch((e) => {
       console.error("[PAYOUT_EMAIL_ERROR]", e);
     });
   }

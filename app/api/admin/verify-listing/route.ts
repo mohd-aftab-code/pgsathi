@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     if (approved || rejected) {
       // Email Owner
       if (listing.owner?.email) {
-        sendListingStatusEmail(listing.owner.email, listing.owner.name, listing.title, status, false).catch((e) => {
+        await sendListingStatusEmail(listing.owner.email, listing.owner.name, listing.title, status, false).catch((e) => {
           console.error("[LISTING_STATUS_EMAIL_OWNER_ERROR]", e);
         });
       }
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         }).catch(console.error);
 
         if (listing.partner.user?.email) {
-          sendListingStatusEmail(listing.partner.user.email, listing.partner.user.name, listing.title, status, true).catch((e) => {
+          await sendListingStatusEmail(listing.partner.user.email, listing.partner.user.name, listing.title, status, true).catch((e) => {
             console.error("[LISTING_STATUS_EMAIL_PARTNER_ERROR]", e);
           });
         }

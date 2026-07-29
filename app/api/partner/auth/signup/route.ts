@@ -123,11 +123,11 @@ export async function POST(req: NextRequest) {
       return profile;
     });
 
-    sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
+    await sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
       console.error("[PARTNER_APP_EMAIL_ERROR]", e);
     });
 
-    sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
+    await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
       console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
     });
 
