@@ -71,8 +71,10 @@ export default async function AdminPartnerEarningsPage({
       {earnings.length === 0 ? (
         <div className="bg-white rounded-2xl border border-neutral-200 py-16 text-center text-neutral-500">Is filter mein koi earning nahi.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm overflow-x-auto">
-          <table className="w-full text-sm min-w-[820px]">
+        <>
+        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[820px]">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
                 <th className="px-5 py-3 font-bold">Partner</th>
@@ -101,7 +103,44 @@ export default async function AdminPartnerEarningsPage({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
+        
+        {/* Mobile Cards */}
+        <div className="grid grid-cols-1 gap-2 md:hidden">
+          {earnings.map((e: any) => (
+            <div key={`mob-${e.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <div className="font-bold text-sm text-neutral-900 truncate">{e.partner.user.name}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{e.partner.partnerCode}</div>
+                </div>
+                <div className="shrink-0 flex flex-col items-end gap-1">
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${statusStyle[e.status]}`}>{e.status}</span>
+                  <span className="text-[10px] font-bold text-neutral-900">{inr(e.amount)}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
+                <div className="truncate px-1">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Owner/PG</div>
+                  <div className="text-[10px] font-semibold text-neutral-700 truncate">{e.owner?.name ?? e.listing?.title ?? "—"}</div>
+                </div>
+                <div className="border-l border-neutral-100 truncate px-1">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Plan</div>
+                  <div className="text-[10px] font-semibold text-neutral-700 truncate">{e.planNameSnapshot ?? "—"}</div>
+                </div>
+                <div className="border-l border-neutral-100 truncate px-1">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Date</div>
+                  <div className="text-[10px] font-semibold text-neutral-500 truncate">{fmtDate(e.createdAt)}</div>
+                </div>
+              </div>
+              <div className="mt-0.5">
+                <AdminEarningActions id={e.id} amount={e.amount} status={e.status} />
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
       )}
 
       {/* Pagination */}

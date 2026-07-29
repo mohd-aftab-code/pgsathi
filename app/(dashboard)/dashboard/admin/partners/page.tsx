@@ -68,8 +68,10 @@ export default async function AdminPartnersPage({
       {partners.length === 0 ? (
         <div className="bg-white rounded-2xl border border-neutral-200 py-16 text-center text-neutral-500">Koi partner nahi mila.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm overflow-x-auto">
-          <table className="w-full text-sm min-w-[820px]">
+        <>
+        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[820px]">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
                 <th className="px-5 py-3 font-bold">Partner</th>
@@ -105,7 +107,47 @@ export default async function AdminPartnersPage({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
+        
+        {/* Mobile Cards */}
+        <div className="grid grid-cols-1 gap-2 md:hidden">
+          {partners.map((p) => (
+            <div key={`mob-${p.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-sm text-neutral-900 truncate block">
+                    {p.user.name}
+                  </a>
+                  <div className="text-[10px] text-neutral-500 truncate">{p.user.phone ?? "No phone"} · {p.user.email}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
+                </div>
+                <div className="shrink-0 flex flex-col items-end gap-1">
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${statusStyle[p.status]}`}>{p.status}</span>
+                  <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded">{TYPE_LABEL[p.type] ?? p.type}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
+                <div>
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Owners</div>
+                  <div className="text-xs font-bold text-neutral-700">{p._count.owners}</div>
+                </div>
+                <div className="border-l border-neutral-100">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
+                  <div className="text-xs font-bold text-neutral-700">{p._count.listings}</div>
+                </div>
+                <div className="border-l border-neutral-100">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Earnings</div>
+                  <div className="text-xs font-bold text-neutral-700">{p._count.earnings}</div>
+                </div>
+              </div>
+              <div className="mt-0.5">
+                <AdminPartnerActions id={p.id} status={p.status} />
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
       )}
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, Ban, RotateCcw, Loader2 } from "lucide-react";
+import { Check, X, Ban, RotateCcw, Loader2, Trash2 } from "lucide-react";
 
 /** Approve / reject / suspend / reactivate buttons for one partner row. */
 export function AdminPartnerActions({ id, status }: { id: number; status: string }) {
@@ -10,6 +10,10 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
   const [busy, setBusy] = useState("");
 
   async function act(newStatus: string) {
+    if (newStatus === "DELETE") {
+      if (!window.confirm("Kaya aap waqayi is partner ko delete karna chahte hain? Yeh undo nahi ho sakta.")) return;
+    }
+
     let reason: string | undefined;
     if (newStatus === "REJECTED") {
       reason = window.prompt("Reject reason (visible to partner):") ?? undefined;
@@ -17,10 +21,11 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
     }
     setBusy(newStatus);
     try {
+      const isDelete = newStatus === "DELETE";
       const res = await fetch(`/api/admin/partners/${id}`, {
-        method: "PATCH",
+        method: isDelete ? "DELETE" : "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus, reason }),
+        body: isDelete ? undefined : JSON.stringify({ status: newStatus, reason }),
       });
       const d = await res.json();
       if (!d.success) alert(d.message || "Action failed");
@@ -48,6 +53,7 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
       {status === "PENDING" && <Btn s="REJECTED" label="Reject" Icon={X} cls="bg-red-50 text-red-600 hover:bg-red-100" />}
       {status === "APPROVED" && <Btn s="SUSPENDED" label="Suspend" Icon={Ban} cls="bg-amber-50 text-amber-700 hover:bg-amber-100" />}
       {status === "SUSPENDED" && <Btn s="APPROVED" label="Reactivate" Icon={RotateCcw} cls="bg-blue-50 text-blue-700 hover:bg-blue-100" />}
+      <Btn s="DELETE" label="Delete" Icon={Trash2} cls="bg-red-50 text-red-600 hover:bg-red-100" />
     </div>
   );
 }

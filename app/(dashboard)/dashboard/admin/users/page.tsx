@@ -248,81 +248,81 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+        <div className="grid grid-cols-1 gap-2 p-3 md:hidden">
           {data.owners.map((o: any) => (
-            <div key={`mob-${o.id}`} className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm flex flex-col gap-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="font-bold text-neutral-900">{o.name}</div>
-                  <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
+            <div key={`mob-${o.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <div className="font-bold text-sm text-neutral-900 truncate">{o.name}</div>
+                  <div className="text-[10px] text-neutral-500 truncate">{o.phone || "No phone"} · {o.email}</div>
                   {o.partner && (
                     <a
                       href={`/dashboard/admin/partners/${o.partner.id}`}
-                      className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 tracking-wide"
+                      className="inline-block mt-0.5 text-[9px] font-bold px-1 py-0.5 rounded bg-violet-100 text-violet-700 tracking-wide"
                     >
                       Partner · {o.partner.partnerCode}
                     </a>
                   )}
                 </div>
-                <div>
+                <div className="shrink-0">
                   {o.status === "FREE_TRIAL" && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800">
                       Trial
                     </span>
                   )}
                   {o.status === "PREMIUM" && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                      Premium
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">
+                      Pro
                     </span>
                   )}
                   {o.status === "EXPIRED" && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-800">
                       Expired
                     </span>
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-2 py-2 border-y border-neutral-50 text-center">
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
                 <div>
-                  <div className="text-[10px] text-neutral-400 font-bold uppercase">PGs</div>
-                  <div className="font-semibold text-neutral-700">{o.pgCount}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
+                  <div className="text-xs font-bold text-neutral-700">{o.pgCount}</div>
                 </div>
                 <div className="border-l border-neutral-100">
-                  <div className="text-[10px] text-neutral-400 font-bold uppercase">Tenants</div>
-                  <div className="font-semibold text-neutral-700">{o.tenantCount}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Tenants</div>
+                  <div className="text-xs font-bold text-neutral-700">{o.tenantCount}</div>
                 </div>
                 <div className="border-l border-neutral-100">
-                  <div className="text-[10px] text-neutral-400 font-bold uppercase">Leads</div>
-                  <div className="font-semibold text-neutral-700">{o.leadCount}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Leads</div>
+                  <div className="text-xs font-bold text-neutral-700">{o.leadCount}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-1.5 mt-0.5">
                 <button 
                   onClick={() => handleImpersonate(o.id, o.name)}
-                  className="cursor-pointer flex-1 text-xs font-bold px-2 py-2 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition text-center"
+                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-orange-100 text-orange-700 hover:bg-orange-200 transition text-center"
                 >
-                  Login As
+                  Login
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition text-center"
+                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition text-center"
                 >
-                  +7D Trial
+                  +7D
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "activate_plan")} 
-                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition text-center"
+                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition text-center"
                 >
                   Pro
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "delete")} 
-                  className="cursor-pointer flex-1 text-xs font-semibold px-2 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition text-center"
+                  className="cursor-pointer flex-1 text-[10px] font-bold px-1.5 py-1.5 rounded bg-red-100 text-red-700 hover:bg-red-200 transition text-center"
                 >
-                  Delete
+                  Del
                 </button>
               </div>
             </div>

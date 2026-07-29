@@ -73,3 +73,38 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   return NextResponse.json({ success: true, message: `Partner ${status.toLowerCase()} ho gaya` });
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const admin = await getAdmin();
+  if (!admin) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
+
+  if (!(await can("ADMIN", PERMISSIONS.PARTNER_APPROVE))) {
+    return NextResponse.json({ success: false, message: "Permission denied" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const partnerId = parseInt(id);
+  if (Number.isNaN(partnerId)) return NextResponse.json({ success: false, message: "Invalid id" }, { status: 400 });
+
+  const existing = await db.partnerProfile.findUnique({
+    where: { id: partnerId },
+    select: { id: true, userId: true },
+  });
+  if (!existing) return NextResponse.json({ success: false, message: "Partner nahi mila" }, { status: 404 });
+
+  await db.user.delete({
+    where: { id: existing.userId },
+  });
+
+  await adminAudit({
+    adminId: admin.id,
+    actor: admin.name,
+    action: `partner.deleted`,
+    entity: "PartnerProfile",
+    entityId: partnerId,
+    before: { id: partnerId },
+    after: null,
+  });
+
+  return NextResponse.json({ success: true, message: "Partner delete ho gaya" });
+}

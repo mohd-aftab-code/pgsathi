@@ -201,7 +201,8 @@ export default function AdminCitiesPage() {
           <span className="text-sm">Loading cities...</span>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-sm">
+        <>
+        <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -331,6 +332,124 @@ export default function AdminCitiesPage() {
             </table>
           </div>
         </div>
+
+        {/* Mobile Cards */}
+        <div className="grid grid-cols-1 gap-2 md:hidden">
+          {filtered.map((city) => (
+            <div key={`mob-${city.id}`} className={`bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2 ${!city.isActive ? "opacity-60" : ""}`}>
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0 w-full">
+                  {editingId === city.id ? (
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <input
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        placeholder="City Name"
+                        className="w-full px-2 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                      />
+                      <input
+                        value={editState}
+                        onChange={(e) => setEditState(e.target.value)}
+                        placeholder="State"
+                        className="w-full px-2 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                      />
+                      <input
+                        type="number"
+                        value={editPriority}
+                        onChange={(e) => setEditPriority(e.target.value)}
+                        placeholder="Priority"
+                        className="w-full px-2 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="font-bold text-sm text-neutral-900 truncate">{city.name}</div>
+                      <div className="text-[10px] text-neutral-500 truncate">{city.state}</div>
+                      <div className="text-[9px] text-neutral-400 font-mono mt-0.5 truncate">{city.slug}</div>
+                    </>
+                  )}
+                </div>
+                {!editingId && (
+                  <div className="shrink-0 flex flex-col items-end gap-1">
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                      city.isActive ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-500"
+                    }`}>
+                      {city.isActive ? "Active" : "Inactive"}
+                    </span>
+                    <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded">Pri: {city.priority}</span>
+                  </div>
+                )}
+              </div>
+              
+              {!editingId && (
+                <div className="grid grid-cols-2 gap-1 py-1.5 border-y border-neutral-50 text-center">
+                  <div className="truncate px-1">
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
+                    <div className="text-[10px] font-bold text-violet-700 truncate">{city._count.listings}</div>
+                  </div>
+                  <div className="border-l border-neutral-100 truncate px-1">
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase">Localities</div>
+                    <div className="text-[10px] font-bold text-neutral-700 truncate">{city._count.localities}</div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex justify-end gap-1.5 mt-0.5">
+                {editingId === city.id ? (
+                  <>
+                    <button
+                      onClick={() => saveEdit(city.id)}
+                      disabled={processing === city.id}
+                      className="flex-1 flex items-center justify-center p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 rounded-lg transition-colors"
+                    >
+                      {processing === city.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="flex-1 flex items-center justify-center p-1.5 bg-neutral-50 text-neutral-500 hover:bg-neutral-100 border border-neutral-200 rounded-lg transition-colors"
+                    >
+                      <X size={13} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditingId(city.id);
+                        setEditName(city.name);
+                        setEditState(city.state);
+                        setEditPriority(String(city.priority));
+                      }}
+                      className="flex-1 flex items-center justify-center p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 rounded-lg transition-colors"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => toggle(city.id)}
+                      disabled={processing === city.id}
+                      className={`flex-1 flex items-center justify-center p-1.5 rounded-lg border transition-colors ${
+                        city.isActive
+                          ? "bg-red-50 text-red-600 hover:bg-red-100 border-red-100"
+                          : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-100"
+                      }`}
+                    >
+                      {processing === city.id
+                        ? <Loader2 size={13} className="animate-spin" />
+                        : city.isActive ? <PowerOff size={13} /> : <Power size={13} />
+                      }
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="text-center py-10 text-neutral-400 text-sm bg-white rounded-xl border border-neutral-100">
+              {search ? `No cities matching "${search}"` : "No cities yet."}
+            </div>
+          )}
+        </div>
+        </>
       )}
     </div>
   );

@@ -108,8 +108,9 @@ export default async function AdminAuditLogsPage({
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm overflow-x-auto">
-            <table className="w-full text-sm min-w-[820px]">
+          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[820px]">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
                   <th className="px-5 py-3 font-bold">When</th>
@@ -143,6 +144,42 @@ export default async function AdminAuditLogsPage({
                 ))}
               </tbody>
             </table>
+          </div>
+          </div>
+          
+          {/* Mobile Cards */}
+          <div className="grid grid-cols-1 gap-2 md:hidden">
+            {logs.map((l) => (
+              <div key={`mob-${l.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm text-neutral-900 truncate">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</div>
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase mt-0.5">{fmtDateTime(l.createdAt)}</div>
+                  </div>
+                  <div className="shrink-0">
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${actionStyle(l.action)}`}>
+                      {ACTION_LABEL[l.action] ?? l.action}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="bg-neutral-50 rounded-lg p-2 flex flex-col gap-1 border border-neutral-100">
+                  <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest border-b border-neutral-200 pb-1 mb-1">
+                    {l.entity ? `${l.entity}${l.entityId ? ` #${l.entityId}` : ""}` : "Entity"}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-start gap-1">
+                      <span className="text-[9px] font-bold text-neutral-400 shrink-0 w-8">BEFORE</span>
+                      <Snapshot data={l.before} tone="before" />
+                    </div>
+                    <div className="flex items-start gap-1">
+                      <span className="text-[9px] font-bold text-neutral-400 shrink-0 w-8">AFTER</span>
+                      <Snapshot data={l.after} tone="after" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {totalPages > 1 && (

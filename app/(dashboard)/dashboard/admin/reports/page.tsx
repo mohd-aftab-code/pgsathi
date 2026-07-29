@@ -308,7 +308,7 @@ export default async function AdminReportsPage() {
             Manage Cities →
           </Link>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wider text-neutral-400 bg-neutral-50 border-b border-neutral-100">
@@ -348,6 +348,41 @@ export default async function AdminReportsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards for Top Cities */}
+        <div className="grid grid-cols-1 gap-0 divide-y divide-neutral-100 md:hidden">
+          {cityCounts.map((city, i) => (
+            <div key={city.name} className="p-3 flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-neutral-400">#{i + 1}</span>
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900">{city.name}</div>
+                    <div className="text-[10px] text-neutral-500">{city.state}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs Listed</div>
+                  <div className="text-sm font-black text-violet-700 leading-none mt-0.5">{city._count.listings}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-violet-500 rounded-full"
+                    style={{ width: `${activeListings > 0 ? (city._count.listings / (cityCounts[0]._count.listings || 1)) * 100 : 0}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-neutral-400 font-bold">
+                  {totalListings > 0 ? Math.round((city._count.listings / totalListings) * 100) : 0}% of total
+                </span>
+              </div>
+            </div>
+          ))}
+          {cityCounts.length === 0 && (
+            <div className="text-center py-8 text-neutral-400 text-sm">No cities found.</div>
+          )}
         </div>
       </div>
 
