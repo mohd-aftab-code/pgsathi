@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (!owner.email.includes("@pgsathi.in")) {
-    sendOwnerInviteEmail(owner.email, owner.name, undefined, owner.email, password).catch(e => {
+    sendOwnerInviteEmail(owner.email, owner.name, undefined, phone, password).catch(e => {
       console.error("[OWNER_INVITE_EMAIL_ERROR]", e);
     });
   }
