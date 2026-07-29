@@ -12,8 +12,9 @@ export default function SoftwareShowcase() {
               <Building size={16} />
               PGSathi Business
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-neutral-900 mb-6 leading-tight">
-              Powerful <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">Cloud CRM</span> for PG Owners
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]">
+              Powerful Cloud CRM <br />
+              for <span className="text-primary-600">PG Owners.</span>
             </h2>
             <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
               Managing a PG shouldn't mean drowning in Excel sheets and WhatsApp messages. We built the ultimate software to digitize your operations and increase your profit margins.

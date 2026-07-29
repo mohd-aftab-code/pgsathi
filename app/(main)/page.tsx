@@ -87,7 +87,7 @@ export default function Home() {
                 For PG Owners
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold mb-5 text-white tracking-tight leading-[1.15] text-balance">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-5 text-white tracking-tight leading-[1.1]">
                 Are you a PG Owner? List on PGSathi.
               </h2>
               <p className="text-primary-200/70 text-base md:text-lg mb-9 max-w-xl leading-relaxed">

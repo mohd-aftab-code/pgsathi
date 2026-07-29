@@ -27,7 +27,7 @@ export default function HowItWorks() {
   return (
     <section className="py-20 bg-white border-t border-neutral-100">
       <div className="container-max section-padding">
-        <h2 className="section-title mb-4 text-left">How PGSathi Works</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 tracking-tight">How PGSathi Works</h2>
         <p className="section-subtitle mb-16 max-w-2xl text-left">
           Finding your perfect PG is now easier than ever. Follow these simple steps to move into your new home.
         </p>

@@ -63,7 +63,7 @@ export default async function FeaturedListings() {
       <div className="container-max section-padding">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <h2 className="section-title mb-2">{isFeatured ? "Featured PGs" : "Latest PGs"}</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-2 tracking-tight">{isFeatured ? "Featured PGs" : "Latest PGs"}</h2>
             <p className="section-subtitle mb-0">
               {isFeatured ? "Handpicked top-rated PGs across India." : "Freshly listed PGs — be the first to enquire."}
             </p>

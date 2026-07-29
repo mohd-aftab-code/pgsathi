@@ -39,7 +39,7 @@ export default function TrustSection() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary-100 text-primary-700 text-sm font-bold tracking-wide uppercase mb-4">
             Why Choose PGSathi?
           </span>
-          <h2 className="section-title mb-4 text-left">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 tracking-tight">
             Finding a PG is Now <span className="text-primary-600">Smart and Free</span>
           </h2>
           <p className="section-subtitle max-w-2xl text-left">

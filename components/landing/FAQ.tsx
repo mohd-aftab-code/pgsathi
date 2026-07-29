@@ -42,7 +42,7 @@ export default function FAQ() {
             <div className="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-5">
               <MessageCircleQuestion size={22} />
             </div>
-            <h2 className="section-title mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 tracking-tight">
               Common Questions
             </h2>
             <p className="text-neutral-500 leading-relaxed mb-6 max-w-sm">

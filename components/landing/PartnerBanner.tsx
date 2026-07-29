@@ -13,7 +13,7 @@ export default function PartnerBanner() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 text-white text-sm font-bold rounded-full mb-4 border border-white/30 backdrop-blur-sm">
               <Handshake size={16} /> Partner Program
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight leading-[1.1]">
               Know a PG Owner? <br className="hidden md:block" />
               Refer them and Earn Money!
             </h2>

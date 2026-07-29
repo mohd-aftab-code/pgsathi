@@ -38,7 +38,7 @@ export default async function CityGrid() {
       <div className="container-max section-padding">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <h2 className="section-title mb-2">Explore Popular Cities</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-2 tracking-tight">Explore Popular Cities</h2>
             <p className="section-subtitle mb-0">Find the best PGs in India's top education and IT hubs.</p>
           </div>
           <Link href="/search" className="btn-ghost flex items-center gap-2 group whitespace-nowrap">
