@@ -15,24 +15,68 @@ export default function PartnerProgramPage() {
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary-500/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/3"></div>
         
-        <div className="container-max section-padding relative z-10 text-center">
-          <div className="max-w-4xl mx-auto">
-            <span className="inline-block py-1.5 px-4 rounded-full bg-emerald-50 text-emerald-700 font-bold text-sm mb-6 border border-emerald-100 uppercase tracking-widest">
-              Refer & Earn Unlimited
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]" style={{ textWrap: "balance" }}>
-              Become a <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">PGSathi Partner</span> & Start Earning Today
-            </h1>
-            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl mx-auto mb-10">
-              Are you a broker, student, or freelancer? Help PG owners digitize their business with our Cloud CRM and earn high commissions for every successful onboarding.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/register" className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25">
-                Join Now For Free <ArrowRight size={18} />
-              </Link>
-              <Link href="#how-it-works" className="bg-white border-2 border-neutral-200 text-neutral-800 hover:border-emerald-500 hover:text-emerald-700 px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto text-center">
-                Learn How It Works
-              </Link>
+        <div className="container-max section-padding relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            {/* Left Content */}
+            <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+              <span className="inline-block py-1.5 px-4 rounded-full bg-emerald-50 text-emerald-700 font-bold text-sm mb-6 border border-emerald-100 uppercase tracking-widest">
+                Refer & Earn Unlimited
+              </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]" style={{ textWrap: "balance" }}>
+                Become a <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">PGSathi Partner</span> & Start Earning Today
+              </h1>
+              <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10">
+                Are you a broker, student, or freelancer? Help PG owners digitize their business with our Cloud CRM and earn high commissions for every successful onboarding.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <Link href="/register" className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25">
+                  Join Now For Free <ArrowRight size={18} />
+                </Link>
+                <Link href="#how-it-works" className="bg-white border-2 border-neutral-200 text-neutral-800 hover:border-emerald-500 hover:text-emerald-700 px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto text-center">
+                  Learn How It Works
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Graphic */}
+            <div className="relative hidden md:block">
+              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-teal-50 rounded-full blur-3xl opacity-50 transform scale-110"></div>
+              <div className="relative bg-white border border-neutral-100 rounded-3xl shadow-2xl p-8 max-w-md mx-auto transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-neutral-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
+                      <Wallet size={24} />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-neutral-400 uppercase tracking-wider">Total Earnings</div>
+                      <div className="text-3xl font-black text-neutral-900">₹45,500</div>
+                    </div>
+                  </div>
+                  <TrendingUp className="text-emerald-500" size={32} />
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-sm font-bold text-neutral-900 mb-2">Recent Payouts</div>
+                  {[
+                    { name: "Rahul PG Referral", amount: "+₹5,000", date: "Today, 10:30 AM" },
+                    { name: "Sunrise Hostel", amount: "+₹2,500", date: "Yesterday, 2:15 PM" },
+                    { name: "Elite Stays Onboarding", amount: "+₹8,000", date: "Jun 20, 11:00 AM" }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-emerald-50/50 transition-colors border border-neutral-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-400">
+                          <CheckCircle2 size={20} className="text-emerald-500" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-neutral-900 text-sm">{item.name}</div>
+                          <div className="text-xs text-neutral-500">{item.date}</div>
+                        </div>
+                      </div>
+                      <div className="font-black text-emerald-600">{item.amount}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
