@@ -58,7 +58,7 @@ export default function PGManagementSoftwarePage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             
             {/* Left Content */}
-            <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+            <div className="max-w-2xl mx-auto lg:mx-0 text-left">
               <span className="inline-block py-1.5 px-4 rounded-full bg-primary-50 text-primary-700 font-bold text-sm mb-6 border border-primary-100 uppercase tracking-widest">
                 India's #1 PG Cloud CRM
               </span>
@@ -68,7 +68,7 @@ export default function PGManagementSoftwarePage() {
               <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10">
                 Stop using pen and paper. Manage tenants, collect rent, automate billing, and track expenses effortlessly from your smartphone or laptop with zero technical knowledge.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start lg:items-center justify-start gap-4">
                 <Link href="/dashboard/owner/listings/new" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto text-center flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25">
                   Start Free Trial <ArrowRight size={18} />
                 </Link>
@@ -127,9 +127,9 @@ export default function PGManagementSoftwarePage() {
 
       {/* ── Features ── */}
       <section className="container-max section-padding py-16 md:py-24">
-        <div className="text-center mb-16">
+        <div className="text-left mb-16 max-w-2xl">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">Everything you need to run your PG</h2>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">Our software is designed specifically for Indian PG owners, Hostels, and Co-living spaces.</p>
+          <p className="text-lg text-neutral-600">Our software is designed specifically for Indian PG owners, Hostels, and Co-living spaces.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -185,9 +185,9 @@ export default function PGManagementSoftwarePage() {
       {/* ── FAQ Section ── */}
       <section className="bg-white py-16 md:py-24 border-t border-neutral-200">
         <div className="container-max section-padding">
-          <div className="text-center mb-12">
+          <div className="text-left mb-12 max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">Everything you need to know about our PG Management Software.</p>
+            <p className="text-lg text-neutral-600">Everything you need to know about our PG Management Software.</p>
           </div>
           
           <div className="max-w-3xl mx-auto space-y-4">
@@ -207,11 +207,11 @@ export default function PGManagementSoftwarePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-neutral-900 py-20 text-center relative overflow-hidden">
+      <section className="bg-neutral-900 py-20 relative overflow-hidden text-left md:text-center">
         <div className="container-max relative z-10 px-4">
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Ready to digitize your PG?</h2>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-10">Join thousands of PG owners across India who are saving time and increasing profits with PGSathi.</p>
-          <Link href="/dashboard/owner/listings/new" className="inline-block bg-primary-500 hover:bg-primary-600 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-primary-500/20">
+          <p className="text-xl text-neutral-400 max-w-2xl md:mx-auto mb-10">Join thousands of PG owners across India who are saving time and increasing profits with PGSathi.</p>
+          <Link href="/dashboard/owner/listings/new" className="inline-block bg-primary-500 hover:bg-primary-600 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-primary-500/20 w-full sm:w-auto text-center">
             Create Your Free Account Now
           </Link>
         </div>
