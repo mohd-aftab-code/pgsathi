@@ -30,10 +30,10 @@ export default function Footer() {
             </p>
             
             <div className="flex flex-col gap-3 mt-2">
-              <a href="mailto:pgsathi.support@gmail.com" className="flex items-center gap-3 text-slate-300 hover:text-white text-sm transition-colors">
+              <Link href="/contact" className="flex items-center gap-3 text-slate-300 hover:text-white text-sm transition-colors">
                 <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center"><Mail size={14} /></div>
-                pgsathi.support@gmail.com
-              </a>
+                Contact Support
+              </Link>
               <a href="tel:+919696110243" className="flex items-center gap-3 text-slate-300 hover:text-white text-sm transition-colors">
                 <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center"><Phone size={14} /></div>
                 +91 9696110243

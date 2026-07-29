@@ -23,13 +23,13 @@ const FAQ_SCHEMA = {
 
 export const metadata = {
   title: "Verified PGs & Hostels in India | PGSathi",
-  description: "PGSathi is India's most trusted platform to find 100% verified Boys, Girls, and Co-ed PGs. PG Owners can list their properties, generate verified leads, and manage their business efficiently.",
+  description: "PGSathi: India's trusted platform to find verified PGs. Owners can list properties, get verified leads, and use our free PG management software.",
   alternates: {
     canonical: "https://pgsathi.in/",
   },
   openGraph: {
     title: "Verified PGs & Hostels in India | PGSathi",
-    description: "Find 100% verified PGs or list your property to generate direct tenant leads. Complete PG discovery and management platform.",
+    description: "Find 100% verified PGs or list your property to generate direct tenant leads. Complete PG discovery and PG management software.",
     url: "https://pgsathi.in/",
   },
 };
@@ -81,7 +81,7 @@ export default function Home() {
                 For PG Owners
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold mb-5 text-white tracking-tight leading-[1.15]" style={{ textWrap: "balance" }}>
+              <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold mb-5 text-white tracking-tight leading-[1.15] text-balance">
                 Are you a PG Owner? List on PGSathi.
               </h2>
               <p className="text-primary-200/70 text-base md:text-lg mb-9 max-w-xl leading-relaxed">

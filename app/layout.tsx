@@ -28,11 +28,11 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi — Verified PGs & Complete PG Management Platform",
+    default: "PGSathi — Verified PGs & Complete PG Management Software",
     template: "%s | PGSathi",
   },
   description:
-    "India's #1 verified platform for finding the best PGs, hostels, and rooms for rent. For PG Owners: Generate direct verified leads and manage your PG business with our powerful CRM.",
+    "Find the best PGs & hostels across India. PG Owners can generate verified leads and manage their business with our powerful PG management software.",
   alternates: {
     canonical: "https://pgsathi.in",
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi — Verified PGs & Complete PG Management Platform",
+    title: "PGSathi — Verified PGs & Complete PG Management Software",
     description:
       "Find 100% verified premium PGs in India. PG Owners can list for free, get direct WhatsApp leads, and manage their PG properties easily.",
     images: [
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PGSathi — Verified PGs & Complete PG Management",
+        alt: "PGSathi — Verified PGs & Complete PG Management Software",
       },
     ],
   },

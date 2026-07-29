@@ -1,0 +1,23 @@
+# PGSathi - Verified PGs & PG Management Software
+
+PGSathi is India's leading platform for finding Paying Guest (PG) accommodations, hostels, and rooms for rent, as well as providing powerful PG Management Software for owners. 
+
+## For Tenants
+- Search for 100% verified Boys, Girls, and Co-ed PGs across India.
+- Zero brokerage and direct contact with PG owners.
+- Verified photos, amenities, and location details.
+
+## For PG Owners & Managers
+- Free property listing.
+- Direct tenant leads via WhatsApp.
+- Powerful dashboard to manage rent, tenants, inventory, and complaints.
+- Zero commission on leads.
+
+## Key Features
+- Geo-location based PG search.
+- Advanced filtering by budget, sharing type, and amenities.
+- CRM for PG owners with analytics and automated rent reminders.
+- Partner program for affiliates to earn by onboarding PGs.
+
+Website: https://pgsathi.in
+Contact: pgsathi.support@gmail.com
