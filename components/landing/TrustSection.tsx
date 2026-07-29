@@ -35,14 +35,14 @@ export default function TrustSection() {
   return (
     <section className="py-24 bg-neutral-50 border-t border-neutral-100">
       <div className="container-max section-padding">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="max-w-3xl mb-16 text-left">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary-100 text-primary-700 text-sm font-bold tracking-wide uppercase mb-4">
             Why Choose PGSathi?
           </span>
-          <h2 className="section-title mb-4">
+          <h2 className="section-title mb-4 text-left">
             Finding a PG is Now <span className="text-primary-600">Smart and Free</span>
           </h2>
-          <p className="section-subtitle mx-auto max-w-2xl">
+          <p className="section-subtitle max-w-2xl text-left">
             Forget about brokers. PGSathi connects you directly with verified PG owners. Safe, secure, and hassle-free.
           </p>
         </div>

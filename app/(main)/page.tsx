@@ -5,6 +5,8 @@ import TrustSection from "@/components/landing/TrustSection";
 import FeaturedListings from "@/components/landing/FeaturedListings";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
+import SoftwareShowcase from "@/components/landing/SoftwareShowcase";
+import PartnerBanner from "@/components/landing/PartnerBanner";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
@@ -69,6 +71,10 @@ export default function Home() {
 
       <Testimonials />
       <FAQ />
+      
+      {/* ── Partner & Owner Sections ── */}
+      <PartnerBanner />
+      <SoftwareShowcase />
 
       {/* CTA Section for Owners */}
       <section className="py-20 md:py-24 bg-primary-950 text-white">
