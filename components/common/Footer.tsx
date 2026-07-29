@@ -12,7 +12,7 @@ export default function Footer() {
     <footer className="bg-[#0f172a] text-slate-400 border-t border-slate-800">
       {/* Main Footer */}
       <div className="container-max section-padding py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8">
           
           {/* Brand & Socials */}
           <div className="lg:col-span-2 flex flex-col gap-6 pr-0 lg:pr-8">
@@ -89,7 +89,7 @@ export default function Footer() {
             </h4>
             <ul className="flex flex-col gap-3">
               {[
-                { label: "Join Partner Program", href: "/register", highlight: true },
+                { label: "Join Partner Program", href: "/partner-program", highlight: true },
                 { label: "Partner Login", href: "/login" },
                 { label: "Partner Dashboard", href: "/dashboard/partner" },
                 { label: "Track Earnings", href: "/dashboard/partner/earnings" },
@@ -103,14 +103,20 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
 
-            <h4 className="text-white font-semibold mt-10 mb-6 text-base flex items-center gap-2">
+          {/* Company */}
+          <div>
+            <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-500"></span>
               Company
             </h4>
             <ul className="flex flex-col gap-3">
               {[
                 { label: "About Us", href: "/about" },
+                { label: "Careers", href: "/careers" },
+                { label: "Trust & Safety", href: "/trust-and-safety" },
+                { label: "Help Center", href: "/help" },
                 { label: "Contact Support", href: "/contact" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms & Conditions", href: "/terms" },
@@ -133,6 +139,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-3">
               {[
                 { label: "Search PGs", href: "/search" },
+                { label: "How it Works", href: "/how-it-works" },
                 { label: "PGs in Delhi", href: "/pg-in-delhi" },
                 { label: "PGs in Noida", href: "/pg-in-noida" },
                 { label: "PGs in Gurgaon", href: "/pg-in-gurgaon" },
