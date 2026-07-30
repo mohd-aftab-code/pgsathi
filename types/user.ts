@@ -2,6 +2,7 @@
  *  "MANAGER" is not a DB role — it is a session-only role for PgTeamMember logins. */
 export type UserRole = "TENANT" | "OWNER" | "ADMIN" | "PARTNER";
 
+export type SessionRole = UserRole | "MANAGER";
 export interface User {
   id: number;
   uuid: string;
@@ -21,6 +22,7 @@ export interface UserSession {
   uuid: string;
   name: string;
   email: string;
-  role: UserRole;
+  role: SessionRole;
   avatar?: string | null;
 }
+
