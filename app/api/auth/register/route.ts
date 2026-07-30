@@ -32,12 +32,13 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, email, phone, password, role } = body as {
+    const { name, email, phone, password, role, referralCode } = body as {
       name?: string;
       email?: string;
       phone?: string;
       password?: string;
       role?: string;
+      referralCode?: string;
     };
 
     if (!name || !email || !phone || !password) {
@@ -109,6 +110,16 @@ export async function POST(req: NextRequest) {
         await tx.partnerSetting.create({ data: { partnerId: profile.id } });
       });
     } else {
+      let partnerId = undefined;
+      
+      if (userRole === "OWNER" && referralCode) {
+        const partner = await db.partnerProfile.findUnique({
+          where: { partnerCode: referralCode },
+          select: { id: true }
+        });
+        if (partner) partnerId = partner.id;
+      }
+
       await db.user.create({
         data: {
           name: name.trim(),
@@ -117,6 +128,7 @@ export async function POST(req: NextRequest) {
           passwordHash,
           role: userRole,
           isVerified: true,
+          partnerId,
         },
       });
     }

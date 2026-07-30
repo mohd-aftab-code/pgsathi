@@ -164,9 +164,13 @@ export function OwnerManager() {
                     </div>
                     <div className="text-[11px] text-neutral-400 mt-1">{inr(o.plan.amount)} paid</div>
                   </div>
+                ) : o.pgCount === 0 ? (
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400">
+                    Action Needed: Add PG
+                  </span>
                 ) : (
-                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-                    Free plan
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400">
+                    Active (Free Tier)
                   </span>
                 )}
               </div>

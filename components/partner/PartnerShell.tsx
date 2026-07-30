@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
-  User, Users, Settings, LogOut, X, Plus, LayoutGrid,
+  User, Users, Settings, LogOut, X, Plus, LayoutGrid, Megaphone
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
@@ -16,6 +16,7 @@ const NAV = [
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
   { name: "Reports", href: "/partner/reports", icon: FileBarChart },
+  { name: "Marketing", href: "/partner/marketing", icon: Megaphone },
   { name: "Notifications", href: "/partner/notifications", icon: Bell },
 ];
 

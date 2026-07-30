@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock, Handshake } from "lucide-react";
 import { CAPABILITY_META, NO_CAPABILITIES, readCapabilities, type PlanCapabilities } from "@/lib/plan-capabilities";
 
 type Feature = { name: string; included: boolean; comingSoon?: boolean };
@@ -373,23 +373,29 @@ export default function AdminPlansPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map(plan => (
-            <div key={plan.id} className={`bg-white rounded-3xl p-6 border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200'}`}>
+            <div key={plan.id} className={`bg-white flex flex-col rounded-3xl p-5 sm:p-6 border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200'}`}>
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="font-extrabold text-xl text-neutral-900">{plan.name}</h3>
-                  <p className="text-sm text-neutral-500 uppercase tracking-wider">{plan.slug}</p>
+                  <h3 className="font-extrabold text-lg sm:text-xl text-neutral-900 leading-tight">{plan.name}</h3>
+                  <p className="text-[10px] sm:text-xs font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{plan.slug}</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-black text-primary-600">₹{plan.price}</div>
-                  <div className="text-xs text-neutral-500">/ month</div>
+                <div className="text-right shrink-0">
+                  <div className="text-xl sm:text-2xl font-black text-primary-600">₹{plan.price}</div>
+                  <div className="text-[10px] sm:text-xs text-neutral-500">/ month</div>
                 </div>
               </div>
-              <div className="space-y-2 mb-6 text-sm text-neutral-600">
+              <div className="space-y-2 mb-5 text-sm text-neutral-600">
                 <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxListings === -1 ? 'Unlimited' : `Up to ${plan.maxListings}`} PGs</div>
                 <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxTenants === -1 ? 'Unlimited' : `Up to ${plan.maxTenants}`} Tenants</div>
                 <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxPhotos} Photos</div>
+                {plan.partnerCommissionType !== 'NONE' && (
+                  <div className="flex items-center gap-2 font-medium text-primary-700 bg-primary-50 dark:bg-primary-950/40 p-1.5 rounded-lg w-max pr-3">
+                    <Handshake size={16} className="text-primary-600" /> 
+                    Partner: {plan.partnerCommissionType === 'PERCENT' ? `${plan.partnerCommissionValue}%` : `₹${plan.partnerCommissionValue}`}
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 pt-4 border-t border-neutral-100">
+              <div className="flex items-center gap-2 pt-4 border-t border-neutral-100 mt-auto">
                 <button onClick={() => handleOpenForm(plan)} className="cursor-pointer flex-1 p-2 bg-blue-50 text-blue-600 rounded-lg font-semibold hover:bg-blue-100 flex justify-center"><Edit size={18} /></button>
                 <button onClick={() => toggleStatus(plan)} className={`cursor-pointer flex-1 p-2 rounded-lg font-semibold flex justify-center ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
                   {plan.isActive ? <PowerOff size={18} /> : <Power size={18} />}

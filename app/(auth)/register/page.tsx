@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo.png";
 import { signIn } from "next-auth/react";
@@ -23,6 +24,9 @@ import {
 type Role = "TENANT" | "OWNER" | "PARTNER";
 
 function RegisterContent() {
+  const searchParams = useSearchParams();
+  const refCode = searchParams.get("ref");
+
   const [role, setRole] = useState<Role>("TENANT");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,6 +34,11 @@ function RegisterContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
+
+  // If there's a refCode, default to OWNER since partners refer owners
+  useEffect(() => {
+    if (refCode) setRole("OWNER");
+  }, [refCode]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -49,7 +58,7 @@ function RegisterContent() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone, password, role }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone, password, role, referralCode: refCode }),
       });
       const data = await res.json();
 
@@ -163,6 +172,11 @@ function RegisterContent() {
             <p className="text-neutral-500 text-sm">
               Fill in the details below to get started for free.
             </p>
+            {refCode && role === "OWNER" && (
+              <div className="mt-3 inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold">
+                <Handshake size={14} /> Referred by Partner: {refCode}
+              </div>
+            )}
           </div>
 
           {/* Role Selector */}

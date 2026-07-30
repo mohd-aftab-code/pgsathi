@@ -36,6 +36,13 @@ export default async function PartnerDashboardPage() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
+  let tier = { name: "Silver", color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300" };
+  if (stats.paidPlanPgs >= 50) {
+    tier = { name: "Platinum", color: "bg-slate-900 text-white dark:bg-white dark:text-slate-900" };
+  } else if (stats.paidPlanPgs >= 10) {
+    tier = { name: "Gold", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400" };
+  }
+
   const cards = [
     { label: "Total PG Registered", value: String(stats.totalPgs), sub: `${stats.thisMonthRegistrations} is mahine`, Icon: Building2, tone: "violet" as const, href: "/partner/pgs" },
     { label: "Active PGs", value: String(stats.activePgs), sub: "live and verified", Icon: CheckCircle2, tone: "green" as const, href: "/partner/pgs?status=ACTIVE" },
@@ -53,9 +60,14 @@ export default async function PartnerDashboardPage() {
       {/* ── Header ────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
-            {greeting}, {ctx.name.split(" ")[0]} 👋
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+              {greeting}, {ctx.name.split(" ")[0]} 👋
+            </h1>
+            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${tier.color}`}>
+              {tier.name} Partner
+            </span>
+          </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
             Complete summary of your registered PGs and earnings.
           </p>
