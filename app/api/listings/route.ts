@@ -5,13 +5,10 @@ import { TRIAL_CUTOFF } from "@/lib/manage-auth";
 import { resolveCity } from "@/lib/geo";
 import slugify from "slugify";
 
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const citySlug = searchParams.get("city");
-    const gender = searchParams.get("gender");
-    const limit = parseInt(searchParams.get("limit") || "10");
+import { unstable_cache } from "next/cache";
 
+const getCachedListings = unstable_cache(
+  async (citySlug: string | null, gender: string | null, limit: number) => {
     const where: any = { isActive: true, status: "ACTIVE" };
 
     if (citySlug) {
@@ -22,7 +19,7 @@ export async function GET(req: NextRequest) {
       where.genderAllowed = gender;
     }
 
-    const listings = await db.listing.findMany({
+    return await db.listing.findMany({
       where,
       take: limit,
       include: {
@@ -37,6 +34,19 @@ export async function GET(req: NextRequest) {
         { createdAt: "desc" },
       ],
     });
+  },
+  ['public-listings'],
+  { revalidate: 60, tags: ['listings'] }
+);
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const citySlug = searchParams.get("city");
+    const gender = searchParams.get("gender");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
+    const listings = await getCachedListings(citySlug, gender, limit);
 
     return NextResponse.json({ success: true, data: listings });
   } catch (error: any) {
@@ -58,6 +68,13 @@ export async function POST(req: NextRequest) {
 
     const data = await req.json();
     const ownerId = parseInt(session.user.id);
+
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const { checkRateLimit } = await import("@/lib/rate-limit");
+    const ipLimit = await checkRateLimit(`listing:create:ip:${ip}`, 20, 86400); // 20 listings per day max
+    if (!ipLimit.allowed) {
+      return NextResponse.json({ success: false, message: "Too many listings created from this IP today. Please try again later." }, { status: 429 });
+    }
 
     // 1. Subscription & Limits Enforcement
     let activeSub = await db.subscription.findFirst({

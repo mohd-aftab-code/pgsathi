@@ -15,6 +15,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Invalid email address" }, { status: 400 });
     }
 
+    // IP-based rate limit: max 10 OTP requests per hour per IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const ipLimit = await checkRateLimit(`otp:email:send:ip:${ip}`, 10, 3600);
+    if (!ipLimit.allowed) {
+      return NextResponse.json({ success: false, message: "Too many OTP requests from this IP. Please try again later" }, { status: 429 });
+    }
+
     const cooldown = await checkRateLimit(`otp:email:send:cooldown:${email}`, 1, 60);
     if (!cooldown.allowed) {
       return NextResponse.json({ success: false, message: "Please wait a minute before requesting another OTP" }, { status: 429 });
