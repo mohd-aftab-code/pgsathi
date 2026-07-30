@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
         console.error("[PARTNER_APP_EMAIL_ERROR]", e);
       });
     } else {
-      await sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole).catch((e) => {
+      await sendWelcomeEmail(email.trim().toLowerCase(), name.trim(), userRole, phone, password).catch((e) => {
         console.error("[WELCOME_EMAIL_ERROR]", e);
       });
     }

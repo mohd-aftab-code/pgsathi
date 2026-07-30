@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         const basicPlan = await db.plan.findFirst({ where: { price: { gt: 0 } }, orderBy: { price: "asc" } });
         if (basicPlan) {
           const endDate = new Date();
-          endDate.setDate(endDate.getDate() + 14); // 14 Days Free Trial
+          endDate.setDate(endDate.getDate() + 15); // 15 Days Free Trial
 
           activeSub = await db.subscription.create({
             data: {

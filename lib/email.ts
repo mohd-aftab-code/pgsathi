@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send generic welcome email
-export async function sendWelcomeEmail(to: string, name: string, role: string) {
+export async function sendWelcomeEmail(to: string, name: string, role: string, phone?: string, password?: string) {
   let html = "";
   let subject = "Welcome to PGSathi!";
   
@@ -36,7 +36,7 @@ export async function sendWelcomeEmail(to: string, name: string, role: string) {
     html = getWelcomeTenantEmail(name);
     subject = "Welcome to PGSathi - Find your perfect PG today!";
   } else if (role === "OWNER") {
-    html = getWelcomeOwnerEmail(name);
+    html = getWelcomeOwnerEmail(name, phone, password);
     subject = "Welcome to PGSathi - Grow your PG business with zero brokerage";
   } else if (role === "PARTNER") {
     html = getWelcomePartnerEmail(name);

@@ -105,10 +105,19 @@ export function getWelcomeTenantEmail(name: string) {
   return baseTemplate(content, "Welcome to PGSathi - Find your perfect PG today!");
 }
 
-export function getWelcomeOwnerEmail(name: string) {
+export function getWelcomeOwnerEmail(name: string, phone?: string, password?: string) {
+  const credentialsHtml = phone && password ? `
+    <div class="card" style="text-align: center; margin-bottom: 24px;">
+      <p style="text-transform: uppercase; font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 0.5px; margin-bottom: 16px;">Your Login Credentials</p>
+      <p style="margin-bottom: 8px; font-size: 16px;"><strong>Login ID:</strong> <span style="color: ${BRAND_COLOR}; font-weight: 600;">${phone}</span></p>
+      <p style="margin-bottom: 0; font-size: 16px;"><strong>Password:</strong> <span style="font-family: monospace; font-size: 18px; font-weight: 700; padding: 6px 12px; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; display: inline-block; margin-top: 8px;">${password}</span></p>
+    </div>
+  ` : "";
+
   const content = `
     <h2>Welcome to PGSathi, ${name}! 🏢</h2>
     <p>Thank you for partnering with us. We're here to help you grow your PG business and find genuine, verified tenants—without paying any brokerage.</p>
+    ${credentialsHtml}
     <p>Get started by setting up your first listing:</p>
     <ul>
       <li>📝 <strong>List your PG</strong> with attractive photos and clear pricing.</li>

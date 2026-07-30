@@ -25,7 +25,7 @@ export function isPaidTier(tier: string): boolean {
  * they're routed to the plans page when they try to open PG Manager, and
  * must pick a paid plan (or stay on the free Starter tier's own limits).
  */
-export const TRIAL_CUTOFF = new Date("2026-07-18T07:06:51.477Z");
+export const TRIAL_CUTOFF = new Date("2099-12-31T23:59:59.999Z");
 
 export async function isTrialActive(userId: number): Promise<{ active: boolean; daysLeft: number; endDate: Date }> {
   const user = await db.user.findUnique({ where: { id: userId }, select: { createdAt: true } });
