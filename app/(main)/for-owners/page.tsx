@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import { CheckCircle, TrendingUp, Users, Smartphone, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "List Your PG Online - Get Tenants & Manage Rent | PGSathi for Owners",
+  title: "PG Owner Registration | List PG Online & Get Tenants | PGSathi",
   description: "List your PG or hostel on PGSathi. Get verified tenant leads directly on WhatsApp with zero brokerage. Manage rent, bills, and tenants easily with our CRM.",
   alternates: {
     canonical: "https://pgsathi.in/for-owners",
   },
   openGraph: {
-    title: "Grow Your PG Business - List Free on PGSathi",
+    title: "PG Owner Registration | List PG Online & Get Tenants | PGSathi",
     description: "Get verified tenant leads directly on WhatsApp with zero brokerage. Manage rent, bills, and tenants easily with our CRM.",
     url: "https://pgsathi.in/for-owners",
   },

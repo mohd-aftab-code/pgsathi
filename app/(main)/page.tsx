@@ -24,14 +24,14 @@ const FAQ_SCHEMA = {
 };
 
 export const metadata = {
-  title: "Verified PGs & Hostels in India | PGSathi",
-  description: "PGSathi: India's trusted platform to find verified PGs. Owners can list properties, get verified leads, and use our free PG management software.",
+  title: "PGSathi: India's #1 PG Platform & Management Software",
+  description: "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
   alternates: {
     canonical: "https://pgsathi.in/",
   },
   openGraph: {
-    title: "Verified PGs & Hostels in India | PGSathi",
-    description: "Find 100% verified PGs or list your property to generate direct tenant leads. Complete PG discovery and PG management software.",
+    title: "PGSathi: India's #1 PG Platform & Management Software",
+    description: "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
     url: "https://pgsathi.in/",
   },
 };

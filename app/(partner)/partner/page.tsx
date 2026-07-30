@@ -5,13 +5,13 @@ import Footer from "@/components/common/Footer";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
-  title: "Partner Programme — Refer PGs & Earn Money Online | PGSathi",
+  title: "PGSathi Partner Programme | Refer PGs & Earn Money Online",
   description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners in your city and earn guaranteed lifetime commissions on every paid conversion.",
   alternates: {
     canonical: "https://pgsathi.in/partner",
   },
   openGraph: {
-    title: "Partner Programme — Refer PGs & Earn Money Online | PGSathi",
+    title: "PGSathi Partner Programme | Refer PGs & Earn Money Online",
     description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners and earn guaranteed lifetime commissions.",
     url: "https://pgsathi.in/partner",
   },

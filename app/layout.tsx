@@ -28,11 +28,11 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi — Verified PGs & Complete PG Management Software",
+    default: "PGSathi: India's #1 PG Platform & Management Software",
     template: "%s | PGSathi",
   },
   description:
-    "Find the best PGs & hostels across India. PG Owners can generate verified leads and manage their business with our powerful PG management software.",
+    "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
   alternates: {
     canonical: "https://pgsathi.in",
   },
@@ -43,22 +43,22 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi — Verified PGs & Complete PG Management Software",
+    title: "PGSathi: India's #1 PG Platform & Management Software",
     description:
-      "Find 100% verified premium PGs in India. PG Owners can list for free, get direct WhatsApp leads, and manage their PG properties easily.",
+      "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PGSathi — Verified PGs & Complete PG Management Software",
+        alt: "PGSathi: India's #1 PG Platform & Management Software",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PGSathi — Verified PGs & PG Management Software",
-    description: "Discover top-rated verified PGs. For Owners: Generate leads and manage your entire PG business.",
+    title: "PGSathi: India's #1 PG Platform & Management Software",
+    description: "Find verified PGs, direct tenant leads, free PG management software, and partner earning opportunities.",
     images: ["/og-image.jpg"],
   },
   robots: {
