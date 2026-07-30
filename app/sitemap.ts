@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { CITY_SLUGS } from '@/constants/cities';
-
+import { BLOG_POSTS } from '@/lib/data/blogs';
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // cache for 24 hours
 
@@ -63,15 +63,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Blog Posts URLs
-  const blogPosts = [
-    'ncr-zero-brokerage-pg-guide',
-    '5-things-check-before-renting',
-    'how-to-avoid-broker-scams'
-  ];
-  
-  const blogUrls = blogPosts.map((slug) => ({
-    url: `${baseUrl}/blog/${slug}`,
-    lastModified: new Date(),
+  const blogUrls = BLOG_POSTS.map((post) => ({
+    url: `${baseUrl}/blog/${post.id}`,
+    lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));

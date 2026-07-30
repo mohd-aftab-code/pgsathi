@@ -70,8 +70,8 @@ export default async function HeroSection() {
               className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
-              Discover Verified PGs & <br className="hidden lg:block" />
-              <span className="text-primary-700">Manage Your PG Business.</span>
+              Find 100% Verified PGs & <br className="hidden lg:block" />
+              <span className="text-primary-700">Free PG Management Software.</span>
             </h1>
 
             <div className="flex flex-col sm:flex-col gap-3 sm:gap-3 text-sm md:text-lg text-neutral-600 mb-8 max-w-xl leading-relaxed">
