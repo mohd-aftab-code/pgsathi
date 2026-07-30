@@ -18,6 +18,7 @@ export async function GET(
         locality: true,
         photos: { orderBy: { sortOrder: "asc" } },
         amenities: { include: { amenity: true } },
+        owner: { select: { name: true, phone: true } },
       },
     });
 
