@@ -1,6 +1,6 @@
 const LOGO_URL = process.env.NEXT_PUBLIC_APP_URL 
-  ? `${process.env.NEXT_PUBLIC_APP_URL}/logo.png`
-  : "https://pgsathi.in/logo.png"; // Fallback if logo not found
+  ? `${process.env.NEXT_PUBLIC_APP_URL}/logo-vertical.png`
+  : "https://pgsathi.in/logo-vertical.png"; // Fallback if logo not found
 
 const BRAND_COLOR = "#6d28d9"; // Purple
 const BRAND_SECONDARY = "#f5f3ff"; // Light purple bg
@@ -15,17 +15,17 @@ function baseTemplate(content: string, preheader: string = "PGSathi Notification
       <title>PGSathi</title>
       <style>
         /* Mobile-friendly resets */
-        body { margin: 0; padding: 0; min-width: 100%; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+        body { margin: 0; padding: 0; min-width: 100%; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
         table { border-spacing: 0; font-family: sans-serif; color: #334155; }
         td { padding: 0; }
         img { border: 0; }
-        .wrapper { width: 100%; table-layout: fixed; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #f9fafb; padding: 40px 0; }
-        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); overflow: hidden; border: 1px solid #f3f4f6; }
+        .wrapper { width: 100%; table-layout: fixed; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #ffffff; padding: 20px 0; }
+        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border: none; box-shadow: none; overflow: hidden; }
         
-        .header { padding: 32px 40px 0 40px; text-align: center; }
+        .header { padding: 20px 0 0 0; text-align: center; }
         .logo { height: 44px; width: auto; display: block; margin: 0 auto; }
         
-        .content { padding: 32px 40px; color: #374151; font-size: 15px; line-height: 1.6; }
+        .content { padding: 20px 0; color: #374151; font-size: 15px; line-height: 1.6; }
         .content h2 { color: #0f172a; font-size: 22px; font-weight: 700; margin-top: 0; margin-bottom: 20px; letter-spacing: -0.5px; }
         .content p { margin-top: 0; margin-bottom: 16px; }
         .content ul { padding-left: 20px; margin-top: 0; margin-bottom: 24px; }
@@ -36,15 +36,15 @@ function baseTemplate(content: string, preheader: string = "PGSathi Notification
         
         .card { background-color: ${BRAND_SECONDARY}; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin: 24px 0; }
         
-        .footer { background-color: #f8fafc; padding: 32px 40px; text-align: center; border-top: 1px solid #f1f5f9; }
+        .footer { background-color: #ffffff; padding: 20px 0; text-align: center; border-top: 1px solid #f1f5f9; }
         .footer p { color: #64748b; font-size: 13px; line-height: 1.5; margin: 0 0 8px 0; }
         .footer-logo { height: 28px; margin-bottom: 16px; opacity: 0.6; filter: grayscale(100%); }
         .social-links { margin-top: 16px; }
         .social-links a { display: inline-block; margin: 0 8px; color: #94a3b8; text-decoration: none; font-size: 12px; font-weight: 600; }
 
         @media screen and (max-width: 600px) {
-          .wrapper { padding: 20px 10px; }
-          .header, .content, .footer { padding: 24px 20px; }
+          .wrapper { padding: 10px 0; }
+          .header, .content, .footer { padding: 20px 0; }
           .btn { width: 100%; box-sizing: border-box; }
         }
       </style>

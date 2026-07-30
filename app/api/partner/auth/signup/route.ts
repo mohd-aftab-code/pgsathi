@@ -123,13 +123,21 @@ export async function POST(req: NextRequest) {
       return profile;
     });
 
-    await sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
-      console.error("[PARTNER_APP_EMAIL_ERROR]", e);
-    });
+    if (email && !email.includes("@pgsathi.in")) {
+      await sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
+        console.error("[PARTNER_APP_EMAIL_ERROR]", e);
+      });
+    }
 
-    await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
-      console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
-    });
+    if (email && !email.includes("@pgsathi.in")) {
+      await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
+        console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
+      });
+    } else {
+      await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, "No email provided").catch((e) => {
+        console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
+      });
+    }
 
     return NextResponse.json(
       {

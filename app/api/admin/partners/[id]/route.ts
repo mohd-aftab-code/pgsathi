@@ -65,7 +65,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   await notify({ userId: existing.userId, type: "SYSTEM", title: "Partner account update", message: msg, link: "/partner/dashboard" });
 
   // Email Notification
-  if (existing.user.email) {
+  if (existing.user.email && !existing.user.email.includes("@pgsathi.in")) {
     await sendPartnerStatusEmail(existing.user.email, existing.user.name, status, updated.rejectReason || undefined).catch((e) => {
       console.error("[PARTNER_STATUS_EMAIL_ERROR]", e);
     });
