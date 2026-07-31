@@ -13,6 +13,7 @@ import {
   Lock,
   CreditCard,
   BedDouble,
+  Gift,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 import { AdSlot } from "./AdSlot";
@@ -54,6 +55,7 @@ function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
       category: "Account",
       items: [
         { name: "Subscription", href: "/dashboard/owner/subscription", icon: CreditCard, hideMobile: true },
+        { name: "Refer & Earn", href: "/dashboard/owner/refer", icon: Gift, hideMobile: true },
         { name: "Settings", href: "/dashboard/owner/settings", icon: Settings, hideMobile: true }
       ],
     },

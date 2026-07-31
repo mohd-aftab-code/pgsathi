@@ -2,15 +2,27 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, IndianRupee, Wallet, X, Loader2 } from "lucide-react";
+import { Check, IndianRupee, Wallet, X, Loader2, PauseCircle, PlayCircle } from "lucide-react";
 
 /**
- * Set amount / approve / mark paid / cancel for one partner earning.
+ * Set amount / hold / approve / pay / cancel for one partner earning.
  *
- * "Mark Paid" asks for the payment method and reference because the API records
- * a PartnerPayout for it — the same trail the batch payout leaves.
+ * "Pay" creates a PROCESSING payout through the same pipeline as the batch
+ * route — KYC gate, TDS, idempotency — and the money is only recorded as sent
+ * once a UTR is entered on the payouts page.
+ *
+ * An earning on hold cannot be approved: the hold is the refund window and the
+ * risk review, so the button is not offered until it is lifted.
  */
-export function AdminEarningActions({ id, amount, status }: { id: number; amount: number; status: string }) {
+export function AdminEarningActions({
+  id, amount, status, onHold, holdReason,
+}: {
+  id: number;
+  amount: number;
+  status: string;
+  onHold?: boolean;
+  holdReason?: string | null;
+}) {
   const router = useRouter();
   const [val, setVal] = useState(String(amount || ""));
   const [busy, setBusy] = useState("");
@@ -60,14 +72,38 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
           </button>
         </>
       )}
-      {amount > 0 && status === "PENDING" && (
+      {/* Hold has to be lifted before approval — that is the whole point of it. */}
+      {status === "PENDING" && onHold && (
+        <button
+          onClick={() => post("unhold")}
+          disabled={!!busy}
+          title={holdReason ?? "On hold"}
+          className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-bold bg-orange-50 text-orange-700 hover:bg-orange-100 disabled:opacity-50"
+        >
+          {spin("unhold") ? <Loader2 size={12} className="animate-spin" /> : <PlayCircle size={13} />} Release
+        </button>
+      )}
+      {status === "PENDING" && !onHold && (
+        <button
+          onClick={() => {
+            const reason = prompt("Hold karne ki wajah?");
+            if (reason) post("hold", { reason });
+          }}
+          disabled={!!busy}
+          className="inline-flex items-center gap-1 h-8 px-2 rounded-lg text-xs font-bold text-neutral-500 hover:bg-neutral-100 disabled:opacity-50"
+          title="Hold this earning"
+        >
+          {spin("hold") ? <Loader2 size={12} className="animate-spin" /> : <PauseCircle size={13} />}
+        </button>
+      )}
+      {amount > 0 && status === "PENDING" && !onHold && (
         <button onClick={() => post("approve")} disabled={!!busy} className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 disabled:opacity-50">
           {spin("approve") ? <Loader2 size={12} className="animate-spin" /> : <Check size={13} />} Approve
         </button>
       )}
       {status === "APPROVED" && (
         <button onClick={() => setPayOpen(true)} disabled={!!busy} className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-bold bg-green-50 text-green-700 hover:bg-green-100 disabled:opacity-50">
-          {spin("mark_paid") ? <Loader2 size={12} className="animate-spin" /> : <Wallet size={13} />} Mark Paid
+          {spin("mark_paid") ? <Loader2 size={12} className="animate-spin" /> : <Wallet size={13} />} Pay
         </button>
       )}
       <button onClick={() => { if (confirm("Cancel this earning?")) post("cancel"); }} disabled={!!busy} className="inline-flex items-center gap-1 h-8 px-2 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 disabled:opacity-50">
@@ -86,6 +122,9 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
               <div className="rounded-xl bg-neutral-50 border border-neutral-200 px-4 py-3">
                 <div className="text-xs text-neutral-500">Payment for this earning</div>
                 <div className="text-2xl font-extrabold text-neutral-900">₹{amount.toLocaleString("en-IN")}</div>
+                <div className="text-[11px] text-neutral-500 mt-1">
+                  TDS lagu hone par net amount kam ho sakta hai — payout banne ke baad exact figure dikhega.
+                </div>
               </div>
 
               <div>
@@ -104,13 +143,14 @@ export function AdminEarningActions({ id, amount, status }: { id: number; amount
               </div>
 
               <p className="text-[11px] text-neutral-400">
-                This records that the money has been sent. You must make the actual transfer via your bank/UPI.
+                Isse ek <b>PROCESSING</b> payout banega. Actual transfer aapko bank/UPI se karna hoga, aur
+                Payouts page par UTR daalne ke baad hi wo COMPLETED hoga.
               </p>
 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => setPayOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700">Cancel</button>
                 <button onClick={() => post("mark_paid", { method, reference })} disabled={!!busy} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {spin("mark_paid") ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Confirm Payment"}
+                  {spin("mark_paid") ? <><Loader2 size={15} className="animate-spin" /> Ban raha hai…</> : "Payout banayein"}
                 </button>
               </div>
             </div>

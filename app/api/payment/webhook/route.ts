@@ -52,6 +52,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, message: "Bad payload" }, { status: 400 });
   }
 
+  // ── Refunds: claw the commission back ──────────────────────────────────────
+  // Money that came back was never really earned. Without this the platform
+  // loses twice on every refund — the plan payment AND the commission paid on
+  // it — which is also the shape of the simplest owner/partner collusion.
+  if (event?.event === "refund.created" || event?.event === "refund.processed") {
+    const refund = event?.payload?.refund?.entity;
+    const refundedPaymentId: string | undefined = refund?.payment_id;
+    if (!refundedPaymentId) {
+      return NextResponse.json({ success: true, ignored: "refund without payment_id" });
+    }
+    try {
+      const invoice = await db.invoice.findFirst({
+        where: { razorpayPayId: refundedPaymentId },
+        select: { id: true },
+      });
+      if (!invoice) return NextResponse.json({ success: true, ignored: "no invoice for refund" });
+
+      const { clawbackForInvoice } = await import("@/lib/partner-earnings");
+      // Idempotent through the (parentEarningId, kind) unique index, so a
+      // redelivered refund event claws back exactly once.
+      const res = await clawbackForInvoice(invoice.id, `Razorpay ${event.event}`);
+      return NextResponse.json({ success: true, clawback: res });
+    } catch (e) {
+      console.error("[webhook] clawback failed", e);
+      return NextResponse.json({ success: false }, { status: 500 });
+    }
+  }
+
   if (event?.event !== "payment.captured") {
     // Acknowledge everything else so Razorpay stops retrying events we ignore.
     return NextResponse.json({ success: true, ignored: event?.event ?? "unknown" });

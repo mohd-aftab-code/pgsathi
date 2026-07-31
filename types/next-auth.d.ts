@@ -23,5 +23,7 @@ declare module "next-auth/jwt" {
     id: string;
     uuid: string;
     role: SessionRole;
+    /** Set on accounts a partner created; forces a password change at the edge. */
+    mustChangePassword?: boolean;
   }
 }

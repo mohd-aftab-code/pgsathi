@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { Wallet, AlertTriangle, IndianRupee, Users } from "lucide-react";
+import { Wallet, AlertTriangle, IndianRupee, Users, Clock } from "lucide-react";
 import { CreatePayoutButton } from "@/components/dashboard/CreatePayoutButton";
+import { PayoutRowActions, BulkPayoutButton } from "@/components/dashboard/PayoutActions";
+import { kycGaps } from "@/lib/partner-payouts";
+import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Payout Cycle — Admin | PGSathi" };
@@ -30,6 +33,10 @@ export default async function AdminPayoutCyclePage() {
       status: true,
       upiId: true,
       bankAccountNo: true,
+      panNumber: true,
+      bankName: true,
+      bankIfsc: true,
+      kycVerifiedAt: true,
       user: { select: { name: true, phone: true } },
       earnings: {
         where: { status: { in: ["PENDING", "APPROVED"] } },
@@ -51,6 +58,10 @@ export default async function AdminPayoutCyclePage() {
         pendingCount: pending.length,
         thisMonthCount: p.earnings.filter((e) => e.createdAt >= monthStart).length,
         hasPayoutDetails: !!(p.upiId || p.bankAccountNo),
+        // The API refuses a payout while any of these are outstanding, so the
+        // table shows the same reason rather than letting the admin find out
+        // by clicking.
+        gaps: kycGaps(p),
       };
     })
     .sort((a, b) => b.payableTotal - a.payableTotal);
@@ -58,16 +69,98 @@ export default async function AdminPayoutCyclePage() {
   const totalPayable = rows.reduce((t, r) => t + r.payableTotal, 0);
   const totalPending = rows.reduce((t, r) => t + r.pendingTotal, 0);
   const readyCount = rows.filter((r) => r.payableTotal > 0).length;
+  const blockedCount = rows.filter((r) => r.payableTotal > 0 && r.gaps.length > 0).length;
+
+  const settings = await getProgramSettings();
+
+  // Payouts still awaiting their UTR. Money the system thinks has been sent but
+  // which nobody has confirmed actually left is the thing worth surfacing first.
+  const processing = await db.partnerPayout.findMany({
+    where: { status: "PROCESSING" },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true, amount: true, grossAmount: true, tdsAmount: true, tdsRate: true,
+      method: true, status: true, createdAt: true, periodLabel: true,
+      partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
+    },
+  });
 
   return (
     <div className="space-y-5">
       <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <h1 className="text-2xl font-extrabold mb-1">Payout Cycle</h1>
-        <p className="text-neutral-300 text-sm">
-          Har mahine yahan se partners ko payment karein. Commission har owner payment par banta hai —
-          approve karne ke baad hi paisa ja sakta hai.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold mb-1">Payout Cycle</h1>
+            <p className="text-neutral-300 text-sm max-w-2xl">
+              Har mahine yahan se partners ko payment karein. Commission har owner payment par banta hai —
+              approve karne ke baad hi paisa ja sakta hai. Payout pehle <b>PROCESSING</b> banta hai; UTR
+              record karne par hi COMPLETED hota hai.
+            </p>
+            <p className="text-neutral-400 text-xs mt-2">
+              Cycle date: har mahine ki {settings.payoutDayOfMonth} tareekh (agla{" "}
+              {nextPayoutDate(settings.payoutDayOfMonth).toLocaleDateString("en-IN", { day: "numeric", month: "long" })})
+              {" · "}minimum {inr(settings.minPayoutAmount)}
+              {" · "}
+              <Link href="/dashboard/admin/partner-program" className="underline hover:text-white">
+                settings badlein
+              </Link>
+            </p>
+          </div>
+          <BulkPayoutButton />
+        </div>
       </div>
+
+      {/* ── Awaiting UTR ───────────────────────────────────────── */}
+      {processing.length > 0 && (
+        <section className="rounded-2xl border border-amber-200 bg-amber-50/60 overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-amber-200">
+            <Clock size={16} className="text-amber-600" />
+            <h2 className="font-bold text-amber-900 text-sm">
+              {processing.length} payout transfer ka intezaar kar rahe hain
+            </h2>
+            <span className="text-xs text-amber-700 ml-auto">
+              Transfer karke UTR daalein — tabhi partner ko confirm hoga
+            </span>
+          </div>
+          <table className="w-full text-sm">
+            <tbody className="divide-y divide-amber-100">
+              {processing.map((p) => (
+                <tr key={p.id} className="hover:bg-amber-50">
+                  <td className="px-5 py-3">
+                    <Link href={`/dashboard/admin/partners/${p.partner.id}`} className="font-semibold text-neutral-900 hover:text-violet-600">
+                      {p.partner.user.name}
+                    </Link>
+                    <div className="text-xs text-neutral-400 tracking-widest">{p.partner.partnerCode}</div>
+                  </td>
+                  <td className="px-3 py-3 text-xs text-neutral-500">
+                    {p.method}
+                    {p.periodLabel ? ` · ${p.periodLabel}` : ""}
+                    <div>{fmtDate(p.createdAt)}</div>
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <div className="font-bold text-neutral-900">{inr(p.amount)}</div>
+                    {p.tdsAmount > 0 && (
+                      <div className="text-[11px] text-neutral-500">
+                        gross {inr(p.grossAmount)} − TDS {p.tdsRate}% {inr(p.tdsAmount)}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    <PayoutRowActions payoutId={p.id} status={p.status} amount={p.amount} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
+
+      {blockedCount > 0 && (
+        <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+          <AlertTriangle size={16} />
+          {blockedCount} partner ka balance to hai par KYC adhoori hai — unka payout nahi ban sakta.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
@@ -143,6 +236,7 @@ export default async function AdminPayoutCyclePage() {
                         count={r.payableCount}
                         amount={r.payableTotal}
                         hasPayoutDetails={r.hasPayoutDetails}
+                        kycGaps={r.gaps}
                       />
                     </td>
                   </tr>
@@ -201,6 +295,7 @@ export default async function AdminPayoutCyclePage() {
                   count={r.payableCount}
                   amount={r.payableTotal}
                   hasPayoutDetails={r.hasPayoutDetails}
+                        kycGaps={r.gaps}
                 />
               </div>
             </div>

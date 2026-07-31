@@ -4,7 +4,6 @@ import { Clock, XCircle, Ban, Handshake, LogOut } from "lucide-react";
 import { getPartnerContext } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
 import { PartnerShell } from "@/components/partner/PartnerShell";
-import { themeInitScript } from "@/components/partner/ThemeToggle";
 
 /**
  * Guard for every authenticated Partner Portal page.
@@ -32,14 +31,16 @@ export default async function PartnerPortalLayout({ children }: { children: Reac
     );
   }
 
+  // The theme is applied by the init script in the root layout's <head> (before
+  // paint, so no flash) and re-applied by PartnerShell on mount (so client-side
+  // navigation into the portal is themed too). It cannot live here: React 19
+  // never executes a <script> created during a client render, so an inline
+  // script in a route layout logs a console error and does nothing on
+  // navigation.
   return (
-    <>
-      {/* Applies the saved theme before paint so there is no light/dark flash. */}
-      <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      <PartnerShell name={ctx.name} partnerCode={ctx.partnerCode}>
-        {children}
-      </PartnerShell>
-    </>
+    <PartnerShell name={ctx.name} partnerCode={ctx.partnerCode}>
+      {children}
+    </PartnerShell>
   );
 }
 

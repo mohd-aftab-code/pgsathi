@@ -32,6 +32,7 @@ export default async function AdminPartnerEarningsPage({
       take: pageSize,
       select: {
         id: true, amount: true, status: true, createdAt: true, planNameSnapshot: true,
+        onHold: true, holdReason: true, kind: true, commissionRateSnapshot: true, autoApproved: true,
         owner: { select: { name: true } },
         listing: { select: { title: true } },
         partner: { select: { partnerCode: true, user: { select: { name: true } } } },
@@ -98,7 +99,7 @@ export default async function AdminPartnerEarningsPage({
                   <td className="px-3 py-3 text-neutral-500">{fmtDate(e.createdAt)}</td>
                   <td className="px-3 py-3 text-right font-bold text-neutral-900">{inr(e.amount)}</td>
                   <td className="px-3 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[e.status]}`}>{e.status}</span></td>
-                  <td className="px-5 py-3"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} /></td>
+                  <td className="px-5 py-3"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} /></td>
                 </tr>
               ))}
             </tbody>
@@ -135,7 +136,7 @@ export default async function AdminPartnerEarningsPage({
                 </div>
               </div>
               <div className="mt-0.5">
-                <AdminEarningActions id={e.id} amount={e.amount} status={e.status} />
+                <AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} />
               </div>
             </div>
           ))}

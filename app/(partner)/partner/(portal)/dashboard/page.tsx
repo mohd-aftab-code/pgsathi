@@ -4,7 +4,10 @@ import {
   IndianRupee, CalendarClock, CalendarPlus, ArrowRight, Activity, Plus,
 } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
+import { db } from "@/lib/db";
 import { getPartnerStats, getPartnerTrend, getPartnerRecentPgs, getPartnerActivity } from "@/lib/partner-stats";
+import { getTierProgress } from "@/lib/partner-tier";
+import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
 import { StatCard } from "@/components/partner/StatCard";
 import { RegistrationsChart, EarningsChart } from "@/components/partner/PartnerCharts";
 
@@ -26,22 +29,31 @@ export default async function PartnerDashboardPage() {
   const ctx = await requirePartner();
 
   // Everything below is scoped to ctx.partnerId, which comes from the session.
-  const [stats, trend, recentPgs, activity] = await Promise.all([
+  const profile = await db.partnerProfile.findUnique({
+    where: { id: ctx.partnerId },
+    select: { tierOverride: true, commissionOverridePercent: true },
+  });
+
+  const [stats, trend, recentPgs, activity, tier, settings] = await Promise.all([
     getPartnerStats(ctx.partnerId),
     getPartnerTrend(ctx.partnerId),
     getPartnerRecentPgs(ctx.partnerId),
     getPartnerActivity(ctx.partnerId),
+    // Tier is no longer a label computed here from PG counts — it decides a real
+    // commission bonus, so it is derived in one place and counted on owners
+    // (which is what commission follows) rather than PGs.
+    getTierProgress(ctx.partnerId, profile?.tierOverride),
+    getProgramSettings(),
   ]);
 
   const hour = new Date().getHours();
+
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
-  let tier = { name: "Silver", color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300" };
-  if (stats.paidPlanPgs >= 50) {
-    tier = { name: "Platinum", color: "bg-slate-900 text-white dark:bg-white dark:text-slate-900" };
-  } else if (stats.paidPlanPgs >= 10) {
-    tier = { name: "Gold", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400" };
-  }
+  const tierColor =
+    tier.tier === "PLATINUM" ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+    : tier.tier === "GOLD" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400"
+    : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300";
 
   const cards = [
     { label: "Total PG Registered", value: String(stats.totalPgs), sub: `${stats.thisMonthRegistrations} is mahine`, Icon: Building2, tone: "violet" as const, href: "/partner/pgs" },
@@ -64,8 +76,9 @@ export default async function PartnerDashboardPage() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
               {greeting}, {ctx.name.split(" ")[0]} 👋
             </h1>
-            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${tier.color}`}>
-              {tier.name} Partner
+            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${tierColor}`}>
+              {tier.label} Partner
+              {tier.bonusPercent > 0 && <span className="opacity-70"> · +{tier.bonusPercent}%</span>}
             </span>
           </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
@@ -79,6 +92,40 @@ export default async function PartnerDashboardPage() {
           <Plus size={17} /> PG Register
         </Link>
       </div>
+
+      {/* ── Tier progress ─────────────────────────────────────── */}
+      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+          <h2 className="font-bold text-neutral-900 dark:text-white text-sm">
+            {tier.next
+              ? tier.next.needed > 0
+                ? `${tier.label} → ${tier.next.label} tak ${tier.next.needed} aur paid owner`
+                : `${tier.next.label} unlock ho gaya`
+              : `${tier.label} — top tier`}
+          </h2>
+          <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+            {tier.conversions} paid owners
+            {profile?.commissionOverridePercent
+              ? ` · custom rate ${profile.commissionOverridePercent}%`
+              : tier.bonusPercent > 0
+                ? ` · har commission par +${tier.bonusPercent}%`
+                : ""}
+          </span>
+        </div>
+        <div className="h-2.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-700"
+            style={{ width: `${tier.progress}%` }}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-[11px] text-neutral-400">
+          {tier.next && <span>{tier.next.label} par +{tier.next.bonusPercent}% extra commission</span>}
+          <span>Agla payout: {nextPayoutDate(settings.payoutDayOfMonth).toLocaleDateString("en-IN", { day: "numeric", month: "long" })}</span>
+          <Link href="/partner/leaderboard" className="font-bold text-primary-600 dark:text-primary-400 hover:underline">
+            Leaderboard dekhein →
+          </Link>
+        </div>
+      </section>
 
       {/* ── 9 analytics cards ─────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">

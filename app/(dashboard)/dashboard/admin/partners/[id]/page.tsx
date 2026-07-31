@@ -3,8 +3,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity } from "lucide-react";
 import { db } from "@/lib/db";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
+import { AdminPartnerControls } from "@/components/dashboard/AdminPartnerControls";
 import { AdminEarningActions } from "@/components/dashboard/AdminEarningActions";
 import { CreatePayoutButton } from "@/components/dashboard/CreatePayoutButton";
+import { PayoutRowActions } from "@/components/dashboard/PayoutActions";
+import { kycGaps } from "@/lib/partner-payouts";
+import { getTierProgress } from "@/lib/partner-tier";
 
 export const metadata = { title: "Partner Detail — Admin | PGSathi" };
 
@@ -41,6 +45,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
         orderBy: { createdAt: "desc" },
         select: {
           id: true, amount: true, status: true, createdAt: true, planNameSnapshot: true, payoutId: true,
+          onHold: true, holdReason: true, kind: true, commissionRateSnapshot: true,
           owner: { select: { name: true } },
           listing: { select: { title: true } },
         },
@@ -50,6 +55,23 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
     },
   });
   if (!partner) notFound();
+
+  // What still blocks a payout, and what the tier is actually worth — both are
+  // computed by the same helpers the payout pipeline and commission engine use,
+  // so the page can never disagree with what the API will do.
+  const gaps = kycGaps(partner);
+  const tier = await getTierProgress(partner.id, partner.tierOverride);
+
+  // Candidate parents for the sub-partner hierarchy. Self is excluded because a
+  // partner cannot be their own parent, and archived partners are not offered.
+  const parentOptions = (
+    await db.partnerProfile.findMany({
+      where: { id: { not: partner.id }, status: "APPROVED", archivedAt: null },
+      orderBy: { partnerCode: "asc" },
+      take: 100,
+      select: { id: true, partnerCode: true, user: { select: { name: true } } },
+    })
+  ).map((p) => ({ id: p.id, label: `${p.user.name} (${p.partnerCode})` }));
 
   // ── Business summary: what this partner is actually generating ──────────
   // Commission follows the owner, so the owner list — not the PG list — is what
@@ -127,6 +149,30 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           <AdminPartnerActions id={partner.id} status={partner.status} />
         </div>
       </div>
+
+      {/* ── Programme controls ─────────────────────────────────── */}
+      <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+          <h2 className="font-bold text-neutral-900 text-sm">Partner controls</h2>
+          <span className="text-xs text-neutral-500">
+            Tier <b>{tier.label}</b>
+            {tier.bonusPercent > 0 ? ` (+${tier.bonusPercent}% bonus)` : ""} · {tier.conversions} paid owners
+          </span>
+        </div>
+        <AdminPartnerControls
+          partnerId={partner.id}
+          kycVerifiedAt={partner.kycVerifiedAt}
+          kycGaps={gaps}
+          riskFlagged={partner.riskFlagged}
+          riskReason={partner.riskReason}
+          commissionOverridePercent={partner.commissionOverridePercent}
+          tierOverride={partner.tierOverride}
+          parentPartnerId={partner.parentPartnerId}
+          parentOverridePercent={partner.parentOverridePercent}
+          archivedAt={partner.archivedAt}
+          parentOptions={parentOptions}
+        />
+      </section>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -240,6 +286,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                 count={payable.length}
                 amount={payableTotal}
                 hasPayoutDetails={!!(partner.upiId || partner.bankAccountNo)}
+                kycGaps={gaps}
               />
             </div>
 
@@ -254,6 +301,9 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-neutral-400">{fmtDate(p.paidAt ?? p.createdAt)}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusStyle[p.status]}`}>{p.status}</span>
+                      {/* PROCESSING → record the UTR; COMPLETED → reverse if the
+                          transfer bounced. Editing the earnings is never the answer. */}
+                      <PayoutRowActions payoutId={p.id} status={p.status} amount={p.amount} />
                     </div>
                   </div>
                 ))}
@@ -289,7 +339,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                         <td className="px-3 py-2.5 text-neutral-500">{fmtDate(e.createdAt)}</td>
                         <td className="px-3 py-2.5 text-right font-bold text-neutral-900">{inr(e.amount)}</td>
                         <td className="px-3 py-2.5"><span className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusStyle[e.status]}`}>{e.status}</span></td>
-                        <td className="px-5 py-2.5"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} /></td>
+                        <td className="px-5 py-2.5"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} /></td>
                       </tr>
                     ))}
                   </tbody>

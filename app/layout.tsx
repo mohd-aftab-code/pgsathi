@@ -4,6 +4,7 @@ import "./globals.css";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { InstallPWA } from "@/components/common/InstallPWA";
 import { MobileAppNav } from "@/components/common/MobileAppNav";
+import { themeInitScript } from "@/components/partner/ThemeToggle";
 import { auth } from "@/lib/auth";
 
 const inter = Inter({
@@ -156,6 +157,10 @@ export default async function RootLayout({
       <GoogleTagManager gtmId="GTM-PF5NWQMS" />
       <head>
         <meta name="google-site-verification" content="ZaMEO4rMht0Z5dlPt2AeWfLWDCu25rMA8baxz770N28" />
+        {/* Applies the saved Partner Portal theme before paint, so there is no
+            light/dark flash. Self-guards on the /partner path, so it is a no-op
+            for the rest of the site — which is light-only. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

@@ -2,20 +2,37 @@
  * app/api/admin/partner-payouts/route.ts
  * POST — pay a partner in one batch.
  *
- * Collects every APPROVED earning that isn't already attached to a payout,
- * creates one PartnerPayout for the total, links those earnings to it and marks
- * them PAID. This is how a real payout works: one transfer per cycle, not one
- * per PG.
+ * Collects every APPROVED earning that isn't already attached to a payout and
+ * creates one PROCESSING payout for the total. This is how a real payout works:
+ * one transfer per cycle, not one per PG.
  *
- * The whole thing runs in a transaction so a partial payout can never exist
- * (money linked to a payout that was never created, or vice versa).
+ * The heavy lifting (KYC gate, minimum balance, TDS, idempotency, the
+ * transaction that attaches the earnings) lives in lib/partner-payouts so the
+ * bulk route and the single-earning route cannot drift from it.
+ *
+ * A payout created here is NOT complete — the money has not moved yet. It is
+ * finished by PATCHing /api/admin/partner-payouts/[id] with the UTR.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { getAdmin, adminAudit } from "@/lib/admin-audit";
 import { can, PERMISSIONS } from "@/lib/permissions";
-import { notify } from "@/lib/notifications";
-import { sendPayoutEmail } from "@/lib/email";
+import { createPayout, getBulkCandidates } from "@/lib/partner-payouts";
+
+export async function GET() {
+  const admin = await getAdmin();
+  if (!admin) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
+  if (!(await can("ADMIN", PERMISSIONS.PAYOUT_CREATE))) {
+    return NextResponse.json({ success: false, message: "Permission denied" }, { status: 403 });
+  }
+
+  const candidates = await getBulkCandidates();
+  return NextResponse.json({
+    success: true,
+    data: candidates,
+    payable: candidates.filter((c) => !c.blocked).length,
+    blocked: candidates.filter((c) => c.blocked).length,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const admin = await getAdmin();
@@ -26,83 +43,97 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const partnerId = parseInt(String(body.partnerId));
-  const method = ["UPI", "BANK", "CASH", "OTHER"].includes(body.method) ? body.method : "UPI";
-  const reference = String(body.reference ?? "").trim().slice(0, 60) || null;
 
+  // ── Bulk: every partner whose balance clears the rules ────────────────────
+  if (body.mode === "bulk") {
+    const candidates = await getBulkCandidates();
+    const eligible = candidates.filter((c) => !c.blocked);
+    const results: { partnerId: number; name: string; ok: boolean; message: string; amount?: number }[] = [];
+
+    for (const c of eligible) {
+      const res = await createPayout({
+        partnerId: c.partnerId,
+        adminId: admin.id,
+        method: body.method,
+        notes: body.notes ?? "Bulk cycle payout",
+      });
+      results.push(
+        res.ok
+          ? { partnerId: c.partnerId, name: c.name, ok: true, message: "created", amount: res.net }
+          : { partnerId: c.partnerId, name: c.name, ok: false, message: res.message },
+      );
+    }
+
+    const created = results.filter((r) => r.ok);
+    await adminAudit({
+      adminId: admin.id,
+      actor: admin.name,
+      action: "payout.bulk_created",
+      entity: "PartnerPayout",
+      before: { eligible: eligible.length, blocked: candidates.length - eligible.length },
+      after: { created: created.length, total: created.reduce((s, r) => s + (r.amount ?? 0), 0) },
+    });
+
+    // Never report a clean sweep when partners were skipped — a silent skip
+    // reads as "everyone got paid".
+    return NextResponse.json({
+      success: true,
+      message: `${created.length} payout ban gaye${
+        candidates.length - eligible.length > 0 ? `, ${candidates.length - eligible.length} partner skip hue` : ""
+      }`,
+      data: { results, skipped: candidates.filter((c) => c.blocked) },
+    });
+  }
+
+  // ── Single partner ────────────────────────────────────────────────────────
+  const partnerId = parseInt(String(body.partnerId));
   if (Number.isNaN(partnerId)) {
     return NextResponse.json({ success: false, message: "Invalid partner" }, { status: 400 });
   }
 
-  const partner = await db.partnerProfile.findUnique({
-    where: { id: partnerId },
-    select: { id: true, userId: true, partnerCode: true, user: { select: { name: true, email: true } } },
+  const res = await createPayout({
+    partnerId,
+    adminId: admin.id,
+    method: body.method,
+    reference: body.reference ?? null,
+    notes: body.notes ?? null,
+    ignoreMinimum: body.ignoreMinimum === true,
   });
-  if (!partner) return NextResponse.json({ success: false, message: "Partner nahi mila" }, { status: 404 });
 
-  // Only APPROVED earnings that aren't already in a payout are payable.
-  const payable = await db.partnerEarning.findMany({
-    where: { partnerId, status: "APPROVED", payoutId: null },
-    select: { id: true, amount: true },
-  });
-  if (payable.length === 0) {
-    return NextResponse.json({ success: false, message: "Koi approved earning payout ke liye pending nahi" }, { status: 400 });
+  if (!res.ok) {
+    return NextResponse.json({ success: false, code: res.code, message: res.message }, { status: 400 });
   }
-
-  const total = payable.reduce((sum, e) => sum + e.amount, 0);
-  const ids = payable.map((e) => e.id);
-
-  const payout = await db.$transaction(async (tx) => {
-    const p = await tx.partnerPayout.create({
-      data: {
-        partnerId,
-        amount: total,
-        method,
-        reference,
-        status: "COMPLETED", // recorded as paid; the transfer itself happens outside the app
-        paidAt: new Date(),
-        createdBy: admin.id,
-      },
-      select: { id: true, amount: true },
-    });
-
-    // Re-check status inside the transaction so a concurrent action can't cause
-    // an earning to be paid twice.
-    await tx.partnerEarning.updateMany({
-      where: { id: { in: ids }, status: "APPROVED", payoutId: null },
-      data: { status: "PAID", paidAt: new Date(), payoutId: p.id },
-    });
-
-    return p;
-  });
 
   await adminAudit({
     adminId: admin.id,
     actor: admin.name,
     action: "payout.created",
     entity: "PartnerPayout",
-    entityId: payout.id,
-    before: { earningIds: ids, status: "APPROVED" },
-    after: { payoutId: payout.id, amount: total, method, reference, status: "PAID" },
+    entityId: res.payoutId,
+    before: { earningCount: res.count, status: "APPROVED" },
+    after: {
+      payoutId: res.payoutId,
+      gross: res.gross,
+      tdsRate: res.tds.rate,
+      tdsAmount: res.tds.amount,
+      net: res.net,
+      status: "PROCESSING",
+    },
   });
-
-  await notify({
-    userId: partner.userId,
-    type: "PARTNER_EARNING",
-    title: `Payout ho gaya — ₹${total.toLocaleString("en-IN")} 🎉`,
-    message: `${payable.length} earning(s) ka payment ${method} se kar diya gaya${reference ? ` (ref: ${reference})` : ""}.`,
-    link: "/partner/earnings",
-  });
-
-  if (partner.user?.email) {
-    await sendPayoutEmail(partner.user.email, partner.user.name, total, method, reference || undefined).catch((e) => {
-      console.error("[PAYOUT_EMAIL_ERROR]", e);
-    });
-  }
 
   return NextResponse.json({
     success: true,
-    message: `₹${total.toLocaleString("en-IN")} ka payout ban gaya (${payable.length} earnings)`,
-    data: { payoutId: payout.id, amount: total, count: payable.length },
+    message:
+      `₹${res.net.toLocaleString("en-IN")} ka payout ban gaya (${res.count} earnings)` +
+      (res.tds.amount > 0 ? ` — TDS ${res.tds.rate}% ₹${res.tds.amount.toLocaleString("en-IN")} kaata gaya` : "") +
+      `. Transfer karke UTR daalein tabhi complete hoga.`,
+    data: {
+      payoutId: res.payoutId,
+      gross: res.gross,
+      tds: res.tds,
+      amount: res.net,
+      count: res.count,
+      needsApproval: res.needsApproval,
+    },
   });
 }

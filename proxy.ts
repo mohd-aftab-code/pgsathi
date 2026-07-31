@@ -30,8 +30,44 @@ const ROLE_HOME: Record<string, string> = {
   PARTNER: "/partner/dashboard",
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Referral attribution
+// A `?ref=` code used to live only in the URL of the page the visitor happened
+// to be on, so browsing anywhere before registering threw the referral away.
+// Parking it in a cookie here — the first request that carries the code — is
+// what lets attribution survive the days between "opened the link" and
+// "actually signed up". The register API reads it back.
+//
+// Kept deliberately dependency-free: this runs at the edge, where the database
+// and anything importing "server-only" are unavailable. Click *tracking* is
+// done by the /r/<code> route instead, which runs on Node.
+// ─────────────────────────────────────────────────────────────────────────────
+const REFERRAL_COOKIE = "ps_ref";
+const REFERRAL_COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
+
+function normalizeRefCode(raw: string | null): string | null {
+  if (!raw) return null;
+  const code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+  return code.length >= 4 ? code : null;
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const refCode = normalizeRefCode(request.nextUrl.searchParams.get("ref"));
+  /** Attaches the referral cookie to whatever response this request produces. */
+  const withRef = (res: NextResponse) => {
+    if (refCode) {
+      res.cookies.set(REFERRAL_COOKIE, refCode, {
+        maxAge: REFERRAL_COOKIE_MAX_AGE,
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      });
+    }
+    return res;
+  };
 
   // Check which cookie actually exists (handles misconfigured AUTH_URL on Vercel)
   const isSecureCookie = request.cookies.has("__Secure-authjs.session-token");
@@ -55,16 +91,27 @@ export async function proxy(request: NextRequest) {
     ? "/dashboard/manager"
     : ROLE_HOME[role ?? ""] ?? "/dashboard/tenant";
 
+  // ── 0. Forced password change ─────────────────────────────────────────────
+  // An owner account created by a partner is handed over with a password the
+  // partner knows. Until it is changed, that partner holds the keys to the
+  // owner's tenants, leads and revenue — so nothing else is reachable first.
+  if (isAuthenticated && token?.mustChangePassword && pathname !== "/change-password") {
+    const isAsset = pathname.startsWith("/_next") || pathname === "/favicon.ico";
+    if (!isAsset) {
+      return withRef(NextResponse.redirect(new URL("/change-password", request.url)));
+    }
+  }
+
   // ── 1. Redirect unauthenticated users away from dashboard ─────────────────
   if (pathname.startsWith("/dashboard") && !isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
+    return withRef(NextResponse.redirect(loginUrl));
   }
 
   // ── 2. Redirect authenticated users away from login/register pages ────────
   if (PUBLIC_AUTH_ROUTES.some((r) => pathname.startsWith(r)) && isAuthenticated) {
-    return NextResponse.redirect(new URL(userHome, request.url));
+    return withRef(NextResponse.redirect(new URL(userHome, request.url)));
   }
 
   // ── 2b. Partner Portal guards ────────────────────────────────────────────
@@ -75,22 +122,22 @@ export async function proxy(request: NextRequest) {
     if (!isAuthenticated) {
       const loginUrl = new URL("/partner/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
+      return withRef(NextResponse.redirect(loginUrl));
     }
     // A signed-in owner/tenant/admin must never land on partner pages.
     if (role !== "PARTNER") {
-      return NextResponse.redirect(new URL(userHome, request.url));
+      return withRef(NextResponse.redirect(new URL(userHome, request.url)));
     }
   }
 
   // An already signed-in partner has no use for the partner auth pages.
   if (isAuthenticated && role === "PARTNER" && isPartnerPublic && pathname !== "/partner") {
-    return NextResponse.redirect(new URL("/partner/dashboard", request.url));
+    return withRef(NextResponse.redirect(new URL("/partner/dashboard", request.url)));
   }
 
   // Partners live entirely outside /dashboard.
   if (pathname.startsWith("/dashboard") && isAuthenticated && role === "PARTNER") {
-    return NextResponse.redirect(new URL("/partner/dashboard", request.url));
+    return withRef(NextResponse.redirect(new URL("/partner/dashboard", request.url)));
   }
 
   // ── 3. Role-based dashboard access enforcement ───────────────────────────
@@ -98,17 +145,17 @@ export async function proxy(request: NextRequest) {
 
     // /dashboard/admin  → ADMIN only
     if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
-      return NextResponse.redirect(new URL(userHome, request.url));
+      return withRef(NextResponse.redirect(new URL(userHome, request.url)));
     }
 
     // /dashboard/owner  → OWNER only
     if (pathname.startsWith("/dashboard/owner") && role !== "OWNER") {
-      return NextResponse.redirect(new URL(userHome, request.url));
+      return withRef(NextResponse.redirect(new URL(userHome, request.url)));
     }
 
     // /dashboard/manager → isManager flag (staff login) OR the OWNER/ADMIN themselves
     if (pathname.startsWith("/dashboard/manager") && !isManager && role !== "OWNER" && role !== "ADMIN") {
-      return NextResponse.redirect(new URL(userHome, request.url));
+      return withRef(NextResponse.redirect(new URL(userHome, request.url)));
     }
 
     // /dashboard/tenant → TENANT role only
@@ -116,11 +163,11 @@ export async function proxy(request: NextRequest) {
       pathname.startsWith("/dashboard/tenant") &&
       (isManager || role !== "TENANT")
     ) {
-      return NextResponse.redirect(new URL(userHome, request.url));
+      return withRef(NextResponse.redirect(new URL(userHome, request.url)));
     }
   }
 
-  return NextResponse.next();
+  return withRef(NextResponse.next());
 }
 
 export const config = {

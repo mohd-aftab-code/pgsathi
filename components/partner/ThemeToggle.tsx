@@ -45,9 +45,38 @@ export function ThemeToggle() {
   );
 }
 
-/** Runs before paint to apply the stored theme — prevents a light/dark flash. */
+/**
+ * Applies the stored partner theme to <html>.
+ *
+ * Only the Partner Portal is themed — the rest of the site is light-only — so
+ * this is a no-op anywhere else. Without that check, a visitor whose OS is in
+ * dark mode would get a half-styled dark public site.
+ */
+export function applyStoredPartnerTheme(): void {
+  if (typeof window === "undefined") return;
+  if (!window.location.pathname.startsWith("/partner")) return;
+  try {
+    const stored = localStorage.getItem(KEY);
+    const dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", dark);
+  } catch {
+    // private mode — fall back to light
+  }
+}
+
+/**
+ * The same logic as an inline string, for the root layout's <head>.
+ *
+ * It has to live in <head> rather than in the portal layout: React 19 refuses to
+ * execute a <script> created during a client render, so an inline script inside
+ * a route layout runs on first load but silently does nothing on client-side
+ * navigation — and logs a console error every time. In <head> it runs once,
+ * before paint, which is exactly what preventing the flash needs.
+ * `applyStoredPartnerTheme()` covers the client-navigation case.
+ */
 export const themeInitScript = `
 (function(){try{
+  if(location.pathname.indexOf('/partner')!==0)return;
   var s=localStorage.getItem(${JSON.stringify(KEY)});
   var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.classList.toggle('dark',d);

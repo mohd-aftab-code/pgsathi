@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { IndianRupee, Clock, CheckCircle2, Wallet, TrendingUp, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { IndianRupee, Clock, CheckCircle2, Wallet, TrendingUp, Calendar, ChevronLeft, ChevronRight, PauseCircle, Receipt, Info } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { getEarningSummary, getEarningList } from "@/lib/partner-earnings";
+import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
+import { kycGaps } from "@/lib/partner-payouts";
+import { db } from "@/lib/db";
 import { cycleLabel } from "@/lib/billing";
 import { StatCard } from "@/components/partner/StatCard";
 
@@ -14,6 +17,7 @@ const statusStyle: Record<string, string> = {
   PAID: "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400",
   APPROVED: "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400",
   PENDING: "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400",
+  ON_HOLD: "bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-400",
   CANCELLED: "bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500",
 };
 
@@ -27,18 +31,32 @@ export default async function PartnerEarningsPage({
   const status = sp.status ?? "";
   const page = Math.max(1, parseInt(sp.page ?? "1"));
 
-  const [summary, list] = await Promise.all([
+  const [summary, list, settings, profile] = await Promise.all([
     getEarningSummary(ctx.partnerId),
     getEarningList(ctx.partnerId, { status: status || undefined, page }),
+    getProgramSettings(),
+    db.partnerProfile.findUnique({
+      where: { id: ctx.partnerId },
+      select: {
+        panNumber: true, upiId: true, bankName: true, bankAccountNo: true,
+        bankIfsc: true, kycVerifiedAt: true,
+      },
+    }),
   ]);
+
+  // "Kab aayega" is the single most common partner question; answer it before
+  // they have to ask.
+  const nextPayout = nextPayoutDate(settings.payoutDayOfMonth);
+  const gaps = profile ? kycGaps(profile) : [];
+  const belowMinimum = summary.approved > 0 && summary.approved < settings.minPayoutAmount;
 
   const cards = [
     { label: "Pending", value: inr(summary.pending), sub: `${summary.count.pending} earnings`, Icon: Clock, tone: "amber" as const },
+    { label: "On Hold", value: inr(summary.onHold), sub: `${summary.count.onHold} review par`, Icon: PauseCircle, tone: "slate" as const },
     { label: "Approved", value: inr(summary.approved), sub: `${summary.count.approved} ready`, Icon: CheckCircle2, tone: "blue" as const },
     { label: "Paid", value: inr(summary.paid), sub: `${summary.count.paid} received`, Icon: Wallet, tone: "green" as const },
     { label: "Net Earnings", value: inr(summary.net), sub: "lifetime", Icon: IndianRupee, accent: true },
     { label: "This Month", value: inr(summary.thisMonth), sub: `pichla: ${inr(summary.lastMonth)}`, Icon: Calendar, tone: "violet" as const },
-    { label: "Lifetime", value: inr(summary.lifetime), sub: "excluding cancelled", Icon: TrendingUp, tone: "green" as const },
   ];
 
   const tab = (label: string, val: string) => (
@@ -67,9 +85,48 @@ export default async function PartnerEarningsPage({
       <div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Earnings</h1>
         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-          Har paid PG par admin dwara set ki gayi earning. Koi commission % nahi.
+          Har owner ke payment par commission — recurring, jab tak wo renew karte rahein.
         </p>
       </div>
+
+      {/* ── Payout status strip ─────────────────────────────────── */}
+      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <div className="inline-flex items-center gap-2">
+            <Calendar size={15} className="text-primary-500" />
+            <span className="text-neutral-500 dark:text-neutral-400">Agla payout:</span>
+            <span className="font-bold text-neutral-900 dark:text-white">
+              {nextPayout.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-2">
+            <span className="text-neutral-500 dark:text-neutral-400">Minimum:</span>
+            <span className="font-bold text-neutral-900 dark:text-white">{inr(settings.minPayoutAmount)}</span>
+          </div>
+          <div className="inline-flex items-center gap-2">
+            <span className="text-neutral-500 dark:text-neutral-400">Refund window:</span>
+            <span className="font-bold text-neutral-900 dark:text-white">{settings.holdDays} din</span>
+          </div>
+        </div>
+
+        {gaps.length > 0 && (
+          <div className="mt-3 rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm">
+            <span className="font-bold text-amber-900 dark:text-amber-400">Payout details adhoore hain</span>
+            <span className="text-amber-800 dark:text-amber-500/90"> — abhi baaki: {gaps.join(", ")}. </span>
+            <Link href="/partner/profile" className="font-bold text-amber-900 dark:text-amber-400 underline">
+              Profile me poora karein
+            </Link>
+            <span className="text-amber-800 dark:text-amber-500/90"> — tab tak approved earnings hold rahengi.</span>
+          </div>
+        )}
+
+        {gaps.length === 0 && belowMinimum && (
+          <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 inline-flex items-center gap-1.5">
+            <Info size={13} />
+            {inr(summary.approved)} approved hai — {inr(settings.minPayoutAmount)} se kam, isliye agle cycle me carry forward hoga.
+          </p>
+        )}
+      </section>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
         {cards.map((c) => <StatCard key={c.label} {...c} />)}
@@ -78,6 +135,7 @@ export default async function PartnerEarningsPage({
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap no-scrollbar">
         {tab("All", "")}
         {tab("Pending", "PENDING")}
+        {tab("On Hold", "ON_HOLD")}
         {tab("Approved", "APPROVED")}
         {tab("Paid", "PAID")}
         {tab("Cancelled", "CANCELLED")}
@@ -136,9 +194,37 @@ export default async function PartnerEarningsPage({
                       {e.invoice && <span className="text-xs text-neutral-400 block">{cycleLabel(e.invoice.billingCycle)} · {inr(e.planPriceSnapshot ?? 0)}</span>}
                     </td>
                     <td className="px-3 py-3 text-neutral-500 dark:text-neutral-400">{fmtDate(e.createdAt)}</td>
-                    <td className="px-3 py-3 text-right font-bold text-neutral-900 dark:text-white">{inr(e.amount)}</td>
+                    <td className="px-3 py-3 text-right">
+                      <span className={`font-bold ${e.amount < 0 ? "text-red-600 dark:text-red-400" : "text-neutral-900 dark:text-white"}`}>
+                        {inr(e.amount)}
+                      </span>
+                      {/* Snapshotted at creation: "yeh amount kaise bana" is the
+                          first question in every payout dispute. */}
+                      {e.commissionRateSnapshot && (
+                        <span className="block text-[11px] text-neutral-400">{e.commissionRateSnapshot}</span>
+                      )}
+                    </td>
                     <td className="px-5 py-3 text-right">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[e.status] ?? statusStyle.PENDING}`}>{e.status}</span>
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                        e.onHold && e.status === "PENDING" ? statusStyle.ON_HOLD : statusStyle[e.status] ?? statusStyle.PENDING
+                      }`}>
+                        {e.onHold && e.status === "PENDING" ? "ON HOLD" : e.status}
+                      </span>
+                      <span className="block text-[11px] text-neutral-400 mt-1 max-w-[170px] ml-auto">
+                        {e.onHold && e.holdReason
+                          ? e.holdReason
+                          : e.status === "PENDING" && e.eligibleAt && e.eligibleAt > new Date()
+                            ? `${fmtDate(e.eligibleAt)} ko approve hogi`
+                            : e.status === "PAID" && e.payout?.reference
+                              ? `${e.payout.method} · ${e.payout.reference}`
+                              : e.status === "PAID" && e.payout?.status === "PROCESSING"
+                                ? "transfer process me hai"
+                                : e.kind === "OVERRIDE"
+                                  ? "team override"
+                                  : e.kind === "ADJUSTMENT"
+                                    ? "refund clawback"
+                                    : ""}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -172,8 +258,14 @@ export default async function PartnerEarningsPage({
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-lg font-extrabold text-neutral-900 dark:text-white">{inr(e.amount)}</div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1 ${statusStyle[e.status] ?? statusStyle.PENDING}`}>{e.status}</span>
+                    <div className={`text-lg font-extrabold ${e.amount < 0 ? "text-red-600 dark:text-red-400" : "text-neutral-900 dark:text-white"}`}>
+                      {inr(e.amount)}
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1 ${
+                      e.onHold && e.status === "PENDING" ? statusStyle.ON_HOLD : statusStyle[e.status] ?? statusStyle.PENDING
+                    }`}>
+                      {e.onHold && e.status === "PENDING" ? "ON HOLD" : e.status}
+                    </span>
                   </div>
                 </div>
                 {/* Row 2: Plan + Date */}
@@ -184,6 +276,20 @@ export default async function PartnerEarningsPage({
                   </span>
                   <span className="shrink-0">{fmtDate(e.createdAt)}</span>
                 </div>
+                {/* Row 3: how the amount was arrived at, and where it is now */}
+                {(e.commissionRateSnapshot || e.holdReason || e.payout?.reference) && (
+                  <div className="pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-400 space-y-0.5">
+                    {e.commissionRateSnapshot && <div>{e.commissionRateSnapshot}</div>}
+                    {e.onHold && e.holdReason && (
+                      <div className="text-orange-600 dark:text-orange-400 font-semibold">{e.holdReason}</div>
+                    )}
+                    {e.status === "PAID" && e.payout?.reference && (
+                      <div className="inline-flex items-center gap-1">
+                        <Receipt size={11} /> {e.payout.method} · {e.payout.reference}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -71,35 +71,79 @@ export function PayoutForm({ initial }: { initial: { panNumber: string; bankName
   );
 }
 
-export function SettingsForm({ initial }: { initial: { notifyInApp: boolean; notifyEmail: boolean; notifyWhatsapp: boolean } }) {
+/**
+ * These toggles are now actually read before anything is sent — see
+ * lib/partner-notify. Until that existed they were stored and ignored, so
+ * turning email off changed nothing.
+ */
+export function SettingsForm({
+  initial,
+  whatsappAvailable,
+}: {
+  initial: { notifyInApp: boolean; notifyEmail: boolean; notifyWhatsapp: boolean; language: string };
+  /** False when no WhatsApp Business API is configured on the server. */
+  whatsappAvailable: boolean;
+}) {
   const [f, setF] = useState(initial);
   const { save, saving, saved, error } = useSave("settings");
-  const toggle = (k: keyof typeof f) => setF((s) => ({ ...s, [k]: !s[k] }));
-  const rows: { k: keyof typeof f; label: string; desc: string }[] = [
-    { k: "notifyInApp", label: "In-app notifications", desc: "Alerts inside the portal" },
-    { k: "notifyEmail", label: "Email notifications", desc: "Important updates on email" },
-    { k: "notifyWhatsapp", label: "WhatsApp notifications", desc: "Alerts on WhatsApp (coming soon)" },
+  const toggle = (k: "notifyInApp" | "notifyEmail" | "notifyWhatsapp") => setF((s) => ({ ...s, [k]: !s[k] }));
+
+  const rows: { k: "notifyInApp" | "notifyEmail" | "notifyWhatsapp"; label: string; desc: string; disabled?: boolean }[] = [
+    { k: "notifyInApp", label: "In-app notifications", desc: "Portal ke andar alerts" },
+    { k: "notifyEmail", label: "Email notifications", desc: "Nayi earning, approval aur payout ki email" },
+    {
+      k: "notifyWhatsapp",
+      label: "WhatsApp notifications",
+      desc: whatsappAvailable
+        ? "Earning aur payout ke alerts WhatsApp par"
+        : "Abhi available nahi — admin ne WhatsApp Business API configure nahi kiya",
+      disabled: !whatsappAvailable,
+    },
   ];
+
   return (
     <form onSubmit={(e) => { e.preventDefault(); save(f); }} className="space-y-4">
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <div className="space-y-2">
         {rows.map((r) => (
-          <label key={r.k} className="flex items-center justify-between gap-3 p-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-800 cursor-pointer">
+          <label
+            key={r.k}
+            className={`flex items-center justify-between gap-3 p-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-800 ${
+              r.disabled ? "opacity-60" : "cursor-pointer"
+            }`}
+          >
             <div>
               <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{r.label}</div>
               <div className="text-xs text-neutral-500 dark:text-neutral-400">{r.desc}</div>
             </div>
             <button
               type="button"
+              disabled={r.disabled}
               onClick={() => toggle(r.k)}
-              className={`w-11 h-6 rounded-full relative transition-colors shrink-0 ${f[r.k] ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-700"}`}
+              className={`w-11 h-6 rounded-full relative transition-colors shrink-0 disabled:cursor-not-allowed ${
+                f[r.k] ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-700"
+              }`}
             >
               <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${f[r.k] ? "translate-x-5" : "translate-x-0.5"}`} />
             </button>
           </label>
         ))}
       </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-neutral-500">Language</label>
+        <select
+          value={f.language}
+          onChange={(e) => setF({ ...f, language: e.target.value })}
+          className="h-11 w-full rounded-xl border-2 border-neutral-200 dark:border-neutral-800 bg-transparent px-3 text-sm font-semibold outline-none"
+        >
+          <option value="ENGLISH">English</option>
+          <option value="HINGLISH">Hinglish (default)</option>
+          <option value="HINDI">हिन्दी</option>
+        </select>
+        <p className="text-[11px] text-neutral-400 mt-1.5">Notifications aur emails isi bhasha me aayenge.</p>
+      </div>
+
       <SaveBtn saving={saving} saved={saved} />
     </form>
   );

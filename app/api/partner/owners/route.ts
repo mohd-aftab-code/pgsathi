@@ -76,6 +76,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, message: "Email sahi nahi hai" }, { status: 400 });
   }
 
+  // Self-referral guard: a partner adding themselves as their own owner would
+  // earn commission on their own purchases, for as long as they kept renewing.
+  const self = await db.user.findUnique({
+    where: { id: ctx.userId },
+    select: { phone: true, email: true },
+  });
+  if ((self?.phone && self.phone === phone) || (emailInput && self?.email?.toLowerCase() === emailInput)) {
+    return NextResponse.json(
+      { success: false, message: "Apne hi number/email se owner nahi bana sakte" },
+      { status: 400 },
+    );
+  }
+
   const existing = await db.user.findUnique({
     where: { phone },
     select: { id: true, name: true, role: true, partnerId: true },
@@ -118,7 +131,11 @@ export async function POST(req: NextRequest) {
       role: "OWNER",
       isVerified: true,
       partnerId: ctx.partnerId,
+      partnerAttributedAt: new Date(),
       ownerType: city || null,
+      // The partner is handed this password so they can pass it on. Forcing a
+      // change on first login is what stops that copy staying valid.
+      mustChangePassword: true,
     },
     select: { id: true, name: true, phone: true, email: true },
   });
@@ -140,11 +157,13 @@ export async function POST(req: NextRequest) {
   });
 
   // The password is returned exactly once, here. It is hashed in the database and
-  // can never be read back — a partner who loses it must issue a new one.
+  // can never be read back — a partner who loses it must issue a new one. The
+  // owner is forced to replace it at first login, so this copy is temporary.
   return NextResponse.json({
     success: true,
     alreadyExisted: false,
-    message: `${owner.name} ka account ban gaya.`,
+    mustChangePassword: true,
+    message: `${owner.name} ka account ban gaya. Pehli login par unhe password badalna hoga.`,
     data: { id: owner.id, name: owner.name, phone: owner.phone, email: owner.email, password },
   });
 }

@@ -52,6 +52,9 @@ export async function POST(req: NextRequest) {
         capabilities: readCapabilities(body.capabilities) as object,
         partnerCommissionType: ["NONE", "PERCENT", "FIXED"].includes(body.partnerCommissionType) ? body.partnerCommissionType : "NONE",
         partnerCommissionValue: body.partnerCommissionValue !== undefined ? Math.max(0, parseInt(body.partnerCommissionValue) || 0) : 0,
+        // 0 = commission runs for as long as the owner keeps renewing.
+        partnerCommissionMonths: Math.max(0, Math.min(120, parseInt(body.partnerCommissionMonths) || 0)),
+        referralBonusDays: Math.max(0, Math.min(365, parseInt(body.referralBonusDays) || 0)),
         isActive: body.isActive !== false,
       }
     });

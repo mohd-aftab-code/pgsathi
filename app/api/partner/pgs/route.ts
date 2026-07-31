@@ -148,6 +148,18 @@ export async function POST(req: NextRequest) {
 
     // Find-or-create the OWNER user by phone. If an account already exists we
     // attach the PG to it (never overwrite their name/role).
+    // Self-referral guard: registering your own PG under your own partner code
+    // is a commission on your own purchase, renewing forever.
+    if (
+      (ctx.phone && ctx.phone === ownerPhone) ||
+      (ownerEmailInput && ctx.email.toLowerCase() === ownerEmailInput)
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Apne hi number/email par owner account nahi bana sakte" },
+        { status: 400 },
+      );
+    }
+
     let owner = await db.user.findUnique({ where: { phone: ownerPhone }, select: { id: true, role: true } });
     let createdOwner = false;
     // Returned to the partner exactly once, for a brand-new owner only. Without
@@ -167,6 +179,10 @@ export async function POST(req: NextRequest) {
           passwordHash: await bcrypt.hash(ownerPassword, 10),
           role: "OWNER",
           isVerified: true,
+          // The partner is shown this password once so they can hand it over.
+          // Forcing a change at first login is what stops their copy of it
+          // remaining a working key to the owner's account.
+          mustChangePassword: true,
         },
         select: { id: true, role: true },
       });

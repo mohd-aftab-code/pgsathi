@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
-  User, Users, Settings, LogOut, X, Plus, LayoutGrid, Megaphone
+  User, Users, Settings, LogOut, X, Plus, LayoutGrid, Megaphone,
+  Target, Trophy
 } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle, applyStoredPartnerTheme } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
 
 const NAV = [
   { name: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
+  { name: "Leads", href: "/partner/leads", icon: Target },
   { name: "Owners", href: "/partner/owners", icon: Users },
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
   { name: "Reports", href: "/partner/reports", icon: FileBarChart },
   { name: "Marketing", href: "/partner/marketing", icon: Megaphone },
+  { name: "Leaderboard", href: "/partner/leaderboard", icon: Trophy },
   { name: "Notifications", href: "/partner/notifications", icon: Bell },
 ];
 
@@ -27,10 +30,14 @@ const ACCOUNT = [
 
 /**
  * The bottom bar holds five slots: two tabs, the centre Add-PG button, one tab,
- * and More. Reports, Notifications and the account pages live in the More sheet.
+ * and More. Everything else lives in the More sheet.
+ *
+ * Picked by href, not by index into NAV — indexes silently point at the wrong
+ * screen the moment an item is inserted into the list above.
  */
-const TABS_LEFT = [NAV[0], NAV[1]];   // Dashboard, Owners
-const TABS_RIGHT = [NAV[3]];          // Earnings
+const tab = (href: string) => NAV.find((n) => n.href === href)!;
+const TABS_LEFT = [tab("/partner/dashboard"), tab("/partner/owners")];
+const TABS_RIGHT = [tab("/partner/earnings")];
 
 /**
  * Portal chrome: fixed sidebar on desktop, native-app bottom tab bar on mobile —
@@ -50,6 +57,15 @@ export function PartnerShell({
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  // The root layout's <head> script themes the portal before paint on a full
+  // page load. Arriving here via client-side navigation runs no such script, so
+  // re-apply it on mount — otherwise a partner who clicks in from the public
+  // site sees the portal in light mode until they reload.
+  useEffect(() => {
+    applyStoredPartnerTheme();
+  }, []);
+
   const isActive = (href: string) =>
     href === "/partner/dashboard" ? pathname === href : pathname.startsWith(href);
 

@@ -6,19 +6,26 @@ import { Wallet, Loader2, X } from "lucide-react";
 
 /**
  * Pays out every approved-but-unpaid earning for one partner in a single batch.
- * Disabled when there is nothing payable, and warns if the partner hasn't filled
- * in payout details yet (you can't transfer money to a blank UPI/account).
+ *
+ * Creates a PROCESSING payout — the transfer itself still happens in a bank app,
+ * and the payout only becomes COMPLETED once its UTR is recorded. Blocked
+ * outright when the partner's payout details are not verified: marking earnings
+ * PAID with nowhere to send the money put them in a terminal state describing
+ * something that never happened.
  */
 export function CreatePayoutButton({
   partnerId,
   count,
   amount,
   hasPayoutDetails,
+  kycGaps = [],
 }: {
   partnerId: number;
   count: number;
   amount: number;
   hasPayoutDetails: boolean;
+  /** Anything still missing before a payout can legally be created. */
+  kycGaps?: string[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -50,6 +57,18 @@ export function CreatePayoutButton({
     );
   }
 
+  // The API refuses this anyway; showing why here saves a pointless round trip.
+  if (kycGaps.length > 0) {
+    return (
+      <div className="inline-flex flex-col items-start gap-1">
+        <button disabled className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-neutral-100 text-neutral-400 text-sm font-bold cursor-not-allowed">
+          <Wallet size={15} /> KYC pending
+        </button>
+        <span className="text-[11px] text-amber-700">Baaki: {kycGaps.join(", ")}</span>
+      </div>
+    );
+  }
+
   return (
     <>
       <button
@@ -72,7 +91,7 @@ export function CreatePayoutButton({
 
               {!hasPayoutDetails && (
                 <div className="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">
-                  This partner has not provided payout details (UPI/bank). Please confirm where to send the money.
+                  Is partner ne payout details (UPI/bank) nahi di hain. Confirm karein ki paisa kahan bhejna hai.
                 </div>
               )}
 
@@ -93,12 +112,13 @@ export function CreatePayoutButton({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-neutral-700 mb-1.5">Reference / UTR <span className="text-neutral-400 font-normal">(optional)</span></label>
+                <label className="block text-xs font-bold text-neutral-700 mb-1.5">Reference / UTR <span className="text-neutral-400 font-normal">(baad me bhi daal sakte hain)</span></label>
                 <input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="e.g. UTR123456789" className="w-full h-11 px-3 rounded-xl border-2 border-neutral-200 text-sm" />
               </div>
 
               <p className="text-[11px] text-neutral-400">
-                This records that the money has been sent. You must make the actual transfer via your bank/UPI.
+                Isse ek <b>PROCESSING</b> payout banega aur TDS (agar lagu ho) apne aap kat jayega. Actual transfer
+                bank/UPI se karke UTR record karein — tabhi payout COMPLETED hoga.
               </p>
 
               <div className="flex gap-2 pt-1">

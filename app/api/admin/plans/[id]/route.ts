@@ -46,6 +46,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         capabilities: body.capabilities !== undefined ? (readCapabilities(body.capabilities) as object) : undefined,
         partnerCommissionType: body.partnerCommissionType !== undefined ? (["NONE", "PERCENT", "FIXED"].includes(body.partnerCommissionType) ? body.partnerCommissionType : "NONE") : undefined,
         partnerCommissionValue: body.partnerCommissionValue !== undefined ? Math.max(0, parseInt(body.partnerCommissionValue) || 0) : undefined,
+        // Changing these only affects future attributions and future payments —
+        // the window is measured from User.partnerAttributedAt, and the bonus is
+        // granted once per user ever.
+        partnerCommissionMonths: body.partnerCommissionMonths !== undefined ? Math.max(0, Math.min(120, parseInt(body.partnerCommissionMonths) || 0)) : undefined,
+        referralBonusDays: body.referralBonusDays !== undefined ? Math.max(0, Math.min(365, parseInt(body.referralBonusDays) || 0)) : undefined,
         isActive: body.isActive !== undefined ? body.isActive : undefined,
       }
     });

@@ -10,6 +10,7 @@ import {
   getPartnerStatusEmail,
   getListingStatusEmail,
   getPayoutEmail,
+  getPartnerAlertEmail,
   getSubscriptionActiveEmail,
   getSubscriptionExpiryEmail,
   getAdminNewUserNotificationEmail
@@ -164,6 +165,22 @@ export async function sendPayoutEmail(
     to,
     subject: `Payout Processed: ₹${amount.toLocaleString('en-IN')}`,
     html: getPayoutEmail(name, amount, method, reference),
+  });
+}
+
+// Generic partner alert — used by lib/partner-notify for any programme event
+export async function sendPartnerAlertEmail(
+  to: string,
+  name: string,
+  title: string,
+  message: string,
+  link?: string
+) {
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: title,
+    html: getPartnerAlertEmail(name, title, message, link),
   });
 }
 

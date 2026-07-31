@@ -31,6 +31,8 @@ export default function AdminPlansPage() {
     capabilities: { ...NO_CAPABILITIES } as PlanCapabilities,
     partnerCommissionType: "NONE",
     partnerCommissionValue: "0",
+    partnerCommissionMonths: "0",
+    referralBonusDays: "0",
     isActive: true,
   });
 
@@ -69,6 +71,8 @@ export default function AdminPlansPage() {
         capabilities: readCapabilities(plan.capabilities),
         partnerCommissionType: plan.partnerCommissionType ?? "NONE",
         partnerCommissionValue: (plan.partnerCommissionValue ?? 0).toString(),
+        partnerCommissionMonths: (plan.partnerCommissionMonths ?? 0).toString(),
+        referralBonusDays: (plan.referralBonusDays ?? 0).toString(),
         isActive: plan.isActive,
       });
     } else {
@@ -91,6 +95,8 @@ export default function AdminPlansPage() {
         capabilities: { ...NO_CAPABILITIES },
         partnerCommissionType: "NONE",
         partnerCommissionValue: "0",
+    partnerCommissionMonths: "0",
+    referralBonusDays: "0",
         isActive: true,
       });
     }
@@ -349,13 +355,52 @@ export default function AdminPlansPage() {
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">Commission kitne mahine tak</label>
+                  <select
+                    className="w-full border rounded-xl p-2.5"
+                    value={formData.partnerCommissionMonths}
+                    onChange={e => setFormData({ ...formData, partnerCommissionMonths: e.target.value })}
+                  >
+                    <option value="0">Lifetime (jab tak owner renew karta rahe)</option>
+                    <option value="12">12 mahine</option>
+                    <option value="24">24 mahine</option>
+                    <option value="1">Sirf pehla payment</option>
+                  </select>
+                  {/* Existing attributions keep their own clock: the window is
+                      measured from when the owner was attributed, so changing
+                      this never rewrites what a partner has already earned. */}
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Attribution ki date se gina jata hai. Purane owners par asar nahi padega.
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">Referral bonus (referred owner ko)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number" min={0}
+                      className="w-full border rounded-xl p-2.5"
+                      value={formData.referralBonusDays}
+                      onChange={e => setFormData({ ...formData, referralBonusDays: e.target.value })}
+                    />
+                    <span className="text-sm font-semibold text-neutral-500 whitespace-nowrap">din extra</span>
+                  </div>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Referral link se aaye owner ko itne din extra milenge — ek baar, pehle paid plan par.
+                  </p>
+                </div>
+              </div>
+
               {formData.partnerCommissionType !== "NONE" && formData.price && (
                 <p className="text-sm text-green-700 font-semibold mt-3">
                   Is plan par partner ko milega:{" "}
                   ₹{formData.partnerCommissionType === "PERCENT"
                     ? Math.round((parseInt(formData.price || "0") * parseInt(formData.partnerCommissionValue || "0")) / 100)
                     : parseInt(formData.partnerCommissionValue || "0")}
-                  {" "}per conversion
+                  {" "}per payment
+                  {formData.partnerCommissionMonths !== "0" && ` · ${formData.partnerCommissionMonths} mahine tak`}
+                  {" "}(tier bonus alag se lagega)
                 </p>
               )}
             </div>

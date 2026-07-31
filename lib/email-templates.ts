@@ -305,6 +305,26 @@ export function getPayoutEmail(name: string, amount: number, method: string, ref
   return baseTemplate(content, `You've received a payout of ${formattedAmount} from PGSathi`);
 }
 
+/**
+ * Generic partner alert — earnings, holds, approvals, reminders. One template
+ * so every programme event can reach email without a bespoke design each time.
+ */
+export function getPartnerAlertEmail(name: string, title: string, message: string, link?: string) {
+  const base = process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in";
+  const href = link ? (link.startsWith("http") ? link : `${base}${link}`) : `${base}/partner/dashboard`;
+  const content = `
+    <h2>${title}</h2>
+    <p>Hi ${name},</p>
+    <div class="card">
+      <p style="margin-bottom: 0; font-size: 16px;">${message}</p>
+    </div>
+    <div class="btn-container">
+      <a href="${href}" class="btn">Open Partner Portal</a>
+    </div>
+  `;
+  return baseTemplate(content, title);
+}
+
 export function getSubscriptionActiveEmail(name: string, planName: string, amount: number) {
   const formattedAmount = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
   const content = `

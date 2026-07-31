@@ -45,6 +45,9 @@ export async function PATCH(req: NextRequest) {
         },
       });
     } else if (section === "settings") {
+      const language = ["ENGLISH", "HINGLISH", "HINDI"].includes(String(body.language))
+        ? String(body.language)
+        : undefined;
       await db.partnerSetting.upsert({
         where: { partnerId: ctx.partnerId },
         create: {
@@ -52,11 +55,13 @@ export async function PATCH(req: NextRequest) {
           notifyInApp: body.notifyInApp ?? true,
           notifyEmail: body.notifyEmail ?? true,
           notifyWhatsapp: body.notifyWhatsapp ?? false,
+          language: language ?? "HINGLISH",
         },
         update: {
           notifyInApp: body.notifyInApp,
           notifyEmail: body.notifyEmail,
           notifyWhatsapp: body.notifyWhatsapp,
+          language,
         },
       });
     } else {

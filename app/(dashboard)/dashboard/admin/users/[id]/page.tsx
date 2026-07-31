@@ -7,6 +7,7 @@ import {
   CreditCard, MessageSquare, CheckCircle2, XCircle, Clock, Ban,
 } from "lucide-react";
 import { UserDetailActions } from "./UserDetailActions";
+import { ReattributeOwner } from "@/components/dashboard/ReattributeOwner";
 
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -27,6 +28,8 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
         take: 5,
       },
       partnerProfile: { select: { id: true, partnerCode: true, status: true } },
+      // Who brought this owner in — the attribution every commission follows.
+      partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
       _count: { select: { listings: true } },
     },
   });
@@ -35,6 +38,20 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
   const leadCount = await db.lead.count({ where: { tenantId: userId } });
 
   if (!user) notFound();
+
+  // Only owners carry a partner attribution, so the control is only offered
+  // where it means something.
+  const attributionPartners =
+    user.role === "OWNER"
+      ? (
+          await db.partnerProfile.findMany({
+            where: { status: "APPROVED", archivedAt: null },
+            orderBy: { partnerCode: "asc" },
+            take: 200,
+            select: { id: true, partnerCode: true, user: { select: { name: true } } },
+          })
+        ).map((p) => ({ id: p.id, label: `${p.user.name} (${p.partnerCode})` }))
+      : [];
 
   const activeSubscription = user.subscriptions.find((s) => s.status === "ACTIVE");
   const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -89,6 +106,37 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
           {/* Actions */}
           <UserDetailActions userId={user.id} userName={user.name || "User"} userRole={user.role} isActive={user.isActive} />
         </div>
+
+        {/* ── Partner attribution ────────────────────────────────── */}
+        {user.role === "OWNER" && (
+          <div className="mt-4 pt-4 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-3">
+            <div className="text-sm">
+              <span className="text-neutral-500">Partner attribution: </span>
+              {user.partner ? (
+                <Link href={`/dashboard/admin/partners/${user.partner.id}`} className="font-bold text-violet-600 hover:underline">
+                  {user.partner.user.name} ({user.partner.partnerCode})
+                </Link>
+              ) : (
+                <span className="font-semibold text-neutral-400">koi nahi — self-registered</span>
+              )}
+              {user.partnerAttributedAt && (
+                <span className="text-xs text-neutral-400 ml-2">
+                  since {format(user.partnerAttributedAt, "d MMM yyyy")}
+                </span>
+              )}
+            </div>
+            <ReattributeOwner
+              ownerId={user.id}
+              ownerName={user.name || "Owner"}
+              currentPartner={
+                user.partner
+                  ? { id: user.partner.id, label: `${user.partner.user.name} (${user.partner.partnerCode})` }
+                  : null
+              }
+              partners={attributionPartners}
+            />
+          </div>
+        )}
       </div>
 
       {/* Stats row */}

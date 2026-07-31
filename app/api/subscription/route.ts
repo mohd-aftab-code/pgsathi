@@ -145,6 +145,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 5. Two-sided referral: the owner who came in through someone else's link
+    //    gets bonus days on this plan. Granted once per user ever, so a renewal
+    //    cannot farm it. Non-fatal for the same reason as the commission above.
+    let bonusDays = 0;
+    if (amount > 0) {
+      try {
+        const { applyReferralBonusDays } = await import("@/lib/referral");
+        bonusDays = await applyReferralBonusDays(userId, subscription.id);
+      } catch (e) {
+        console.error("[subscription] referral bonus failed (non-fatal):", e);
+      }
+    }
+
     const userObj = await db.user.findUnique({
       where: { id: userId },
       select: { name: true, email: true }
@@ -156,7 +169,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, data: subscription });
+    return NextResponse.json({
+      success: true,
+      data: subscription,
+      bonusDays,
+      message: bonusDays > 0 ? `Referral bonus: ${bonusDays} din extra mile 🎉` : undefined,
+    });
   } catch (error: any) {
     // P2002 on razorpayPaymentId means the webhook already recorded this exact
     // payment. The customer is subscribed — reporting a failure here would be

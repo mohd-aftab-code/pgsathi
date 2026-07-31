@@ -8,8 +8,10 @@
  * Business rules applied:
  *  • A PG's plan is its OWNER's plan — there are no per-PG subscriptions.
  *    "Paid PG" = the owner holds an active paid subscription right now.
- *  • Earnings are created per PG when it converts to paid; the amount is set
- *    manually by an admin.
+ *  • Earnings are created per OWNER PAYMENT, not per PG, and the amount comes
+ *    from the plan's commission rate — see lib/partner-earnings. Held earnings
+ *    are counted in the totals here because they are still owed; only cancelled
+ *    ones are excluded.
  */
 import "server-only";
 import { db } from "@/lib/db";

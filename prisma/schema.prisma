@@ -19,8 +19,18 @@ model User {
   isVerified         Boolean            @default(false)
   isActive           Boolean            @default(true)
   googleId           String?            @unique @db.VarChar(255)
+  // Owner-to-owner referral. `referralCode` is this user's own shareable code
+  // (generated for owners on demand); `referredBy` is the user whose code
+  // brought them in. Partner referrals use `partnerId` below instead — the two
+  // are deliberately separate ledgers.
   referralCode       String?            @unique @db.VarChar(20)
   referredBy         Int?
+  /// Set when the referral reward (extra trial days) was actually granted, so
+  /// it can never be granted twice.
+  referralRewardAt   DateTime?
+  /// A partner-created account hands the password to the partner. Forcing a
+  /// change on first login is what stops the partner keeping that access.
+  mustChangePassword Boolean            @default(false)
   lastLoginAt        DateTime?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -37,6 +47,9 @@ model User {
   // a stable attribution is what keeps payouts unambiguous when an owner ends up
   // with PGs from more than one partner. Null for self-registered users.
   partnerId          Int?
+  /// When the partner attribution was stamped. A plan can cap how long a
+  /// partner keeps earning on an owner, and that clock starts here.
+  partnerAttributedAt DateTime?
   beds               Bed[]              @relation("TenantBeds")
   leads              Lead[]             @relation("TenantLeads")
   listings           Listing[]
@@ -66,10 +79,15 @@ model User {
   // SetNull: removing a partner must never delete the owners they brought in.
   partner            PartnerProfile?    @relation("PartnerOwners", fields: [partnerId], references: [id], onDelete: SetNull)
   partnerEarnings    PartnerEarning[]   @relation("EarningOwner")
+  // SetNull for the same reason as partner: losing a referrer must not delete
+  // the accounts they referred.
+  referrer           User?              @relation("UserReferrals", fields: [referredBy], references: [id], onDelete: SetNull)
+  referrals          User[]             @relation("UserReferrals")
 
   @@index([email])
   @@index([phone])
   @@index([role])
+  @@index([referredBy])
   @@map("users")
 }
 
@@ -316,11 +334,37 @@ model PartnerProfile {
   approvedBy    Int?
   rejectReason  String?       @db.VarChar(300)
   notes         String?
+  // Payout details are only trustworthy once an admin has eyeballed them. A
+  // payout cannot be created until this is set — see api/admin/partner-payouts.
+  kycVerifiedAt DateTime?
+  kycVerifiedBy Int?
+  // Fraud controls. A flagged partner keeps earning (the referral may be real)
+  // but every earning of theirs lands on hold instead of auto-approving.
+  riskFlagged   Boolean       @default(false)
+  riskReason    String?       @db.VarChar(300)
+  // Soft delete. Partners are never hard-deleted — that would orphan the
+  // historical "who brought this owner in" link that earnings are audited on.
+  archivedAt    DateTime?
+  // ── Commission controls ───────────────────────────────────────────────────
+  // When set, this rate replaces the plan's rate entirely — the custom deal a
+  // big channel partner negotiates. Percent of the invoice.
+  commissionOverridePercent Int?
+  // Tier is normally derived from paid conversions; an admin can pin it.
+  tierOverride              String?  @db.VarChar(12)
+  // Sub-partner hierarchy: this partner works under `parent`, and the parent
+  // earns `parentOverridePercent`% of whatever this partner earns.
+  parentPartnerId           Int?
+  parentOverridePercent     Int      @default(0)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   user     User                 @relation("PartnerUser", fields: [userId], references: [id], onDelete: Cascade)
   listings Listing[]            @relation("ListingPartner")
+  // SetNull: removing a parent must never cascade into their sub-partners.
+  parent   PartnerProfile?      @relation("PartnerHierarchy", fields: [parentPartnerId], references: [id], onDelete: SetNull)
+  children PartnerProfile[]     @relation("PartnerHierarchy")
+  clicks   ReferralClick[]
+  leads    PartnerLead[]
   // Owners this partner brought in. Commission follows the OWNER (one payment =
   // one commission, whatever their PG count), so this — not `listings` — is what
   // earnings are calculated from.
@@ -331,7 +375,111 @@ model PartnerProfile {
   settings PartnerSetting?
 
   @@index([status])
+  @@index([parentPartnerId])
   @@map("partner_profiles")
+}
+
+/// Single-row config (id = 1) for the whole Refer & Earn programme. Kept in the
+/// database rather than env so the admin can tune payout rules without a deploy.
+model PartnerProgramSetting {
+  id Int @id @default(1)
+
+  // ── Earning approval ──────────────────────────────────────────────────────
+  /// Days an earning must age before it can be auto-approved. This is the
+  /// refund window: money that comes back inside it never became payable.
+  holdDays          Int     @default(7)
+  /// Auto-approve earnings once the hold has passed. Off = every earning is
+  /// approved by hand (the original behaviour).
+  autoApproveEnabled Boolean @default(true)
+  /// Earnings at or above this stay manual even when auto-approve is on.
+  autoApproveMaxAmount Int   @default(5000)
+
+  // ── Payouts ───────────────────────────────────────────────────────────────
+  /// Balance below this carries forward instead of becoming a payout.
+  minPayoutAmount   Int     @default(500)
+  /// Day of the month payouts are run, shown to partners so "kab aayega" has an
+  /// answer.
+  payoutDayOfMonth  Int     @default(5)
+  /// Second admin must approve a payout at or above this. 0 disables.
+  makerCheckerAbove Int     @default(10000)
+
+  // ── TDS (section 194H) ────────────────────────────────────────────────────
+  tdsEnabled        Boolean @default(false)
+  tdsRateWithPan    Int     @default(5)
+  tdsRateWithoutPan Int     @default(20)
+  /// TDS only starts once the partner's financial-year commission crosses this.
+  tdsThresholdYearly Int    @default(15000)
+
+  // ── Tiers ─────────────────────────────────────────────────────────────────
+  /// Paid conversions needed for each tier, and the extra commission points
+  /// each tier adds on top of the plan rate.
+  goldAfterConversions     Int @default(10)
+  platinumAfterConversions Int @default(50)
+  goldBonusPercent         Int @default(2)
+  platinumBonusPercent     Int @default(5)
+
+  updatedAt DateTime @updatedAt
+  updatedBy Int?
+
+  @@map("partner_program_settings")
+}
+
+/// One row per referral-link open. This is what makes attribution survive the
+/// gap between "owner clicked the link" and "owner finally registered", and it
+/// is the only source of a real click → signup → paid funnel.
+model ReferralClick {
+  id        Int      @id @default(autoincrement())
+  /// The raw code from the URL, kept even when it resolves to nothing so dead
+  /// codes still circulating can be spotted.
+  code      String   @db.VarChar(20)
+  partnerId Int?
+  /// Owner-to-owner referrals use the same pipe; this is the referring user.
+  referrerUserId Int?
+  landingPath String? @db.VarChar(300)
+  ip          String? @db.VarChar(45)
+  userAgent   String? @db.VarChar(300)
+  utmSource   String? @db.VarChar(60)
+  utmMedium   String? @db.VarChar(60)
+  utmCampaign String? @db.VarChar(60)
+  /// Set when this click's cookie actually produced a registration.
+  convertedUserId Int?
+  convertedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  partner PartnerProfile? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([code, createdAt])
+  @@index([partnerId, createdAt])
+  @@index([convertedUserId])
+  @@map("referral_clicks")
+}
+
+/// A partner's own pipeline, before an owner exists in the system. Without this
+/// the portal can only show "registered" or nothing at all.
+model PartnerLead {
+  id        Int      @id @default(autoincrement())
+  partnerId Int
+  name      String   @db.VarChar(120)
+  phone     String   @db.VarChar(15)
+  city      String?  @db.VarChar(100)
+  pgName    String?  @db.VarChar(150)
+  /// NEW | CONTACTED | DEMO | NEGOTIATION | WON | LOST
+  stage     String   @default("NEW") @db.VarChar(15)
+  notes     String?
+  nextFollowUpAt DateTime?
+  /// Set when the lead becomes a real owner account.
+  convertedUserId Int?
+  convertedAt     DateTime?
+  lostReason String?  @db.VarChar(200)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  partner PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@unique([partnerId, phone])
+  @@index([partnerId, stage])
+  @@index([nextFollowUpAt])
+  @@map("partner_leads")
 }
 
 model PartnerSetting {
@@ -350,8 +498,10 @@ model PartnerSetting {
   @@map("partner_settings")
 }
 
-/// One row per partner-registered PG that converted to a paid plan.
-/// `amount` is set MANUALLY by the admin — there is deliberately no commission %.
+/// One row per commission-bearing event.
+/// `amount` comes from the plan's rate (plus any partner override and tier
+/// bonus); the admin can still adjust or cancel an individual row. A plan set to
+/// commission type NONE still creates the row at ₹0 for the admin to price.
 model PartnerEarning {
   id             Int           @id @default(autoincrement())
   partnerId      Int
@@ -363,12 +513,31 @@ model PartnerEarning {
   // an owner-level commission isn't tied to any single PG.
   listingId      Int?
   subscriptionId Int? // which paid subscription triggered this
+  // Negative for ADJUSTMENT rows — a refund clawback nets off the next payout.
   amount         Int           @default(0) // ₹, from the plan's commission %
   status         EarningStatus @default(PENDING)
+  // What produced this row:
+  //   REFERRAL   — the normal commission on an owner's payment
+  //   OVERRIDE   — a parent partner's cut of a sub-partner's REFERRAL earning
+  //   ADJUSTMENT — a clawback (negative) after a refund or chargeback
+  kind            String  @default("REFERRAL") @db.VarChar(12)
+  parentEarningId Int?
   // Snapshots: the admin can change plan pricing later, so the earning must
   // remember what the conversion was actually based on.
   planNameSnapshot  String?    @db.VarChar(50)
   planPriceSnapshot Int?
+  // How the amount was arrived at, e.g. "20% + 2% Gold of ₹5,000". Every payout
+  // dispute starts with "yeh amount kaise bana" — this answers it.
+  commissionRateSnapshot String? @db.VarChar(60)
+  // Hold: the earning exists and is visible, but must not be approved or paid
+  // yet. Used for the refund window, flagged partners and suspended partners.
+  onHold         Boolean       @default(false)
+  holdReason     String?       @db.VarChar(200)
+  /// When the refund window closes and auto-approval may consider this row.
+  eligibleAt     DateTime?
+  autoApproved   Boolean       @default(false)
+  /// Maker-checker: whoever last set the amount cannot also approve it.
+  amountSetBy    Int?
   payoutId       Int?
   approvedAt     DateTime?
   approvedBy     Int?
@@ -382,15 +551,23 @@ model PartnerEarning {
   listing Listing?       @relation(fields: [listingId], references: [id], onDelete: SetNull)
   invoice Invoice?       @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
   payout  PartnerPayout? @relation(fields: [payoutId], references: [id])
+  // A REFERRAL earning can spawn at most one OVERRIDE and one ADJUSTMENT.
+  parentEarning PartnerEarning?  @relation("EarningDerivation", fields: [parentEarningId], references: [id], onDelete: Cascade)
+  derived       PartnerEarning[] @relation("EarningDerivation")
 
   // `invoiceId @unique` is the real guarantee: one payment can produce only one
   // commission, so a retry or double-click can never duplicate money. It replaces
   // the old @@unique([partnerId, listingId]), which capped a PG at ONE lifetime
   // earning and made recurring commission impossible.
+  // A derived row exists at most once per source: one OVERRIDE and one
+  // ADJUSTMENT per REFERRAL earning. This is what stops a refund processed
+  // twice from clawing back twice, exactly as invoiceId does for the original.
+  @@unique([parentEarningId, kind])
   @@index([partnerId, status])
   @@index([ownerId])
   @@index([listingId])
   @@index([createdAt])
+  @@index([status, onHold, eligibleAt])
   @@map("partner_earnings")
 }
 
@@ -398,14 +575,41 @@ model PartnerEarning {
 model PartnerPayout {
   id        Int          @id @default(autoincrement())
   partnerId Int
+  /// Net amount actually transferred. Kept as `amount` so every existing read
+  /// still means the same thing: what the partner received.
   amount    Int
   method    String       @default("UPI") @db.VarChar(20)
-  reference String?      @db.VarChar(60) // UTR / txn ref
+  reference String?      @db.VarChar(60) // UTR / txn ref — required to complete
+  // A payout starts PROCESSING and only becomes COMPLETED when a UTR is
+  // recorded. The transfer happens outside the app, so claiming "paid" at
+  // creation time made the system state a fact it could not know.
   status    PayoutStatus @default(PROCESSING)
   paidAt    DateTime?
   notes     String?
   createdBy Int?
   createdAt DateTime     @default(now())
+
+  // ── TDS breakdown (section 194H) ──────────────────────────────────────────
+  grossAmount Int @default(0)
+  tdsRate     Int @default(0) // percent applied
+  tdsAmount   Int @default(0)
+
+  /// "2026-07" — which cycle this payout covers. With the unique key below it
+  /// is what stops one partner being paid twice for the same month.
+  periodLabel    String? @db.VarChar(10)
+  idempotencyKey String? @unique @db.VarChar(90)
+  proofUrl       String?
+
+  // ── Reversal (a failed bank transfer) ─────────────────────────────────────
+  // Earnings are terminal once PAID, so a failed transfer cannot be fixed by
+  // editing. Reversing the payout is the only sanctioned route back.
+  reversedAt    DateTime?
+  reversedBy    Int?
+  reverseReason String?   @db.VarChar(300)
+
+  /// Maker-checker for large payouts.
+  approvedBy Int?
+  approvedAt DateTime?
 
   partner  PartnerProfile   @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   earnings PartnerEarning[]
@@ -489,6 +693,13 @@ model Plan {
   // FIXED = a flat ₹ amount. Admin-controlled from the Plans panel.
   partnerCommissionType  String @default("NONE") @db.VarChar(10)
   partnerCommissionValue Int    @default(0)
+  /// How long a partner keeps earning on an owner they brought in, counted from
+  /// the attribution date. 0 = forever (the original behaviour). Existing
+  /// attributions are unaffected by a later change — see lib/partner-earnings.
+  partnerCommissionMonths Int   @default(0)
+  /// Two-sided referral: extra free days the REFERRED owner gets on this plan.
+  /// 0 = the referral gives the new owner nothing.
+  referralBonusDays      Int    @default(0)
   razorpayPlanId String?        @db.VarChar(100)
   isActive       Boolean        @default(true)
   subscriptions  Subscription[]

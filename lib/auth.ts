@@ -211,6 +211,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (profile) token.partnerId = profile.id;
           }
         }
+        // An account created BY a partner had its password handed to that
+        // partner. Carrying the flag on the token lets `proxy.ts` force the
+        // change at the edge, before any dashboard page renders.
+        const uid = parseInt(user.id as string, 10);
+        if (!Number.isNaN(uid)) {
+          const u = await db.user.findUnique({
+            where: { id: uid },
+            select: { mustChangePassword: true },
+          });
+          if (u?.mustChangePassword) token.mustChangePassword = true;
+        }
+      }
+      // The flag has to be able to clear itself without a re-login, otherwise
+      // changing the password leaves the user stuck in the redirect loop.
+      if (token.mustChangePassword) {
+        const uid = parseInt(token.id as string, 10);
+        if (!Number.isNaN(uid)) {
+          const u = await db.user.findUnique({
+            where: { id: uid },
+            select: { mustChangePassword: true },
+          });
+          if (!u?.mustChangePassword) delete (token as any).mustChangePassword;
+        }
       }
       return token;
     },
@@ -227,6 +250,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         if (token.partnerId) {
           (session.user as any).partnerId = token.partnerId;
+        }
+        if (token.mustChangePassword) {
+          (session.user as any).mustChangePassword = true;
         }
       }
       return session;
