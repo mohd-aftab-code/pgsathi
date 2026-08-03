@@ -146,7 +146,7 @@ export function PartnerShell({
   const Brand = () => (
     <Link href="/partner/dashboard" className="flex items-center justify-center h-20 px-4 shrink-0 border-b border-neutral-200 dark:border-neutral-800">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logo-vertical.png" alt="PGSathi" className="h-14 w-auto object-contain" />
+            <img src="/partner%20logo.png" alt="PGSathi" className="h-14 w-auto object-contain" />
     </Link>
   );
 
@@ -178,7 +178,7 @@ export function PartnerShell({
             {/* Mobile top app bar: logo + code. Navigation lives in the bottom bar. */}
             <Link href="/partner/dashboard" className="lg:hidden flex items-center gap-2 min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-vertical.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
+              <img src="/partner%20logo.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
               <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
             </Link>
 

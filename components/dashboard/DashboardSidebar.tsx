@@ -68,7 +68,7 @@ export function DashboardSidebar({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo-vertical.png"
+            src="/owner%20logo.png"
             alt="PGSathi"
             className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all"
           />
