@@ -135,7 +135,6 @@ export default async function PartnerPgsPage({
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
                   <th className="px-5 py-3 font-bold">PG Details</th>
-                  <th className="px-3 py-3 font-bold">Owner</th>
                   <th className="px-3 py-3 font-bold">Plan</th>
                   <th className="px-3 py-3 font-bold">Earnings</th>
                   <th className="px-5 py-3 font-bold text-right">Status</th>
@@ -155,10 +154,6 @@ export default async function PartnerPgsPage({
                           <span className="flex items-center gap-0.5"><MapPin size={10} /> {l.city?.name ?? "—"}</span>
                           <span className="flex items-center gap-0.5"><Calendar size={10} /> {l.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
                         </div>
-                      </td>
-                      <td className="px-3 py-3">
-                        <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{l.owner?.name ?? "—"}</div>
-                        <div className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5"><Phone size={10} /> {l.owner?.phone ?? "—"}</div>
                       </td>
                       <td className="px-3 py-3">
                         <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${planName ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
@@ -201,19 +196,17 @@ export default async function PartnerPgsPage({
                   {/* Details grid */}
                   <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-3 border-t border-neutral-100 dark:border-neutral-800 text-xs">
                     <div>
-                      <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Owner</div>
-                      <div className="text-neutral-900 dark:text-white font-semibold truncate">{l.owner?.name ?? "—"}</div>
-                      <div className="text-neutral-500 flex items-center gap-1 mt-0.5"><Phone size={10} /> {l.owner?.phone ?? "—"}</div>
+                      <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Plan</div>
+                      <div className="mt-1">
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${planName ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
+                          {planName || "FREE"}
+                        </span>
+                      </div>
                     </div>
                     <div>
                       <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Earnings</div>
                       <div className="text-neutral-900 dark:text-white font-bold flex items-center gap-0.5">
                         <IndianRupee size={12} className="text-neutral-400" /> {earned.toLocaleString("en-IN")}
-                      </div>
-                      <div className="mt-1">
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${planName ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
-                          {planName || "FREE"}
-                        </span>
                       </div>
                     </div>
                   </div>
