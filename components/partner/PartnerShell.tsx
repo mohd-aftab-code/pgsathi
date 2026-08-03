@@ -14,7 +14,6 @@ import { PartnerBell } from "./PartnerBell";
 const NAV = [
   { name: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
   { name: "Leads", href: "/partner/leads", icon: Target },
-  { name: "Owners", href: "/partner/owners", icon: Users },
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
   { name: "Plans", href: "/partner/plans", icon: Package },
@@ -37,8 +36,8 @@ const ACCOUNT = [
  * screen the moment an item is inserted into the list above.
  */
 const tab = (href: string) => NAV.find((n) => n.href === href)!;
-const TABS_LEFT = [tab("/partner/dashboard"), tab("/partner/owners")];
-const TABS_RIGHT = [tab("/partner/earnings")];
+const TABS_LEFT = [tab("/partner/dashboard"), tab("/partner/leads")];
+const TABS_RIGHT = [tab("/partner/pgs"), tab("/partner/earnings")];
 
 /**
  * Portal chrome: fixed sidebar on desktop, native-app bottom tab bar on mobile —
