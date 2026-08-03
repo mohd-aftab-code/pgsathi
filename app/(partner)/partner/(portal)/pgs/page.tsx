@@ -103,12 +103,6 @@ export default async function PartnerPgsPage({
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">My PGs</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">{total} PG registered</p>
         </div>
-        <Link
-          href="/partner/pgs/new"
-          className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5"
-        >
-          <Plus size={17} /> PG Register
-        </Link>
       </div>
 
       <PgFilters q={q} status={status} />
@@ -119,13 +113,8 @@ export default async function PartnerPgsPage({
             <Building2 className="text-neutral-400" size={22} />
           </div>
           <p className="font-semibold text-neutral-700 dark:text-neutral-300">
-            {q || status ? "Koi PG match nahi hua" : "Abhi koi PG register nahi kiya"}
+            {q || status ? "Koi PG match nahi hua" : "Abhi koi PG register nahi hua"}
           </p>
-          {!q && !status && (
-            <Link href="/partner/pgs/new" className="inline-flex items-center gap-1.5 mt-3 text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline">
-              <Plus size={15} /> Register your first PG
-            </Link>
-          )}
         </div>
       ) : (
         <>

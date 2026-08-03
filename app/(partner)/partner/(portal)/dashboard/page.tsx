@@ -78,15 +78,9 @@ export default async function PartnerDashboardPage() {
             </span>
           </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Share your referral link from Marketing for owners to register, or use <b>PG Register</b> to list on their behalf.
+            Share your referral link from Marketing for owners to register and list their PGs.
           </p>
         </div>
-        <Link
-          href="/partner/pgs/new"
-          className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5"
-        >
-          <Plus size={17} /> PG Register
-        </Link>
       </div>
 
       {/* ── Tier progress ─────────────────────────────────────── */}
@@ -206,13 +200,7 @@ export default async function PartnerDashboardPage() {
               <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 grid place-items-center mx-auto mb-3">
                 <Building2 className="text-neutral-400" size={22} />
               </div>
-              <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Abhi koi PG register nahi kiya</p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 mb-4">
-                Pehla PG add karein — paid hone par earning ban jayegi.
-              </p>
-              <Link href="/partner/pgs/new" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline">
-                <Plus size={15} /> PG Register
-              </Link>
+              <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Abhi koi PG register nahi hua</p>
             </div>
           ) : (
             <div className="divide-y divide-neutral-100 dark:divide-neutral-800">

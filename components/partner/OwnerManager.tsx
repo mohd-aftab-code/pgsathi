@@ -111,7 +111,7 @@ export function OwnerManager() {
           </p>
           {owners.length === 0 && (
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              Share your referral link or use 'Register PG' from the dashboard to add owners.
+              Share your referral link from the Marketing section to add owners.
             </p>
           )}
         </div>
@@ -146,12 +146,6 @@ export function OwnerManager() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
-                <Link
-                  href={`/partner/pgs/new?owner=${o.id}`}
-                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-xs font-bold hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
-                >
-                  <Plus size={14} /> List their PG
-                </Link>
                 <button
                   onClick={() => resetPassword(o)}
                   className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-bold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
