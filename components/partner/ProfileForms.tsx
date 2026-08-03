@@ -80,7 +80,7 @@ export function SettingsForm({
   initial,
   whatsappAvailable,
 }: {
-  initial: { notifyInApp: boolean; notifyEmail: boolean; notifyWhatsapp: boolean; language: string };
+  initial: { notifyInApp: boolean; notifyEmail: boolean; notifyWhatsapp: boolean };
   /** False when no WhatsApp Business API is configured on the server. */
   whatsappAvailable: boolean;
 }) {
@@ -130,19 +130,7 @@ export function SettingsForm({
         ))}
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-neutral-500">Language</label>
-        <select
-          value={f.language}
-          onChange={(e) => setF({ ...f, language: e.target.value })}
-          className="h-11 w-full rounded-xl border-2 border-neutral-200 dark:border-neutral-800 bg-transparent px-3 text-sm font-semibold outline-none"
-        >
-          <option value="ENGLISH">English</option>
-          <option value="HINGLISH">Hinglish (default)</option>
-          <option value="HINDI">हिन्दी</option>
-        </select>
-        <p className="text-[11px] text-neutral-400 mt-1.5">Notifications aur emails isi bhasha me aayenge.</p>
-      </div>
+
 
       <SaveBtn saving={saving} saved={saved} />
     </form>

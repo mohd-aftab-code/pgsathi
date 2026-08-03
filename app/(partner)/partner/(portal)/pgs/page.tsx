@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Plus, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Building2, Plus, ChevronLeft, ChevronRight, MapPin, Phone, Calendar, IndianRupee } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
 import { PgFilters } from "@/components/partner/PgFilters";
@@ -48,28 +48,44 @@ export default async function PartnerPgsPage({
         id: true, title: true, status: true, priceMin: true, priceMax: true,
         genderAllowed: true, ownerId: true, createdAt: true,
         city: { select: { name: true } },
-        owner: { select: { name: true } },
+        owner: { select: { name: true, phone: true } },
       },
     }),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const ownerIds = [...new Set(listings.map((l) => l.ownerId))];
-  const paidOwners = new Set(
-    ownerIds.length
-      ? (
-          await db.subscription.findMany({
-            where: {
-              userId: { in: ownerIds },
-              status: { in: ["ACTIVE", "TRIAL"] },
-              endDate: { gt: new Date() },
-              plan: { price: { gt: 0 } },
-            },
-            select: { userId: true },
-          })
-        ).map((s) => s.userId)
-      : []
-  );
+  const activeSubs = ownerIds.length
+    ? await db.subscription.findMany({
+        where: {
+          userId: { in: ownerIds },
+          status: { in: ["ACTIVE", "TRIAL"] },
+          endDate: { gt: new Date() },
+          plan: { price: { gt: 0 } },
+        },
+        select: { userId: true, plan: { select: { name: true } } },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+
+  const planMap = new Map<number, string>();
+  for (const s of activeSubs) {
+    if (!planMap.has(s.userId)) planMap.set(s.userId, s.plan.name);
+  }
+
+  const earnings = ownerIds.length
+    ? await db.partnerEarning.findMany({
+        where: { ownerId: { in: ownerIds }, partnerId: ctx.partnerId },
+        select: { ownerId: true, amount: true },
+      })
+    : [];
+
+  const earningMap = new Map<number, number>();
+  for (const e of earnings) {
+    if (e.ownerId) {
+      earningMap.set(e.ownerId, (earningMap.get(e.ownerId) || 0) + e.amount);
+    }
+  }
 
   const buildHref = (p: number) => {
     const params = new URLSearchParams();
@@ -118,67 +134,92 @@ export default async function PartnerPgsPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
-                  <th className="px-5 py-3 font-bold">PG</th>
+                  <th className="px-5 py-3 font-bold">PG Details</th>
                   <th className="px-3 py-3 font-bold">Owner</th>
-                  <th className="px-3 py-3 font-bold">Rent</th>
                   <th className="px-3 py-3 font-bold">Plan</th>
+                  <th className="px-3 py-3 font-bold">Earnings</th>
                   <th className="px-5 py-3 font-bold text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {listings.map((l) => (
-                  <tr key={l.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors">
-                    <td className="px-5 py-3">
-                      <Link href={`/partner/pgs/${l.id}`} className="font-semibold text-neutral-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate max-w-[240px]">
-                        {l.title}
-                      </Link>
-                      <span className="text-xs text-neutral-400 flex items-center gap-1"><MapPin size={11} /> {l.city?.name ?? "—"}</span>
-                    </td>
-                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300">{l.owner?.name ?? "—"}</td>
-                    <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300">₹{l.priceMin}{l.priceMax > l.priceMin ? `–${l.priceMax}` : ""}</td>
-                    <td className="px-3 py-3">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${paidOwners.has(l.ownerId) ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
-                        {paidOwners.has(l.ownerId) ? "PAID" : "FREE"}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-right">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
-                    </td>
-                  </tr>
-                ))}
+                {listings.map((l) => {
+                  const planName = planMap.get(l.ownerId);
+                  const earned = earningMap.get(l.ownerId) || 0;
+                  return (
+                    <tr key={l.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors">
+                      <td className="px-5 py-3">
+                        <Link href={`/partner/pgs/${l.id}`} className="font-semibold text-neutral-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate max-w-[240px]">
+                          {l.title}
+                        </Link>
+                        <div className="text-[11px] text-neutral-500 flex items-center gap-2 mt-0.5">
+                          <span className="flex items-center gap-0.5"><MapPin size={10} /> {l.city?.name ?? "—"}</span>
+                          <span className="flex items-center gap-0.5"><Calendar size={10} /> {l.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{l.owner?.name ?? "—"}</div>
+                        <div className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5"><Phone size={10} /> {l.owner?.phone ?? "—"}</div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${planName ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
+                          {planName || "FREE"}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="text-sm font-bold text-neutral-900 dark:text-white flex items-center gap-1">
+                          <IndianRupee size={12} className="text-neutral-400" /> {earned.toLocaleString("en-IN")}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
-            {listings.map((l) => (
-              <Link key={l.id} href={`/partner/pgs/${l.id}`} className="block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm active:scale-[0.99] transition-transform">
-                {/* Title + Status */}
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <span className="font-bold text-neutral-900 dark:text-white leading-tight flex-1">{l.title}</span>
-                  <span className={`text-[10px] font-bold px-2 py-1 rounded-md shrink-0 ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
-                </div>
-                {/* Details grid */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-                  <div className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
-                    <MapPin size={11} className="shrink-0" />
-                    <span className="truncate">{l.city?.name ?? "—"}</span>
+            {listings.map((l) => {
+              const planName = planMap.get(l.ownerId);
+              const earned = earningMap.get(l.ownerId) || 0;
+              return (
+                <Link key={l.id} href={`/partner/pgs/${l.id}`} className="block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm active:scale-[0.99] transition-transform">
+                  {/* Title + Status */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="min-w-0">
+                      <div className="font-bold text-neutral-900 dark:text-white leading-tight truncate">{l.title}</div>
+                      <div className="text-[11px] text-neutral-500 mt-1 flex items-center gap-2">
+                        <span className="flex items-center gap-0.5"><MapPin size={10} /> {l.city?.name ?? "—"}</span>
+                        <span className="flex items-center gap-0.5"><Calendar size={10} /> {l.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-md shrink-0 ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
                   </div>
-                  <div className="text-neutral-600 dark:text-neutral-300 font-semibold">
-                    ₹{l.priceMin}{l.priceMax > l.priceMin ? `–${l.priceMax}` : ""}
+                  {/* Details grid */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-3 border-t border-neutral-100 dark:border-neutral-800 text-xs">
+                    <div>
+                      <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Owner</div>
+                      <div className="text-neutral-900 dark:text-white font-semibold truncate">{l.owner?.name ?? "—"}</div>
+                      <div className="text-neutral-500 flex items-center gap-1 mt-0.5"><Phone size={10} /> {l.owner?.phone ?? "—"}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Earnings</div>
+                      <div className="text-neutral-900 dark:text-white font-bold flex items-center gap-0.5">
+                        <IndianRupee size={12} className="text-neutral-400" /> {earned.toLocaleString("en-IN")}
+                      </div>
+                      <div className="mt-1">
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${planName ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
+                          {planName || "FREE"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-neutral-500 dark:text-neutral-400 truncate">
-                    {l.owner?.name ?? "—"}
-                  </div>
-                  <div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block ${paidOwners.has(l.ownerId) ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
-                      {paidOwners.has(l.ownerId) ? "PAID" : "FREE"}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
 
           {totalPages > 1 && (

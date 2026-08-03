@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
   User, Users, Settings, LogOut, X, Plus, LayoutGrid, Megaphone,
-  Target, Trophy
+  Target, Trophy, Package
 } from "lucide-react";
 import { ThemeToggle, applyStoredPartnerTheme } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
@@ -17,6 +17,7 @@ const NAV = [
   { name: "Owners", href: "/partner/owners", icon: Users },
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
+  { name: "Plans", href: "/partner/plans", icon: Package },
   { name: "Reports", href: "/partner/reports", icon: FileBarChart },
   { name: "Marketing", href: "/partner/marketing", icon: Megaphone },
   { name: "Leaderboard", href: "/partner/leaderboard", icon: Trophy },

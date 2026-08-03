@@ -82,7 +82,7 @@ export default async function PartnerDashboardPage() {
             </span>
           </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Complete summary of your registered PGs and earnings.
+            Share your referral link from Marketing for owners to register, or use <b>PG Register</b> to list on their behalf.
           </p>
         </div>
         <Link

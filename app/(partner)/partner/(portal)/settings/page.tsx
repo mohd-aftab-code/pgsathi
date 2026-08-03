@@ -28,7 +28,6 @@ export default async function PartnerSettingsPage() {
             notifyInApp: settings?.notifyInApp ?? true,
             notifyEmail: settings?.notifyEmail ?? true,
             notifyWhatsapp: settings?.notifyWhatsapp ?? false,
-            language: settings?.language ?? "HINGLISH",
           }}
           // Told the truth rather than labelled "coming soon" indefinitely: the
           // toggle is only offered when the server can actually deliver.
