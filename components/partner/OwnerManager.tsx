@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   UserPlus, Loader2, Copy, Check, KeyRound, Building2, Search,
-  ShieldCheck, X, Phone, Plus,
+  ShieldCheck, Phone, Plus,
 } from "lucide-react";
 
 type Owner = {
@@ -48,7 +48,6 @@ export function OwnerManager() {
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [error, setError] = useState("");
   const [issued, setIssued] = useState<Issued>(null);
 
   async function load() {

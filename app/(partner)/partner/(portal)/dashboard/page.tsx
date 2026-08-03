@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
-  Building2, CheckCircle2, CircleDashed, BadgeCheck, TrendingUp, Clock,
-  IndianRupee, CalendarClock, CalendarPlus, ArrowRight, Activity, Plus,
+  Building2, CheckCircle2, BadgeCheck, Clock,
+  IndianRupee, ArrowRight, Activity, Plus,
 } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
@@ -56,15 +56,11 @@ export default async function PartnerDashboardPage() {
     : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300";
 
   const cards = [
-    { label: "Total PG Registered", value: String(stats.totalPgs), sub: `${stats.thisMonthRegistrations} is mahine`, Icon: Building2, tone: "violet" as const, href: "/partner/pgs" },
-    { label: "Active PGs", value: String(stats.activePgs), sub: "live and verified", Icon: CheckCircle2, tone: "green" as const, href: "/partner/pgs?status=ACTIVE" },
-    { label: "Free Plan PGs", value: String(stats.freePlanPgs), sub: "abhi convert nahi hue", Icon: CircleDashed, tone: "slate" as const, href: "/partner/pgs" },
+    { label: "Total PGs", value: String(stats.totalPgs), sub: `${stats.thisMonthRegistrations} is mahine`, Icon: Building2, tone: "violet" as const, href: "/partner/pgs" },
+    { label: "Active PGs", value: String(stats.activePgs), sub: "live on platform", Icon: CheckCircle2, tone: "green" as const, href: "/partner/pgs?status=ACTIVE" },
     { label: "Paid Plan PGs", value: String(stats.paidPlanPgs), sub: `${stats.conversionRate}% conversion`, Icon: BadgeCheck, tone: "blue" as const, href: "/partner/pgs" },
-    { label: "Revenue Generated", value: inr(stats.revenueGenerated), sub: "for the platform", Icon: TrendingUp, tone: "green" as const, href: "/partner/reports?type=revenue" },
     { label: "Pending Earnings", value: inr(stats.pendingEarnings), sub: "payout ka intezaar", Icon: Clock, tone: "amber" as const, href: "/partner/earnings?status=PENDING" },
     { label: "Net Earnings", value: inr(stats.netEarnings), sub: `${inr(stats.paidEarnings)} mil chuke`, Icon: IndianRupee, accent: true, href: "/partner/earnings" },
-    { label: "Renewal Due", value: String(stats.renewalDue), sub: "agle 30 din mein", Icon: CalendarClock, tone: "red" as const, href: "/partner/reports?type=renewal" },
-    { label: "This Month", value: String(stats.thisMonthRegistrations), sub: "naye registrations", Icon: CalendarPlus, tone: "violet" as const, href: "/partner/pgs" },
   ];
 
   return (
