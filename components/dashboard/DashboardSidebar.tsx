@@ -62,56 +62,64 @@ export function DashboardSidebar({
 
   return (
     <>
-      {/* ── Desktop Rail — clean violet, original style ─────── */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-violet-300 border-r border-violet-400 w-64">
+      {/* ── Desktop Rail — premium gradient, glassmorphism accent ─────── */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-gradient-to-b from-violet-200/90 via-violet-100/95 to-slate-100/90 border-r border-violet-300/60 shadow-[4px_0_24px_rgba(109,40,217,0.04)] w-64">
 
         {/* Brand mark */}
         <Link
           href={brandHref}
-          className="flex items-center justify-center h-20 [@media(min-height:800px)]:h-24 shrink-0 border-b border-violet-400 px-4 hover:bg-violet-200/40 transition-colors"
+          className="flex items-center justify-center h-20 [@media(min-height:800px)]:h-24 shrink-0 border-b border-violet-300/60 px-4 bg-white/40 backdrop-blur-md hover:bg-white/60 transition-colors"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-vertical.png"
             alt="PGSathi"
-            className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all"
+            className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all hover:scale-[1.02]"
           />
         </Link>
 
         {backLink && (
           <Link
             href={backLink.href}
-            className="flex items-center h-9 mx-3 mt-3 rounded-md px-3 gap-3 text-neutral-600 hover:bg-white/50 hover:text-neutral-900 transition-colors shrink-0"
+            className="flex items-center h-9 mx-3 mt-3 rounded-xl px-3 gap-2.5 text-neutral-600 hover:bg-white/70 hover:text-violet-900 transition-all shrink-0 border border-transparent hover:border-violet-200/50"
           >
-            <ArrowLeft size={16} className="shrink-0" />
+            <ArrowLeft size={16} className="shrink-0 text-neutral-500" />
             <span className="text-sm font-semibold whitespace-nowrap">{backLink.label}</span>
           </Link>
         )}
 
         {/* Nav + footer scroll container */}
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col scrollbar-hide">
-          <nav className="flex flex-col px-3 py-2 [@media(min-height:800px)]:py-3">
-            {visibleGroups.map((group, gi) => (
-              <div key={group.category} className={gi > 0 ? "mt-2 [@media(min-height:800px)]:mt-3" : ""}>
-                <p className="px-3 mb-1 text-[11px] font-bold text-neutral-500 uppercase tracking-wide whitespace-nowrap">
+          <nav className="flex flex-col px-3 py-2.5 [@media(min-height:800px)]:py-3.5 space-y-3">
+            {visibleGroups.map((group) => (
+              <div key={group.category}>
+                <p className="px-3 mb-1.5 text-[10px] font-extrabold text-violet-950/60 uppercase tracking-wider whitespace-nowrap">
                   {group.category}
                 </p>
-                <div className="flex flex-col">
+                <div className="flex flex-col space-y-0.5">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item);
-                    const isHighlight = item.highlight;
                     return (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center h-8.5 rounded-lg px-3 gap-2.5 text-sm transition-all ${
+                        className={`group relative flex items-center h-9 rounded-xl px-3 gap-2.5 text-sm transition-all duration-200 ${
                           active
-                            ? "bg-white text-violet-700 font-bold shadow-sm"
-                            : "text-neutral-700 font-semibold hover:bg-white/60 hover:text-neutral-900"
+                            ? "bg-white text-violet-800 font-extrabold shadow-sm border border-violet-200/70"
+                            : "text-neutral-700 font-semibold hover:bg-white/70 hover:text-violet-900 hover:translate-x-0.5"
                         }`}
                       >
-                        <Icon size={17} strokeWidth={2} className="shrink-0" />
+                        {active && (
+                          <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-violet-600 shadow-sm" />
+                        )}
+                        <Icon
+                          size={18}
+                          strokeWidth={active ? 2.2 : 1.8}
+                          className={`shrink-0 transition-colors ${
+                            active ? "text-violet-700" : "text-neutral-500 group-hover:text-violet-700"
+                          }`}
+                        />
                         <span className="whitespace-nowrap flex-1">{item.name}</span>
                         {item.badge && (
                           <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 uppercase tracking-wider">
@@ -126,7 +134,7 @@ export function DashboardSidebar({
             ))}
           </nav>
 
-          {footer && <div className="mt-auto px-3 pt-2 pb-3">{footer}</div>}
+          {footer && <div className="mt-auto px-3 pt-2 pb-3.5">{footer}</div>}
         </div>
       </aside>
 

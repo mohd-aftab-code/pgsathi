@@ -74,22 +74,22 @@ export function OwnerSidebar({
   const isEnterprise = tier === "ENTERPRISE";
 
   const planWidget = (
-    <div className="rounded-2xl bg-white border border-violet-100/80 p-3.5 shadow-sm space-y-2.5">
+    <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-violet-200/80 p-3.5 shadow-sm space-y-3 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
         <p className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-wider">
           Current Plan
         </p>
-        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 uppercase">
+        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white uppercase shadow-2xs">
           {displayTier}
         </span>
       </div>
 
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center shrink-0 border border-violet-100">
-          <Sparkles size={16} />
+        <div className="w-8.5 h-8.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-violet-500/20">
+          <Sparkles size={17} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-neutral-900 leading-tight">
+          <p className="text-xs font-extrabold text-neutral-900 leading-tight">
             {displayTier} Plan
           </p>
           <p className="text-[10px] font-medium text-neutral-500 truncate">
@@ -105,9 +105,9 @@ export function OwnerSidebar({
       {!isEnterprise && (
         <Link
           href="/dashboard/owner/subscription/upgrade"
-          className="block text-center text-xs font-bold rounded-xl py-2 px-3 bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200/60 transition-all"
+          className="block text-center text-xs font-extrabold rounded-xl py-2 px-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all"
         >
-          Upgrade Now
+          Upgrade Now 🚀
         </Link>
       )}
     </div>
