@@ -56,7 +56,7 @@ export default async function ManagerDashboardLayout({
                   <span className="w-px h-5 bg-neutral-200 hidden sm:block shrink-0" />
                   <Link
                     href="/dashboard/owner"
-                    className="inline-flex items-center gap-2 h-9 px-3 rounded-xl text-sm font-bold border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition-colors shrink-0"
+                    className="inline-flex items-center gap-2 h-9 px-3.5 rounded-xl text-xs sm:text-sm font-bold border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors shrink-0 shadow-sm"
                   >
                     <ArrowLeft size={15} />
                     Owner Dashboard

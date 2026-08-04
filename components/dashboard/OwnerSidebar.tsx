@@ -22,19 +22,14 @@ function buildOwnerNav(): SidebarNavGroup[] {
   return [
     {
       category: "Main",
-      items: [{ name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard, exact: true }],
+      items: [
+        { name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard, exact: true },
+      ],
     },
     {
       category: "Business",
       items: [
         { name: "My PGs", href: "/dashboard/owner/listings", icon: Building2 },
-        // PG Manager deliberately does NOT live here. It is a separate app, not
-        // another page of this one, and sitting between "My PGs" and "Bed
-        // Report" made it read as a sibling page — which is exactly the
-        // confusion it caused. Its entry point is in the top header instead.
-        //
-        // Read-only occupancy report. Rooms and beds are entered in PG Manager;
-        // the owner just needs to see where things stand.
         { name: "Bed Report", href: "/dashboard/owner/inventory", icon: BedDouble, hideMobile: true },
         { name: "Analytics", href: "/dashboard/owner/analytics", icon: BarChart3, hideMobile: true },
       ],
@@ -76,41 +71,42 @@ export function OwnerSidebar({
 }) {
   const ownerNav = buildOwnerNav();
   const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE");
-  const displayTier = tier === "NONE" || tier === "STARTER" ? "Basic" : tier;
+  const displayTier = tier === "NONE" || tier === "STARTER" ? "Growth" : tier;
   const isEnterprise = tier === "ENTERPRISE";
 
   const planWidget = (
-    <div className={`rounded-xl bg-white border ${hasPaidPlan ? 'border-primary-100' : trialDaysLeft > 0 ? 'border-violet-100' : 'border-red-100'} p-3 shadow-sm`}>
-      <p className="text-[10px] text-neutral-500 font-bold uppercase mb-1">Current Plan</p>
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <Sparkles size={14} className={hasPaidPlan ? 'text-primary-600' : trialDaysLeft > 0 ? 'text-violet-600' : 'text-neutral-600'} />
-        <p className={`text-sm font-bold ${hasPaidPlan ? 'text-primary-900' : trialDaysLeft > 0 ? 'text-violet-900' : 'text-neutral-900'}`}>
-          {displayTier} Plan
+    <div className="rounded-2xl bg-white border border-violet-100/80 p-3.5 shadow-sm space-y-2.5">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-wider">
+          Current Plan
         </p>
+        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 uppercase">
+          {displayTier}
+        </span>
       </div>
-      
-      {!hasPaidPlan && trialDaysLeft > 0 && (
-        <p className="text-[10px] text-violet-700/80 mb-2.5 whitespace-nowrap">
-          {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left in Trial
-        </p>
-      )}
-      {!hasPaidPlan && trialDaysLeft <= 0 && (
-        <p className="text-[10px] text-red-700/80 mb-2.5 whitespace-nowrap">
-          Free Tier / Trial Expired
-        </p>
-      )}
-      {hasPaidPlan && !isEnterprise && <div className="h-2"></div>}
-      
+
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center shrink-0 border border-violet-100">
+          <Sparkles size={16} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-neutral-900 leading-tight">
+            {displayTier} Plan
+          </p>
+          <p className="text-[10px] font-medium text-neutral-500 truncate">
+            {hasPaidPlan
+              ? "PG Manager Included"
+              : trialDaysLeft > 0
+              ? `${trialDaysLeft} days left in Trial`
+              : "Upgrade for PG Manager"}
+          </p>
+        </div>
+      </div>
+
       {!isEnterprise && (
         <Link
           href="/dashboard/owner/subscription/upgrade"
-          className={`block text-center text-xs font-bold rounded-lg py-1.5 transition-colors ${
-            hasPaidPlan 
-              ? 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-100' 
-              : trialDaysLeft > 0 
-                ? 'bg-violet-500 text-white hover:bg-violet-600'
-                : 'bg-red-600 text-white hover:bg-red-700'
-          }`}
+          className="block text-center text-xs font-bold rounded-xl py-2 px-3 bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200/60 transition-all"
         >
           Upgrade Now
         </Link>

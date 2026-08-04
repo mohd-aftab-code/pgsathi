@@ -15,6 +15,10 @@ export type SidebarNavItem = {
   ownerOnly?: boolean;
   /** Excluded from the primary mobile tab row; still reachable via the "More" sheet. */
   hideMobile?: boolean;
+  /** Highlighted CTA styling in navigation rail */
+  highlight?: boolean;
+  /** Optional badge text displayed next to item */
+  badge?: string;
 };
 
 export type SidebarNavGroup = {
@@ -96,18 +100,24 @@ export function DashboardSidebar({
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item);
+                    const isHighlight = item.highlight;
                     return (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center h-8 rounded-md px-3 gap-3 text-sm transition-colors ${
+                        className={`flex items-center h-8.5 rounded-lg px-3 gap-2.5 text-sm transition-all ${
                           active
                             ? "bg-white text-violet-700 font-bold shadow-sm"
                             : "text-neutral-700 font-semibold hover:bg-white/60 hover:text-neutral-900"
                         }`}
                       >
                         <Icon size={17} strokeWidth={2} className="shrink-0" />
-                        <span className="whitespace-nowrap">{item.name}</span>
+                        <span className="whitespace-nowrap flex-1">{item.name}</span>
+                        {item.badge && (
+                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 uppercase tracking-wider">
+                            {item.badge}
+                          </span>
+                        )}
                       </Link>
                     );
                   })}

@@ -63,20 +63,25 @@ export default async function OwnerDashboardLayout({
               <span className="w-px h-5 bg-neutral-200 hidden sm:block shrink-0" />
               <Link
                 href={hasManagerAccess ? "/dashboard/manager" : "/dashboard/owner/subscription/upgrade"}
-                className={`inline-flex items-center gap-2 h-9 px-3 rounded-xl text-sm font-bold border transition-colors shrink-0 ${
+                className={`inline-flex items-center gap-2 h-10 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-200 shrink-0 shadow-md ${
                   hasManagerAccess
-                    ? "border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100"
-                    : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50"
+                    ? "bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700 hover:scale-[1.02] shadow-violet-500/25 border border-violet-400/30"
+                    : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 hover:scale-[1.02] shadow-amber-500/25"
                 }`}
               >
-                {hasManagerAccess ? <Layers size={16} /> : <Lock size={15} />}
-                PG Manager
-                {!hasManagerAccess && (
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 uppercase tracking-wider">
+                {hasManagerAccess ? (
+                  <Sparkles size={16} className="text-amber-300 animate-pulse shrink-0" />
+                ) : (
+                  <Lock size={15} className="shrink-0" />
+                )}
+                <span>Launch PG Manager 🚀</span>
+                {!hasManagerAccess ? (
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-white/20 text-white uppercase tracking-wider">
                     Pro
                   </span>
+                ) : (
+                  <ArrowRight size={14} className="ml-0.5 opacity-90 shrink-0" />
                 )}
-                {hasManagerAccess && <ArrowRight size={14} className="opacity-60" />}
               </Link>
             </div>
 
