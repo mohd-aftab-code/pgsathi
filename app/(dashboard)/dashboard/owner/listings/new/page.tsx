@@ -313,28 +313,39 @@ export default function NewListingPage() {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="flex w-full mb-10 overflow-x-auto hide-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-      <div className="flex w-full min-w-[600px] justify-between relative px-2">
-        <div className="absolute top-1/2 left-4 right-4 h-1 bg-neutral-100 -translate-y-1/2 rounded-full z-0"></div>
-        <div className="absolute top-1/2 left-4 h-1 bg-primary-500 -translate-y-1/2 rounded-full z-0 transition-all duration-500" style={{ width: `calc(${((currentStep - 1) / (STEPS.length - 1)) * 100}% - 2rem)` }}></div>
-        
-        {STEPS.map((step, index) => {
+    <div className="mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 md:gap-3">
+        {STEPS.map((step) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
-          
           return (
-            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 shadow-sm
-                ${isActive ? 'bg-primary-500 text-white ring-4 ring-primary-100 scale-110' : 
-                  isCompleted ? 'bg-primary-100 text-primary-600' : 
-                  'bg-white text-neutral-400 border border-neutral-200'}`}
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => {
+                if (isCompleted || isActive) setCurrentStep(step.id as StepType);
+              }}
+              className={`flex items-center gap-2.5 p-2.5 md:p-3 rounded-xl border text-left transition-all ${
+                isActive
+                  ? "bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/20 font-bold"
+                  : isCompleted
+                  ? "bg-violet-50 text-violet-800 border-violet-200/80 font-semibold hover:bg-violet-100/80"
+                  : "bg-white text-neutral-400 border-neutral-200 cursor-not-allowed opacity-80"
+              }`}
+            >
+              <div
+                className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : isCompleted
+                    ? "bg-violet-200/60 text-violet-800"
+                    : "bg-neutral-100 text-neutral-400"
+                }`}
               >
-                {isCompleted ? <CheckCircle2 size={20} /> : step.id}
+                {isCompleted ? <CheckCircle2 size={14} /> : step.id}
               </div>
-              <span className={`text-xs font-bold whitespace-nowrap transition-colors ${isActive ? 'text-neutral-900' : isCompleted ? 'text-primary-700' : 'text-neutral-400'}`}>
-                {step.title}
-              </span>
-            </div>
+              <span className="text-xs truncate">{step.title}</span>
+            </button>
           );
         })}
       </div>
@@ -343,14 +354,14 @@ export default function NewListingPage() {
 
   const renderStep1 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="border border-neutral-200/80 rounded-2xl p-5 md:p-7 bg-white shadow-sm">
+        <h3 className="text-base md:text-lg font-extrabold text-neutral-900 mb-6 pb-3 border-b border-neutral-100">Provide Details of PG</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">PG / Flat Name *</label>
+            <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wide mb-1.5">PG / Flat Name *</label>
             <input 
               type="text" 
-              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
+              className="w-full h-11 px-3.5 rounded-xl border border-neutral-200 bg-neutral-50/40 focus:bg-white focus:ring-2 focus:ring-violet-100 focus:border-violet-600 outline-none transition-all shadow-2xs"
               placeholder="Enter PG Name"
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
@@ -757,16 +768,16 @@ export default function NewListingPage() {
   return (
     // pb-52 on mobile: the action bar AND the app's bottom tab bar both sit at
     // the bottom of the viewport there, so content needs to clear both.
-    <div className="max-w-5xl mx-auto pb-52 md:pb-24">
+    <div className="max-w-6xl mx-auto pb-44 md:pb-20 px-2 sm:px-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200 hover:text-primary-600 transition-colors">
-            <ArrowLeft size={20} />
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard/owner/listings" className="w-9 h-9 bg-white rounded-xl flex items-center justify-center text-neutral-600 shadow-2xs border border-neutral-200 hover:text-violet-700 hover:border-violet-300 transition-colors">
+            <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">List Your Property</h1>
-            <p className="text-neutral-500 text-sm">
+            <h1 className="text-xl md:text-2xl font-extrabold text-neutral-900">List Your Property</h1>
+            <p className="text-neutral-500 text-xs sm:text-sm">
               ✅ Draft auto-saved — fill in the details, live after verification
             </p>
           </div>
@@ -786,7 +797,7 @@ export default function NewListingPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 mb-6">
+        <div className="bg-red-50 text-red-600 p-3.5 rounded-xl text-sm font-medium border border-red-100 mb-4">
           {error}
         </div>
       )}
@@ -795,7 +806,7 @@ export default function NewListingPage() {
       {renderStepIndicator()}
 
       {/* Form Area */}
-      <div className="mb-8">
+      <div className="mb-6">
         {currentStep === 1 && renderStep1()}
         {currentStep === 2 && renderStep2()}
         {currentStep === 3 && renderStep3()}
@@ -804,14 +815,11 @@ export default function NewListingPage() {
       </div>
 
       {/* Sticky Bottom Navigation Buttons */}
-      {/* On mobile this floats ABOVE the app's bottom tab bar (72px + safe area).
-          It used to be pinned to bottom-0 at z-50, so the tab bar (z-100) covered
-          it completely and owners could not reach Previous/Continue at all. */}
-      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-6">
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-4">
         <button 
           type="button" 
           onClick={handlePrev}
-          className={`px-6 md:px-8 py-3.5 rounded-xl font-bold border transition-all shadow-sm ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white hover:bg-neutral-50 hover:shadow-md'}`}
+          className={`px-6 md:px-8 py-3 rounded-xl font-bold border transition-all shadow-2xs ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white hover:bg-neutral-50 hover:shadow-sm'}`}
         >
           Previous
         </button>
@@ -820,7 +828,7 @@ export default function NewListingPage() {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5"
+            className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-extrabold transition-all shadow-md shadow-violet-500/20 hover:scale-[1.01]"
           >
             Save & Continue
           </button>
@@ -829,9 +837,9 @@ export default function NewListingPage() {
             type="button" 
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-neutral-900/30 hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-70"
+            className="bg-gradient-to-r from-violet-700 via-indigo-700 to-purple-700 hover:from-violet-800 hover:to-purple-800 text-white px-8 py-3 rounded-xl font-extrabold transition-all shadow-md shadow-violet-600/25 hover:scale-[1.01] flex items-center gap-2 disabled:opacity-70"
           >
-            {loading ? <><Loader2 size={20} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
+            {loading ? <><Loader2 size={18} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
           </button>
         )}
       </div>

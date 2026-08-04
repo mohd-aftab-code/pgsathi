@@ -133,30 +133,27 @@ export function LocationStep({
 
   const locationReady = !!(value.latitude && value.longitude);
 
-  const label = (n: number, text: string, required = true) => (
-    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-500 text-white text-[10px] mr-1.5 align-middle">
-        {n}
-      </span>
+  const label = (text: string, required = true) => (
+    <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">
       {text} {required && <span className="text-red-500">*</span>}
     </label>
   );
 
   const inputCls =
-    "w-full h-11 px-3 rounded-lg border-2 border-neutral-200 bg-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition-all shadow-sm placeholder:text-neutral-400";
+    "w-full h-11 px-3.5 rounded-xl border border-neutral-200 bg-neutral-50/40 text-sm focus:bg-white focus:ring-2 focus:ring-violet-100 focus:border-violet-600 outline-none transition-all shadow-2xs placeholder:text-neutral-400";
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl p-5 md:p-6 bg-white">
-        <h3 className="text-lg font-bold text-neutral-900 mb-1">Where is your PG located?</h3>
-        <p className="text-xs text-neutral-500 mb-5 pb-4 border-b border-neutral-100">
-          You can type to search in every field. The map will automatically update at the end.
+      <div className="border border-neutral-200/80 rounded-2xl p-5 md:p-7 bg-white shadow-sm">
+        <h3 className="text-base md:text-lg font-extrabold text-neutral-900 mb-1">Where is your PG located?</h3>
+        <p className="text-xs text-neutral-500 mb-6 pb-4 border-b border-neutral-100">
+          Type to search in every field. The map will automatically update at the end.
         </p>
 
         {/* Row 1 — State + City */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
           <div>
-            {label(1, "State")}
+            {label("State")}
             <SearchableSelect
               options={STATE_NAMES}
               value={value.stateName}
@@ -166,7 +163,7 @@ export function LocationStep({
             />
           </div>
           <div>
-            {label(2, "City / District")}
+            {label("City / District")}
             <SearchableSelect
               options={districts}
               value={value.cityName}
@@ -180,11 +177,11 @@ export function LocationStep({
         </div>
 
         {/* Row 2 — PIN + Area */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
           <div>
-            {label(3, "PIN Code")}
+            {label("PIN Code")}
             {!value.cityName ? (
-              <div className="h-11 px-3 rounded-lg border-2 border-neutral-200 bg-neutral-50 flex items-center text-sm text-neutral-400 cursor-not-allowed">
+              <div className="h-11 px-3.5 rounded-xl border border-neutral-200 bg-neutral-50 flex items-center text-sm text-neutral-400 cursor-not-allowed">
                 Select city first…
               </div>
             ) : (
@@ -193,12 +190,12 @@ export function LocationStep({
                   type="text"
                   inputMode="numeric"
                   maxLength={6}
-                  className={`w-full h-11 pl-3 pr-9 rounded-lg border-2 bg-white text-sm tracking-[0.2em] font-semibold focus:ring-2 outline-none transition-all shadow-sm ${
+                  className={`w-full h-11 pl-3.5 pr-9 rounded-xl border bg-neutral-50/40 text-sm tracking-[0.2em] font-semibold focus:bg-white focus:ring-2 outline-none transition-all shadow-2xs ${
                     pinStatus === "fail"
-                      ? "border-amber-300 focus:ring-amber-300"
+                      ? "border-amber-300 focus:ring-amber-200"
                       : pinStatus === "ok"
-                      ? "border-green-400 focus:ring-green-300"
-                      : "border-neutral-200 focus:ring-primary-300 focus:border-primary-400"
+                      ? "border-green-400 focus:ring-green-200"
+                      : "border-neutral-200 focus:ring-violet-100 focus:border-violet-600"
                   }`}
                   placeholder="204211"
                   value={value.pincode}
@@ -216,7 +213,7 @@ export function LocationStep({
                   }}
                 />
                 <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                  {pinStatus === "loading" && <Loader2 size={16} className="animate-spin text-primary-500" />}
+                  {pinStatus === "loading" && <Loader2 size={16} className="animate-spin text-violet-600" />}
                   {pinStatus === "ok" && <CheckCircle2 size={16} className="text-green-500" />}
                   {pinStatus === "fail" && <AlertCircle size={16} className="text-amber-500" />}
                 </div>
@@ -226,7 +223,7 @@ export function LocationStep({
 
           {!simpleAddress && (
             <div>
-              {label(4, "Area / Mohalla", false)}
+              {label("Area / Mohalla", false)}
               {/* India Post only lists post offices, not every mohalla — so this is
                   a text field first, with those names offered as suggestions. */}
               <SearchableSelect
