@@ -313,8 +313,9 @@ export default function NewListingPage() {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="mb-6">
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 md:gap-3">
+    <div className="mb-5">
+      {/* Mobile: horizontal scrollable steps */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none sm:grid sm:grid-cols-5 sm:overflow-visible">
         {STEPS.map((step) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
@@ -325,12 +326,12 @@ export default function NewListingPage() {
               onClick={() => {
                 if (isCompleted || isActive) setCurrentStep(step.id as StepType);
               }}
-              className={`flex items-center gap-2.5 p-2.5 md:p-3 rounded-xl border text-left transition-all ${
+              className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all shrink-0 min-w-[120px] sm:min-w-0 sm:w-auto ${
                 isActive
                   ? "bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/20 font-bold"
                   : isCompleted
                   ? "bg-violet-50 text-violet-800 border-violet-200/80 font-semibold hover:bg-violet-100/80"
-                  : "bg-white text-neutral-400 border-neutral-200 cursor-not-allowed opacity-80"
+                  : "bg-white text-neutral-400 border-neutral-200 cursor-not-allowed opacity-70"
               }`}
             >
               <div
@@ -354,38 +355,40 @@ export default function NewListingPage() {
 
   const renderStep1 = () => (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Basic Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">PG / Flat Name <span className="text-red-500">*</span></label>
-            <input 
-              type="text" 
-              className="w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
-              placeholder="e.g. Sharma Boys PG"
-              value={formData.title}
-              onChange={e => setFormData({...formData, title: e.target.value})}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Description <span className="text-red-500">*</span></label>
-            <input 
-              type="text" 
-              className="w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
-              placeholder="Short catchy description"
-              value={formData.description}
-              onChange={e => setFormData({...formData, description: e.target.value})}
-            />
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">PG / Flat Name <span className="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
+                placeholder="e.g. Sharma Boys PG"
+                value={formData.title}
+                onChange={e => setFormData({...formData, title: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Description <span className="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
+                placeholder="Short catchy description"
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
+              />
+            </div>
           </div>
           
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2">Available for <span className="text-red-500">*</span></label>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {['BOYS', 'GIRLS', 'COED'].map(type => (
-                <label key={type} className={`flex-1 flex items-center justify-center gap-1.5 h-10 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                <label key={type} className={`flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
                   formData.genderAllowed === type 
                     ? 'border-violet-500 bg-violet-50 text-violet-700' 
-                    : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                    : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
                 }`}>
                   <input type="radio" name="gender" className="hidden" checked={formData.genderAllowed === type} onChange={() => setFormData({...formData, genderAllowed: type})} />
                   {type === 'COED' ? 'Co-living' : type === 'BOYS' ? '♂ Boys' : '♀ Girls'}
@@ -394,9 +397,9 @@ export default function NewListingPage() {
             </div>
           </div>
           
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2">Room Types <span className="text-red-500">*</span></label>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {[
                 { id: "SINGLE_ROOM", label: "Single Room" },
                 { id: "DOUBLE_SHARING", label: "Double Sharing" },
@@ -405,10 +408,10 @@ export default function NewListingPage() {
                 { id: "DORMITORY", label: "Dormitory" },
                 { id: "STUDIO", label: "Studio" },
               ].map((type) => (
-                <label key={type.id} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                <label key={type.id} className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
                   formData.roomTypes.includes(type.id)
                     ? 'border-violet-500 bg-violet-50 text-violet-700'
-                    : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                    : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
                 }`}>
                   <input type="checkbox" className="hidden" checked={formData.roomTypes.includes(type.id)}
                     onChange={(e) => {
@@ -451,8 +454,8 @@ export default function NewListingPage() {
         <p className="text-sm font-medium text-neutral-700 mb-2">{label}</p>
         <div className="flex gap-2">
           {['Yes', 'No'].map(opt => (
-            <label key={opt} className={`flex-1 flex items-center justify-center h-9 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
-              (formData[field] as string) === opt ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+            <label key={opt} className={`flex-1 flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+              (formData[field] as string) === opt ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
             }`}>
               <input type="radio" className="hidden" checked={(formData[field] as string) === opt} onChange={() => setFormData({...formData, [field]: opt})} />
               {opt}
@@ -463,23 +466,23 @@ export default function NewListingPage() {
     );
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">PG Details</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
             {tog2('Notice Period', formData.noticePeriod, 'noticePeriod')}
             {tog2('Food Included', formData.foodIncluded, 'foodIncluded')}
             {tog2('Gate Closing Time', formData.gateClosingTime, 'gateClosingTime')}
           </div>
           <p className="text-sm font-medium text-neutral-700 mb-2">PG Rules</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {[
               { key: 'rentLockIn', label: 'Rent Lock-in' },
               { key: 'noGuardiansStay', label: 'No Guardians Stay' },
             ].map(({ key, label }) => {
               const checked = formData[key as keyof typeof formData] as boolean;
               return (
-                <label key={key} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
-                  checked ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                <label key={key} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                  checked ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
                 }`}>
                   <input type="checkbox" className="hidden" checked={checked} onChange={(e) => setFormData({...formData, [key]: e.target.checked})} />
                   {checked && <CheckCircle2 size={13} />}
@@ -495,9 +498,9 @@ export default function NewListingPage() {
 
   const renderStep4 = () => (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
-      <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Services</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { label: 'Laundry Service', field: 'laundryService', name: 'laundry' },
             { label: 'Room Cleaning', field: 'roomCleaning', name: 'cleaning' },
@@ -507,10 +510,10 @@ export default function NewListingPage() {
               <p className="text-sm font-medium text-neutral-700 mb-2">{label}</p>
               <div className="flex gap-2">
                 {['Yes', 'No'].map(opt => (
-                  <label key={opt} className={`flex-1 flex items-center justify-center h-9 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                  <label key={opt} className={`flex-1 flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
                     (formData[field as keyof typeof formData] as string) === opt
                       ? 'border-violet-500 bg-violet-50 text-violet-700'
-                      : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                      : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
                   }`}>
                     <input type="radio" name={name} className="hidden" checked={(formData[field as keyof typeof formData] as string) === opt} onChange={() => setFormData({...formData, [field]: opt})} />
                     {opt}
@@ -522,34 +525,34 @@ export default function NewListingPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Amenities</h3>
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
           {AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
-                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+              <label key={amenity.id} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors text-center ${
+                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
               }`}>
                 <input type="checkbox" className="hidden" checked={isSelected} onChange={() => toggleAmenity(amenity.id, 'pg')} />
-                {isSelected && <CheckCircle2 size={13} />}
-                {amenity.label}
+                {isSelected && <CheckCircle2 size={13} className="shrink-0" />}
+                <span className="text-xs">{amenity.label}</span>
               </label>
             );
           })}
         </div>
 
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Amenities</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {ROOM_AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedRoomAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
-                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+              <label key={amenity.id} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors text-center ${
+                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
               }`}>
                 <input type="checkbox" className="hidden" checked={isSelected} onChange={() => toggleAmenity(amenity.id, 'room')} />
-                {isSelected && <CheckCircle2 size={13} />}
-                {amenity.label}
+                {isSelected && <CheckCircle2 size={13} className="shrink-0" />}
+                <span className="text-xs">{amenity.label}</span>
               </label>
             );
           })}
@@ -562,18 +565,19 @@ export default function NewListingPage() {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
       
       {/* Gallery */}
-      <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Photos</h3>
         
         {formData.photos.length > 0 && (
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
             {formData.photos.map((photo, i) => (
               <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-neutral-200 group">
                 <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+                {/* Always visible on mobile (touch), hover on desktop */}
                 <button 
                   type="button"
                   onClick={() => removePhoto(i)}
-                  className="absolute top-1 right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                  className="absolute top-1 right-1 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center transition-opacity text-sm font-bold sm:opacity-0 sm:group-hover:opacity-100 opacity-100"
                 >
                   &times;
                 </button>
@@ -582,24 +586,24 @@ export default function NewListingPage() {
           </div>
         )}
 
-        <label className="border-2 border-dashed border-neutral-200 hover:border-violet-400 rounded-xl p-6 flex items-center gap-4 cursor-pointer transition-colors group">
+        <label className="border-2 border-dashed border-neutral-200 hover:border-violet-400 active:border-violet-400 rounded-xl p-5 flex items-center gap-4 cursor-pointer transition-colors group">
           <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
           <div className="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center text-violet-600 shrink-0">
             {uploadingImage ? <Loader2 className="animate-spin" size={22} /> : <Upload size={22} />}
           </div>
           <div>
-            <p className="font-semibold text-neutral-800 text-sm">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
+            <p className="font-semibold text-neutral-800 text-sm">{uploadingImage ? "Uploading..." : "Tap to Upload Photos"}</p>
             <p className="text-xs text-neutral-400">Multiple images allowed · Max 5MB each</p>
           </div>
         </label>
       </div>
 
       {/* Pricing */}
-      <div className="bg-white rounded-xl border border-neutral-200 p-5 md:p-6">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Pricing</h3>
         <p className="text-xs text-neutral-400 mb-4">Set rent and deposit for each room type.</p>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
           {formData.roomTypes.map(rt => {
             const labelMap: Record<string, string> = {
               "SINGLE_ROOM": "Single Room",
@@ -616,15 +620,15 @@ export default function NewListingPage() {
             return (
               <div key={rt} className="border border-neutral-200 rounded-xl p-4">
                 <p className="text-xs font-bold text-neutral-600 uppercase tracking-wide mb-3">{label}</p>
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="block text-xs text-neutral-500 mb-1">Rent (₹/mo) *</label>
-                    <input type="number" className="w-full h-10 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="e.g. 8000" value={currentRent} 
+                    <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="8000" value={currentRent} 
                       onChange={e => setFormData({ ...formData, roomPrices: { ...formData.roomPrices, [rt]: { ...formData.roomPrices[rt], rent: e.target.value, deposit: currentDeposit } } })} />
                   </div>
                   <div>
                     <label className="block text-xs text-neutral-500 mb-1">Deposit (₹)</label>
-                    <input type="number" className="w-full h-10 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="e.g. 10000" value={currentDeposit} 
+                    <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="10000" value={currentDeposit} 
                       onChange={e => setFormData({ ...formData, roomPrices: { ...formData.roomPrices, [rt]: { ...formData.roomPrices[rt], rent: currentRent, deposit: e.target.value } } })} />
                   </div>
                 </div>
@@ -634,7 +638,7 @@ export default function NewListingPage() {
         </div>
         
         <p className="text-xs font-bold text-neutral-500 uppercase tracking-wide mb-3">Additional Charges (Optional)</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Maintenance (₹/mo)', field: 'maintenanceCharge' },
             { label: 'Electricity (₹/mo)', field: 'electricityCharge' },
@@ -643,7 +647,7 @@ export default function NewListingPage() {
           ].map(({ label, field }) => (
             <div key={field}>
               <label className="block text-xs text-neutral-500 mb-1">{label}</label>
-              <input type="number" className="w-full h-10 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" value={formData[field as keyof typeof formData] as string} onChange={e => setFormData({...formData, [field]: e.target.value})} />
+              <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" value={formData[field as keyof typeof formData] as string} onChange={e => setFormData({...formData, [field]: e.target.value})} />
             </div>
           ))}
         </div>
@@ -701,11 +705,11 @@ export default function NewListingPage() {
       </div>
 
       {/* Sticky Bottom Navigation Buttons */}
-      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-4">
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 px-4 py-3 md:p-0 z-40 shadow-[0_-4px_12px_rgb(0,0,0,0.05)] md:shadow-none flex items-center justify-between gap-3 md:pt-4">
         <button 
           type="button" 
           onClick={handlePrev}
-          className={`px-6 md:px-8 py-3 rounded-xl font-bold border transition-all shadow-2xs ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white hover:bg-neutral-50 hover:shadow-sm'}`}
+          className={`h-12 px-5 md:px-8 rounded-xl font-semibold border transition-all text-sm ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white active:bg-neutral-50'}`}
         >
           Previous
         </button>
@@ -714,7 +718,7 @@ export default function NewListingPage() {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-extrabold transition-all shadow-md shadow-violet-500/20 hover:scale-[1.01]"
+            className="flex-1 md:flex-none h-12 md:px-8 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl font-bold transition-all shadow-md shadow-violet-500/20 active:opacity-90 text-sm"
           >
             Save & Continue
           </button>
@@ -723,7 +727,7 @@ export default function NewListingPage() {
             type="button" 
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-gradient-to-r from-violet-700 via-indigo-700 to-purple-700 hover:from-violet-800 hover:to-purple-800 text-white px-8 py-3 rounded-xl font-extrabold transition-all shadow-md shadow-violet-600/25 hover:scale-[1.01] flex items-center gap-2 disabled:opacity-70"
+            className="flex-1 md:flex-none h-12 md:px-8 bg-gradient-to-r from-violet-700 to-purple-700 text-white rounded-xl font-bold transition-all shadow-md shadow-violet-600/25 active:opacity-90 flex items-center justify-center gap-2 disabled:opacity-70 text-sm"
           >
             {loading ? <><Loader2 size={18} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
           </button>
