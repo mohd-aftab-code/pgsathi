@@ -115,9 +115,55 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
           </div>
         </div>
 
-        {/* KYC */}
+        {/* Work / Education Verification */}
         <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900">KYC Details</h2>
+          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+            🎓 Work &amp; Education Verification
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Occupation Type</label>
+              <select name="occupation" className="input-base" defaultValue="STUDENT">
+                <option value="STUDENT">Student (College/School)</option>
+                <option value="WORKING_PROFESSIONAL">Working Professional (Job/IT)</option>
+                <option value="SELF_EMPLOYED">Self Employed / Business</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Company / Institute Name</label>
+              <input name="workplace" className="input-base" placeholder="e.g. TCS / Christ University" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Employee / Student Roll ID</label>
+              <input name="workplaceId" className="input-base" placeholder="e.g. EMP-99812 / 21BC045" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Blood Group</label>
+              <select name="bloodGroup" className="input-base">
+                <option value="">Select Blood Group...</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="O+">O+</option>
+                <option value="AB+">AB+</option>
+                <option value="A-">A-</option>
+                <option value="B-">B-</option>
+                <option value="O-">O-</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Office / College Address</label>
+              <input name="workplaceAddress" className="input-base" placeholder="e.g. Manyata Tech Park, Nagavara, Bangalore" />
+            </div>
+          </div>
+        </div>
+
+        {/* KYC & Verification Details */}
+        <div className="card p-4 sm:p-6">
+          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+            📄 KYC &amp; Police Verification
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">ID Type</label>
@@ -135,16 +181,61 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               <input name="idNumber" className="input-base" placeholder="XXXX XXXX XXXX" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Guardian Name</label>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Police Verification Status</label>
+              <select name="policeVerificationStatus" className="input-base" defaultValue="NOT_SUBMITTED">
+                <option value="NOT_SUBMITTED">Not Submitted Yet</option>
+                <option value="PENDING">Form Submitted (Under Process)</option>
+                <option value="VERIFIED">Verified by Police Station</option>
+                <option value="REJECTED">Rejected / Resubmit Required</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Police Ack / Token Ref No.</label>
+              <input name="policeVerificationRef" className="input-base" placeholder="e.g. PV-BLR-2026-9812" />
+            </div>
+          </div>
+        </div>
+
+        {/* Guardian & Emergency Contacts */}
+        <div className="card p-4 sm:p-6">
+          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+            📞 Guardian &amp; Emergency Contacts
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Guardian / Parent Name</label>
               <input name="guardianName" className="input-base" placeholder="Father/Guardian ka naam" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-neutral-600 mb-1">Guardian Phone</label>
               <input name="guardianPhone" type="tel" className="input-base" placeholder="9876543210" />
             </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Relation</label>
+              <select name="guardianRelation" className="input-base" defaultValue="FATHER">
+                <option value="FATHER">Father</option>
+                <option value="MOTHER">Mother</option>
+                <option value="SPOUSE">Spouse</option>
+                <option value="BROTHER">Brother / Sister</option>
+                <option value="RELATIVE">Relative / Local Guardian</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Vehicle Type</label>
+              <select name="vehicleType" className="input-base" defaultValue="NONE">
+                <option value="NONE">No Vehicle</option>
+                <option value="TWO_WHEELER">Two Wheeler (Bike / Scooter)</option>
+                <option value="FOUR_WHEELER">Four Wheeler (Car)</option>
+              </select>
+            </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Permanent Address</label>
-              <textarea name="permanentAddress" rows={2} className="input-base resize-none" placeholder="Ghar ka address…" />
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Vehicle Registration Number</label>
+              <input name="vehicleNumber" className="input-base" placeholder="e.g. KA 01 EV 1234 (Optional)" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-neutral-600 mb-1">Permanent Home Address</label>
+              <textarea name="permanentAddress" rows={2} className="input-base resize-none" placeholder="Ghar ka poora address…" />
             </div>
           </div>
         </div>
