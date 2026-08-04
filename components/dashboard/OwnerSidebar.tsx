@@ -13,6 +13,7 @@ import {
   BedDouble,
   BarChart3,
   Gift,
+  Bell,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 import type { PlanTier } from "@/lib/manage-auth";
@@ -46,7 +47,8 @@ function buildOwnerNav(): SidebarNavGroup[] {
       items: [
         { name: "Subscription", href: "/dashboard/owner/subscription", icon: CreditCard, hideMobile: true },
         { name: "Refer & Earn", href: "/dashboard/owner/refer", icon: Gift, hideMobile: true },
-        { name: "Settings", href: "/dashboard/owner/settings", icon: Settings, hideMobile: true }
+        { name: "Notifications", href: "/dashboard/owner/notifications", icon: Bell, hideMobile: true },
+        { name: "Settings", href: "/dashboard/owner/settings", icon: Settings },
       ],
     },
   ];
