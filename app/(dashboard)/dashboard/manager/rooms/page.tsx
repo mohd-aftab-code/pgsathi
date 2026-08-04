@@ -32,16 +32,18 @@ function catStyle(n: number): string {
 
 function RoomCard({ room }: { room: any }) {
   const roomVacant = room.beds.filter((b: any) => !b.isOccupied).length;
+  const cleanRoomName = room.name.replace(/^Room\s+/i, "");
+
   return (
-    <div className="rounded-xl border border-neutral-200 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+    <div className="rounded-xl border border-neutral-200 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 bg-white">
       {/* Room header bar */}
       <div className={`px-3 py-2 flex justify-between items-center text-xs font-bold border-b ${
         roomVacant === 0 ? "bg-red-50 border-red-100 text-red-700" :
         roomVacant === room.beds.length ? "bg-green-50 border-green-100 text-green-700" :
         "bg-amber-50 border-amber-100 text-amber-700"
       }`}>
-        <span className="flex items-center">
-          🛏 Room {room.name}
+        <span className="flex items-center gap-1">
+          🛏 Room {cleanRoomName}
           {roomVacant === room.beds.length && <DeleteRoomBtn roomId={room.id} />}
         </span>
         <span>{roomVacant > 0 ? `${roomVacant} Vacant` : "Full 🔴"}</span>
@@ -51,26 +53,42 @@ function RoomCard({ room }: { room: any }) {
       <div className="p-3 grid grid-cols-2 gap-2 bg-neutral-50/50">
         {room.beds.map((bed: any) => {
           const tenant = room.pgTenants.find((t: any) => t.bedId === bed.id);
+          const cleanBedName = bed.name.replace(/^Bed\s+/i, "");
+
           return (
-            <div
-              key={bed.id}
-              className={`rounded-lg border text-center p-2.5 text-xs font-semibold transition-transform hover:scale-105 cursor-default ${
-                bed.isOccupied ? "bg-red-50 border-red-200 text-red-800" : "bg-green-50 border-green-200 text-green-800"
-              }`}
-            >
-              <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 opacity-50">Bed {bed.name}</div>
-              {bed.isOccupied ? (
+            <div key={bed.id}>
+              {bed.isOccupied && tenant ? (
                 <Link
-                  href={`/dashboard/manager/tenants/${tenant?.id}`}
-                  className="hover:underline block truncate font-bold"
-                  title={tenant?.name}
+                  href={`/dashboard/manager/tenants/${tenant.id}`}
+                  className="group block rounded-lg border border-red-200 bg-red-50/90 hover:bg-red-100/90 p-2.5 text-center text-xs font-semibold transition-all hover:shadow-sm"
+                  title={`View ${tenant.name}'s full profile`}
                 >
-                  {tenant?.name?.split(" ")[0] || "Occupied"}
+                  <div className="font-extrabold text-[9px] uppercase tracking-widest mb-0.5 text-red-400">
+                    Bed {cleanBedName}
+                  </div>
+                  <div className="font-extrabold text-red-900 truncate group-hover:underline">
+                    {tenant.name}
+                  </div>
+                  <span className="text-[10px] font-semibold text-violet-700 mt-1 block opacity-90 group-hover:opacity-100">
+                    View Profile →
+                  </span>
                 </Link>
+              ) : bed.isOccupied ? (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-center text-xs font-semibold text-red-800">
+                  <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 text-red-400">
+                    Bed {cleanBedName}
+                  </div>
+                  <span className="font-bold">Occupied</span>
+                </div>
               ) : (
-                <span className="flex items-center justify-center gap-1 text-green-700">
-                  <CheckCircle size={11} /> Free
-                </span>
+                <div className="rounded-lg border border-green-200 bg-green-50 p-2.5 text-center text-xs font-semibold text-green-800">
+                  <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 text-green-500">
+                    Bed {cleanBedName}
+                  </div>
+                  <span className="flex items-center justify-center gap-1 text-green-700 font-bold">
+                    <CheckCircle size={11} /> Free
+                  </span>
+                </div>
               )}
             </div>
           );

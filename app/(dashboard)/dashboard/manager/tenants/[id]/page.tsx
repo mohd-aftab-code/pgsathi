@@ -82,8 +82,8 @@ export default async function TenantDetailPage({ params }: PageProps) {
             <h3 className="mb-3 font-bold text-neutral-900">Stay Details</h3>
             <div className="space-y-2 text-sm">
               <Row label="PG" value={tenant.listing.title} />
-              {tenant.room && <Row label="Room" value={`Room ${tenant.room.name}`} />}
-              {tenant.bed  && <Row label="Bed"  value={`Bed ${tenant.bed.name}`}   />}
+              {tenant.room && <Row label="Room" value={`Room ${tenant.room.name.replace(/^Room\s+/i, "")}`} />}
+              {tenant.bed  && <Row label="Bed"  value={`Bed ${tenant.bed.name.replace(/^Bed\s+/i, "")}`}   />}
               <Row label="Check-in"    value={formatDate(tenant.checkInDate)} />
               {tenant.checkOutDate && <Row label="Check-out" value={formatDate(tenant.checkOutDate)} />}
               <Row label="Rent Due Day" value={`${tenant.rentDueDay}th every month`} />
