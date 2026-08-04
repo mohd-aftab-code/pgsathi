@@ -7,10 +7,8 @@ import {
   Star,
   MessageSquare,
   Settings,
-  Layers,
   UsersRound,
   Sparkles,
-  Lock,
   CreditCard,
   BedDouble,
   Gift,
@@ -19,11 +17,7 @@ import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 import { AdSlot } from "./AdSlot";
 import type { PlanTier } from "@/lib/manage-auth";
 
-// "PG Manager" is a paid feature (Growth/Pro/Scale plans, or an active trial), but the
-// link is ALWAYS shown in the sidebar so owners can discover it. Owners who don't have
-// access are sent to the plans/upgrade page on click (and a Lock icon marks it as premium)
-// instead of the link being hidden — the CRM route itself also redirects them as a backstop.
-function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
+function buildOwnerNav(): SidebarNavGroup[] {
   return [
     {
       category: "Main",
@@ -33,11 +27,11 @@ function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
       category: "Business",
       items: [
         { name: "My PGs", href: "/dashboard/owner/listings", icon: Building2 },
-        {
-          name: "PG Manager",
-          href: hasManagerAccess ? "/dashboard/manager" : "/dashboard/owner/subscription/upgrade",
-          icon: hasManagerAccess ? Layers : Lock,
-        },
+        // PG Manager deliberately does NOT live here. It is a separate app, not
+        // another page of this one, and sitting between "My PGs" and "Bed
+        // Report" made it read as a sibling page — which is exactly the
+        // confusion it caused. Its entry point is in the top header instead.
+        //
         // Read-only occupancy report. Rooms and beds are entered in PG Manager;
         // the owner just needs to see where things stand.
         { name: "Bed Report", href: "/dashboard/owner/inventory", icon: BedDouble, hideMobile: true },
@@ -78,8 +72,7 @@ export function OwnerSidebar({
   showAds?: boolean;
   children?: React.ReactNode;
 }) {
-  const hasManagerAccess = hasPaidPlan || trialDaysLeft > 0;
-  const ownerNav = buildOwnerNav(hasManagerAccess);
+  const ownerNav = buildOwnerNav();
   const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE");
   const displayTier = tier === "NONE" || tier === "STARTER" ? "Basic" : tier;
   const isEnterprise = tier === "ENTERPRISE";

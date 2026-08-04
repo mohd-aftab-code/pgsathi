@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Layers, Lock, ArrowRight } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { OwnerSidebar } from "@/components/dashboard/OwnerSidebar";
@@ -36,6 +36,9 @@ export default async function OwnerDashboardLayout({
     getPlanCapabilities(userId),
   ]);
   const hasPaidPlan = isPaidTier(tier);
+  // Same rule the sidebar used: a live trial gets in too, so owners can try the
+  // CRM before paying. The /dashboard/manager route re-checks this itself.
+  const hasManagerAccess = hasPaidPlan || trial.active;
   // Ads hide when the plan's adsFree capability is on (super-admin controlled).
   const showAds = !capabilities.adsFree;
 
@@ -46,8 +49,36 @@ export default async function OwnerDashboardLayout({
       <OwnerSidebar hasPaidPlan={hasPaidPlan} trialDaysLeft={trial.active ? trial.daysLeft : 0} tier={tier} showAds={showAds}>
         {/* ── Top Header ────────────────────────────────────── */}
         <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <div className="section-padding h-16 flex items-center justify-between">
-            <span className="text-neutral-500 text-sm font-semibold">Owner Dashboard</span>
+          <div className="section-padding h-16 flex items-center justify-between gap-3">
+            {/* PG Manager is a separate application, not another page of this
+                dashboard. In the sidebar it sat between "My PGs" and "Bed
+                Report" and read as a sibling page, which is what made it
+                confusing. Up here, beside the current context, it reads as what
+                it is: a switch into the other app. It lives in the shared
+                header so it stays reachable from every owner page. */}
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-neutral-500 text-sm font-semibold hidden sm:block shrink-0">
+                Owner Dashboard
+              </span>
+              <span className="w-px h-5 bg-neutral-200 hidden sm:block shrink-0" />
+              <Link
+                href={hasManagerAccess ? "/dashboard/manager" : "/dashboard/owner/subscription/upgrade"}
+                className={`inline-flex items-center gap-2 h-9 px-3 rounded-xl text-sm font-bold border transition-colors shrink-0 ${
+                  hasManagerAccess
+                    ? "border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100"
+                    : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50"
+                }`}
+              >
+                {hasManagerAccess ? <Layers size={16} /> : <Lock size={15} />}
+                PG Manager
+                {!hasManagerAccess && (
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 uppercase tracking-wider">
+                    Pro
+                  </span>
+                )}
+                {hasManagerAccess && <ArrowRight size={14} className="opacity-60" />}
+              </Link>
+            </div>
 
             {/* User info */}
             <div className="flex items-center gap-4">
