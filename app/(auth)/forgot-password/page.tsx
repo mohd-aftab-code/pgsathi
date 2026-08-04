@@ -114,11 +114,14 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const inputCls = "w-full h-12 px-4 bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all";
-  const btnCls = "w-full h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-70 flex justify-center items-center gap-2";
+  // Same field treatment as /login and /register: a hairline border and a tight
+  // radius, so the three auth screens read as one product.
+  const inputCls =
+    "h-12 w-full rounded-lg border border-[#ded8d1] bg-white px-4 text-[15px] font-medium text-[#1a1523] outline-none transition-colors placeholder:font-normal placeholder:text-[#a9a2b3] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15";
+  const btnCls = "w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors disabled:opacity-70 flex justify-center items-center gap-2";
 
   return (
-    <div className="min-h-screen flex bg-neutral-50">
+    <div className="flex min-h-screen bg-[#faf8f5]">
       <AuthBrandPanel
         eyebrow="Account Recovery"
         headline="Get back in"

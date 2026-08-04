@@ -4,36 +4,44 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/app/assets/logo/logo.png";
+import logoMark from "@/app/assets/logo/logo-icon.png";
 import { signIn } from "next-auth/react";
-import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
-import {
-  Phone,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Building2,
-  User,
-  ArrowRight,
-  Loader2,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
 
-type Tab = "user" | "manager";
+/**
+ * Sign in.
+ *
+ * Deliberately a single narrow column with no illustration, no statistics and
+ * no split panel. Those are what made the previous version read as generic:
+ * every template reaches for the same brand-colour panel with three big numbers
+ * in it, and swapping the artwork inside that layout does not change the fact
+ * that it is the layout. Restraint is the thing that is hard to fake.
+ *
+ * The two account types are no longer a tab strip. Phone sign-in covers almost
+ * everyone — tenants, owners and partners — so it is simply the page, and staff
+ * reach their email form through one link. That removes a whole control from
+ * the screen and makes the common path shorter.
+ */
+
+type Mode = "phone" | "staff";
+
+const FIELD =
+  "h-10 w-full rounded-[8px] border border-[#e4e4e7] bg-white px-3 text-[14px] text-[#18181b] outline-none transition-shadow " +
+  "placeholder:text-[#a1a1aa] focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-[#8b5cf6]/12";
+
+const LABEL = "mb-1.5 block text-[13px] font-medium text-[#3f3f46]";
 
 function LoginContent() {
   const searchParams = useSearchParams();
   let callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
   if (callbackUrl.includes("/login")) callbackUrl = "/dashboard";
 
-  const [tab, setTab] = useState<Tab>("user");
+  const [mode, setMode] = useState<Mode>("phone");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [managerEmail, setManagerEmail] = useState("");
   const [password, setPassword] = useState("");
   const [managerPassword, setManagerPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
-  const [showManagerPass, setShowManagerPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(() =>
     searchParams?.get("error") === "CredentialsSignin"
@@ -41,9 +49,12 @@ function LoginContent() {
       : ""
   );
 
-  const resetError = () => setError("");
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setError("");
+    setShowPass(false);
+  };
 
-  // ── Tab 1: User (Phone + Password) ──────────────────────────────
   const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.length !== 10) {
@@ -57,11 +68,7 @@ function LoginContent() {
     setLoading(true);
     setError("");
     try {
-      const res = await signIn("credentials", {
-        phone,
-        password,
-        redirect: false,
-      });
+      const res = await signIn("credentials", { phone, password, redirect: false });
       if (res?.error) {
         setError("Invalid phone number or password. Please try again.");
         setLoading(false);
@@ -74,11 +81,10 @@ function LoginContent() {
     }
   };
 
-  // ── Tab 2: Manager Login (Email from PgTeamMember) ───────────────
   const handleManagerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!managerEmail || !managerPassword) {
-      setError("Please enter your manager email and password");
+      setError("Please enter your email and password");
       return;
     }
     setLoading(true);
@@ -95,7 +101,6 @@ function LoginContent() {
         setLoading(false);
         return;
       }
-      // Sign in using next-auth with manager token
       const signInRes = await signIn("credentials", {
         email: managerEmail,
         password: managerPassword,
@@ -114,283 +119,219 @@ function LoginContent() {
     }
   };
 
-  const tabs: { id: Tab; label: string; icon: React.ElementType; desc: string }[] = [
-    { id: "user", label: "Tenant / Owner / Partner", icon: User, desc: "Login with phone number" },
-    { id: "manager", label: "Manager / Staff", icon: Building2, desc: "PG staff sub-login" },
-  ];
+  const notice =
+    searchParams?.get("passwordChanged") === "1"
+      ? "Password badal gaya. Naye password se sign in karein."
+      : searchParams?.get("partner_registered") === "true"
+        ? "Partner account ban gaya. Ab aap sign in kar sakte hain."
+        : null;
 
   return (
-    <div className="min-h-screen flex bg-neutral-50">
-      <AuthBrandPanel
-        eyebrow="For Tenants, Owners & Managers"
-        headline="Manage your PG"
-        accentWord="the simple way."
-        subtext="List properties, track tenants, and collect rent — everything in one place, zero brokerage."
-        stats={[
-          { value: "10,000+", label: "PG Listings" },
-          { value: "50,000+", label: "Users on PGSathi" },
-          { value: "0%", label: "Brokerage, always" },
-        ]}
-        footer="© 2026 PGSathi. Trusted by 10,000+ PG owners."
-      />
+    <div className="flex min-h-screen flex-col bg-[#f5f5f7]">
+      <main className="flex flex-1 items-center justify-center px-5 py-12">
+        <div className="w-full max-w-[400px] rounded-[14px] border border-[#e7e7ea] bg-white p-8 shadow-[0_1px_2px_rgba(16,17,26,0.04),0_8px_24px_-12px_rgba(16,17,26,0.12)] sm:p-10">
+          <Link href="/" className="mb-7 inline-block">
+            <Image
+              src={logoMark}
+              alt="PGSathi"
+              width={72}
+              height={72}
+              priority
+              className="h-9 w-auto object-contain"
+            />
+          </Link>
 
-      {/* ── Right Panel (Form) ───────────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:px-10 lg:px-16">
-        {/* Mobile Logo */}
-        <Link
-          href="/"
-          className="lg:hidden flex items-center gap-2.5 mb-8 group"
-        >
-          <Image 
-            src={logoImg} 
-            alt="PGSathi Logo" 
-            width={140}
-            height={48}
-            priority
-            className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
-          />
-        </Link>
+          <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[#18181b]">
+            {mode === "phone" ? "Sign in" : "Staff sign in"}
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#71717a]">
+            {mode === "phone" ? (
+              <>
+                Naya account?{" "}
+                <Link href="/register" className="font-medium text-[#7c3aed] hover:underline">
+                  Register
+                </Link>
+              </>
+            ) : (
+              "Wo email jo aapke PG owner ne aapko di hai."
+            )}
+          </p>
 
-        <div className="w-full max-w-[420px]">
-          {/* Heading */}
-          <div className="mb-7">
-            <h2 className="text-3xl font-extrabold text-neutral-900 tracking-tight mb-1.5">
-              Welcome back
-            </h2>
-            <p className="text-neutral-500 text-sm">
-              Sign in to your PGSathi account to continue.
-            </p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex gap-1 bg-neutral-100 rounded-2xl p-1 mb-7">
-            {tabs.map((t) => {
-              const Icon = t.icon;
-              const active = tab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => {
-                    setTab(t.id);
-                    resetError();
-                  }}
-                  className={`flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    active
-                      ? "bg-white shadow-md text-violet-700 shadow-violet-100"
-                      : "text-neutral-500 hover:text-neutral-700"
-                  }`}
-                >
-                  <Icon size={15} />
-                  <span className="hidden sm:block">{t.label}</span>
-                  <span className="sm:hidden">{t.label.split(" ")[0]}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Tab description */}
-          <div className="flex items-center gap-2 bg-violet-50 border border-violet-100 rounded-xl px-4 py-2.5 mb-6">
-            {tab === "user" && <User size={14} className="text-violet-600 shrink-0" />}
-            {tab === "manager" && <Building2 size={14} className="text-violet-600 shrink-0" />}
-            <p className="text-xs text-violet-700 font-medium">
-              {tab === "user" && "For tenants, PG owners, and partners. Login with your registered phone number."}
-              {tab === "manager" && "For PG staff. Use your manager email provided by your PG owner."}
-            </p>
-          </div>
-
-          {/* Error */}
+          {/* A single line with a rule, not a filled alert box — it carries the
+              same information at a fraction of the visual weight. */}
           {error && (
-            <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm mb-5 font-medium animate-slide-down">
-              <span className="text-lg leading-none mt-0.5">⚠️</span>
+            <div className="mt-6 flex items-start gap-2 border-l-2 border-[#dc2626] pl-3 text-[13px] text-[#b91c1c]">
+              <AlertCircle size={15} className="mt-px shrink-0" />
               <span>{error}</span>
             </div>
           )}
-
-          {/* Partner Registration Success */}
-          {searchParams?.get("partner_registered") === "true" && !error && (
-            <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 text-blue-700 p-3.5 rounded-xl text-sm mb-5 font-medium animate-slide-down">
-              <span className="text-lg leading-none mt-0.5">🎉</span>
-              <span>Partner account created successfully! You can now log in.</span>
+          {!error && notice && (
+            <div className="mt-6 flex items-start gap-2 border-l-2 border-[#16a34a] pl-3 text-[13px] text-[#15803d]">
+              <CheckCircle2 size={15} className="mt-px shrink-0" />
+              <span>{notice}</span>
             </div>
           )}
 
-          {/* ══ FORM: User Login ══════════════════════════════════ */}
-          {tab === "user" && (
-            <form onSubmit={handleUserLogin} className="space-y-4">
-              {/* Phone */}
+          {mode === "phone" ? (
+            <form onSubmit={handleUserLogin} className="mt-7 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                  Phone Number
+                <label htmlFor="phone" className={LABEL}>
+                  Phone number
                 </label>
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                    <Phone size={15} className="text-neutral-400" />
-                    <span className="text-neutral-500 text-sm font-semibold border-r border-neutral-300 pr-2.5">+91</span>
-                  </div>
+                  {/* Static prefix, sized to match the field's own padding so the
+                      digits line up with every other field on the page. */}
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[#71717a]">
+                    +91
+                  </span>
                   <input
+                    id="phone"
                     type="tel"
+                    inputMode="numeric"
                     maxLength={10}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                    className="w-full h-12 pl-24 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="Enter 10-digit number"
+                    className={`${FIELD} pl-[46px]`}
+                    placeholder="98765 43210"
                     required
                     autoFocus
+                    autoComplete="tel"
                   />
                 </div>
               </div>
 
-              {/* Password */}
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-sm font-semibold text-neutral-700">
+                <div className="mb-1.5 flex items-baseline justify-between">
+                  <label htmlFor="password" className="text-[13px] font-medium text-[#3f3f46]">
                     Password
                   </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs text-violet-600 hover:text-violet-700 font-semibold hover:underline"
-                  >
-                    Forgot password?
+                  <Link href="/forgot-password" className="text-[13px] text-[#71717a] hover:text-[#18181b]">
+                    Forgot?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
                   <input
+                    id="password"
                     type={showPass ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="Enter password"
+                    className={`${FIELD} pr-10`}
+                    placeholder="••••••••"
                     required
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                    aria-label={showPass ? "Hide password" : "Show password"}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-1 text-[#a1a1aa] transition-colors hover:text-[#18181b]"
                   >
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
-              >
-                {loading ? (
-                  <><Loader2 size={18} className="animate-spin" /> Signing in...</>
-                ) : (
-                  <><span>Sign In</span><ArrowRight size={16} /></>
-                )}
-              </button>
-
-              <p className="text-center text-sm text-neutral-500">
-                Don&apos;t have an account?{" "}
-                <Link href="/register" className="text-violet-600 font-bold hover:underline">
-                  Register here
-                </Link>
-              </p>
+              <SubmitButton loading={loading} label="Continue" />
             </form>
-          )}
-
-          {/* ══ FORM: Manager Login ════════════════════════════════ */}
-          {tab === "manager" && (
-            <form onSubmit={handleManagerLogin} className="space-y-4">
-              {/* Manager Email */}
+          ) : (
+            <form onSubmit={handleManagerLogin} className="mt-7 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                  Manager Email
+                <label htmlFor="mEmail" className={LABEL}>
+                  Email
                 </label>
-                <div className="relative">
-                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-                  <input
-                    type="email"
-                    value={managerEmail}
-                    onChange={(e) => setManagerEmail(e.target.value)}
-                    className="w-full h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="manager@yourpg.in"
-                    required
-                    autoFocus
-                  />
-                </div>
+                <input
+                  id="mEmail"
+                  type="email"
+                  value={managerEmail}
+                  onChange={(e) => setManagerEmail(e.target.value)}
+                  className={FIELD}
+                  placeholder="manager@yourpg.in"
+                  required
+                  autoFocus
+                  autoComplete="email"
+                />
               </div>
 
-              {/* Manager Password */}
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                <label htmlFor="mPassword" className={LABEL}>
                   Password
                 </label>
                 <div className="relative">
-                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
                   <input
-                    type={showManagerPass ? "text" : "password"}
+                    id="mPassword"
+                    type={showPass ? "text" : "password"}
                     value={managerPassword}
                     onChange={(e) => setManagerPassword(e.target.value)}
-                    className="w-full h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
-                    placeholder="Enter your manager password"
+                    className={`${FIELD} pr-10`}
+                    placeholder="••••••••"
                     required
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowManagerPass(!showManagerPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                    onClick={() => setShowPass(!showPass)}
+                    aria-label={showPass ? "Hide password" : "Show password"}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-1 text-[#a1a1aa] transition-colors hover:text-[#18181b]"
                   >
-                    {showManagerPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
 
-              {/* Manager Role Badge */}
-              <div className="flex gap-2 flex-wrap">
-                {["MANAGER", "WARDEN", "ACCOUNTANT"].map((role) => (
-                  <span
-                    key={role}
-                    className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-xs font-semibold px-3 py-1.5 rounded-full"
-                  >
-                    <Building2 size={10} />
-                    {role}
-                  </span>
-                ))}
-              </div>
+              <SubmitButton loading={loading} label="Continue" />
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 bg-neutral-900 hover:bg-black text-white font-bold rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
-              >
-                {loading ? (
-                  <><Loader2 size={18} className="animate-spin" /> Signing in...</>
-                ) : (
-                  <><Building2 size={16} /><span>Sign In as Manager</span></>
-                )}
-              </button>
-
-              <p className="text-center text-xs text-neutral-400">
-                Your login credentials are provided by your PG Owner.
-                <br />
-                Contact your owner if you&apos;ve forgotten your password.
+              <p className="text-[13px] text-[#71717a]">
+                Password aapke PG owner ne set kiya hai. Bhool gaye hain to unse poochhein.
               </p>
             </form>
           )}
 
-
-
-          {/* Footer */}
-          <p className="mt-8 text-center text-xs text-neutral-400 leading-relaxed">
-            By continuing, you agree to PGSathi&apos;s{" "}
-            <Link href="/terms" className="underline hover:text-violet-600 transition-colors">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="underline hover:text-violet-600 transition-colors">
-              Privacy Policy
-            </Link>
-            .
-          </p>
+          {/* The other account type lives behind one link instead of a tab strip
+              that every visitor has to read past. */}
+          <div className="mt-7 border-t border-[#f4f4f5] pt-5">
+            {mode === "phone" ? (
+              <button
+                onClick={() => switchMode("staff")}
+                className="text-[13px] text-[#71717a] transition-colors hover:text-[#18181b]"
+              >
+                PG staff ho? <span className="font-medium text-[#3f3f46]">Email se sign in karein</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => switchMode("phone")}
+                className="inline-flex items-center gap-1.5 text-[13px] text-[#71717a] transition-colors hover:text-[#18181b]"
+              >
+                <ArrowLeft size={14} />
+                Phone se sign in karein
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className="px-6 pb-8 text-center text-[12px] text-[#a1a1aa]">
+        <Link href="/terms" className="hover:text-[#71717a]">
+          Terms
+        </Link>
+        <span className="mx-2">·</span>
+        <Link href="/privacy" className="hover:text-[#71717a]">
+          Privacy
+        </Link>
+      </footer>
     </div>
+  );
+}
+
+function SubmitButton({ loading, label }: { loading: boolean; label: string }) {
+  return (
+    <button
+      type="submit"
+      disabled={loading}
+      className="flex h-10 w-full items-center justify-center gap-2 rounded-[8px] bg-[#7c3aed] text-[14px] font-medium text-white transition-colors hover:bg-[#6d28d9] disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {loading ? <Loader2 size={15} className="animate-spin" /> : null}
+      {loading ? "Signing in…" : label}
+    </button>
   );
 }
 
@@ -398,18 +339,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-          <div className="flex flex-col items-center gap-3">
-            <Image 
-              src={logoImg} 
-              alt="PGSathi Logo" 
-              width={140}
-              height={48}
-              priority
-              className="h-10 w-auto object-contain mix-blend-multiply" 
-            />
-            <Loader2 size={24} className="animate-spin text-violet-600" />
-          </div>
+        <div className="flex min-h-screen items-center justify-center bg-white">
+          <Loader2 size={20} className="animate-spin text-[#a1a1aa]" />
         </div>
       }
     >

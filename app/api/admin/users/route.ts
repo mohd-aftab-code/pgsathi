@@ -143,14 +143,117 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: `Role changed to ${newRole}` });
     }
 
+    /**
+     * Hard-delete a user.
+     *
+     * A plain `user.delete()` fails for anyone who has ever transacted. Deleting
+     * the user cascades into their subscriptions, tenants and rooms, but three
+     * child tables are RESTRICT and refuse to go with them:
+     *
+     *   invoices.subscriptionId      → blocks the subscription cascade
+     *   pg_payments.tenantId         → blocks the tenant cascade
+     *   pg_rent_bills.tenantId       → blocks the tenant cascade
+     *   pg_meter_readings.roomId     → blocks the room cascade
+     *
+     * Postgres raises this as a bare 23001 that Prisma wraps in a connector
+     * error, which is why the old handler surfaced an unreadable wall of text.
+     * Clearing those rows first, in one transaction, is what makes the delete
+     * actually work.
+     */
     if (action === "delete") {
-      await db.user.delete({ where: { id: parseInt(userId) } });
-      return NextResponse.json({ success: true, message: "User deleted successfully" });
+      const uid = parseInt(userId);
+
+      const [paidInvoices, revenue] = await Promise.all([
+        db.invoice.count({ where: { subscription: { userId: uid }, status: "PAID" } }),
+        db.invoice.aggregate({
+          where: { subscription: { userId: uid }, status: "PAID" },
+          _sum: { amount: true },
+        }),
+      ]);
+
+      // Invoices are financial records. Wiping a paying customer should be a
+      // deliberate act, not something that happens because a button was handy —
+      // so it needs a second, explicit confirmation.
+      if (paidInvoices > 0 && data.force !== true) {
+        return NextResponse.json(
+          {
+            success: false,
+            requiresForce: true,
+            message:
+              `Is user ke ${paidInvoices} paid invoice hain (₹${(revenue._sum.amount ?? 0).toLocaleString("en-IN")} ka record). ` +
+              `Delete karne par ye payment history hamesha ke liye chali jayegi. ` +
+              `Behtar hai "Ban" kar dein — account band ho jayega par record bacha rahega. ` +
+              `Phir bhi delete karna hai to dobara confirm karein.`,
+            data: { paidInvoices, revenue: revenue._sum.amount ?? 0 },
+          },
+          { status: 409 },
+        );
+      }
+
+      const removed = await db.$transaction(async (tx) => {
+        // 1. Rows that hold rooms hostage.
+        const listingIds = (
+          await tx.listing.findMany({ where: { ownerId: uid }, select: { id: true } })
+        ).map((l) => l.id);
+        if (listingIds.length) {
+          const roomIds = (
+            await tx.room.findMany({ where: { listingId: { in: listingIds } }, select: { id: true } })
+          ).map((r) => r.id);
+          if (roomIds.length) await tx.pgMeterReading.deleteMany({ where: { roomId: { in: roomIds } } });
+        }
+        await tx.pgMeterReading.deleteMany({ where: { ownerId: uid } });
+
+        // 2. Rows that hold tenants hostage.
+        const tenantIds = (
+          await tx.pgTenant.findMany({
+            where: { OR: [{ ownerId: uid }, { userId: uid }] },
+            select: { id: true },
+          })
+        ).map((t) => t.id);
+        if (tenantIds.length) {
+          await tx.pgPayment.deleteMany({ where: { tenantId: { in: tenantIds } } });
+          await tx.pgRentBill.deleteMany({ where: { tenantId: { in: tenantIds } } });
+        }
+        await tx.pgPayment.deleteMany({ where: { ownerId: uid } });
+        await tx.pgRentBill.deleteMany({ where: { ownerId: uid } });
+
+        // 3. Rows that hold subscriptions hostage.
+        const invoices = await tx.invoice.deleteMany({ where: { subscription: { userId: uid } } });
+
+        // Everything else follows the user out via ON DELETE CASCADE.
+        await tx.user.delete({ where: { id: uid } });
+
+        return { invoices: invoices.count, listings: listingIds.length, tenants: tenantIds.length };
+      },
+      // Prisma's 5s default is not enough: this is a dozen round trips to a
+      // remote Postgres, and a busy account tips over it. A timeout here fails
+      // the whole delete with a message that looks nothing like the real cause.
+      { timeout: 30_000, maxWait: 10_000 });
+
+      return NextResponse.json({
+        success: true,
+        message:
+          `User delete ho gaya` +
+          (removed.listings || removed.tenants || removed.invoices
+            ? ` — ${removed.listings} PG, ${removed.tenants} tenant, ${removed.invoices} invoice bhi hate`
+            : ""),
+        data: removed,
+      });
     }
 
     return NextResponse.json({ success: false, message: "Invalid action" }, { status: 400 });
 
-  } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    // Prisma wraps a foreign-key violation in a multi-line connector error, and
+    // dumping that raw into a toast is why "delete nahi ho raha" came with no
+    // usable explanation. Name the blocking table instead.
+    const raw = err instanceof Error ? err.message : String(err);
+    const fk = raw.match(/foreign key constraint "(\w+)" on table "(\w+)"/);
+    const message = fk
+      ? `Ye record delete nahi ho sakta — "${fk[2]}" table me iska data juda hua hai. Pehle wo hataana hoga.`
+      : raw.split("\n").map((l) => l.trim()).filter(Boolean).pop() || "Kuch galat ho gaya";
+
+    console.error("[admin/users]", raw);
+    return NextResponse.json({ success: false, message }, { status: 500 });
   }
 }

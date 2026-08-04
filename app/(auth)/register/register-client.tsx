@@ -104,7 +104,7 @@ function RegisterContent() {
   const strength = passwordStrength(password);
 
   return (
-    <div className="min-h-screen flex bg-neutral-50">
+    <div className="flex min-h-screen bg-[#faf8f5]">
       {role === "TENANT" ? (
         <AuthBrandPanel
           eyebrow="For Tenants"
@@ -181,7 +181,7 @@ function RegisterContent() {
 
           {/* Role Selector */}
           <div className="mb-5 sm:mb-6">
-            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+            <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
               I am a...
             </label>
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -324,16 +324,16 @@ function RegisterContent() {
           <form onSubmit={handleRegister} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
                 Full Name
               </label>
               <div className="relative">
-                <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <User size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8b8496]" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full h-11 sm:h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-11 pr-4 rounded-lg border border-[#ded8d1] bg-white outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 text-[15px] font-medium text-[#1a1523] placeholder:text-[#a9a2b3] placeholder:font-normal"
                   placeholder="John Doe"
                   required
                   autoFocus
@@ -343,16 +343,16 @@ function RegisterContent() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
                 Email Address
               </label>
               <div className="relative">
-                <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <Mail size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8b8496]" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-11 sm:h-12 pl-11 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-11 pr-4 rounded-lg border border-[#ded8d1] bg-white outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 text-[15px] font-medium text-[#1a1523] placeholder:text-[#a9a2b3] placeholder:font-normal"
                   placeholder="you@example.com"
                   required
                 />
@@ -361,7 +361,7 @@ function RegisterContent() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
                 Phone Number
               </label>
               <div className="relative">
@@ -376,7 +376,7 @@ function RegisterContent() {
                   maxLength={10}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                  className="w-full h-11 sm:h-12 pl-24 pr-4 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-24 pr-4 rounded-lg border border-[#ded8d1] bg-white outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 text-[15px] font-medium text-[#1a1523] placeholder:text-[#a9a2b3] placeholder:font-normal"
                   placeholder="Enter 10-digit number"
                   required
                 />
@@ -385,16 +385,16 @@ function RegisterContent() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
                 Password
               </label>
               <div className="relative">
-                <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <Lock size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8b8496]" />
                 <input
                   type={showPass ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-11 sm:h-12 pl-11 pr-12 bg-white border-2 border-neutral-200 rounded-xl focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-sm font-medium placeholder:text-neutral-400"
+                  className="w-full h-11 sm:h-12 pl-11 pr-12 rounded-lg border border-[#ded8d1] bg-white outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 text-[15px] font-medium text-[#1a1523] placeholder:text-[#a9a2b3] placeholder:font-normal"
                   placeholder="At least 6 characters"
                   required
                   minLength={6}
@@ -402,7 +402,7 @@ function RegisterContent() {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8b8496] transition-colors hover:text-[#1a1523]"
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -435,11 +435,11 @@ function RegisterContent() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#6b6478]">
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <Lock size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8b8496]" />
                 <input
                   type={showConfirm ? "text" : "password"}
                   value={confirmPassword}
@@ -457,7 +457,7 @@ function RegisterContent() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8b8496] transition-colors hover:text-[#1a1523]"
                 >
                   {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -492,18 +492,18 @@ function RegisterContent() {
 
           <p className="text-center text-sm text-neutral-500 mt-5">
             Already have an account?{" "}
-            <Link href="/login" className="text-violet-600 font-bold hover:underline">
+            <Link href="/login" className="font-bold text-primary-600 underline decoration-primary-300 underline-offset-2 hover:decoration-primary-600">
               Log in
             </Link>
           </p>
 
           <p className="mt-6 text-center text-xs text-neutral-400 leading-relaxed">
             By registering, you agree to PGSathi&apos;s{" "}
-            <Link href="/terms" className="underline hover:text-violet-600 transition-colors">
+            <Link href="/terms" className="underline decoration-[#ded8d1] underline-offset-2 transition-colors hover:text-primary-600">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="underline hover:text-violet-600 transition-colors">
+            <Link href="/privacy" className="underline decoration-[#ded8d1] underline-offset-2 transition-colors hover:text-primary-600">
               Privacy Policy
             </Link>
             .
