@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import LogoutButton from "@/components/common/LogoutButton";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { db } from "@/lib/db";
@@ -42,8 +43,27 @@ export default async function ManagerDashboardLayout({
       <ManagerSidebar isOwner={isOwner} messEnabled={messEnabled} expensesEnabled={expensesEnabled}>
         {/* ── Top Header ────────────────────────────────────── */}
         <header className="bg-white/70 backdrop-blur-2xl border-b border-white/50 sticky top-0 z-20 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <div className="section-padding h-16 flex items-center justify-between">
-            <span className="text-neutral-500 text-sm font-semibold">CRM Workspace</span>
+          <div className="section-padding h-16 flex items-center justify-between gap-3">
+            {/* Symmetric to the owner layout's "PG Manager →" button — owners
+                can switch back to the owner dashboard from here. Staff managers
+                don't have an owner dashboard, so they just see the label. */}
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-neutral-500 text-sm font-semibold hidden sm:block shrink-0">
+                CRM Workspace
+              </span>
+              {isOwner && (
+                <>
+                  <span className="w-px h-5 bg-neutral-200 hidden sm:block shrink-0" />
+                  <Link
+                    href="/dashboard/owner"
+                    className="inline-flex items-center gap-2 h-9 px-3 rounded-xl text-sm font-bold border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition-colors shrink-0"
+                  >
+                    <ArrowLeft size={15} />
+                    Owner Dashboard
+                  </Link>
+                </>
+              )}
+            </div>
 
             {/* User info */}
             <div className="flex items-center gap-4">

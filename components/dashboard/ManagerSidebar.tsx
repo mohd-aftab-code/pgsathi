@@ -87,7 +87,6 @@ export function ManagerSidebar({
       brandHref="/dashboard/manager"
       groups={buildManagerNav(messEnabled, expensesEnabled)}
       isOwner={isOwner}
-      backLink={isOwner ? { href: "/dashboard/owner", label: "Owner Dashboard" } : undefined}
     >
       {children}
     </DashboardSidebar>

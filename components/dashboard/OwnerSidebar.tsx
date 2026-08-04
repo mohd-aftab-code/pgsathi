@@ -11,6 +11,7 @@ import {
   Sparkles,
   CreditCard,
   BedDouble,
+  BarChart3,
   Gift,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
@@ -35,6 +36,7 @@ function buildOwnerNav(): SidebarNavGroup[] {
         // Read-only occupancy report. Rooms and beds are entered in PG Manager;
         // the owner just needs to see where things stand.
         { name: "Bed Report", href: "/dashboard/owner/inventory", icon: BedDouble, hideMobile: true },
+        { name: "Analytics", href: "/dashboard/owner/analytics", icon: BarChart3, hideMobile: true },
       ],
     },
     {
