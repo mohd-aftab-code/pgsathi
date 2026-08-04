@@ -15,7 +15,6 @@ import {
   Gift,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
-import { AdSlot } from "./AdSlot";
 import type { PlanTier } from "@/lib/manage-auth";
 
 function buildOwnerNav(): SidebarNavGroup[] {
@@ -114,10 +113,9 @@ export function OwnerSidebar({
     </div>
   );
 
-  const footer = planWidget || showAds ? (
+  const footer = planWidget ? (
     <div className="space-y-3">
       {planWidget}
-      {showAds && <AdSlot />}
     </div>
   ) : null;
 
