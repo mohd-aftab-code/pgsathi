@@ -112,8 +112,8 @@ export async function POST(req: NextRequest) {
           partnerCode,
           type,
           status: "PENDING", // admin must approve before the portal opens
-          city: city || null,
-          company: company || null,
+          city: city || undefined,
+          company: company || undefined,
         },
         select: { id: true, partnerCode: true },
       });
