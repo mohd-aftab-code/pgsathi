@@ -354,7 +354,7 @@ export function getSubscriptionExpiryEmail(name: string, daysLeft: number) {
     <p>To avoid any interruption in receiving leads and managing your PG, please renew your subscription soon.</p>
     
     <div class="btn-container">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in'}/dashboard/owner/plans" class="btn">Renew Now</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in'}/dashboard/owner/subscription/upgrade" class="btn">Renew Now</a>
     </div>
   `;
   return baseTemplate(content, `Your PGSathi subscription expires in ${daysLeft} day(s)`);
