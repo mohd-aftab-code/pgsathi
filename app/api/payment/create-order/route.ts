@@ -11,6 +11,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
+    // Only OWNER accounts can create a payment order.
+    if (session.user.role !== "OWNER") {
+      return NextResponse.json({ success: false, message: "Only PG owners can purchase a plan" }, { status: 403 });
+    }
+
     const { planId, billingCycle } = await req.json();
     const cycle = isValidCycle(billingCycle) ? billingCycle : "MONTHLY";
 

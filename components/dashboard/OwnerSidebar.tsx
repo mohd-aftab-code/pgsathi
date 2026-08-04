@@ -7,40 +7,31 @@ import {
   Star,
   MessageSquare,
   Settings,
-  Layers,
   UsersRound,
   Sparkles,
-  Lock,
   CreditCard,
   BedDouble,
+  BarChart3,
   Gift,
+  Bell,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
-import { AdSlot } from "./AdSlot";
 import type { PlanTier } from "@/lib/manage-auth";
 
-// "PG Manager" is a paid feature (Growth/Pro/Scale plans, or an active trial), but the
-// link is ALWAYS shown in the sidebar so owners can discover it. Owners who don't have
-// access are sent to the plans/upgrade page on click (and a Lock icon marks it as premium)
-// instead of the link being hidden — the CRM route itself also redirects them as a backstop.
-function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
+function buildOwnerNav(): SidebarNavGroup[] {
   return [
     {
       category: "Main",
-      items: [{ name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard, exact: true }],
+      items: [
+        { name: "Overview", href: "/dashboard/owner", icon: LayoutDashboard, exact: true },
+      ],
     },
     {
       category: "Business",
       items: [
         { name: "My PGs", href: "/dashboard/owner/listings", icon: Building2 },
-        {
-          name: "PG Manager",
-          href: hasManagerAccess ? "/dashboard/manager" : "/dashboard/owner/subscription/upgrade",
-          icon: hasManagerAccess ? Layers : Lock,
-        },
-        // Read-only occupancy report. Rooms and beds are entered in PG Manager;
-        // the owner just needs to see where things stand.
         { name: "Bed Report", href: "/dashboard/owner/inventory", icon: BedDouble, hideMobile: true },
+        { name: "Analytics", href: "/dashboard/owner/analytics", icon: BarChart3, hideMobile: true },
       ],
     },
     {
@@ -56,7 +47,8 @@ function buildOwnerNav(hasManagerAccess: boolean): SidebarNavGroup[] {
       items: [
         { name: "Subscription", href: "/dashboard/owner/subscription", icon: CreditCard, hideMobile: true },
         { name: "Refer & Earn", href: "/dashboard/owner/refer", icon: Gift, hideMobile: true },
-        { name: "Settings", href: "/dashboard/owner/settings", icon: Settings, hideMobile: true }
+        { name: "Notifications", href: "/dashboard/owner/notifications", icon: Bell, hideMobile: true },
+        { name: "Settings", href: "/dashboard/owner/settings", icon: Settings },
       ],
     },
   ];
@@ -78,55 +70,54 @@ export function OwnerSidebar({
   showAds?: boolean;
   children?: React.ReactNode;
 }) {
-  const hasManagerAccess = hasPaidPlan || trialDaysLeft > 0;
-  const ownerNav = buildOwnerNav(hasManagerAccess);
+  const ownerNav = buildOwnerNav();
   const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE");
-  const displayTier = tier === "NONE" || tier === "STARTER" ? "Basic" : tier;
+  const displayTier = tier === "NONE" || tier === "STARTER" ? "Growth" : tier;
   const isEnterprise = tier === "ENTERPRISE";
 
   const planWidget = (
-    <div className={`rounded-xl bg-white border ${hasPaidPlan ? 'border-primary-100' : trialDaysLeft > 0 ? 'border-violet-100' : 'border-red-100'} p-3 shadow-sm`}>
-      <p className="text-[10px] text-neutral-500 font-bold uppercase mb-1">Current Plan</p>
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <Sparkles size={14} className={hasPaidPlan ? 'text-primary-600' : trialDaysLeft > 0 ? 'text-violet-600' : 'text-neutral-600'} />
-        <p className={`text-sm font-bold ${hasPaidPlan ? 'text-primary-900' : trialDaysLeft > 0 ? 'text-violet-900' : 'text-neutral-900'}`}>
-          {displayTier} Plan
+    <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-violet-200/80 p-3.5 shadow-sm space-y-3 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-wider">
+          Current Plan
         </p>
+        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white uppercase shadow-2xs">
+          {displayTier}
+        </span>
       </div>
-      
-      {!hasPaidPlan && trialDaysLeft > 0 && (
-        <p className="text-[10px] text-violet-700/80 mb-2.5 whitespace-nowrap">
-          {trialDaysLeft} {trialDaysLeft === 1 ? "day" : "days"} left in Trial
-        </p>
-      )}
-      {!hasPaidPlan && trialDaysLeft <= 0 && (
-        <p className="text-[10px] text-red-700/80 mb-2.5 whitespace-nowrap">
-          Free Tier / Trial Expired
-        </p>
-      )}
-      {hasPaidPlan && !isEnterprise && <div className="h-2"></div>}
-      
+
+      <div className="flex items-center gap-2.5">
+        <div className="w-8.5 h-8.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-violet-500/20">
+          <Sparkles size={17} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-extrabold text-neutral-900 leading-tight">
+            {displayTier} Plan
+          </p>
+          <p className="text-[10px] font-medium text-neutral-500 truncate">
+            {hasPaidPlan
+              ? "PG Manager Included"
+              : trialDaysLeft > 0
+              ? `${trialDaysLeft} days left in Trial`
+              : "Upgrade for PG Manager"}
+          </p>
+        </div>
+      </div>
+
       {!isEnterprise && (
         <Link
           href="/dashboard/owner/subscription/upgrade"
-          className={`block text-center text-xs font-bold rounded-lg py-1.5 transition-colors ${
-            hasPaidPlan 
-              ? 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-100' 
-              : trialDaysLeft > 0 
-                ? 'bg-violet-500 text-white hover:bg-violet-600'
-                : 'bg-red-600 text-white hover:bg-red-700'
-          }`}
+          className="block text-center text-xs font-extrabold rounded-xl py-2 px-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all"
         >
-          Upgrade Now
+          Upgrade Now 🚀
         </Link>
       )}
     </div>
   );
 
-  const footer = planWidget || showAds ? (
+  const footer = planWidget ? (
     <div className="space-y-3">
       {planWidget}
-      {showAds && <AdSlot />}
     </div>
   ) : null;
 

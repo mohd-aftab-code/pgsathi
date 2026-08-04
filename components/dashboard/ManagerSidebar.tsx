@@ -56,8 +56,6 @@ function buildManagerNav(messEnabled: boolean, expensesEnabled: boolean): Sideba
     {
       category: "System",
       items: [
-        // The notifications page existed with no link anywhere in the sidebar —
-        // a manager received notifications but had no way to open them.
         { name: "Notifications", href: "/dashboard/manager/notifications", icon: Bell, hideMobile: true },
         { name: "Reminders", href: "/dashboard/manager/reminders", icon: BellRing, hideMobile: true },
         { name: "Announcements", href: "/dashboard/manager/announcements", icon: Megaphone, hideMobile: true },
@@ -87,7 +85,6 @@ export function ManagerSidebar({
       brandHref="/dashboard/manager"
       groups={buildManagerNav(messEnabled, expensesEnabled)}
       isOwner={isOwner}
-      backLink={isOwner ? { href: "/dashboard/owner", label: "Owner Dashboard" } : undefined}
     >
       {children}
     </DashboardSidebar>

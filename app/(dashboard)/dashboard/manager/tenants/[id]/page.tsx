@@ -82,8 +82,8 @@ export default async function TenantDetailPage({ params }: PageProps) {
             <h3 className="mb-3 font-bold text-neutral-900">Stay Details</h3>
             <div className="space-y-2 text-sm">
               <Row label="PG" value={tenant.listing.title} />
-              {tenant.room && <Row label="Room" value={`Room ${tenant.room.name}`} />}
-              {tenant.bed  && <Row label="Bed"  value={`Bed ${tenant.bed.name}`}   />}
+              {tenant.room && <Row label="Room" value={`Room ${tenant.room.name.replace(/^Room\s+/i, "")}`} />}
+              {tenant.bed  && <Row label="Bed"  value={`Bed ${tenant.bed.name.replace(/^Bed\s+/i, "")}`}   />}
               <Row label="Check-in"    value={formatDate(tenant.checkInDate)} />
               {tenant.checkOutDate && <Row label="Check-out" value={formatDate(tenant.checkOutDate)} />}
               <Row label="Rent Due Day" value={`${tenant.rentDueDay}th every month`} />
@@ -115,16 +115,58 @@ export default async function TenantDetailPage({ params }: PageProps) {
             )}
           </div>
 
-          {/* KYC */}
-          {(tenant.idType || tenant.guardianName) && (
-            <div className="card p-5">
-              <h3 className="mb-3 font-bold text-neutral-900">KYC</h3>
-              <div className="space-y-2 text-sm">
-                {tenant.idType && <Row label={tenant.idType} value={tenant.idNumber ?? "—"} />}
-                {tenant.guardianName && <Row label="Guardian" value={`${tenant.guardianName} (${tenant.guardianPhone ?? "—"})`} />}
-              </div>
+          {/* Work / Education Verification */}
+          <div className="card p-5">
+            <h3 className="mb-3 font-bold text-neutral-900 flex items-center gap-2">
+              🎓 Work &amp; Education Verification
+            </h3>
+            <div className="space-y-2 text-sm">
+              <Row label="Occupation" value={tenant.occupation ? tenant.occupation.replace("_", " ") : "STUDENT"} />
+              {tenant.workplace && <Row label="Company / Institute" value={tenant.workplace} />}
+              {tenant.workplaceId && <Row label="ID / Roll No" value={tenant.workplaceId} />}
+              {tenant.workplaceAddress && <Row label="Office/College Address" value={tenant.workplaceAddress} />}
             </div>
-          )}
+          </div>
+
+          {/* KYC & Police Verification */}
+          <div className="card p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-neutral-900">KYC &amp; Police Verification</h3>
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                tenant.policeVerificationStatus === "VERIFIED" ? "bg-green-50 text-green-700 border-green-200" :
+                tenant.policeVerificationStatus === "PENDING" ? "bg-amber-50 text-amber-700 border-amber-200" :
+                tenant.policeVerificationStatus === "REJECTED" ? "bg-red-50 text-red-700 border-red-200" :
+                "bg-neutral-100 text-neutral-600 border-neutral-200"
+              }`}>
+                POLICE: {tenant.policeVerificationStatus ? tenant.policeVerificationStatus.replace("_", " ") : "NOT SUBMITTED"}
+              </span>
+            </div>
+            <div className="space-y-2 text-sm">
+              {tenant.idType && <Row label={tenant.idType} value={tenant.idNumber ?? "—"} />}
+              {tenant.policeVerificationRef && <Row label="Police Token/Ack Ref" value={tenant.policeVerificationRef} />}
+              {tenant.bloodGroup && <Row label="Blood Group" value={tenant.bloodGroup} />}
+            </div>
+          </div>
+
+          {/* Guardian & Emergency Details */}
+          <div className="card p-5">
+            <h3 className="mb-3 font-bold text-neutral-900">Guardian &amp; Emergency Contact</h3>
+            <div className="space-y-2 text-sm">
+              {tenant.guardianName && <Row label="Guardian" value={`${tenant.guardianName} ${tenant.guardianRelation ? `(${tenant.guardianRelation})` : ""}`} />}
+              {tenant.guardianPhone && (
+                <div className="flex justify-between items-center gap-4">
+                  <span className="text-neutral-400 shrink-0">Guardian Phone</span>
+                  <a href={`tel:${tenant.guardianPhone}`} className="font-medium text-primary-700 hover:underline flex items-center gap-1">
+                    <Phone className="h-3 w-3" /> {tenant.guardianPhone}
+                  </a>
+                </div>
+              )}
+              {tenant.permanentAddress && <Row label="Permanent Address" value={tenant.permanentAddress} />}
+              {tenant.vehicleType && tenant.vehicleType !== "NONE" && (
+                <Row label="Vehicle" value={`${tenant.vehicleType.replace("_", " ")} ${tenant.vehicleNumber ? `(${tenant.vehicleNumber})` : ""}`} />
+              )}
+            </div>
+          </div>
 
           {/* Actions */}
           <TenantActions tenantId={tenant.id} listingId={tenant.listingId} forMonth={month} monthlyRent={tenant.monthlyRent} />

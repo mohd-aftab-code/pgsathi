@@ -313,28 +313,40 @@ export default function NewListingPage() {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="flex w-full mb-10 overflow-x-auto hide-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-      <div className="flex w-full min-w-[600px] justify-between relative px-2">
-        <div className="absolute top-1/2 left-4 right-4 h-1 bg-neutral-100 -translate-y-1/2 rounded-full z-0"></div>
-        <div className="absolute top-1/2 left-4 h-1 bg-primary-500 -translate-y-1/2 rounded-full z-0 transition-all duration-500" style={{ width: `calc(${((currentStep - 1) / (STEPS.length - 1)) * 100}% - 2rem)` }}></div>
-        
-        {STEPS.map((step, index) => {
+    <div className="mb-5">
+      {/* Mobile: horizontal scrollable steps */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none sm:grid sm:grid-cols-5 sm:overflow-visible">
+        {STEPS.map((step) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
-          
           return (
-            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 shadow-sm
-                ${isActive ? 'bg-primary-500 text-white ring-4 ring-primary-100 scale-110' : 
-                  isCompleted ? 'bg-primary-100 text-primary-600' : 
-                  'bg-white text-neutral-400 border border-neutral-200'}`}
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => {
+                if (isCompleted || isActive) setCurrentStep(step.id as StepType);
+              }}
+              className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all shrink-0 min-w-[120px] sm:min-w-0 sm:w-auto ${
+                isActive
+                  ? "bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/20 font-bold"
+                  : isCompleted
+                  ? "bg-violet-50 text-violet-800 border-violet-200/80 font-semibold hover:bg-violet-100/80"
+                  : "bg-white text-neutral-400 border-neutral-200 cursor-not-allowed opacity-70"
+              }`}
+            >
+              <div
+                className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : isCompleted
+                    ? "bg-violet-200/60 text-violet-800"
+                    : "bg-neutral-100 text-neutral-400"
+                }`}
               >
-                {isCompleted ? <CheckCircle2 size={20} /> : step.id}
+                {isCompleted ? <CheckCircle2 size={14} /> : step.id}
               </div>
-              <span className={`text-xs font-bold whitespace-nowrap transition-colors ${isActive ? 'text-neutral-900' : isCompleted ? 'text-primary-700' : 'text-neutral-400'}`}>
-                {step.title}
-              </span>
-            </div>
+              <span className="text-xs truncate">{step.title}</span>
+            </button>
           );
         })}
       </div>
@@ -342,52 +354,52 @@ export default function NewListingPage() {
   );
 
   const renderStep1 = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">PG / Flat Name *</label>
-            <input 
-              type="text" 
-              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
-              placeholder="Enter PG Name"
-              value={formData.title}
-              onChange={e => setFormData({...formData, title: e.target.value})}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Description *</label>
-            <input 
-              type="text" 
-              className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm"
-              placeholder="Short catchy description"
-              value={formData.description}
-              onChange={e => setFormData({...formData, description: e.target.value})}
-            />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Basic Details</h3>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">PG / Flat Name <span className="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
+                placeholder="e.g. Sharma Boys PG"
+                value={formData.title}
+                onChange={e => setFormData({...formData, title: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">Description <span className="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
+                placeholder="Short catchy description"
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
+              />
+            </div>
           </div>
           
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Place is available for *</label>
-            <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Available for <span className="text-red-500">*</span></label>
+            <div className="grid grid-cols-3 gap-2">
               {['BOYS', 'GIRLS', 'COED'].map(type => (
-                <label key={type} className={`relative flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.genderAllowed === type ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input 
-                    type="radio" 
-                    name="gender" 
-                    className="hidden"
-                    checked={formData.genderAllowed === type}
-                    onChange={() => setFormData({...formData, genderAllowed: type})}
-                  />
-                  <span className="text-sm font-bold">{type === 'COED' ? 'Co-living' : type === 'BOYS' ? 'Boys' : 'Girls'}</span>
+                <label key={type} className={`flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                  formData.genderAllowed === type 
+                    ? 'border-violet-500 bg-violet-50 text-violet-700' 
+                    : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+                }`}>
+                  <input type="radio" name="gender" className="hidden" checked={formData.genderAllowed === type} onChange={() => setFormData({...formData, genderAllowed: type})} />
+                  {type === 'COED' ? 'Co-living' : type === 'BOYS' ? '♂ Boys' : '♀ Girls'}
                 </label>
               ))}
             </div>
           </div>
           
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Types Available *</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Room Types <span className="text-red-500">*</span></label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {[
                 { id: "SINGLE_ROOM", label: "Single Room" },
                 { id: "DOUBLE_SHARING", label: "Double Sharing" },
@@ -396,14 +408,12 @@ export default function NewListingPage() {
                 { id: "DORMITORY", label: "Dormitory" },
                 { id: "STUDIO", label: "Studio" },
               ].map((type) => (
-                <label key={type.id} className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.roomTypes.includes(type.id) ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
-                    {formData.roomTypes.includes(type.id) && <CheckCircle2 size={16} className="text-white" />}
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    className="hidden"
-                    checked={formData.roomTypes.includes(type.id)}
+                <label key={type.id} className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                  formData.roomTypes.includes(type.id)
+                    ? 'border-violet-500 bg-violet-50 text-violet-700'
+                    : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+                }`}>
+                  <input type="checkbox" className="hidden" checked={formData.roomTypes.includes(type.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
                         setFormData({ ...formData, roomTypes: [...formData.roomTypes, type.id] });
@@ -414,7 +424,8 @@ export default function NewListingPage() {
                       }
                     }}
                   />
-                  <span className={`text-sm font-bold ${formData.roomTypes.includes(type.id) ? 'text-primary-800' : 'text-neutral-600'}`}>{type.label}</span>
+                  {formData.roomTypes.includes(type.id) && <CheckCircle2 size={13} />}
+                  {type.label}
                 </label>
               ))}
             </div>
@@ -437,181 +448,111 @@ export default function NewListingPage() {
     />
   );
 
-  const renderStep3 = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Provide Details of PG</h3>
-        
-        {/* "Available From" used to sit here marked required. It had no column in
-            the schema and was never sent to the API — the owner filled a date
-            that went nowhere. Removed rather than wired up: a PG being listed is
-            available now, and vacancy is tracked per-bed in PG Manager. */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Notice Period</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noticePeriod === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input 
-                    type="radio" 
-                    name="noticePeriod" 
-                    className="hidden"
-                    checked={formData.noticePeriod === opt}
-                    onChange={() => setFormData({...formData, noticePeriod: opt})}
-                  />
-                  <span className="text-sm font-bold">{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Food Included</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.foodIncluded === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input 
-                    type="radio" 
-                    name="foodIncluded" 
-                    className="hidden"
-                    checked={formData.foodIncluded === opt}
-                    onChange={() => setFormData({...formData, foodIncluded: opt})}
-                  />
-                  <span className="text-sm font-bold">{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Gate Closing Time</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.gateClosingTime === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input 
-                    type="radio" 
-                    name="gateClosingTime" 
-                    className="hidden"
-                    checked={formData.gateClosingTime === opt}
-                    onChange={() => setFormData({...formData, gateClosingTime: opt})}
-                  />
-                  <span className="text-sm font-bold">{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Rules</label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-              <label className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.rentLockIn ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.rentLockIn ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
-                  {formData.rentLockIn && <CheckCircle2 size={16} className="text-white" />}
-                </div>
-                <input 
-                  type="checkbox" 
-                  className="hidden"
-                  checked={formData.rentLockIn}
-                  onChange={(e) => setFormData({...formData, rentLockIn: e.target.checked})}
-                />
-                <span className={`text-sm font-bold ${formData.rentLockIn ? 'text-primary-800' : 'text-neutral-600'}`}>Rent lock-in</span>
-              </label>
-              <label className={`relative flex items-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.noGuardiansStay ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center mr-3 shrink-0 transition-colors ${formData.noGuardiansStay ? 'bg-primary-500 border-primary-500' : 'border-2 border-neutral-300'}`}>
-                  {formData.noGuardiansStay && <CheckCircle2 size={16} className="text-white" />}
-                </div>
-                <input 
-                  type="checkbox" 
-                  className="hidden"
-                  checked={formData.noGuardiansStay}
-                  onChange={(e) => setFormData({...formData, noGuardiansStay: e.target.checked})}
-                />
-                <span className={`text-sm font-bold ${formData.noGuardiansStay ? 'text-primary-800' : 'text-neutral-600'}`}>No guardians stay</span>
-              </label>
-            </div>
-          </div>
-
+  const renderStep3 = () => {
+    const tog2 = (label: string, value: string, field: keyof typeof formData) => (
+      <div key={label}>
+        <p className="text-sm font-medium text-neutral-700 mb-2">{label}</p>
+        <div className="flex gap-2">
+          {['Yes', 'No'].map(opt => (
+            <label key={opt} className={`flex-1 flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+              (formData[field] as string) === opt ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+            }`}>
+              <input type="radio" className="hidden" checked={(formData[field] as string) === opt} onChange={() => setFormData({...formData, [field]: opt})} />
+              {opt}
+            </label>
+          ))}
         </div>
       </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Available Services</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Laundry Service</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.laundryService === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input type="radio" name="laundry" className="hidden" checked={formData.laundryService === opt} onChange={() => setFormData({...formData, laundryService: opt})} />
-                  <span className="text-sm font-bold">{opt}</span>
-                </label>
-              ))}
-            </div>
+    );
+    return (
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+          <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">PG Details</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+            {tog2('Notice Period', formData.noticePeriod, 'noticePeriod')}
+            {tog2('Food Included', formData.foodIncluded, 'foodIncluded')}
+            {tog2('Gate Closing Time', formData.gateClosingTime, 'gateClosingTime')}
           </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Cleaning</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.roomCleaning === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input type="radio" name="cleaning" className="hidden" checked={formData.roomCleaning === opt} onChange={() => setFormData({...formData, roomCleaning: opt})} />
-                  <span className="text-sm font-bold">{opt}</span>
+          <p className="text-sm font-medium text-neutral-700 mb-2">PG Rules</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { key: 'rentLockIn', label: 'Rent Lock-in' },
+              { key: 'noGuardiansStay', label: 'No Guardians Stay' },
+            ].map(({ key, label }) => {
+              const checked = formData[key as keyof typeof formData] as boolean;
+              return (
+                <label key={key} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                  checked ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+                }`}>
+                  <input type="checkbox" className="hidden" checked={checked} onChange={(e) => setFormData({...formData, [key]: e.target.checked})} />
+                  {checked && <CheckCircle2 size={13} />}
+                  {label}
                 </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Parking</label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {['Yes', 'No'].map(opt => (
-                <label key={opt} className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.parking === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50 text-neutral-600'}`}>
-                  <input type="radio" name="parking" className="hidden" checked={formData.parking === opt} onChange={() => setFormData({...formData, parking: opt})} />
-                  <span className="text-sm font-bold">{opt}</span>
-                </label>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
+      </div>
+    );
+  };
 
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Available Amenities of PG</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-10">
+  const renderStep4 = () => (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Services</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { label: 'Laundry Service', field: 'laundryService', name: 'laundry' },
+            { label: 'Room Cleaning', field: 'roomCleaning', name: 'cleaning' },
+            { label: 'Parking', field: 'parking', name: 'parking' },
+          ].map(({ label, field, name }) => (
+            <div key={field}>
+              <p className="text-sm font-medium text-neutral-700 mb-2">{label}</p>
+              <div className="flex gap-2">
+                {['Yes', 'No'].map(opt => (
+                  <label key={opt} className={`flex-1 flex items-center justify-center h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
+                    (formData[field as keyof typeof formData] as string) === opt
+                      ? 'border-violet-500 bg-violet-50 text-violet-700'
+                      : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+                  }`}>
+                    <input type="radio" name={name} className="hidden" checked={(formData[field as keyof typeof formData] as string) === opt} onChange={() => setFormData({...formData, [field]: opt})} />
+                    {opt}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Amenities</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
           {AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
-                  {isSelected && <CheckCircle2 size={12} className="text-white" />}
-                </div>
-                <input 
-                  type="checkbox" 
-                  className="hidden"
-                  checked={isSelected}
-                  onChange={() => toggleAmenity(amenity.id, 'pg')}
-                />
-                <span className={`text-sm font-bold mt-2 ${isSelected ? 'text-primary-800' : 'text-neutral-600'}`}>{amenity.label}</span>
+              <label key={amenity.id} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors text-center ${
+                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+              }`}>
+                <input type="checkbox" className="hidden" checked={isSelected} onChange={() => toggleAmenity(amenity.id, 'pg')} />
+                {isSelected && <CheckCircle2 size={13} className="shrink-0" />}
+                <span className="text-xs">{amenity.label}</span>
               </label>
             );
           })}
         </div>
 
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Room Amenities of PG</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">Room Amenities</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {ROOM_AMENITIES_LIST.map(amenity => {
             const isSelected = formData.selectedRoomAmenities.includes(amenity.id);
             return (
-              <label key={amenity.id} className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm' : 'border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50'}`}>
-                <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-primary-500' : 'bg-neutral-200'}`}>
-                  {isSelected && <CheckCircle2 size={12} className="text-white" />}
-                </div>
-                <input 
-                  type="checkbox" 
-                  className="hidden"
-                  checked={isSelected}
-                  onChange={() => toggleAmenity(amenity.id, 'room')}
-                />
-                <span className={`text-sm font-bold mt-2 ${isSelected ? 'text-primary-800' : 'text-neutral-600'}`}>{amenity.label}</span>
+              <label key={amenity.id} className={`flex items-center justify-center gap-1.5 h-11 rounded-lg border cursor-pointer text-sm font-medium transition-colors text-center ${
+                isSelected ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-neutral-200 bg-white text-neutral-600 active:bg-neutral-50'
+              }`}>
+                <input type="checkbox" className="hidden" checked={isSelected} onChange={() => toggleAmenity(amenity.id, 'room')} />
+                {isSelected && <CheckCircle2 size={13} className="shrink-0" />}
+                <span className="text-xs">{amenity.label}</span>
               </label>
             );
           })}
@@ -621,22 +562,22 @@ export default function NewListingPage() {
   );
 
   const renderStep5 = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
       
       {/* Gallery */}
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-8 pb-4 border-b border-neutral-100">Gallery</h3>
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Photos</h3>
         
         {formData.photos.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
             {formData.photos.map((photo, i) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-neutral-100 group shadow-sm hover:shadow-md transition-shadow">
-                <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-neutral-200 group">
+                <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+                {/* Always visible on mobile (touch), hover on desktop */}
                 <button 
                   type="button"
                   onClick={() => removePhoto(i)}
-                  className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-lg scale-90 group-hover:scale-100"
+                  className="absolute top-1 right-1 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center transition-opacity text-sm font-bold sm:opacity-0 sm:group-hover:opacity-100 opacity-100"
                 >
                   &times;
                 </button>
@@ -645,35 +586,24 @@ export default function NewListingPage() {
           </div>
         )}
 
-        <label className="border-2 border-dashed border-primary-300 bg-primary-50/50 hover:bg-primary-50 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer transition-colors relative group">
-          <input 
-            type="file" 
-            multiple 
-            accept="image/*" 
-            className="hidden" 
-            onChange={handleImageUpload} 
-            disabled={uploadingImage}
-          />
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform duration-300 text-primary-500">
-            {uploadingImage ? (
-               <Loader2 className="animate-spin" size={28} />
-            ) : (
-               <Upload size={28} />
-            )}
+        <label className="border-2 border-dashed border-neutral-200 hover:border-violet-400 active:border-violet-400 rounded-xl p-5 flex items-center gap-4 cursor-pointer transition-colors group">
+          <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+          <div className="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center text-violet-600 shrink-0">
+            {uploadingImage ? <Loader2 className="animate-spin" size={22} /> : <Upload size={22} />}
           </div>
-          <p className="font-bold text-neutral-900 mb-1 text-lg">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
-          <p className="text-sm text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
-          <div className="bg-primary-500 text-white font-bold px-8 py-3 rounded-xl shadow-sm text-sm hover:bg-primary-600 transition-colors">Browse Files</div>
-          <p className="text-[10px] text-neutral-400 mt-4 uppercase tracking-wider font-semibold">Max size 5MB per image</p>
+          <div>
+            <p className="font-semibold text-neutral-800 text-sm">{uploadingImage ? "Uploading..." : "Tap to Upload Photos"}</p>
+            <p className="text-xs text-neutral-400">Multiple images allowed · Max 5MB each</p>
+          </div>
         </label>
       </div>
 
       {/* Pricing */}
-      <div className="border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-6 md:p-8 bg-white">
-        <h3 className="text-xl font-black text-neutral-900 mb-2">Pricing per Room Type</h3>
-        <p className="text-sm text-neutral-500 mb-8 pb-4 border-b border-neutral-100">Set the monthly rent and security deposit for each room type you selected.</p>
+      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Pricing</h3>
+        <p className="text-xs text-neutral-400 mb-4">Set rent and deposit for each room type.</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
           {formData.roomTypes.map(rt => {
             const labelMap: Record<string, string> = {
               "SINGLE_ROOM": "Single Room",
@@ -688,42 +618,18 @@ export default function NewListingPage() {
             const currentDeposit = formData.roomPrices[rt]?.deposit || "";
 
             return (
-              <div key={rt} className="border-2 border-neutral-100 rounded-2xl p-5 bg-neutral-50/30">
-                <h4 className="font-bold text-neutral-800 mb-4 flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-primary-500"></div> {label}
-                </h4>
-                <div className="space-y-4">
+              <div key={rt} className="border border-neutral-200 rounded-xl p-4">
+                <p className="text-xs font-bold text-neutral-600 uppercase tracking-wide mb-3">{label}</p>
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Rent (₹/mo) *</label>
-                    <input 
-                      type="number" 
-                      className="w-full h-12 px-3 rounded-xl border border-neutral-200 bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all shadow-sm" 
-                      placeholder="e.g. 8000"
-                      value={currentRent} 
-                      onChange={e => setFormData({
-                        ...formData, 
-                        roomPrices: { 
-                          ...formData.roomPrices, 
-                          [rt]: { ...formData.roomPrices[rt], rent: e.target.value, deposit: currentDeposit } 
-                        }
-                      })} 
-                    />
+                    <label className="block text-xs text-neutral-500 mb-1">Rent (₹/mo) *</label>
+                    <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="8000" value={currentRent} 
+                      onChange={e => setFormData({ ...formData, roomPrices: { ...formData.roomPrices, [rt]: { ...formData.roomPrices[rt], rent: e.target.value, deposit: currentDeposit } } })} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Deposit (₹)</label>
-                    <input 
-                      type="number" 
-                      className="w-full h-12 px-3 rounded-xl border border-neutral-200 bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all shadow-sm" 
-                      placeholder="e.g. 10000"
-                      value={currentDeposit} 
-                      onChange={e => setFormData({
-                        ...formData, 
-                        roomPrices: { 
-                          ...formData.roomPrices, 
-                          [rt]: { ...formData.roomPrices[rt], rent: currentRent, deposit: e.target.value } 
-                        }
-                      })} 
-                    />
+                    <label className="block text-xs text-neutral-500 mb-1">Deposit (₹)</label>
+                    <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" placeholder="10000" value={currentDeposit} 
+                      onChange={e => setFormData({ ...formData, roomPrices: { ...formData.roomPrices, [rt]: { ...formData.roomPrices[rt], rent: currentRent, deposit: e.target.value } } })} />
                   </div>
                 </div>
               </div>
@@ -731,24 +637,19 @@ export default function NewListingPage() {
           })}
         </div>
         
-        <h3 className="text-sm font-bold text-neutral-800 mb-6 uppercase tracking-wider">Additional Charges (Optional)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Maintenance (₹/mo)</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Electricity (₹/mo)</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Food / Mess (₹/mo)</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Setup Fee (One-time)</label>
-            <input type="number" className="w-full h-14 px-4 rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
-          </div>
+        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wide mb-3">Additional Charges (Optional)</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: 'Maintenance (₹/mo)', field: 'maintenanceCharge' },
+            { label: 'Electricity (₹/mo)', field: 'electricityCharge' },
+            { label: 'Food / Mess (₹/mo)', field: 'foodCharge' },
+            { label: 'Setup Fee (one-time)', field: 'setupFee' },
+          ].map(({ label, field }) => (
+            <div key={field}>
+              <label className="block text-xs text-neutral-500 mb-1">{label}</label>
+              <input type="number" inputMode="numeric" className="w-full h-11 px-3 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors" value={formData[field as keyof typeof formData] as string} onChange={e => setFormData({...formData, [field]: e.target.value})} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -757,16 +658,16 @@ export default function NewListingPage() {
   return (
     // pb-52 on mobile: the action bar AND the app's bottom tab bar both sit at
     // the bottom of the viewport there, so content needs to clear both.
-    <div className="max-w-5xl mx-auto pb-52 md:pb-24">
+    <div className="max-w-6xl mx-auto pb-44 md:pb-20 px-2 sm:px-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200 hover:text-primary-600 transition-colors">
-            <ArrowLeft size={20} />
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard/owner/listings" className="w-9 h-9 bg-white rounded-xl flex items-center justify-center text-neutral-600 shadow-2xs border border-neutral-200 hover:text-violet-700 hover:border-violet-300 transition-colors">
+            <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">List Your Property</h1>
-            <p className="text-neutral-500 text-sm">
+            <h1 className="text-xl md:text-2xl font-extrabold text-neutral-900">List Your Property</h1>
+            <p className="text-neutral-500 text-xs sm:text-sm">
               ✅ Draft auto-saved — fill in the details, live after verification
             </p>
           </div>
@@ -786,7 +687,7 @@ export default function NewListingPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 mb-6">
+        <div className="bg-red-50 text-red-600 p-3.5 rounded-xl text-sm font-medium border border-red-100 mb-4">
           {error}
         </div>
       )}
@@ -795,7 +696,7 @@ export default function NewListingPage() {
       {renderStepIndicator()}
 
       {/* Form Area */}
-      <div className="mb-8">
+      <div className="mb-6">
         {currentStep === 1 && renderStep1()}
         {currentStep === 2 && renderStep2()}
         {currentStep === 3 && renderStep3()}
@@ -804,14 +705,11 @@ export default function NewListingPage() {
       </div>
 
       {/* Sticky Bottom Navigation Buttons */}
-      {/* On mobile this floats ABOVE the app's bottom tab bar (72px + safe area).
-          It used to be pinned to bottom-0 at z-50, so the tab bar (z-100) covered
-          it completely and owners could not reach Previous/Continue at all. */}
-      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-6">
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 md:border-t-0 px-4 py-3 md:p-0 z-40 shadow-[0_-4px_12px_rgb(0,0,0,0.05)] md:shadow-none flex items-center justify-between gap-3 md:pt-4">
         <button 
           type="button" 
           onClick={handlePrev}
-          className={`px-6 md:px-8 py-3.5 rounded-xl font-bold border transition-all shadow-sm ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white hover:bg-neutral-50 hover:shadow-md'}`}
+          className={`h-12 px-5 md:px-8 rounded-xl font-semibold border transition-all text-sm ${currentStep === 1 ? 'opacity-0 pointer-events-none' : 'border-neutral-200 text-neutral-600 bg-white active:bg-neutral-50'}`}
         >
           Previous
         </button>
@@ -820,7 +718,7 @@ export default function NewListingPage() {
           <button 
             type="button" 
             onClick={handleNext}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5"
+            className="flex-1 md:flex-none h-12 md:px-8 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl font-bold transition-all shadow-md shadow-violet-500/20 active:opacity-90 text-sm"
           >
             Save & Continue
           </button>
@@ -829,9 +727,9 @@ export default function NewListingPage() {
             type="button" 
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-neutral-900/30 hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-70"
+            className="flex-1 md:flex-none h-12 md:px-8 bg-gradient-to-r from-violet-700 to-purple-700 text-white rounded-xl font-bold transition-all shadow-md shadow-violet-600/25 active:opacity-90 flex items-center justify-center gap-2 disabled:opacity-70 text-sm"
           >
-            {loading ? <><Loader2 size={20} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
+            {loading ? <><Loader2 size={18} className="animate-spin" /> Publishing...</> : "Submit & Publish"}
           </button>
         )}
       </div>

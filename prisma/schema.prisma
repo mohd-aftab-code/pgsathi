@@ -937,9 +937,19 @@ model PgTenant {
   idType           String?            @db.VarChar(30)
   idNumber         String?            @db.VarChar(50)
   photoUrl         String?
-  guardianName     String?            @db.VarChar(100)
-  guardianPhone    String?            @db.VarChar(15)
-  permanentAddress String?
+  guardianName             String?            @db.VarChar(100)
+  guardianPhone            String?            @db.VarChar(15)
+  guardianRelation         String?            @db.VarChar(30)
+  permanentAddress         String?
+  occupation               String?            @default("STUDENT") @db.VarChar(50)
+  workplace                String?            @db.VarChar(150)
+  workplaceId              String?            @db.VarChar(50)
+  workplaceAddress         String?            @db.VarChar(255)
+  policeVerificationStatus String             @default("NOT_SUBMITTED") @db.VarChar(20)
+  policeVerificationRef    String?            @db.VarChar(50)
+  bloodGroup               String?            @db.VarChar(10)
+  vehicleType              String?            @default("NONE") @db.VarChar(20)
+  vehicleNumber            String?            @db.VarChar(30)
   monthlyRent      Int                @default(0)
   securityDeposit  Int                @default(0)
   rentDueDay       Int                @default(5)
