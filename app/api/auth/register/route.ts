@@ -21,7 +21,7 @@ const registerSchema = z.object({
   phone: z.string().length(10, "Phone number must be exactly 10 digits").regex(/^\d+$/, "Phone number must contain only digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["TENANT", "OWNER", "PARTNER"]).optional().default("TENANT"),
-  referralCode: z.string().optional()
+  referralCode: z.string().nullable().optional()
 });
 
 export const POST = withErrorHandler(async (req: NextRequest) => {
