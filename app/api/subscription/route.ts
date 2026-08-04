@@ -17,6 +17,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
+    // Only OWNER accounts can purchase or activate a subscription.
+    if (session.user.role !== "OWNER") {
+      return NextResponse.json({ success: false, message: "Only PG owners can purchase a plan" }, { status: 403 });
+    }
+
     const { planId, razorpayPaymentId, razorpayOrderId, razorpaySignature, billingCycle } = await req.json();
     capturedPaymentId = typeof razorpayPaymentId === "string" ? razorpayPaymentId : null;
 
