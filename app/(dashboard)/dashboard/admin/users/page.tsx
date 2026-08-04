@@ -33,34 +33,22 @@ export default function AdminUsersPage() {
     setQuery(searchInput);
   };
 
-  async function handleAction(userId: number, action: string, days?: number, force = false) {
-    if (!force && !confirm(`Are you sure you want to perform: ${action}?`)) return;
+  async function handleAction(userId: number, action: string, days?: number) {
+    if (!confirm(`Are you sure you want to perform: ${action}?`)) return;
     setProcessing(true);
     try {
       const res = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, userId, days, planId: 1, force })
+        body: JSON.stringify({ action, userId, days, planId: 1 })
       });
       const d = await res.json();
       if (d.success) {
         toast.success(d.message);
         fetchData();
-        return;
+      } else {
+        toast.error(d.message);
       }
-
-      // Deleting someone with payment history destroys financial records, so the
-      // API refuses once and asks again rather than doing it on the first click.
-      if (d.requiresForce) {
-        if (confirm(`${d.message}\n\nDelete permanently?`)) {
-          await handleAction(userId, action, days, true);
-        }
-        return;
-      }
-
-      toast.error(d.message);
-    } catch {
-      toast.error("Request failed. Please try again.");
     } finally {
       setProcessing(false);
     }
