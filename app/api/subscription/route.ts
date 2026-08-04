@@ -130,13 +130,6 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
 
-    // 3. Update User Role to OWNER if they were TENANT
-    if (session.user.role === "TENANT") {
-      await db.user.update({
-        where: { id: parseInt(session.user.id) },
-        data: { role: "OWNER" }
-      });
-    }
 
     // 4. Partner commission for THIS payment. Recurring by construction — every
     //    renewal writes a new invoice and earns again; stop renewing and it stops.
