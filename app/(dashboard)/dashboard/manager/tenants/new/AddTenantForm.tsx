@@ -88,24 +88,23 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
     <form onSubmit={handleSubmit} className="grid gap-4 sm:gap-6 lg:grid-cols-3">
       {/* Left: Basic Info */}
       <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-        {/* Personal Details */}
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900">Personal Details</h2>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider">Personal Details</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Full Name *</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Full Name *</label>
               <input name="name" required className="input-base" placeholder="Rahul Sharma" defaultValue={prefill.name ?? ""} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Phone *</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Phone *</label>
               <input name="phone" required type="tel" className="input-base" placeholder="9876543210" defaultValue={prefill.phone ?? ""} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Email</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Email</label>
               <input name="email" type="email" className="input-base" placeholder="rahul@email.com" defaultValue={prefill.email ?? ""} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Gender</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Gender</label>
               <select name="gender" className="input-base">
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
@@ -116,13 +115,13 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
         </div>
 
         {/* Work / Education Verification */}
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider flex items-center gap-2">
             🎓 Work &amp; Education Verification
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Occupation Type</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Occupation Type</label>
               <select name="occupation" className="input-base" defaultValue="STUDENT">
                 <option value="STUDENT">Student (College/School)</option>
                 <option value="WORKING_PROFESSIONAL">Working Professional (Job/IT)</option>
@@ -131,15 +130,15 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Company / Institute Name</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Company / Institute Name</label>
               <input name="workplace" className="input-base" placeholder="e.g. TCS / Christ University" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Employee / Student Roll ID</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Employee / Student Roll ID</label>
               <input name="workplaceId" className="input-base" placeholder="e.g. EMP-99812 / 21BC045" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Blood Group</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Blood Group</label>
               <select name="bloodGroup" className="input-base">
                 <option value="">Select Blood Group...</option>
                 <option value="A+">A+</option>
@@ -153,20 +152,20 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Office / College Address</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Office / College Address</label>
               <input name="workplaceAddress" className="input-base" placeholder="e.g. Manyata Tech Park, Nagavara, Bangalore" />
             </div>
           </div>
         </div>
 
         {/* KYC & Verification Details */}
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider flex items-center gap-2">
             📄 KYC &amp; Police Verification
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">ID Type</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">ID Type</label>
               <select name="idType" className="input-base">
                 <option value="">Select…</option>
                 <option value="AADHAAR">Aadhaar Card</option>
@@ -177,11 +176,11 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">ID Number</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">ID Number</label>
               <input name="idNumber" className="input-base" placeholder="XXXX XXXX XXXX" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Police Verification Status</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Police Verification Status</label>
               <select name="policeVerificationStatus" className="input-base" defaultValue="NOT_SUBMITTED">
                 <option value="NOT_SUBMITTED">Not Submitted Yet</option>
                 <option value="PENDING">Form Submitted (Under Process)</option>
@@ -190,28 +189,28 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Police Ack / Token Ref No.</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Police Ack / Token Ref No.</label>
               <input name="policeVerificationRef" className="input-base" placeholder="e.g. PV-BLR-2026-9812" />
             </div>
           </div>
         </div>
 
         {/* Guardian & Emergency Contacts */}
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900 flex items-center gap-2">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider flex items-center gap-2">
             📞 Guardian &amp; Emergency Contacts
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Guardian / Parent Name</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Guardian / Parent Name</label>
               <input name="guardianName" className="input-base" placeholder="Father/Guardian ka naam" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Guardian Phone</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Guardian Phone</label>
               <input name="guardianPhone" type="tel" className="input-base" placeholder="9876543210" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Relation</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Relation</label>
               <select name="guardianRelation" className="input-base" defaultValue="FATHER">
                 <option value="FATHER">Father</option>
                 <option value="MOTHER">Mother</option>
@@ -222,7 +221,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Vehicle Type</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Vehicle Type</label>
               <select name="vehicleType" className="input-base" defaultValue="NONE">
                 <option value="NONE">No Vehicle</option>
                 <option value="TWO_WHEELER">Two Wheeler (Bike / Scooter)</option>
@@ -230,22 +229,22 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Vehicle Registration Number</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Vehicle Registration Number</label>
               <input name="vehicleNumber" className="input-base" placeholder="e.g. KA 01 EV 1234 (Optional)" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Permanent Home Address</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Permanent Home Address</label>
               <textarea name="permanentAddress" rows={2} className="input-base resize-none" placeholder="Ghar ka poora address…" />
             </div>
           </div>
         </div>
 
         {/* Rent & Stay */}
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900">Rent & Stay</h2>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider">Rent & Stay</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Monthly Rent (₹)</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Monthly Rent (₹)</label>
               <input
                 name="monthlyRent"
                 type="number"
@@ -267,19 +266,19 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               )}
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Security Deposit (₹)</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Security Deposit (₹)</label>
               <input name="securityDeposit" type="number" min="0" className="input-base" placeholder="10000" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Rent Due Day</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Rent Due Day</label>
               <input name="rentDueDay" type="number" min="1" max="31" defaultValue={5} className="input-base" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Check-In Date</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Check-In Date</label>
               <input name="checkInDate" type="date" className="input-base" defaultValue={new Date().toISOString().slice(0,10)} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Notes</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Notes</label>
               <textarea name="notes" rows={2} className="input-base resize-none" placeholder="Koi special note…" />
             </div>
           </div>
@@ -288,11 +287,11 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
 
       {/* Right: PG Assignment */}
       <div className="space-y-4 sm:space-y-6">
-        <div className="card p-4 sm:p-6">
-          <h2 className="mb-4 font-bold text-neutral-900">PG Assignment</h2>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
+          <h2 className="mb-4 text-[10px] font-black text-neutral-900 uppercase tracking-wider">PG Assignment</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">PG Property *</label>
+              <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">PG Property *</label>
               <select
                 name="listingId" required value={selectedListing}
                 onChange={(e) => loadRooms(e.target.value)}
@@ -303,14 +302,14 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             {selectedListing && rooms.length === 0 && (
-              <div className="text-sm font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
-                Is PG mein koi Room add nahi kiya gaya hai. Pehle <strong>Rooms & Beds</strong> section mein jaakar naya room add karein.
+              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50/80 p-3 rounded-lg border border-red-200/60 shadow-sm">
+                Is PG mein koi Room add nahi kiya gaya hai. Pehle <strong className="font-black">Rooms & Beds</strong> section mein jaakar naya room add karein.
               </div>
             )}
             
             {rooms.length > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Room *</label>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Room *</label>
                 <select
                   name="roomId" required value={selectedRoom}
                   onChange={(e) => loadBeds(e.target.value)}
@@ -333,14 +332,14 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
             )}
             
             {selectedRoom && beds.length === 0 && (
-              <div className="text-sm font-medium text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50/80 p-3 rounded-lg border border-amber-200/60 shadow-sm">
                 Is Room me koi Bed khali nahi hai. Kripya dusra room chunein.
               </div>
             )}
 
             {beds.length > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Available Bed *</label>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Available Bed *</label>
                 <select name="bedId" required className="input-base">
                   <option value="">Select Bed...</option>
                   {beds.map((b) => <option key={b.id} value={b.id}>Bed {b.name}</option>)}
@@ -350,8 +349,8 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
           </div>
         </div>
 
-        <div className="rounded-2xl bg-primary-50 border border-primary-100 p-4">
-          <p className="text-xs text-primary-700">
+        <div className="rounded-2xl bg-violet-50/80 border border-violet-200/60 p-4 shadow-sm">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-violet-700">
             💡 Tenant add karne ke baad aap unka rent record kar sakte hain, bills generate kar sakte hain, aur WhatsApp reminders bhej sakte hain.
           </p>
         </div>

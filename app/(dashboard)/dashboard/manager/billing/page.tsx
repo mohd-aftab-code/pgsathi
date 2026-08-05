@@ -37,9 +37,9 @@ export default async function BillingPage({
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Rent Bills</h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Total Billed: <strong>{formatINR(totalBilled)}</strong> · Due: <strong className="text-red-600">{formatINR(totalDue)}</strong>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Rent Bills</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
+            Total Billed: <strong className="text-neutral-700">{formatINR(totalBilled)}</strong> · Due: <strong className="text-red-600">{formatINR(totalDue)}</strong>
           </p>
         </div>
         <GenerateBillsButton currentMonth={month} />
@@ -50,7 +50,7 @@ export default async function BillingPage({
       </form>
 
       {bills.length === 0 ? (
-        <div className="card">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <EmptyState
             icon={FileText}
             title={`${formatMonth(month)} ke bills generate nahi hue`}
@@ -58,35 +58,35 @@ export default async function BillingPage({
           />
         </div>
       ) : (
-        <div className="card overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-neutral-50 border-b border-neutral-200">
+              <thead className="bg-white/40 border-b border-neutral-200/60">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-500">Bill No / Tenant</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-500">Rent + Other</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-500">Paid</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-500">Balance</th>
+                  <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider font-bold text-neutral-500">Bill No / Tenant</th>
+                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-wider font-bold text-neutral-500">Rent + Other</th>
+                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-wider font-bold text-neutral-500">Paid</th>
+                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-wider font-bold text-neutral-500">Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-200/60">
                 {bills.map((b) => {
                   const billTotal = b.rentAmount + b.electricity + b.otherAmount + b.lateFee;
                   const paid = b.payments.reduce((s, p) => s + p.amount, 0);
                   const bal  = Math.max(0, billTotal - paid);
                   return (
-                    <tr key={b.id} className="hover:bg-neutral-50">
+                    <tr key={b.id} className="hover:bg-white/60 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-neutral-900">{b.tenant.name}</div>
-                        <div className="text-xs text-neutral-400">{b.billNo} · {b.tenant.listing.title}</div>
+                        <div className="text-xs font-black text-neutral-900">{b.tenant.name}</div>
+                        <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{b.billNo} · {b.tenant.listing.title}</div>
                       </td>
-                      <td className="px-4 py-3 text-right text-neutral-600">
+                      <td className="px-4 py-3 text-right text-xs font-bold text-neutral-600">
                         {formatINR(billTotal)}
-                        {(b.electricity > 0 || b.otherAmount > 0) && <div className="text-xs text-neutral-400">incl. extras</div>}
+                        {(b.electricity > 0 || b.otherAmount > 0) && <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">incl. extras</div>}
                       </td>
-                      <td className="px-4 py-3 text-right font-medium text-green-700">{formatINR(paid)}</td>
+                      <td className="px-4 py-3 text-right text-xs font-black text-emerald-700">{formatINR(paid)}</td>
                       <td className="px-4 py-3 text-right">
-                        <div className={`font-bold ${bal > 0 ? "text-red-600" : "text-green-600"}`}>
+                        <div className={`text-xs font-black ${bal > 0 ? "text-red-600" : "text-emerald-600"}`}>
                           {bal > 0 ? formatINR(bal) : "Paid"}
                         </div>
                         {bal > 0 && (

@@ -82,13 +82,13 @@ export default async function TenantsPage({
   return (
     <div>
       {/* Header */}
-      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-neutral-200">
+      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-neutral-200/60">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl font-black text-neutral-900 tracking-tight flex items-center gap-2 uppercase">
             <Users className="text-violet-600" size={20} />
             Tenant Directory
           </h1>
-          <p className="text-xs text-neutral-500 mt-1 font-medium">
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
             {showingPast
               ? `${total} past tenants — inka record safe hai`
               : `${total} total tenants across all properties`}
@@ -96,10 +96,10 @@ export default async function TenantsPage({
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
           <TenantFilters q={q} status={status} listingId={listingId} listings={listings} />
-          <div className="w-px h-6 bg-neutral-200 hidden md:block"></div>
+          <div className="w-px h-6 bg-neutral-200/60 hidden md:block"></div>
           <ImportCsvButton listings={listings} canImport={capabilities.csvImport} />
           <ExportCsvButton data={exportData} filename="Tenants_Export" canExport={capabilities.csvExport} />
-          <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-sm font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-1">
+          <Link href="/dashboard/manager/tenants/new" id="add-tenant-btn" className="btn-primary py-1.5 px-3 text-[10px] uppercase tracking-wider font-bold rounded-xl shadow-sm whitespace-nowrap flex items-center gap-1 hover:-translate-y-0.5 transition-transform">
             <Plus className="h-4 w-4" /> Add Tenant
           </Link>
         </div>
@@ -107,7 +107,8 @@ export default async function TenantsPage({
 
       {/* Table */}
       {tenants.length === 0 ? (
-        <div className="card">
+      {tenants.length === 0 ? (
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <EmptyState
             icon={Users}
             title="Koi tenant nahi mila"
@@ -118,11 +119,11 @@ export default async function TenantsPage({
         </div>
       ) : (
         <>
-        <div className="mt-4">
+        <div className="mt-4 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto pb-8 md:px-1 md:-mx-1">
-            <table className="w-full text-sm text-left border-separate border-spacing-y-3 hidden md:table">
-              <thead>
-                <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+            <table className="w-full text-sm text-left border-separate border-spacing-y-2 hidden md:table">
+              <thead className="bg-white/40 border-b border-neutral-200/60">
+                <tr className="text-[10px] uppercase tracking-wider font-bold text-neutral-500">
                   <th className="px-6 py-3">Tenant</th>
                   <th className="px-6 py-3">PG / Room</th>
                   <th className="px-6 py-3">Rent</th>
@@ -132,45 +133,45 @@ export default async function TenantsPage({
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-neutral-200/60">
                   {tenants.map((t) => {
                     const paid = t.payments.reduce((s, p) => s + p.amount, 0);
                     const due  = Math.max(0, t.monthlyRent - paid);
                     return (
-                      <tr key={t.id} className="bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group">
-                        <td className="px-6 py-4 rounded-l-2xl border-y border-l border-neutral-100">
+                      <tr key={t.id} className="hover:bg-white/80 transition-colors">
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary-100 text-xs font-bold text-primary-700">
+                            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-violet-100/80 text-[10px] font-black text-violet-700 shadow-sm border border-violet-200/60">
                               {initials(t.name)}
                             </div>
                             <div>
-                              <div className="font-semibold text-neutral-900">{t.name}</div>
-                              <div className="text-xs text-neutral-400">{t.phone}</div>
+                              <div className="font-black text-neutral-900 tracking-tight">{t.name}</div>
+                              <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{t.phone}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 border-y border-neutral-100">
-                          <div className="text-neutral-900 font-medium text-xs">{t.listing.title}</div>
-                          {t.room && <div className="text-xs text-neutral-400">Room {t.room.name}</div>}
+                        <td className="px-6 py-4">
+                          <div className="text-neutral-900 font-black text-xs tracking-tight">{t.listing.title}</div>
+                          {t.room && <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">Room {t.room.name}</div>}
                         </td>
-                        <td className="px-6 py-4 font-semibold text-neutral-900 border-y border-neutral-100">
+                        <td className="px-6 py-4 font-black text-emerald-700">
                           {formatINR(t.monthlyRent)}
                         </td>
-                        <td className="px-6 py-4 hidden lg:table-cell text-neutral-500 text-xs border-y border-neutral-100">
+                        <td className="px-6 py-4 hidden lg:table-cell text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
                           {formatDate(t.checkInDate)}
                         </td>
-                        <td className="px-6 py-4 border-y border-neutral-100">
+                        <td className="px-6 py-4">
                           <StatusBadge status={t.status} />
                         </td>
-                        <td className="px-6 py-4 border-y border-neutral-100">
+                        <td className="px-6 py-4">
                           {due > 0 ? (
-                            <span className="text-red-600 font-semibold text-xs">{formatINR(due)} due</span>
+                            <span className="text-red-600 font-black text-xs">{formatINR(due)} <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider">due</span></span>
                           ) : (
-                            <span className="text-green-600 font-semibold text-xs">Paid ✓</span>
+                            <span className="text-emerald-600 font-black text-xs">Paid ✓</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 rounded-r-2xl border-y border-r border-neutral-100 text-right">
-                          <Link href={`/dashboard/manager/tenants/${t.id}`} className="text-xs font-semibold text-primary-700 hover:underline">
+                        <td className="px-6 py-4 text-right">
+                          <Link href={`/dashboard/manager/tenants/${t.id}`} className="text-[10px] font-bold text-violet-700 uppercase tracking-wider hover:underline">
                             View →
                           </Link>
                         </td>
@@ -180,38 +181,38 @@ export default async function TenantsPage({
                 </tbody>
               </table>
 
-              <div className="md:hidden flex flex-col space-y-4">
+              <div className="md:hidden flex flex-col space-y-4 p-4">
                 {tenants.map((t) => {
                   const paid = t.payments.reduce((s, p) => s + p.amount, 0);
                   const due  = Math.max(0, t.monthlyRent - paid);
                   return (
-                    <Link key={t.id} href={`/dashboard/manager/tenants/${t.id}`} className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col gap-3">
+                    <Link key={t.id} href={`/dashboard/manager/tenants/${t.id}`} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-3 hover:bg-white/80 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary-100 text-sm font-bold text-primary-700">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-violet-100/80 text-[10px] font-black text-violet-700 shadow-sm border border-violet-200/60">
                             {initials(t.name)}
                           </div>
                           <div>
-                            <div className="font-bold text-neutral-900">{t.name}</div>
-                            <div className="text-xs text-neutral-500">{t.phone}</div>
+                            <div className="font-black text-neutral-900 tracking-tight">{t.name}</div>
+                            <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{t.phone}</div>
                           </div>
                         </div>
                         <StatusBadge status={t.status} />
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2 text-sm bg-neutral-50 p-3 rounded-xl border border-neutral-100">
+                      <div className="grid grid-cols-2 gap-2 text-[10px] uppercase tracking-wider bg-white/40 p-3 rounded-xl border border-neutral-200/60">
                         <div>
-                          <span className="text-xs text-neutral-400 block mb-0.5">Property</span>
-                          <span className="font-semibold text-neutral-700 block truncate">{t.listing.title}</span>
-                          {t.room && <span className="text-xs text-neutral-500">Room {t.room.name}</span>}
+                          <span className="font-bold text-neutral-400 block mb-1">Property</span>
+                          <span className="font-black text-neutral-900 block truncate">{t.listing.title}</span>
+                          {t.room && <span className="font-bold text-neutral-500 mt-0.5 block">Room {t.room.name}</span>}
                         </div>
                         <div>
-                          <span className="text-xs text-neutral-400 block mb-0.5">Rent</span>
-                          <span className="font-semibold text-neutral-900 block">{formatINR(t.monthlyRent)}</span>
+                          <span className="font-bold text-neutral-400 block mb-1">Rent</span>
+                          <span className="font-black text-emerald-700 block">{formatINR(t.monthlyRent)}</span>
                           {due > 0 ? (
-                            <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 rounded">{formatINR(due)} due</span>
+                            <span className="text-[9px] text-red-600 font-black mt-0.5 block">{formatINR(due)} due</span>
                           ) : (
-                            <span className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 rounded">Paid ✓</span>
+                            <span className="text-[9px] text-emerald-600 font-black mt-0.5 block">Paid ✓</span>
                           )}
                         </div>
                       </div>
@@ -229,8 +230,8 @@ export default async function TenantsPage({
                 <Link
                   key={p}
                   href={pageHref(p)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    p === page ? "bg-primary-500 text-white" : "bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-black transition-colors ${
+                    p === page ? "bg-violet-600 text-white shadow-sm" : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-700 hover:bg-white/80"
                   }`}
                 >
                   {p}

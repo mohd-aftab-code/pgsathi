@@ -88,19 +88,19 @@ export default async function AdminReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Analytics & Reports</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Platform-wide metrics — {format(now, "MMMM yyyy")}</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Analytics & Reports</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Platform-wide metrics — {format(now, "MMMM yyyy")}</p>
         </div>
         <div className="flex gap-1.5 flex-wrap">
           <a
             href="/api/admin/reports/export?type=users"
-            className="h-8 px-3 rounded-lg bg-white border border-neutral-200 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="h-8 px-3 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/60 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
           >
             Export Users CSV
           </a>
           <a
             href="/api/admin/reports/export?type=listings"
-            className="h-8 px-3 rounded-lg bg-white border border-neutral-200 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="h-8 px-3 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/60 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
           >
             Export Listings CSV
           </a>

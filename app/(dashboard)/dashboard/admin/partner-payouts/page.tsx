@@ -89,8 +89,8 @@ export default async function AdminPayoutCyclePage() {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Payout Cycle</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5 max-w-2xl">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Payout Cycle</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5 max-w-2xl">
             Har mahine yahan se partners ko payment karein. Commission har owner payment par banta hai —
             approve karne ke baad hi paisa ja sakta hai.
           </p>
@@ -160,17 +160,17 @@ export default async function AdminPayoutCyclePage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, cls: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, cls: "text-amber-600 bg-amber-50 border-amber-200" },
-          { label: "Partners", value: String(rows.length), sub: "jinka bakaya hai", Icon: Users, cls: "text-blue-600 bg-blue-50 border-blue-200" },
-          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, cls: "text-violet-600 bg-violet-50 border-violet-200" },
+          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, textCls: "text-emerald-600", borderCls: "border-emerald-200", iconBg: "bg-emerald-100" },
+          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, textCls: "text-amber-600", borderCls: "border-amber-200", iconBg: "bg-amber-100" },
+          { label: "Partners", value: String(rows.length), sub: "jinka bakaya hai", Icon: Users, textCls: "text-blue-600", borderCls: "border-blue-200", iconBg: "bg-blue-100" },
+          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, textCls: "text-violet-600", borderCls: "border-violet-200", iconBg: "bg-violet-100" },
         ].map((s) => (
-          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl border ${s.cls} p-3.5 shadow-sm`}>
+          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl border ${s.borderCls} p-3.5 shadow-sm`}>
             <div className="flex items-start justify-between mb-1.5">
-              <span className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">{s.label}</span>
-              <div className={`p-1.5 rounded-lg ${s.cls} bg-opacity-50`}><s.Icon size={12} /></div>
+              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-wider">{s.label}</span>
+              <div className={`p-1.5 rounded-lg ${s.iconBg}`}><s.Icon size={12} className={s.textCls} /></div>
             </div>
-            <div className="text-xl font-black text-neutral-900 leading-none">{s.value}</div>
+            <div className={`text-xl font-black leading-none ${s.textCls}`}>{s.value}</div>
             <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
           </div>
         ))}
@@ -184,10 +184,10 @@ export default async function AdminPayoutCyclePage() {
         </div>
       ) : (
         <>
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-              <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+              <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
                 <tr>
                   <th className="px-4 py-2 font-bold">Partner</th>
                   <th className="px-4 py-2 font-bold text-center">Is mahine</th>
@@ -197,16 +197,16 @@ export default async function AdminPayoutCyclePage() {
                   <th className="px-4 py-2 font-bold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-50 text-[11px]">
+              <tbody className="divide-y divide-neutral-200/60 text-[11px] bg-white/60">
                 {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-violet-50/30 transition-colors group">
+                  <tr key={r.id} className="hover:bg-white/80 transition-colors group">
                     <td className="px-4 py-2">
-                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 transition-colors">
+                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-black text-xs uppercase tracking-tight text-neutral-900 hover:text-violet-700 transition-colors">
                         {r.user.name}
                       </Link>
                       <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
                       {!r.hasPayoutDetails && (
-                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 tracking-wider uppercase">
+                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-100 border border-amber-200/60 shadow-sm text-amber-700 tracking-wider uppercase">
                           <AlertTriangle size={10} /> UPI/bank missing
                         </span>
                       )}
@@ -245,10 +245,10 @@ export default async function AdminPayoutCyclePage() {
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {rows.map((r) => (
-            <div key={`mob-${r.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${r.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-sm text-neutral-900 truncate block">
+                  <Link href={`/dashboard/admin/partners/${r.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate block">
                     {r.user.name}
                   </Link>
                   <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{r.partnerCode}</div>
@@ -300,7 +300,7 @@ export default async function AdminPayoutCyclePage() {
         </>
       )}
 
-      <p className="text-xs text-neutral-400">
+      <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
         App sirf payout <b>record</b> karta hai — asli transfer aapko apne bank/UPI se karna hoga.
       </p>
     </div>

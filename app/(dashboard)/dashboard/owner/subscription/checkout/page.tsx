@@ -225,16 +225,16 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
         {/* Left: Plan Details */}
-        <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-sm border border-neutral-200/60">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
-              <ShieldCheck size={24} />
+            <div className="w-10 h-10 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center border border-violet-200">
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-neutral-900">Order Summary</h2>
-              <p className="text-sm text-neutral-500">Review your plan details</p>
+              <h2 className="text-lg font-black text-neutral-900 uppercase tracking-tight">Order Summary</h2>
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Review your plan details</p>
             </div>
           </div>
 
@@ -307,19 +307,19 @@ export default function CheckoutPage() {
 
         {/* Right: Payment Gateway */}
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+          <h2 className="text-xl font-black text-neutral-900 mb-5 uppercase tracking-tight">
             {totalAmount === 0 ? "Activate Your Plan" : "Complete Payment"}
           </h2>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200 relative overflow-hidden">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-sm border border-neutral-200/60 relative overflow-hidden">
             {paymentStep === "PROCESSING" && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in">
-                <Loader2 size={40} className="animate-spin text-primary-600 mb-4" />
-                <p className="font-bold text-neutral-800">
+                <Loader2 size={32} className="animate-spin text-violet-600 mb-3" />
+                <p className="font-black text-xs uppercase tracking-wider text-neutral-800">
                   {totalAmount === 0 ? "Activating your plan..." : "Opening Secure Payment..."}
                 </p>
                 {totalAmount > 0 && (
-                  <p className="text-sm text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-500 mt-1 text-center px-6">Powered by Razorpay</p>
                 )}
               </div>
             )}

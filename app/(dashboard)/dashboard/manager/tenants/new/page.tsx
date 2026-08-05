@@ -23,12 +23,12 @@ export default async function AddTenantPage({ searchParams }: { searchParams: Pr
   return (
     <div>
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/dashboard/manager/tenants" className="grid h-9 w-9 place-items-center rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 transition">
+        <Link href="/dashboard/manager/tenants" className="grid h-9 w-9 place-items-center rounded-xl border border-neutral-200/60 bg-white/60 backdrop-blur-md hover:bg-white/80 transition-colors">
           <ArrowLeft className="h-4 w-4 text-neutral-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Add New Tenant</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Add New Tenant</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
             {sp.name ? `Pre-filled from Lead: ${sp.name}` : "Tenant ka poora profile banaiye"}
           </p>
         </div>

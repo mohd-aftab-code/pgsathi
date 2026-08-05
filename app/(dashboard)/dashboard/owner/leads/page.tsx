@@ -67,12 +67,22 @@ export default async function VisitsInboxPage({
     whereClause.status = stage;
   }
 
+  const page = Math.max(1, parseInt(typeof sp.page === 'string' ? sp.page : "1"));
+  const pageSize = 20;
+
   // Fetch leads
-  const leads = await db.lead.findMany({
-    where: whereClause,
-    include: { listing: { select: { title: true, slug: true } } },
-    orderBy: { createdAt: "desc" },
-  });
+  const [totalFilteredLeads, leads] = await Promise.all([
+    db.lead.count({ where: whereClause }),
+    db.lead.findMany({
+      where: whereClause,
+      include: { listing: { select: { title: true, slug: true } } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    })
+  ]);
+  
+  const totalPages = Math.max(1, Math.ceil(totalFilteredLeads / pageSize));
 
   // Fetch visit bookings
   const visits = await db.visitBooking.findMany({
@@ -107,50 +117,52 @@ export default async function VisitsInboxPage({
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">Scheduled Visits & Leads</h1>
-        <p className="text-neutral-500 mt-1">Manage physical visits and tenant inquiries pipeline.</p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Scheduled Visits & Leads</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Manage physical visits and tenant inquiries pipeline.</p>
+        </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Visits Section */}
         <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <CalendarClock className="text-primary-600" /> Upcoming Physical Visits
+          <h2 className="text-sm font-black text-neutral-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <CalendarClock size={16} className="text-violet-600" /> Upcoming Physical Visits
           </h2>
           {visits.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {visits.map(visit => (
-                <div key={visit.id} className="bg-white p-4 sm:p-6 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary-200 transition-all duration-300">
+                <div key={visit.id} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm hover:shadow-md hover:border-violet-300 transition-all duration-300">
                   <div className="flex justify-between items-start mb-3">
-                    <div className="font-bold text-lg">{visit.name}</div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                    <div className="font-bold text-sm text-neutral-900">{visit.name}</div>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
                       {visit.status}
                     </span>
                   </div>
-                  <div className="text-sm text-neutral-600 mb-4 space-y-2">
-                    <div className="flex items-center gap-2"><Phone size={14} className="text-neutral-400"/> {visit.phone}</div>
-                    <div className="flex items-center gap-2 text-primary-700 font-semibold bg-primary-50 w-fit px-2 py-1 rounded">
-                      <CalendarDays size={14}/> {format(new Date(visit.visitDate), 'dd MMM yyyy, h:mm a')}
+                  <div className="text-xs text-neutral-600 mb-4 space-y-1.5 font-medium">
+                    <div className="flex items-center gap-2"><Phone size={12} className="text-neutral-400"/> {visit.phone}</div>
+                    <div className="flex items-center gap-2 text-violet-700 font-bold bg-violet-50/80 w-fit px-2 py-1 rounded-md">
+                      <CalendarDays size={12}/> {format(new Date(visit.visitDate), 'dd MMM yyyy, h:mm a')}
                     </div>
                   </div>
-                  <div className="pt-3 border-t border-neutral-100 flex justify-between items-center">
-                    <Link href={`/pg/${visit.listing.slug}`} className="text-xs text-neutral-500 font-medium hover:text-primary-600 flex items-center gap-1 line-clamp-1">
-                      <ExternalLink size={12} /> {visit.listing.title}
+                  <div className="pt-3 border-t border-neutral-100/60 flex justify-between items-center">
+                    <Link href={`/pg/${visit.listing.slug}`} className="text-[10px] text-neutral-500 font-bold hover:text-violet-600 flex items-center gap-1 uppercase tracking-wider line-clamp-1">
+                      <ExternalLink size={10} /> {visit.listing.title}
                     </Link>
                     {hasAccess ? (
                       <a 
                         href={`https://wa.me/91${sanitizePhone(visit.phone)}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="text-green-600 bg-green-50 p-1.5 rounded-lg hover:bg-green-100 transition"
+                        className="text-emerald-600 bg-emerald-50 p-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
                       >
-                        <MessageCircle size={16} />
+                        <MessageCircle size={14} />
                       </a>
                     ) : (
                       <Link
                         href="/dashboard/owner/subscription/upgrade"
-                        className="text-white bg-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-[10px] font-bold shadow-sm"
+                        className="text-white bg-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-700 transition-colors text-[9px] font-bold shadow-sm uppercase tracking-wider"
                       >
                         Unlock WA
                       </Link>
@@ -160,33 +172,32 @@ export default async function VisitsInboxPage({
               ))}
             </div>
           ) : (
-            <div className="bg-white p-12 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center text-neutral-500 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
-              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6 text-primary-400 relative z-10">
-                <CalendarClock size={32} />
+            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-2xl shadow-sm border border-neutral-200/60 text-center text-neutral-500 relative overflow-hidden">
+              <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-400 relative z-10">
+                <CalendarClock size={24} />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-2 relative z-10">No physical visits scheduled</h3>
-              <p className="text-sm font-medium relative z-10">Tenants can book visits directly from your PG page.</p>
+              <h3 className="text-lg font-black text-neutral-900 mb-1 relative z-10">No physical visits scheduled</h3>
+              <p className="text-xs font-medium relative z-10">Tenants can book visits directly from your PG page.</p>
             </div>
           )}
         </section>
 
         {/* Leads Section */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Mail className="text-neutral-600" /> General Inquiries (Leads)
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-black text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Mail size={16} className="text-violet-600" /> General Inquiries (Leads)
             </h2>
             <ExportCsvButton data={exportData} filename="Leads_Export" canExport={capabilities.csvExport} />
           </div>
           
           {/* Pipeline summary + stage filter */}
-          <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="mb-3 flex flex-wrap items-center gap-1.5">
             <Link
               href={`/dashboard/owner/leads${q ? `?q=${encodeURIComponent(q)}` : ""}`}
-              className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"}`}
+              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-md border transition-colors uppercase tracking-wider ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200/60 hover:bg-neutral-50"}`}
             >
-              All <span className="tabular-nums">{totalLeads}</span>
+              All <span className="tabular-nums ml-0.5">{totalLeads}</span>
             </Link>
             {PIPELINE.map((s) => {
               const active = stage === s.value;
@@ -195,57 +206,57 @@ export default async function VisitsInboxPage({
                 <Link
                   key={s.value}
                   href={href}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors hover:opacity-90 ${active ? s.active : s.cls}`}
+                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-md border transition-colors hover:opacity-90 uppercase tracking-wider ${active ? s.active : s.cls}`}
                 >
-                  {s.label} <span className="tabular-nums">{countBy[s.value] ?? 0}</span>
+                  {s.label} <span className="tabular-nums ml-0.5">{countBy[s.value] ?? 0}</span>
                 </Link>
               );
             })}
-            <span className="ml-auto text-xs font-semibold text-neutral-500 bg-neutral-50 border border-neutral-200 px-3 py-1.5 rounded-lg">
-              Conversion: <span className="text-green-600 font-bold tabular-nums">{convRate}%</span>{" "}
-              <span className="text-neutral-400">({convertedLeads}/{totalLeads})</span>
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-50 border border-neutral-200/60 px-2.5 py-1.5 rounded-md">
+              Conv: <span className="text-emerald-600 font-black tabular-nums">{convRate}%</span>{" "}
+              <span className="text-neutral-400 font-medium">({convertedLeads}/{totalLeads})</span>
             </span>
           </div>
 
           <LeadsFilter />
 
-          <div className="mt-4">
+          <div className="mt-3">
             {leads.length > 0 ? (
-              <div className="pb-10">
+              <div className="pb-8">
                 {/* Desktop Table */}
                 <div className="hidden md:block overflow-x-auto px-1 -mx-1">
-                  <table className="w-full text-left border-separate border-spacing-y-4">
+                  <table className="w-full text-left border-separate border-spacing-y-2">
                     <thead>
-                      <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
-                        <th className="pb-2 px-6">Tenant Name</th>
-                        <th className="pb-2 px-6">Contact & Actions</th>
-                        <th className="pb-2 px-6">Property Interested</th>
-                        <th className="pb-2 px-6 text-right">Received</th>
+                      <tr className="text-[9px] uppercase tracking-widest font-black text-neutral-400 bg-neutral-50/40">
+                        <th className="py-2.5 px-4 rounded-l-lg border-y border-l border-neutral-100/60">Tenant Name</th>
+                        <th className="py-2.5 px-4 border-y border-neutral-100/60">Contact & Actions</th>
+                        <th className="py-2.5 px-4 border-y border-neutral-100/60">Property Interested</th>
+                        <th className="py-2.5 px-4 text-right rounded-r-lg border-y border-r border-neutral-100/60">Received</th>
                       </tr>
                     </thead>
-                    <tbody className="text-sm">
+                    <tbody className="text-xs">
                       {leads.map((lead) => (
-                        <tr key={lead.id} className={`bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group ${!lead.isRead ? 'ring-2 ring-orange-100 shadow-orange-100/50' : ''}`}>
-                          <td className={`py-5 px-6 rounded-l-2xl border-y border-l ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                        <tr key={lead.id} className={`bg-white/60 backdrop-blur-md shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group ${!lead.isRead ? 'ring-1 ring-orange-200' : ''}`}>
+                          <td className={`py-3 px-4 rounded-l-xl border-y border-l ${!lead.isRead ? 'border-orange-200 bg-orange-50/50' : 'border-neutral-200/60'}`}>
                             <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
                                 {lead.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <div className="font-extrabold text-neutral-900 flex items-center gap-2">
+                                <div className="font-bold text-neutral-900 flex items-center gap-2 text-[13px]">
                                   {lead.name}
-                                  {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>}
+                                  {!lead.isRead && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-sm"></span>}
                                 </div>
-                                <div className="text-xs text-neutral-500 mt-1 uppercase tracking-wider font-semibold">{lead.source} Lead</div>
+                                <div className="text-[9px] text-neutral-500 mt-0.5 uppercase tracking-wider font-bold">{lead.source} Lead</div>
                               </div>
                             </div>
                           </td>
-                          <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                            <div className="flex flex-col gap-2">
-                              <div className="font-bold text-neutral-800 tracking-wide">
+                          <td className={`py-3 px-4 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/50' : 'border-neutral-200/60'}`}>
+                            <div className="flex flex-col gap-1.5">
+                              <div className="font-bold text-neutral-800 tracking-wide text-xs">
                                 {hasAccess ? lead.phone : "98XXXXXX" + lead.phone.slice(-2)}
                               </div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1.5">
                                 {hasAccess ? (
                                   <>
                                     <a 
@@ -274,33 +285,33 @@ export default async function VisitsInboxPage({
                               </div>
                             </div>
                           </td>
-                          <td className={`py-5 px-6 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                            <div className="space-y-1.5">
-                              <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1">
-                                {lead.listing.title} <ExternalLink size={14} />
+                          <td className={`py-3 px-4 border-y ${!lead.isRead ? 'border-orange-200 bg-orange-50/50' : 'border-neutral-200/60'}`}>
+                            <div className="space-y-1">
+                              <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-violet-600 transition-colors flex items-center gap-1.5 line-clamp-1 text-xs">
+                                {lead.listing.title} <ExternalLink size={12} />
                               </Link>
                               {lead.message && (
-                                <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block">
+                                <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-lg border border-neutral-100/60 inline-block font-medium">
                                   &ldquo;{lead.message}&rdquo;
                                 </div>
                               )}
                             </div>
                           </td>
-                          <td className={`py-5 px-6 rounded-r-2xl border-y border-r text-right ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
-                            <div className="flex flex-col items-end gap-2">
-                              <span className="font-bold text-neutral-900">
+                          <td className={`py-3 px-4 rounded-r-xl border-y border-r text-right ${!lead.isRead ? 'border-orange-200 bg-orange-50/50' : 'border-neutral-200/60'}`}>
+                            <div className="flex flex-col items-end gap-1.5">
+                              <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">
                                 {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
                               </span>
-                              <span className="text-xs font-medium text-neutral-400 flex items-center gap-1">
-                                <CalendarDays size={12} />
+                              <span className="text-[9px] font-bold text-neutral-400 flex items-center gap-1 uppercase tracking-wider">
+                                <CalendarDays size={10} />
                                 {format(new Date(lead.createdAt), 'dd MMM yyyy, h:mm a')}
                               </span>
                               <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                               <Link
                                 href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                                className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2 py-1 rounded-md transition-colors uppercase tracking-wider"
                               >
-                                ➜ Convert to Tenant
+                                ➜ Convert
                               </Link>
                             </div>
                           </td>
@@ -311,54 +322,54 @@ export default async function VisitsInboxPage({
                 </div>
 
                 {/* Mobile Cards */}
-                <div className="md:hidden space-y-4">
+                <div className="md:hidden space-y-3">
                   {leads.map((lead) => (
-                    <div key={lead.id} className={`bg-white rounded-2xl shadow-sm border p-4 flex flex-col gap-4 ${!lead.isRead ? 'border-orange-200 bg-orange-50/30' : 'border-neutral-100'}`}>
+                    <div key={lead.id} className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border p-4 flex flex-col gap-3 ${!lead.isRead ? 'border-orange-200 bg-orange-50/50' : 'border-neutral-200/60'}`}>
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] ${!lead.isRead ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-600'}`}>
                             {lead.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <div className="font-extrabold text-neutral-900 flex items-center gap-2">
+                            <div className="font-bold text-neutral-900 flex items-center gap-1.5 text-xs">
                               {lead.name}
-                              {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>}
+                              {!lead.isRead && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-sm"></span>}
                             </div>
-                            <div className="text-xs text-neutral-500 mt-0.5 font-medium">{formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}</div>
+                            <div className="text-[9px] text-neutral-500 mt-0.5 font-bold uppercase tracking-wider">{formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}</div>
                           </div>
                         </div>
                         <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-primary-600 transition-colors flex items-center gap-1.5 line-clamp-1 text-sm">
-                          {lead.listing.title} <ExternalLink size={14} />
+                      <div className="space-y-1">
+                        <Link href={`/pg/${lead.listing.slug}`} className="text-neutral-900 font-bold hover:text-violet-600 transition-colors flex items-center gap-1.5 line-clamp-1 text-xs">
+                          {lead.listing.title} <ExternalLink size={12} />
                         </Link>
                         {lead.message && (
-                          <div className="text-xs text-neutral-500 italic bg-neutral-50 p-2 rounded-lg border border-neutral-100 inline-block line-clamp-2">
+                          <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-lg border border-neutral-100/60 inline-block line-clamp-2 font-medium">
                             &ldquo;{lead.message}&rdquo;
                           </div>
                         )}
                       </div>
 
-                      <div className="pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+                      <div className="pt-2.5 border-t border-neutral-100/60 flex items-center justify-between gap-2">
                         {hasAccess ? (
-                          <div className="flex items-center gap-2">
-                            <a href={`tel:${lead.phone}`} className="w-9 h-9 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors">
-                              <Phone size={14} />
+                          <div className="flex items-center gap-1.5">
+                            <a href={`tel:${lead.phone}`} className="h-8 px-2.5 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
+                              <Phone size={12} /> Call
                             </a>
-                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="w-9 h-9 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors">
-                              <MessageCircle size={14} />
+                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="h-8 px-2.5 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
+                              <MessageCircle size={12} /> WA
                             </a>
                           </div>
                         ) : (
-                          <Link href="/dashboard/owner/subscription/upgrade" className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg font-bold">Unlock</Link>
+                          <Link href="/dashboard/owner/subscription/upgrade" className="text-[10px] bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg font-bold shadow-sm uppercase tracking-wider">Unlock</Link>
                         )}
                         <Link
                           href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wider"
                         >
-                          Convert to Tenant
+                          Convert
                         </Link>
                       </div>
                     </div>
@@ -366,15 +377,36 @@ export default async function VisitsInboxPage({
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
+              <div className="bg-white/80 backdrop-blur-xl p-16 rounded-3xl shadow-sm border border-neutral-200/60 text-center relative overflow-hidden">
                 <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
                   <Mail size={40} />
                 </div>
                 <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No leads found</h3>
-                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">
+                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-xs font-medium relative z-10">
                   {q || status !== 'ALL' ? "Try adjusting your filters or search query." : "You haven't received any leads yet."}
                 </p>
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 px-2">
+                <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Page <span className="font-bold">{page}</span> of <span className="font-bold">{totalPages}</span></span>
+                <div className="flex gap-1">
+                  <Link
+                    href={`/dashboard/owner/leads?${q ? `q=${encodeURIComponent(q)}&` : ""}${stage ? `stage=${stage}&` : ""}page=${page - 1}`}
+                    aria-disabled={page <= 1}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  >
+                    Prev
+                  </Link>
+                  <Link
+                    href={`/dashboard/owner/leads?${q ? `q=${encodeURIComponent(q)}&` : ""}${stage ? `stage=${stage}&` : ""}page=${page + 1}`}
+                    aria-disabled={page >= totalPages}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  >
+                    Next
+                  </Link>
+                </div>
               </div>
             )}
           </div>

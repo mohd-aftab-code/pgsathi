@@ -168,12 +168,12 @@ export default function AdminPlansPage() {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Subscription Plans</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Manage pricing tiers for PG Owners.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Subscription Plans</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Manage pricing tiers for PG Owners.</p>
         </div>
         <button 
           onClick={() => handleOpenForm()}
-          className="cursor-pointer inline-flex items-center gap-2 h-8 px-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-colors shrink-0 shadow-sm"
+          className="cursor-pointer inline-flex items-center gap-2 h-8 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] uppercase tracking-wider font-black transition-colors shrink-0 shadow-sm"
         >
           <Plus size={14} /> Add Plan
         </button>

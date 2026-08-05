@@ -91,13 +91,13 @@ export default function StaffPage() {
       {loading ? (
         <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-2xl skeleton" />)}</div>
       ) : staff.length === 0 ? (
-        <div className="card">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <EmptyState icon={UserCheck} title="Koi staff nahi" description="PG manage karne ke liye staff add karein." />
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {staff.map(s => (
-            <div key={s.id} className="card p-5">
+            <div key={s.id} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-5">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-bold text-neutral-900">{s.name}</h3>
@@ -138,7 +138,7 @@ export default function StaffPage() {
       {/* Add Staff Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={submitStaff} className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
+          <form onSubmit={submitStaff} className="bg-white/80 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-5 sm:p-6 w-full max-w-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Add Staff Member</h3>
             <div className="space-y-4">
               <div>
@@ -244,7 +244,7 @@ export default function StaffPage() {
       {/* Pay Salary Modal */}
       {showPayModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={submitPayout} className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
+          <form onSubmit={submitPayout} className="bg-white/80 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-5 sm:p-6 w-full max-w-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Record Salary Payout</h3>
             <div className="space-y-4">
               <div>

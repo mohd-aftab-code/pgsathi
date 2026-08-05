@@ -67,10 +67,10 @@ function RecordPaymentForm() {
 
   return (
     <form onSubmit={submit}>
-      <div className="card p-4 sm:p-4 sm:p-6 max-w-lg mx-auto">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6 max-w-lg mx-auto">
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-neutral-600 mb-1">Tenant *</label>
+            <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Tenant *</label>
             <select value={tenantId} onChange={e => setTenantId(e.target.value)} className="input-base" required>
               <option value="">Select tenant…</option>
               {tenants.map(t => <option key={t.id} value={t.id}>{t.name} ({t.phone})</option>)}
@@ -78,7 +78,7 @@ function RecordPaymentForm() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Payment Type</label>
+              <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Payment Type</label>
               <select value={type} onChange={e => setType(e.target.value)} className="input-base">
                 <option value="RENT">Rent</option>
                 <option value="DEPOSIT">Security Deposit</option>
@@ -88,11 +88,11 @@ function RecordPaymentForm() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Amount (₹) *</label>
+              <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Amount (₹) *</label>
               <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-base" required min={1} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Payment Method</label>
+              <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Payment Method</label>
               <select value={method} onChange={e => setMethod(e.target.value)} className="input-base">
                 <option value="CASH">Cash</option>
                 <option value="UPI">UPI</option>
@@ -101,16 +101,16 @@ function RecordPaymentForm() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">For Month</label>
+              <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">For Month</label>
               <input type="month" value={forMonth} onChange={e => setForMonth(e.target.value)} className="input-base" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Paid On</label>
+              <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Paid On</label>
               <input type="date" value={paidOn} onChange={e => setPaidOn(e.target.value)} className="input-base" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-neutral-600 mb-1">Note (optional)</label>
+            <label className="block text-[10px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Note (optional)</label>
             <input type="text" value={note} onChange={e => setNote(e.target.value)} className="input-base" placeholder="e.g., UPI ref: 1234567" />
           </div>
         </div>
@@ -137,15 +137,15 @@ export default function RecordPaymentPage() {
   return (
     <div>
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/dashboard/manager/payments" className="grid h-9 w-9 place-items-center rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50">
-          <ArrowLeft className="h-4 w-4" />
+        <Link href="/dashboard/manager/payments" className="grid h-9 w-9 place-items-center rounded-xl border border-neutral-200/60 bg-white/60 backdrop-blur-md hover:bg-white/80 transition-colors">
+          <ArrowLeft className="h-4 w-4 text-neutral-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Record Payment</h1>
-          <p className="text-sm text-neutral-500">Tenant ki payment manually record karein</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Record Payment</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Tenant ki payment manually record karein</p>
         </div>
       </div>
-      <Suspense fallback={<div className="card p-4 sm:p-4 sm:p-6 text-center text-neutral-400">Loading…</div>}>
+      <Suspense fallback={<div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-8 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-400">Loading…</div>}>
         <RecordPaymentForm />
       </Suspense>
     </div>

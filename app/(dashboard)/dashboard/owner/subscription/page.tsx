@@ -57,9 +57,9 @@ export default async function OwnerSubscriptionPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">My Subscription</h1>
-        <p className="text-neutral-500 mt-1">Manage your billing, view plan details, and upgrade.</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">My Subscription</h1>
+        <p className="text-xs font-medium text-neutral-500 mt-0.5">Manage your billing, view plan details, and upgrade.</p>
       </div>
 
       {/* Charged but no live plan. The owner cannot fix this themselves and has
@@ -93,11 +93,11 @@ export default async function OwnerSubscriptionPage() {
       )}
 
       {!activeSub ? (
-        <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-neutral-200">
-          <div className="w-20 h-20 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-10 text-center shadow-sm border border-neutral-200/60">
+          <div className="w-20 h-20 bg-orange-50/50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-orange-100/60">
             <AlertTriangle size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-3">No Active Subscription</h2>
+          <h2 className="text-2xl font-black text-neutral-900 mb-3 tracking-tight">No Active Subscription</h2>
           <p className="text-neutral-500 max-w-md mx-auto mb-8">
             You are currently on the Free Basic Tier. Upgrade to a premium plan to list more PGs and get priority ranking.
           </p>
@@ -109,41 +109,41 @@ export default async function OwnerSubscriptionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Active Plan Card */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border border-green-200 shadow-sm relative overflow-hidden">
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-green-200/40 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-emerald-200/60 shadow-sm relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none"></div>
               
-              <div className="flex items-start justify-between mb-8 relative z-10">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 relative z-10 gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-3">
-                    <CheckCircle2 size={14} /> ACTIVE PLAN
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-700 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-md mb-2 shadow-sm border border-emerald-200/50">
+                    <CheckCircle2 size={12} strokeWidth={3} /> ACTIVE PLAN
                   </div>
-                  <h2 className="text-3xl font-black text-green-950">{activeSub.plan.name} Plan</h2>
+                  <h2 className="text-2xl font-black text-emerald-950 uppercase tracking-tight">{activeSub.plan.name} Plan</h2>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-black text-green-900">₹{activeSub.amount}</div>
-                  <div className="text-sm font-medium text-green-700">/{activeSub.billingCycle.toLowerCase()}</div>
+                <div className="text-left sm:text-right">
+                  <div className="text-2xl font-black text-emerald-900 leading-none">₹{activeSub.amount}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-emerald-700 mt-1">/{activeSub.billingCycle}</div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
-                <div className="bg-white/60 p-4 rounded-2xl">
-                  <div className="text-sm text-green-800 font-medium mb-1 flex items-center gap-2">
-                    <CalendarDays size={16} /> Current Period Starts
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
+                <div className="bg-white/60 backdrop-blur-md p-4 rounded-xl shadow-sm border border-emerald-100/60">
+                  <div className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold mb-1 flex items-center gap-1.5">
+                    <CalendarDays size={14} /> Current Period Starts
                   </div>
-                  <div className="font-bold text-green-950">{format(new Date(activeSub.startDate), 'dd MMM yyyy')}</div>
+                  <div className="font-black text-emerald-950 text-sm">{format(new Date(activeSub.startDate), 'dd MMM yyyy')}</div>
                 </div>
-                <div className="bg-white/60 p-4 rounded-2xl">
-                  <div className="text-sm text-green-800 font-medium mb-1 flex items-center gap-2">
-                    <CalendarDays size={16} /> Next Billing Date
+                <div className="bg-white/60 backdrop-blur-md p-4 rounded-xl shadow-sm border border-emerald-100/60">
+                  <div className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold mb-1 flex items-center gap-1.5">
+                    <CalendarDays size={14} /> Next Billing Date
                   </div>
-                  <div className="font-bold text-green-950">{format(new Date(activeSub.endDate), 'dd MMM yyyy')}</div>
+                  <div className="font-black text-emerald-950 text-sm">{format(new Date(activeSub.endDate), 'dd MMM yyyy')}</div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 border border-neutral-200 shadow-sm">
-              <h3 className="text-xl font-bold text-neutral-900 mb-6">Plan Features Included</h3>
+            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-neutral-200/60 shadow-sm">
+              <h3 className="text-sm uppercase tracking-wider font-black text-neutral-900 mb-5">Plan Features Included</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -168,18 +168,18 @@ export default async function OwnerSubscriptionPage() {
           </div>
 
           {/* Actions Sidebar */}
-          <div className="space-y-6">
-            <div className="bg-neutral-900 rounded-3xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
-              <h3 className="font-bold text-lg mb-2 relative z-10">Need more features?</h3>
-              <p className="text-sm text-neutral-400 mb-6 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
-              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white text-neutral-900 text-center font-bold py-3 rounded-xl hover:bg-neutral-100 transition-colors relative z-10">
+          <div className="space-y-4">
+            <div className="bg-neutral-900 rounded-2xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
+              <h3 className="font-black text-sm uppercase tracking-wider mb-2 relative z-10 text-neutral-100">Need more features?</h3>
+              <p className="text-[11px] font-medium text-neutral-400 mb-5 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
+              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white text-neutral-900 text-center font-black text-xs uppercase tracking-wider py-2.5 rounded-lg shadow-sm hover:bg-neutral-50 transition-colors relative z-10">
                 Upgrade Plan
               </Link>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-neutral-200 shadow-sm">
-              <h3 className="font-bold text-neutral-900 mb-4">Payment Method</h3>
+            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-neutral-200/60 shadow-sm">
+              <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900 mb-4">Payment Method</h3>
               <div className="flex items-center gap-3 p-3 border border-neutral-200 rounded-xl bg-neutral-50 mb-4">
                 <CreditCard className="text-neutral-400" />
                 <div>
@@ -222,10 +222,10 @@ export default async function OwnerSubscriptionPage() {
 
       {/* Payment history. One row per payment, so a renewal is its own line and
           the owner can always see exactly what they were charged and when. */}
-      <div className="mt-8 bg-white rounded-3xl border border-neutral-200 shadow-sm overflow-hidden">
-        <div className="px-5 sm:px-6 py-4 border-b border-neutral-100">
-          <h3 className="font-bold text-neutral-900">Payment History</h3>
-          <p className="text-xs text-neutral-500 mt-0.5">
+      <div className="mt-6 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-neutral-100/60 bg-white/40">
+          <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900">Payment History</h3>
+          <p className="text-[10px] font-medium text-neutral-500 mt-1">
             Aapke saare payments. Kisi bhi dikkat par team ko yahi detail bata dijiye.
           </p>
         </div>

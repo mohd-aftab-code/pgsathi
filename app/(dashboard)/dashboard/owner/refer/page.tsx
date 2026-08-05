@@ -52,14 +52,14 @@ export default async function OwnerReferPage() {
   ];
 
   return (
-    <div className="space-y-5 max-w-4xl">
-      <div className="rounded-3xl bg-gradient-to-r from-violet-700 to-violet-500 p-6 sm:p-8 text-white shadow-xl">
+    <div className="space-y-4 max-w-4xl">
+      <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-violet-500 p-5 sm:p-6 text-white shadow-sm border border-violet-400/50">
         <div className="flex items-center gap-2 mb-2">
-          <Gift size={18} />
-          <span className="text-xs font-bold uppercase tracking-widest opacity-90">Refer &amp; Earn</span>
+          <Gift size={16} />
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-90">Refer &amp; Earn</span>
         </div>
-        <h1 className="text-2xl font-extrabold mb-1">Apne jaan-pehchan ke PG owners ko bulayein</h1>
-        <p className="text-violet-100 text-sm max-w-2xl">
+        <h1 className="text-xl font-black mb-1 tracking-tight">Apne jaan-pehchan ke PG owners ko bulayein</h1>
+        <p className="text-violet-100 text-xs font-medium max-w-2xl mt-1.5">
           {bonusDays > 0
             ? `Jo owner aapke link se join karke plan lega, use ${bonusDays} din extra free milenge — aur aapko bhi.`
             : "Jo owner aapke link se join karega, wo aapke naam ke saath judega."}
@@ -68,36 +68,36 @@ export default async function OwnerReferPage() {
 
       <div className="grid grid-cols-3 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
-            <s.Icon size={16} className="text-violet-600 mb-2" />
-            <div className="text-2xl font-extrabold text-neutral-900 leading-tight">{s.value}</div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">{s.label}</div>
+          <div key={s.label} className="rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md p-4 shadow-sm flex flex-col items-center justify-center text-center">
+            <s.Icon size={20} className="text-violet-600 mb-2" />
+            <div className="text-2xl font-black text-neutral-900 leading-none mb-1.5">{s.value}</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">{s.label}</div>
           </div>
         ))}
       </div>
 
       <OwnerReferralShare code={code} link={link} qrSvg={qr} bonusDays={bonusDays} />
 
-      <section className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-100">
-          <h2 className="font-bold text-neutral-900 text-sm">Aapke laye owners ({referred.length})</h2>
+      <section className="rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-neutral-100/60 bg-white/40">
+          <h2 className="font-black text-neutral-900 text-sm uppercase tracking-wider">Aapke laye owners ({referred.length})</h2>
         </div>
         {referred.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-neutral-400">
+          <div className="px-5 py-10 text-center text-xs font-medium text-neutral-500 bg-white/20">
             Abhi koi nahi — link share karke shuruaat karein.
-          </p>
+          </div>
         ) : (
-          <ul className="divide-y divide-neutral-100">
+          <ul className="divide-y divide-neutral-100/60">
             {referred.map((r) => (
-              <li key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
+              <li key={r.id} className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-white/40 transition-colors">
                 <div>
-                  <div className="font-semibold text-neutral-900 text-sm">{r.name}</div>
-                  <div className="text-xs text-neutral-400">
+                  <div className="font-bold text-neutral-900 text-[13px]">{r.name}</div>
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
                     {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </div>
                 </div>
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
-                  r.referralRewardAt ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm ${
+                  r.referralRewardAt ? "bg-emerald-100 text-emerald-700 border border-emerald-200" : "bg-neutral-100 text-neutral-500 border border-neutral-200"
                 }`}>
                   {r.referralRewardAt ? "PAID PLAN" : "JOINED"}
                 </span>

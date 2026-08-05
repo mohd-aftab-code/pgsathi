@@ -26,13 +26,13 @@ function StatCard({ icon: Icon, label, value, sub, tone }: {
   };
   const t = tones[tone];
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 shadow-sm p-5">
+    <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-5 hover:bg-white/80 transition-colors">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-neutral-500">{label}</span>
-        <div className={`p-2 rounded-lg ${t.bg}`}><Icon size={16} className={t.icon} /></div>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">{label}</span>
+        <div className={`p-2 rounded-xl ${t.bg}`}><Icon size={16} className={t.icon} /></div>
       </div>
-      <p className={`text-2xl font-bold ${t.text}`}>{value}</p>
-      {sub && <p className="text-xs text-neutral-400 mt-1">{sub}</p>}
+      <p className={`text-2xl font-black tracking-tight ${t.text}`}>{value}</p>
+      {sub && <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-400 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -52,11 +52,11 @@ export default function ReportsPage() {
   if (loading || !data) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-56 skeleton rounded" />
+        <div className="h-8 w-56 bg-white/40 skeleton rounded-xl" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-28 skeleton rounded-xl" />)}
+          {[1,2,3,4].map(i => <div key={i} className="h-28 bg-white/40 skeleton rounded-2xl border border-neutral-200/40" />)}
         </div>
-        <div className="h-72 skeleton rounded-2xl" />
+        <div className="h-72 bg-white/40 skeleton rounded-3xl border border-neutral-200/40" />
       </div>
     );
   }
@@ -70,12 +70,12 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-4 pb-5 border-b border-neutral-200">
+      <div className="flex flex-wrap items-end justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 flex items-center gap-2">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase flex items-center gap-2">
             <BarChart2 className="text-violet-600" size={22} /> Reports & Analytics
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
             {new Date(c.month + "-01").toLocaleDateString("en-IN", { month: "long", year: "numeric" })} — Live Data
           </p>
         </div>
@@ -91,19 +91,19 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 6-Month Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 shadow-sm p-4 sm:p-6">
+        <div className="lg:col-span-2 bg-white/60 backdrop-blur-md rounded-3xl border border-neutral-200/60 shadow-sm p-5 sm:p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold text-neutral-900 flex items-center gap-2">
+            <h2 className="text-xs font-black text-neutral-900 uppercase tracking-wider flex items-center gap-2">
               <BarChart2 size={16} className="text-neutral-400" /> 6-Month Trend
             </h2>
             {/* Toggle */}
-            <div className="flex bg-neutral-100 rounded-lg p-1 gap-1">
+            <div className="flex bg-white/50 border border-neutral-200/60 rounded-xl p-1 gap-1">
               {(["both", "income", "expense"] as const).map(v => (
                 <button
                   key={v}
                   onClick={() => setView(v)}
-                  className={`text-xs font-semibold px-3 py-1 rounded-md transition-all capitalize ${
-                    view === v ? "bg-white shadow-sm text-neutral-900" : "text-neutral-500 hover:text-neutral-700"
+                  className={`text-[9px] font-black tracking-wider uppercase px-3 py-1.5 rounded-lg transition-all ${
+                    view === v ? "bg-white shadow-sm text-violet-700" : "text-neutral-500 hover:text-neutral-700 hover:bg-white/40"
                   }`}
                 >
                   {v === "both" ? "Both" : v === "income" ? "Income" : "Expense"}
@@ -156,9 +156,9 @@ export default function ReportsPage() {
         {/* Right Column: Occupancy + Rent Collection */}
         <div className="space-y-5">
           {/* Occupancy */}
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5">
-            <h3 className="font-bold text-neutral-900 mb-4 flex items-center gap-2 text-sm">
-              <BedDouble size={15} className="text-neutral-400" /> Occupancy
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-5 sm:p-6">
+            <h3 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <BedDouble size={15} className="text-violet-500" /> Occupancy
             </h3>
             <div className="flex items-end gap-4 mb-3">
               <span className="text-3xl font-black text-violet-700">{c.occupancyPct}%</span>
@@ -170,15 +170,15 @@ export default function ReportsPage() {
                 style={{ width: `${c.occupancyPct}%` }}
               />
             </div>
-            <p className="text-xs text-neutral-400 mt-2">
+            <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-3">
               {c.totalBeds - c.occupiedBeds} beds vacant
             </p>
           </div>
 
           {/* Rent Collection */}
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5">
-            <h3 className="font-bold text-neutral-900 mb-4 flex items-center gap-2 text-sm">
-              <Wallet size={15} className="text-neutral-400" /> Rent Collection
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-5 sm:p-6">
+            <h3 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Wallet size={15} className="text-emerald-500" /> Rent Collection
             </h3>
             <div className="flex items-end gap-4 mb-3">
               <span className="text-3xl font-black text-green-700">{collectionPct}%</span>
@@ -190,26 +190,26 @@ export default function ReportsPage() {
                 style={{ width: `${collectionPct}%` }}
               />
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
+            <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
                 <span className="text-neutral-500">Expected</span>
-                <span className="font-bold text-neutral-800">{formatINR(c.expectedRent)}</span>
+                <span className="font-black text-neutral-800">{formatINR(c.expectedRent)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
                 <span className="text-neutral-500">Collected</span>
-                <span className="font-bold text-green-700">{formatINR(c.collectedRent)}</span>
+                <span className="font-black text-emerald-700">{formatINR(c.collectedRent)}</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-neutral-100">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
                 <span className="text-neutral-500">Pending</span>
-                <span className="font-bold text-red-600">{formatINR(c.pendingRent)}</span>
+                <span className="font-black text-red-600">{formatINR(c.pendingRent)}</span>
               </div>
             </div>
           </div>
 
           {/* Status breakdown */}
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5">
-            <h3 className="font-bold text-neutral-900 mb-4 flex items-center gap-2 text-sm">
-              <PieChart size={15} className="text-neutral-400" /> Quick Status
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-5 sm:p-6">
+            <h3 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <PieChart size={15} className="text-blue-500" /> Quick Status
             </h3>
             <div className="space-y-2.5">
               {[
@@ -219,12 +219,12 @@ export default function ReportsPage() {
               ].map(s => {
                 const Icon = s.icon;
                 return (
-                  <div key={s.label} className="flex items-center justify-between">
-                    <span className="text-sm text-neutral-600 flex items-center gap-2">
-                      <span className={`p-1 rounded ${s.cls}`}><Icon size={12} /></span>
+                  <div key={s.label} className="flex items-center justify-between bg-white/40 p-2 rounded-lg border border-neutral-200/40">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-2">
+                      <span className={`p-1.5 rounded-md ${s.cls}`}><Icon size={12} /></span>
                       {s.label}
                     </span>
-                    <span className="font-bold text-neutral-900">{s.value}</span>
+                    <span className="font-black text-neutral-900 text-xs">{s.value}</span>
                   </div>
                 );
               })}

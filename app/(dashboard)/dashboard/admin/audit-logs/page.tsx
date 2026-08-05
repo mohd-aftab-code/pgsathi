@@ -77,7 +77,7 @@ export default async function AdminAuditLogsPage({
     <Link
       href={val ? `/dashboard/admin/audit-logs?entity=${val}` : "/dashboard/admin/audit-logs"}
       className={`h-8 px-3 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${
-        entity === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+        entity === val ? "bg-neutral-900 text-white" : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white/80 hover:text-neutral-900"
       }`}
     >
       {label}
@@ -88,8 +88,8 @@ export default async function AdminAuditLogsPage({
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Audit Logs</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Audit Logs</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
             Har money aur partner action ka record — kisne, kab, kya se kya kiya. {total} entries.
           </p>
         </div>
@@ -108,10 +108,10 @@ export default async function AdminAuditLogsPage({
         </div>
       ) : (
         <>
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[800px]">
-              <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+              <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
                 <tr>
                   <th className="px-4 py-2 font-bold">When</th>
                   <th className="px-4 py-2 font-bold">Admin</th>
@@ -120,17 +120,17 @@ export default async function AdminAuditLogsPage({
                   <th className="px-4 py-2 font-bold">Before → After</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-50 text-[11px]">
+              <tbody className="divide-y divide-neutral-200/60 text-[11px] bg-white/60">
                 {logs.map((l) => (
-                  <tr key={l.id} className="hover:bg-violet-50/30 align-top transition-colors">
-                    <td className="px-4 py-2 text-neutral-500 whitespace-nowrap font-medium">{fmtDateTime(l.createdAt)}</td>
-                    <td className="px-4 py-2 text-neutral-800 font-bold">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
+                  <tr key={l.id} className="hover:bg-white/80 align-top transition-colors">
+                    <td className="px-4 py-2 text-[9px] font-bold text-neutral-500 whitespace-nowrap uppercase tracking-wider">{fmtDateTime(l.createdAt)}</td>
+                    <td className="px-4 py-2 text-neutral-900 font-black text-xs uppercase tracking-tight">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
                     <td className="px-4 py-2">
-                      <span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${actionStyle(l.action)}`}>
+                      <span className={`inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-md tracking-wider uppercase border shadow-sm ${actionStyle(l.action)}`}>
                         {ACTION_LABEL[l.action] ?? l.action}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-neutral-600 whitespace-nowrap font-bold text-[9px] uppercase tracking-wider">
+                    <td className="px-4 py-2 text-neutral-600 whitespace-nowrap font-black text-[9px] uppercase tracking-wider">
                       {l.entity ? `${l.entity}${l.entityId ? ` #${l.entityId}` : ""}` : "—"}
                     </td>
                     <td className="px-4 py-2">
@@ -150,21 +150,21 @@ export default async function AdminAuditLogsPage({
           {/* Mobile Cards */}
           <div className="grid grid-cols-1 gap-2 md:hidden">
             {logs.map((l) => (
-              <div key={`mob-${l.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+              <div key={`mob-${l.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
-                    <div className="font-bold text-[13px] text-neutral-900 truncate">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</div>
-                    <div className="text-[9px] text-neutral-400 font-bold uppercase mt-0.5">{fmtDateTime(l.createdAt)}</div>
+                    <div className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</div>
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{fmtDateTime(l.createdAt)}</div>
                   </div>
                   <div className="shrink-0">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${actionStyle(l.action)}`}>
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shadow-sm ${actionStyle(l.action)}`}>
                       {ACTION_LABEL[l.action] ?? l.action}
                     </span>
                   </div>
                 </div>
                 
-                <div className="bg-neutral-50 rounded-lg p-2 flex flex-col gap-1 border border-neutral-100">
-                  <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest border-b border-neutral-200 pb-1 mb-1">
+                <div className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-xl p-2 flex flex-col gap-1 shadow-sm">
+                  <div className="text-[9px] font-black text-neutral-500 uppercase tracking-widest border-b border-neutral-200/60 pb-1 mb-1">
                     {l.entity ? `${l.entity}${l.entityId ? ` #${l.entityId}` : ""}` : "Entity"}
                   </div>
                   <div className="flex flex-col gap-1">
@@ -184,19 +184,27 @@ export default async function AdminAuditLogsPage({
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 px-2">
-              <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Page <span className="font-bold">{page}</span> of <span className="font-bold">{totalPages}</span></span>
+              <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider">Page <span className="text-neutral-900">{page}</span> of <span className="text-neutral-900">{totalPages}</span></span>
               <div className="flex gap-1">
                 <Link
                   href={`/dashboard/admin/audit-logs?${entity ? `entity=${entity}&` : ""}page=${page - 1}`}
                   aria-disabled={page <= 1}
-                  className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  className={`flex items-center gap-1 text-[10px] font-black border border-neutral-200/60 shadow-sm px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider ${
+                    page <= 1
+                      ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50"
+                      : "text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md hover:bg-white/80"
+                  }`}
                 >
                   Prev
                 </Link>
                 <Link
                   href={`/dashboard/admin/audit-logs?${entity ? `entity=${entity}&` : ""}page=${page + 1}`}
                   aria-disabled={page >= totalPages}
-                  className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  className={`flex items-center gap-1 text-[10px] font-black border border-neutral-200/60 shadow-sm px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider ${
+                    page >= totalPages
+                      ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50"
+                      : "text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md hover:bg-white/80"
+                  }`}
                 >
                   Next
                 </Link>

@@ -36,22 +36,24 @@ export default async function OwnerReviewsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-neutral-200 shadow-sm overflow-hidden">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
         {reviews.length === 0 ? (
-          <div className="p-16 text-center">
-            <Star size={48} className="mx-auto text-neutral-200 mb-4" />
-            <h3 className="text-xl font-bold text-neutral-900 mb-2">No reviews yet</h3>
-            <p className="text-neutral-500">Your PG reviews will appear here once tenants start reviewing.</p>
+          <div className="p-12 text-center bg-white/40">
+            <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-400">
+              <Star size={24} />
+            </div>
+            <h3 className="text-lg font-black text-neutral-900 mb-2">No reviews yet</h3>
+            <p className="text-xs font-medium text-neutral-500 max-w-sm mx-auto">Your PG reviews will appear here once tenants start reviewing.</p>
           </div>
         ) : (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-100/60">
             {reviews.map((review) => (
-              <div key={review.id} className="p-6 md:p-8 hover:bg-neutral-50 transition-colors">
-                <div className="flex flex-col md:flex-row gap-6">
+              <div key={review.id} className="p-4 md:p-6 hover:bg-white/40 transition-colors">
+                <div className="flex flex-col md:flex-row gap-4">
                   
                   {/* Left Column - Tenant Info */}
-                  <div className="w-full md:w-64 shrink-0 flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-700 text-lg overflow-hidden shrink-0">
+                  <div className="w-full md:w-56 shrink-0 flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center font-bold text-violet-700 text-sm overflow-hidden shrink-0 border border-violet-200">
                       {review.user.avatar ? (
                         <img src={review.user.avatar} alt={review.user.name} className="w-full h-full object-cover" />
                       ) : (
@@ -59,54 +61,54 @@ export default async function OwnerReviewsPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-bold text-neutral-900">{review.user.name}</p>
+                      <p className="font-bold text-neutral-900 text-xs">{review.user.name}</p>
                       {review.isVerified && (
-                        <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold text-green-700 bg-green-100 px-1.5 py-0.5 rounded mt-1 w-max">
-                          <ShieldCheck size={10} /> Verified Tenant
+                        <div className="flex items-center gap-1 text-[9px] uppercase tracking-wider font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded mt-0.5 w-max">
+                          <ShieldCheck size={10} /> Verified
                         </div>
                       )}
-                      <div className="flex items-center gap-1 text-xs text-neutral-400 mt-2 font-medium">
-                        <Clock size={12} /> {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                      <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-neutral-500 mt-1 font-bold">
+                        <Clock size={10} /> {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
                       </div>
                     </div>
                   </div>
 
                   {/* Right Column - Review Content */}
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex gap-1 text-amber-400">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex gap-0.5 text-amber-400">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={18} className={i < review.rating ? "fill-amber-400" : "text-neutral-200"} />
+                          <Star key={i} size={14} className={i < review.rating ? "fill-amber-400" : "text-neutral-200"} />
                         ))}
                       </div>
                       <a 
                         href={`/pg/${review.listing.city?.slug}/${review.listing.locality?.slug || "all"}/${review.listing.slug}`}
                         target="_blank"
-                        className="text-xs font-semibold text-primary-600 hover:text-primary-700 hover:underline"
+                        className="text-[10px] font-bold text-violet-600 hover:text-violet-700 hover:underline uppercase tracking-wider"
                       >
                         {review.listing.title}
                       </a>
                     </div>
                     
                     {review.comment ? (
-                      <p className="text-neutral-700 leading-relaxed text-sm">{review.comment}</p>
+                      <p className="text-neutral-700 leading-relaxed text-xs font-medium">{review.comment}</p>
                     ) : (
-                      <p className="text-neutral-400 italic text-sm">No written feedback provided.</p>
+                      <p className="text-neutral-400 italic text-xs font-medium">No written feedback provided.</p>
                     )}
                     
                     {!review.isApproved && (
-                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                        <p className="text-xs font-semibold text-amber-800 mb-3">
-                          This review is pending moderation as the user is not a verified tenant for this PG.
+                      <div className="mt-3 p-3 bg-amber-50/50 border border-amber-200/60 rounded-xl">
+                        <p className="text-[10px] font-bold text-amber-800 mb-2 uppercase tracking-wider">
+                          Pending Moderation
                         </p>
                         <div className="flex items-center gap-2">
                           <form action={async () => { "use server"; await moderateReviewAction(review.id, "APPROVE"); }}>
-                            <button type="submit" className="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-green-600 hover:bg-green-700 transition-colors">
+                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 hover:bg-emerald-200 transition-colors uppercase tracking-wider">
                               Approve
                             </button>
                           </form>
                           <form action={async () => { "use server"; await moderateReviewAction(review.id, "REJECT"); }}>
-                            <button type="submit" className="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold text-neutral-700 bg-white border border-neutral-300 hover:bg-neutral-100 transition-colors">
+                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-rose-700 bg-rose-100 border border-rose-200 hover:bg-rose-200 transition-colors uppercase tracking-wider">
                               Reject
                             </button>
                           </form>

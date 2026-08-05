@@ -35,12 +35,12 @@ function RoomCard({ room }: { room: any }) {
   const cleanRoomName = room.name.replace(/^Room\s+/i, "");
 
   return (
-    <div className="rounded-xl border border-neutral-200 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 bg-white">
+    <div className="rounded-2xl border border-neutral-200/60 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 bg-white/60 backdrop-blur-md">
       {/* Room header bar */}
-      <div className={`px-3 py-2 flex justify-between items-center text-xs font-bold border-b ${
-        roomVacant === 0 ? "bg-red-50 border-red-100 text-red-700" :
-        roomVacant === room.beds.length ? "bg-green-50 border-green-100 text-green-700" :
-        "bg-amber-50 border-amber-100 text-amber-700"
+      <div className={`px-4 py-3 flex justify-between items-center text-[10px] uppercase tracking-wider font-bold border-b ${
+        roomVacant === 0 ? "bg-red-50/50 border-red-200/60 text-red-700" :
+        roomVacant === room.beds.length ? "bg-emerald-50/50 border-emerald-200/60 text-emerald-700" :
+        "bg-amber-50/50 border-amber-200/60 text-amber-700"
       }`}>
         <span className="flex items-center gap-1">
           🛏 Room {cleanRoomName}
@@ -50,7 +50,7 @@ function RoomCard({ room }: { room: any }) {
       </div>
 
       {/* Bed grid */}
-      <div className="p-3 grid grid-cols-2 gap-2 bg-neutral-50/50">
+      <div className="p-3 grid grid-cols-2 gap-2 bg-white/30">
         {room.beds.map((bed: any) => {
           const tenant = room.pgTenants.find((t: any) => t.bedId === bed.id);
           const cleanBedName = bed.name.replace(/^Bed\s+/i, "");
@@ -74,18 +74,18 @@ function RoomCard({ room }: { room: any }) {
                   </span>
                 </Link>
               ) : bed.isOccupied ? (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-center text-xs font-semibold text-red-800">
-                  <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 text-red-400">
+                <div className="rounded-xl border border-red-200/60 bg-red-50/50 p-2.5 text-center text-[10px] font-bold text-red-800 uppercase tracking-wider">
+                  <div className="font-black text-[9px] uppercase tracking-widest mb-1 text-red-400">
                     Bed {cleanBedName}
                   </div>
-                  <span className="font-bold">Occupied</span>
+                  <span className="font-black">Occupied</span>
                 </div>
               ) : (
-                <div className="rounded-lg border border-green-200 bg-green-50 p-2.5 text-center text-xs font-semibold text-green-800">
-                  <div className="font-extrabold text-[9px] uppercase tracking-widest mb-1 text-green-500">
+                <div className="rounded-xl border border-emerald-200/60 bg-emerald-50/50 p-2.5 text-center text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
+                  <div className="font-black text-[9px] uppercase tracking-widest mb-1 text-emerald-500">
                     Bed {cleanBedName}
                   </div>
-                  <span className="flex items-center justify-center gap-1 text-green-700 font-bold">
+                  <span className="flex items-center justify-center gap-1 text-emerald-700 font-black">
                     <CheckCircle size={11} /> Free
                   </span>
                 </div>
@@ -140,11 +140,11 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 flex items-center gap-2">
+          <h1 className="text-2xl font-black text-neutral-900 flex items-center gap-2 uppercase tracking-tight">
             <BedDouble className="h-6 w-6 text-violet-600" />
             Room &amp; Bed Matrix
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">Visual map of all beds across your properties</p>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Visual map of all beds across your properties</p>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
           <PropertyFilterSelect listings={allOwnerListings} value={listingId} />
@@ -154,38 +154,38 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
 
       {/* Occupancy Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 shadow-sm flex items-center gap-3">
+          <div className="w-10 h-10 bg-neutral-100/80 rounded-xl flex items-center justify-center border border-neutral-200/60">
             <BedDouble size={20} className="text-neutral-500" />
           </div>
           <div>
-            <div className="text-xl font-extrabold text-neutral-900">{totalBeds}</div>
-            <div className="text-xs text-neutral-500 font-medium">Total Beds</div>
+            <div className="text-xl font-black tracking-tight text-neutral-900">{totalBeds}</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Total Beds</div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-red-100 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-red-200/60 p-4 shadow-sm flex items-center gap-3">
+          <div className="w-10 h-10 bg-red-50/80 rounded-xl flex items-center justify-center border border-red-200/60">
             <Users size={20} className="text-red-500" />
           </div>
           <div>
-            <div className="text-xl font-extrabold text-red-600">{occupied}</div>
-            <div className="text-xs text-neutral-500 font-medium">Occupied</div>
+            <div className="text-xl font-black tracking-tight text-red-600">{occupied}</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Occupied</div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-green-100 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-            <CheckCircle size={20} className="text-green-500" />
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-emerald-200/60 p-4 shadow-sm flex items-center gap-3">
+          <div className="w-10 h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center border border-emerald-200/60">
+            <CheckCircle size={20} className="text-emerald-500" />
           </div>
           <div>
-            <div className="text-xl font-extrabold text-green-600">{vacant}</div>
-            <div className="text-xs text-neutral-500 font-medium">Vacant</div>
+            <div className="text-xl font-black tracking-tight text-emerald-600">{vacant}</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Vacant</div>
           </div>
         </div>
         {/* Circular Occupancy Gauge */}
-        <div className="bg-white rounded-2xl border border-violet-100 p-4 shadow-sm flex items-center gap-3">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-200/60 p-4 shadow-sm flex items-center gap-3">
           <div className="relative w-12 h-12 shrink-0">
             <svg viewBox="0 0 36 36" className="w-12 h-12 -rotate-90">
-              <circle cx="18" cy="18" r="14" fill="none" stroke="#e5e7eb" strokeWidth="4" />
+              <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" className="text-neutral-200/60" strokeWidth="4" />
               <circle
                 cx="18" cy="18" r="14" fill="none"
                 stroke={occupancyPct > 85 ? "#ef4444" : occupancyPct > 60 ? "#f59e0b" : "#8b5cf6"}
@@ -195,24 +195,24 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-[9px] font-extrabold text-neutral-700">{occupancyPct}%</span>
+              <span className="text-[9px] font-black text-neutral-700">{occupancyPct}%</span>
             </div>
           </div>
           <div>
-            <div className="text-xl font-extrabold text-violet-600">{occupancyPct}%</div>
-            <div className="text-xs text-neutral-500 font-medium">Occupancy</div>
+            <div className="text-xl font-black tracking-tight text-violet-600">{occupancyPct}%</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Occupancy</div>
           </div>
         </div>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs font-semibold text-neutral-500">
-        <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-400 inline-block"></span> Vacant</div>
-        <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-400 inline-block"></span> Occupied</div>
+      <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider font-bold text-neutral-500">
+        <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-emerald-400 inline-block shadow-sm"></span> Vacant</div>
+        <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-400 inline-block shadow-sm"></span> Occupied</div>
       </div>
 
       {listings.length === 0 ? (
-        <div className="card">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <EmptyState icon={BedDouble} title="Koi property nahi" description="Pehle apni PG property add karein." />
         </div>
       ) : (
@@ -241,21 +241,21 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
             });
 
             return (
-              <div key={listing.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+              <div key={listing.id} className="bg-white/60 backdrop-blur-md rounded-3xl border border-neutral-200/60 shadow-sm overflow-hidden">
                 {/* PG Header */}
-                <div className="px-6 py-4 border-b border-neutral-100 bg-gradient-to-r from-violet-50/50 to-white flex items-center justify-between flex-wrap gap-3">
+                <div className="px-6 py-5 border-b border-neutral-200/60 bg-white/40 flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h2 className="text-base font-bold text-neutral-900">{listing.title}</h2>
-                    <p className="text-xs text-neutral-500 mt-0.5">{listing.rooms.length} rooms · {listingTotal} beds · {listingOccupied} occupied</p>
+                    <h2 className="text-lg font-black tracking-tight text-neutral-900">{listing.title}</h2>
+                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">{listing.rooms.length} rooms · {listingTotal} beds · {listingOccupied} occupied</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-24 bg-neutral-100 rounded-full overflow-hidden">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-32 bg-neutral-200/60 rounded-full overflow-hidden shadow-inner">
                       <div
-                        className={`h-2 rounded-full transition-all ${listingPct > 85 ? "bg-red-500" : listingPct > 60 ? "bg-amber-500" : "bg-violet-500"}`}
+                        className={`h-2.5 rounded-full transition-all ${listingPct > 85 ? "bg-red-500" : listingPct > 60 ? "bg-amber-500" : "bg-violet-500"}`}
                         style={{ width: `${listingPct}%` }}
                       />
                     </div>
-                    <span className="text-xs font-bold text-neutral-500">{listingPct}%</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">{listingPct}%</span>
                   </div>
                 </div>
 

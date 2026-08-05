@@ -41,9 +41,9 @@ export default async function PaymentsPage({
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Payments</h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            {total} payments · Total: <strong>{formatINR(summary._sum.amount ?? 0)}</strong>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Payments</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
+            {total} payments · Total: <strong className="text-emerald-700">{formatINR(summary._sum.amount ?? 0)}</strong>
           </p>
         </div>
         <Link href="/dashboard/manager/payments/new" className="btn-primary text-sm">
@@ -65,23 +65,23 @@ export default async function PaymentsPage({
       </form>
 
       {payments.length === 0 ? (
-        <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
-          <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
-            <Wallet size={40} />
+        <div className="bg-white/60 backdrop-blur-md p-12 sm:p-16 rounded-2xl shadow-sm border border-neutral-200/60 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/30 pointer-events-none"></div>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-violet-100/80 rounded-full flex items-center justify-center mx-auto mb-5 text-violet-600 relative z-10 shadow-sm border border-violet-200/60">
+            <Wallet size={32} />
           </div>
-          <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No payments found</h3>
-          <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">No payments recorded for this month yet.</p>
+          <h3 className="text-xl sm:text-2xl font-black text-neutral-900 mb-2 relative z-10 tracking-tight">No payments found</h3>
+          <p className="text-neutral-500 max-w-md mx-auto text-xs sm:text-sm font-medium relative z-10 mb-8">No payments recorded for this month yet.</p>
           <Link href="/dashboard/manager/payments/new" className="btn-primary px-6 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all relative z-10 inline-flex">
             Record Payment
           </Link>
         </div>
       ) : (
-        <div className="mt-4">
+        <div className="mt-4 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto pb-8 md:px-1 md:-mx-1">
-            <table className="w-full text-sm text-left border-separate border-spacing-y-3 hidden md:table">
-              <thead>
-                <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
+            <table className="w-full text-sm text-left border-separate border-spacing-y-2 hidden md:table">
+              <thead className="bg-white/40 border-b border-neutral-200/60">
+                <tr className="text-[10px] uppercase tracking-wider font-bold text-neutral-500">
                   <th className="px-6 py-3">Tenant</th>
                   <th className="px-6 py-3">Type</th>
                   <th className="px-6 py-3">Method</th>
@@ -91,24 +91,24 @@ export default async function PaymentsPage({
                   <th className="px-6 py-3 text-right">Remind</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-neutral-200/60">
                 {payments.map((p) => (
-                  <tr key={p.id} className="bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group">
-                    <td className="px-6 py-4 rounded-l-2xl border-y border-l border-neutral-100">
-                      <Link href={`/dashboard/manager/tenants/${p.tenantId}`} className="font-semibold text-primary-700 hover:underline">
+                  <tr key={p.id} className="hover:bg-white/80 transition-colors">
+                    <td className="px-6 py-4">
+                      <Link href={`/dashboard/manager/tenants/${p.tenantId}`} className="text-xs font-black text-violet-700 hover:underline block mb-0.5">
                         {p.tenant.name}
                       </Link>
-                      <div className="text-xs text-neutral-400">{p.tenant.phone}</div>
+                      <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{p.tenant.phone}</div>
                     </td>
-                    <td className="px-6 py-4 border-y border-neutral-100">
+                    <td className="px-6 py-4">
                       <StatusBadge status={p.status} />
-                      <div className="text-xs text-neutral-400 mt-0.5">{p.type}</div>
+                      <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-1">{p.type}</div>
                     </td>
-                    <td className="px-6 py-4 text-neutral-600 border-y border-neutral-100">{p.method}</td>
-                    <td className="px-6 py-4 text-xs text-neutral-400 border-y border-neutral-100">{p.receiptNo ?? "—"}</td>
-                    <td className="px-6 py-4 text-neutral-600 border-y border-neutral-100">{formatDate(p.paidOn)}</td>
-                    <td className="px-6 py-4 text-right font-bold text-green-700 border-y border-neutral-100">{formatINR(p.amount)}</td>
-                    <td className="px-6 py-4 rounded-r-2xl border-y border-r border-neutral-100 text-right">
+                    <td className="px-6 py-4 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">{p.method}</td>
+                    <td className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{p.receiptNo ?? "—"}</td>
+                    <td className="px-6 py-4 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">{formatDate(p.paidOn)}</td>
+                    <td className="px-6 py-4 text-right text-xs font-black text-emerald-700">{formatINR(p.amount)}</td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <WhatsAppReminderBtn
                           phone={p.tenant.phone || ""}
@@ -125,29 +125,29 @@ export default async function PaymentsPage({
               </tbody>
             </table>
 
-            <div className="md:hidden flex flex-col space-y-4">
+            <div className="md:hidden flex flex-col space-y-4 p-4">
               {payments.map((p) => (
-                <div key={p.id} className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col gap-3">
+                <div key={p.id} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <Link href={`/dashboard/manager/tenants/${p.tenantId}`} className="font-bold text-neutral-900 hover:underline block">
+                      <Link href={`/dashboard/manager/tenants/${p.tenantId}`} className="font-black text-neutral-900 hover:underline block text-sm">
                         {p.tenant.name}
                       </Link>
-                      <div className="text-xs text-neutral-500">{p.tenant.phone}</div>
+                      <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">{p.tenant.phone}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-extrabold text-green-700">{formatINR(p.amount)}</div>
-                      <div className="text-xs text-neutral-400">{formatDate(p.paidOn)}</div>
+                      <div className="text-sm font-black text-emerald-700">{formatINR(p.amount)}</div>
+                      <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{formatDate(p.paidOn)}</div>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 text-sm bg-neutral-50 p-3 rounded-xl border border-neutral-100">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] bg-white/40 p-3 rounded-xl border border-neutral-200/60">
                     <div>
-                      <span className="text-xs text-neutral-400 block mb-0.5">Type & Method</span>
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <span className="font-bold text-neutral-400 block mb-1 uppercase tracking-wider">Type & Method</span>
+                      <div className="flex items-center gap-1.5 mb-1.5">
                         <StatusBadge status={p.status} />
                       </div>
-                      <span className="text-xs text-neutral-600 font-medium block">{p.type} via {p.method}</span>
+                      <span className="font-bold text-neutral-600 uppercase tracking-wider block">{p.type} via {p.method}</span>
                     </div>
                     <div className="flex flex-col items-end justify-center">
                       <div className="flex gap-2">

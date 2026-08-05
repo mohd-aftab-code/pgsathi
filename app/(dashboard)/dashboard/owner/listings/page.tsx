@@ -10,115 +10,132 @@ export const metadata = {
   title: "My Listings - Owner Dashboard",
 };
 
-export default async function OwnerListingsPage() {
+export default async function OwnerListingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const sp = await searchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const listings = await db.listing.findMany({
-    where: { ownerId: parseInt(session.user.id!) },
-    orderBy: { createdAt: "desc" },
-    include: {
-      city: true,
-      locality: true,
-      photos: {
-        take: 1,
-        orderBy: { sortOrder: "asc" }
+  const page = Math.max(1, parseInt(typeof sp.page === 'string' ? sp.page : "1"));
+  const pageSize = 10;
+  
+  const ownerId = parseInt(session.user.id!);
+
+  const [totalListings, listings] = await Promise.all([
+    db.listing.count({ where: { ownerId } }),
+    db.listing.findMany({
+      where: { ownerId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        city: true,
+        locality: true,
+        photos: {
+          take: 1,
+          orderBy: { sortOrder: "asc" }
+        },
+        _count: {
+          select: { leads: true }
+        }
       },
-      _count: {
-        select: { leads: true }
-      }
-    },
-  });
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    })
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(totalListings / pageSize));
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">My Listings</h1>
-          <p className="text-neutral-500 mt-1">Manage your properties, edit details, and track performance.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">My Listings</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Manage your properties, edit details, and track performance.</p>
         </div>
         <Link 
           href="/dashboard/owner/listings/new" 
-          className="bg-neutral-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
+          className="bg-violet-600 hover:bg-violet-700 text-white h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-1.5 shrink-0"
         >
-          <PlusCircle size={20} /> Add New PG
+          <PlusCircle size={14} /> Add New PG
         </Link>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4">
         {listings.length > 0 ? (
-          <div className="pb-10">
+          <div className="pb-8">
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto px-1 -mx-1">
-              <table className="w-full text-left border-separate border-spacing-y-4">
+              <table className="w-full text-left border-separate border-spacing-y-2">
               <thead>
-                <tr className="text-xs uppercase tracking-widest font-extrabold text-neutral-400">
-                  <th className="pb-2 px-6">Property Details</th>
-                  <th className="pb-2 px-6">Status & Type</th>
-                  <th className="pb-2 px-6">Performance</th>
-                  <th className="pb-2 px-6 text-right">Actions</th>
+                <tr className="text-[9px] uppercase tracking-widest font-black text-neutral-400 bg-neutral-50/40">
+                  <th className="py-2.5 px-4 rounded-l-lg border-y border-l border-neutral-100/60">Property Details</th>
+                  <th className="py-2.5 px-4 border-y border-neutral-100/60">Status & Type</th>
+                  <th className="py-2.5 px-4 border-y border-neutral-100/60">Performance</th>
+                  <th className="py-2.5 px-4 text-right rounded-r-lg border-y border-r border-neutral-100/60">Actions</th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
+              <tbody className="text-xs">
                 {listings.map((listing) => (
-                  <tr key={listing.id} className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
-                    <td className="py-5 px-6 rounded-l-2xl border-y border-l border-neutral-100">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200">
+                  <tr key={listing.id} className="bg-white/60 backdrop-blur-md shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+                    <td className="py-3 px-4 rounded-l-xl border-y border-l border-neutral-200/60">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-neutral-100 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
                           {listing.photos && listing.photos.length > 0 ? (
                             <img src={listing.photos[0].url} alt={listing.title} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                              <Building2 size={24} />
+                              <Building2 size={20} />
                             </div>
                           )}
                         </div>
                         <div>
-                          <Link href={`/pg/${listing.slug}`} className="font-extrabold text-neutral-900 text-base hover:text-primary-600 transition-colors line-clamp-1">
+                          <Link href={`/pg/${listing.slug}`} className="font-bold text-neutral-900 text-[13px] hover:text-violet-700 transition-colors line-clamp-1">
                             {listing.title}
                           </Link>
-                          <div className="text-xs text-neutral-500 mt-1 flex items-center gap-1">
-                            <MapPin size={12} /> {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
+                          <div className="text-[10px] text-neutral-500 mt-0.5 flex items-center gap-1 uppercase tracking-wider font-bold">
+                            <MapPin size={10} /> {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
                           </div>
-                          <div className="text-xs font-bold text-neutral-900 mt-1.5">
+                          <div className="text-[11px] font-black text-neutral-900 mt-1">
                             ₹{listing.priceMin.toLocaleString("en-IN")} - ₹{listing.priceMax.toLocaleString("en-IN")} <span className="text-neutral-500 font-medium">/mo</span>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-5 px-6 border-y border-neutral-100">
-                      <div className="flex flex-col items-start gap-2">
-                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold ${
-                          listing.status === "ACTIVE" ? "bg-green-100 text-green-700 border border-green-200" :
-                          listing.status === "PENDING" ? "bg-orange-100 text-orange-700 border border-orange-200" :
-                          "bg-neutral-100 text-neutral-700 border border-neutral-200"
+                    <td className="py-3 px-4 border-y border-neutral-200/60">
+                      <div className="flex flex-col items-start gap-1.5">
+                        <span className={`px-2 py-0.5 rounded-md text-[9px] uppercase tracking-wider font-bold ${
+                          listing.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" :
+                          listing.status === "PENDING" ? "bg-amber-50 text-amber-700 border border-amber-200/60" :
+                          "bg-neutral-50 text-neutral-600 border border-neutral-200/60"
                         }`}>
                           {listing.status === "ACTIVE" ? "● Live" : "● " + listing.status}
                         </span>
-                        <div className="text-xs font-semibold text-neutral-600 bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200 inline-block">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white border border-neutral-200/80 px-2 py-0.5 rounded-md inline-block">
                           <span className="capitalize">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ").toLowerCase()}</span> • {listing.genderAllowed}
                         </div>
                         <ListingReviewsToggle listingId={listing.id} initialEnabled={listing.reviewsEnabled} />
                       </div>
                     </td>
-                    <td className="py-5 px-6 border-y border-neutral-100">
-                      <div className="flex items-center gap-4">
+                    <td className="py-3 px-4 border-y border-neutral-200/60">
+                      <div className="flex items-center gap-3">
                         <div className="flex flex-col items-center">
-                          <span className="text-lg font-black text-neutral-900 flex items-center gap-1">
-                            {listing._count.leads} <MessageSquare size={14} className="text-green-500" />
+                          <span className="text-sm font-black text-neutral-900 flex items-center gap-1">
+                            {listing._count.leads} <MessageSquare size={12} className="text-emerald-500" />
                           </span>
-                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Leads</span>
+                          <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">Leads</span>
                         </div>
-                        <div className="w-px h-8 bg-neutral-200"></div>
+                        <div className="w-px h-6 bg-neutral-200/80"></div>
                         <div className="flex flex-col items-center">
-                          <span className="text-lg font-black text-neutral-900 flex items-center gap-1">
-                            {listing.totalViews} <Eye size={14} className="text-purple-500" />
+                          <span className="text-sm font-black text-neutral-900 flex items-center gap-1">
+                            {listing.totalViews} <Eye size={12} className="text-violet-500" />
                           </span>
-                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Views</span>
+                          <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">Views</span>
                         </div>
                       </div>
                     </td>
-                    <td className="py-5 px-6 rounded-r-2xl border-y border-r border-neutral-100 text-right">
+                    <td className="py-3 px-4 rounded-r-xl border-y border-r border-neutral-200/60 text-right">
                       <ListingActions
                         listingId={listing.id}
                         listingSlug={listing.slug}
@@ -132,55 +149,55 @@ export default async function OwnerListingsPage() {
             </div>
 
             {/* Mobile Cards */}
-            <div className="md:hidden space-y-4">
+            <div className="md:hidden space-y-3">
               {listings.map((listing) => (
-                <div key={listing.id} className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-4">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-16 h-16 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200">
+                <div key={listing.id} className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 p-4">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 bg-neutral-100 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
                       {listing.photos && listing.photos.length > 0 ? (
                         <img src={listing.photos[0].url} alt={listing.title} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                          <Building2 size={24} />
+                          <Building2 size={20} />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <Link href={`/pg/${listing.slug}`} className="font-extrabold text-neutral-900 text-base hover:text-primary-600 transition-colors line-clamp-1">
+                      <Link href={`/pg/${listing.slug}`} className="font-bold text-neutral-900 text-sm hover:text-violet-700 transition-colors line-clamp-1">
                         {listing.title}
                       </Link>
-                      <div className="text-xs text-neutral-500 mt-1 flex items-center gap-1 line-clamp-1">
-                        <MapPin size={12} className="shrink-0" /> {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
+                      <div className="text-[10px] text-neutral-500 mt-0.5 flex items-center gap-1 uppercase tracking-wider font-bold line-clamp-1">
+                        <MapPin size={10} className="shrink-0" /> {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
                       </div>
-                      <div className="text-xs font-bold text-neutral-900 mt-1.5">
+                      <div className="text-[11px] font-black text-neutral-900 mt-1">
                         ₹{listing.priceMin.toLocaleString("en-IN")} - ₹{listing.priceMax.toLocaleString("en-IN")} <span className="text-neutral-500 font-medium">/mo</span>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className={`px-2 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold ${
-                      listing.status === "ACTIVE" ? "bg-green-100 text-green-700" :
-                      listing.status === "PENDING" ? "bg-orange-100 text-orange-700" :
-                      "bg-neutral-100 text-neutral-700"
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] uppercase tracking-wider font-bold ${
+                      listing.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" :
+                      listing.status === "PENDING" ? "bg-amber-50 text-amber-700 border border-amber-200/60" :
+                      "bg-neutral-50 text-neutral-600 border border-neutral-200/60"
                     }`}>
                       {listing.status === "ACTIVE" ? "Live" : listing.status}
                     </span>
-                    <div className="text-[10px] font-semibold text-neutral-600 bg-neutral-50 px-2 py-1 rounded-md border border-neutral-200">
+                    <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white border border-neutral-200/80 px-2 py-0.5 rounded-md inline-block">
                       <span className="capitalize">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ").toLowerCase()}</span> • {listing.genderAllowed}
                     </div>
                     <ListingReviewsToggle listingId={listing.id} initialEnabled={listing.reviewsEnabled} />
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
+                  <div className="flex items-center justify-between pt-3 border-t border-neutral-100/60">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1">
-                        <MessageSquare size={14} className="text-green-500" />
-                        <span className="text-sm font-black text-neutral-900">{listing._count.leads}</span>
+                        <MessageSquare size={12} className="text-emerald-500" />
+                        <span className="text-xs font-black text-neutral-900">{listing._count.leads}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Eye size={14} className="text-purple-500" />
-                        <span className="text-sm font-black text-neutral-900">{listing.totalViews}</span>
+                        <Eye size={12} className="text-violet-500" />
+                        <span className="text-xs font-black text-neutral-900">{listing.totalViews}</span>
                       </div>
                     </div>
                     <ListingActions
@@ -192,20 +209,41 @@ export default async function OwnerListingsPage() {
                 </div>
               ))}
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 px-2">
+                <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Page <span className="font-bold">{page}</span> of <span className="font-bold">{totalPages}</span></span>
+                <div className="flex gap-1">
+                  <Link
+                    href={`/dashboard/owner/listings?page=${page - 1}`}
+                    aria-disabled={page <= 1}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  >
+                    Prev
+                  </Link>
+                  <Link
+                    href={`/dashboard/owner/listings?page=${page + 1}`}
+                    aria-disabled={page >= totalPages}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                  >
+                    Next
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
-            <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6 text-primary-500 shadow-inner relative z-10">
-              <Building2 size={40} />
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-neutral-200/60 p-12 text-center relative overflow-hidden">
+            <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-400 relative z-10">
+              <Building2 size={24} />
             </div>
-            <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No listings yet</h3>
-            <p className="text-neutral-500 mb-8 max-w-md mx-auto text-base font-medium relative z-10">You haven't added any properties yet. Create your first listing to start getting leads and maximizing occupancy.</p>
+            <h3 className="text-lg font-black text-neutral-900 mb-2 relative z-10">No listings yet</h3>
+            <p className="text-neutral-500 mb-6 max-w-sm mx-auto text-xs font-medium relative z-10">You haven't added any properties yet. Create your first listing to start getting leads and maximizing occupancy.</p>
             <Link 
               href="/dashboard/owner/listings/new" 
-              className="bg-neutral-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 inline-flex items-center gap-2 relative z-10"
+              className="bg-violet-600 hover:bg-violet-700 text-white h-9 px-6 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-colors shadow-sm inline-flex items-center gap-2 relative z-10"
             >
-              <PlusCircle size={20} /> Create Your First Listing
+              <PlusCircle size={14} /> Create Your First Listing
             </Link>
           </div>
         )}

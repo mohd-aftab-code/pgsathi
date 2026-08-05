@@ -97,19 +97,19 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       {/* Assign Owner Button */}
       <button
         onClick={() => setShowAssignModal(true)}
-        className="cursor-pointer p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+        className="cursor-pointer p-2 text-blue-600 hover:bg-blue-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors"
         title="Assign Owner & Send Invite"
       >
-        <UserPlus size={18} />
+        <UserPlus size={16} />
       </button>
 
       {/* Edit Button */}
       <Link
         href={`/dashboard/owner/listings/${listingId}/edit`}
-        className="cursor-pointer p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+        className="cursor-pointer p-2 text-violet-600 hover:bg-violet-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors"
         title="Edit Listing (Admin Override)"
       >
-        <Edit size={18} />
+        <Edit size={16} />
       </Link>
 
       {/* Approve / Reject for PENDING */}
@@ -118,18 +118,18 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
           <button 
             onClick={() => handleStatusChange("ACTIVE")}
             disabled={loading !== null}
-            className="cursor-pointer p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+            className="cursor-pointer p-2 text-emerald-600 hover:bg-emerald-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
             title="Approve Listing"
           >
-            {loading === "ACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+            {loading === "ACTIVE" ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
           </button>
           <button 
             onClick={() => handleStatusChange("REJECTED")}
             disabled={loading !== null}
-            className="cursor-pointer p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+            className="cursor-pointer p-2 text-red-600 hover:bg-red-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
             title="Reject Listing"
           >
-            {loading === "REJECTED" ? <Loader2 size={18} className="animate-spin" /> : <XCircle size={18} />}
+            {loading === "REJECTED" ? <Loader2 size={16} className="animate-spin" /> : <XCircle size={16} />}
           </button>
         </>
       )}
@@ -139,10 +139,10 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={() => handleStatusChange("INACTIVE")}
           disabled={loading !== null}
-          className="cursor-pointer p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-amber-600 hover:bg-amber-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
           title="Deactivate Listing"
         >
-          {loading === "INACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <PowerOff size={18} />}
+          {loading === "INACTIVE" ? <Loader2 size={16} className="animate-spin" /> : <PowerOff size={16} />}
         </button>
       )}
 
@@ -151,10 +151,10 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={() => handleStatusChange("ACTIVE")}
           disabled={loading !== null}
-          className="cursor-pointer p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-emerald-600 hover:bg-emerald-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
           title="Activate Listing"
         >
-          {loading === "ACTIVE" ? <Loader2 size={18} className="animate-spin" /> : <Power size={18} />}
+          {loading === "ACTIVE" ? <Loader2 size={16} className="animate-spin" /> : <Power size={16} />}
         </button>
       )}
 
@@ -163,55 +163,55 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         <button 
           onClick={handleDelete}
           disabled={loading !== null}
-          className="cursor-pointer p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 text-red-600 hover:bg-red-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
           title="Soft Delete Listing"
         >
-          {loading === "DELETE" ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+          {loading === "DELETE" ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
         </button>
       )}
 
       {/* Assign Owner Modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-neutral-200/60 w-full max-w-md overflow-hidden relative">
             <div className="p-4 sm:p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Assign Owner</h3>
-              <p className="text-sm text-gray-500 mb-6">
+              <h3 className="text-[10px] font-black uppercase tracking-wider text-neutral-900 mb-2">Assign Owner</h3>
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-6">
                 Enter the real owner's details. A new account will be created (if it doesn't exist) and an email with credentials will be sent.
               </p>
               
               <form onSubmit={handleAssignSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Owner Name</label>
+                  <label className="block text-[9px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Owner Name</label>
                   <input 
                     type="text" 
                     required 
                     value={assignForm.name}
                     onChange={e => setAssignForm({...assignForm, name: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full px-4 py-2 border border-neutral-200/60 rounded-xl bg-white/60 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 text-xs font-black tracking-tight"
                     placeholder="E.g. Rahul Sharma"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <label className="block text-[9px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Email Address</label>
                   <input 
                     type="email" 
                     required 
                     value={assignForm.email}
                     onChange={e => setAssignForm({...assignForm, email: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full px-4 py-2 border border-neutral-200/60 rounded-xl bg-white/60 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 text-xs font-black tracking-tight"
                     placeholder="E.g. rahul@example.com"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block text-[9px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Phone Number</label>
                   <input 
                     type="tel" 
                     required 
                     pattern="[0-9]{10}"
                     value={assignForm.phone}
                     onChange={e => setAssignForm({...assignForm, phone: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full px-4 py-2 border border-neutral-200/60 rounded-xl bg-white/60 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 text-xs font-black tracking-tight"
                     placeholder="10 digit mobile number"
                   />
                 </div>
@@ -220,14 +220,14 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
                   <button
                     type="button"
                     onClick={() => setShowAssignModal(false)}
-                    className="cursor-pointer px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="cursor-pointer px-4 py-2 text-[10px] uppercase tracking-wider font-black text-neutral-700 bg-neutral-100/80 hover:bg-neutral-200 rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading === "ASSIGN"}
-                    className="cursor-pointer px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors flex items-center gap-2"
+                    className="cursor-pointer px-4 py-2 text-[10px] uppercase tracking-wider font-black text-white bg-violet-600 hover:bg-violet-700 rounded-xl transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
                   >
                     {loading === "ASSIGN" ? <Loader2 size={16} className="animate-spin" /> : null}
                     {loading === "ASSIGN" ? "Assigning..." : "Assign & Invite"}

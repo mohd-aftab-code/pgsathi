@@ -83,24 +83,24 @@ export default async function UpgradePage({
                 key={plan.id}
                 className={
                   rec
-                    ? "bg-neutral-900 rounded-3xl p-6 shadow-xl relative overflow-hidden ring-2 ring-primary-500 ring-offset-2"
+                    ? "bg-neutral-900 rounded-3xl p-6 shadow-xl relative overflow-hidden ring-2 ring-violet-500 ring-offset-2"
                     : plan.badge
-                    ? "bg-white rounded-3xl p-6 border-2 border-primary-300 shadow-md relative overflow-hidden"
-                    : "bg-white rounded-3xl p-6 border border-neutral-200 shadow-sm relative"
+                    ? "bg-white/60 backdrop-blur-md rounded-3xl p-6 border-2 border-violet-300 shadow-md relative overflow-hidden"
+                    : "bg-white/60 backdrop-blur-md rounded-3xl p-6 border border-neutral-200/60 shadow-sm relative"
                 }
               >
                 {rec ? (
-                  <div className="absolute top-0 right-0 bg-gradient-to-r from-primary-600 to-primary-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg">
+                  <div className="absolute top-0 right-0 bg-gradient-to-r from-violet-600 to-violet-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg">
                     Recommended
                   </div>
                 ) : plan.badge ? (
-                  <div className="absolute top-0 right-0 bg-primary-100 text-primary-700 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg">
+                  <div className="absolute top-0 right-0 bg-violet-100 text-violet-700 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg border-b border-l border-violet-200">
                     {plan.badge}
                   </div>
                 ) : null}
 
                 <h3 className={`text-xl font-bold mb-2 flex items-center gap-2 ${rec ? "text-white" : "text-neutral-900"}`}>
-                  {rec && <ShieldCheck className="text-primary-400" size={20} />}
+                  {rec && <ShieldCheck className="text-violet-400" size={20} />}
                   {plan.name}
                 </h3>
                 {plan.tagline && (
@@ -138,11 +138,11 @@ export default async function UpgradePage({
                 </div>
 
                 {/* Limits straight from the admin-controlled plan row */}
-                <div className={`flex flex-wrap gap-2 mb-5 text-xs font-semibold ${rec ? "text-neutral-300" : "text-neutral-600"}`}>
-                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100"}`}>
+                <div className={`flex flex-wrap gap-2 mb-5 text-[10px] font-bold uppercase tracking-wider ${rec ? "text-neutral-300" : "text-neutral-600"}`}>
+                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
                     {plan.maxTenants === -1 ? "Unlimited" : plan.maxTenants} tenants
                   </span>
-                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100"}`}>
+                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
                     {plan.maxListings === -1 ? "Unlimited" : plan.maxListings} PGs
                   </span>
                 </div>
@@ -155,7 +155,7 @@ export default async function UpgradePage({
                       ) : feat.included === false ? (
                         <XCircle size={18} className="text-neutral-300 shrink-0 mt-0.5" />
                       ) : (
-                        <CheckCircle2 size={18} className={`shrink-0 mt-0.5 ${rec ? "text-primary-400" : "text-green-500"}`} />
+                        <CheckCircle2 size={18} className={`shrink-0 mt-0.5 ${rec ? "text-violet-400" : "text-emerald-500"}`} />
                       )}
                       <span className={feat.included === false && !feat.comingSoon ? "line-through text-neutral-400" : ""}>
                         {feat.name}
@@ -171,8 +171,8 @@ export default async function UpgradePage({
                   href={`/dashboard/owner/subscription/checkout?plan=${plan.slug}&cycle=${cycle}`}
                   className={
                     rec
-                      ? "block w-full py-3 rounded-xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition shadow-lg shadow-primary-500/25 text-center"
-                      : "block w-full py-3 rounded-xl font-bold bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition text-center"
+                      ? "block w-full py-3 rounded-xl font-bold bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-500 hover:to-violet-400 transition shadow-lg shadow-violet-500/25 text-center"
+                      : "block w-full py-3 rounded-xl font-bold bg-neutral-100/80 text-neutral-900 hover:bg-neutral-200 border border-neutral-200/60 shadow-sm transition text-center"
                   }
                 >
                   Upgrade to {plan.name}
@@ -183,13 +183,13 @@ export default async function UpgradePage({
         </div>
       )}
 
-      <div className="text-center mt-10 flex items-center justify-center gap-2 text-sm text-neutral-500">
-        <Sparkles size={14} className="text-primary-500" />
+      <div className="text-center mt-10 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+        <Sparkles size={14} className="text-violet-500" />
         All prices are GST-inclusive. Cancel anytime.
       </div>
 
       <div className="text-center mt-4">
-        <p className="text-sm text-neutral-500">Need help or offline activation? <Link href="/contact" className="font-semibold text-primary-600">Contact Support</Link></p>
+        <p className="text-xs font-medium text-neutral-500">Need help or offline activation? <Link href="/contact" className="font-black text-violet-600 hover:text-violet-700 hover:underline">Contact Support</Link></p>
       </div>
     </div>
   );

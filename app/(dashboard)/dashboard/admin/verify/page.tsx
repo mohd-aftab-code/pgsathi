@@ -51,35 +51,35 @@ export default async function AdminListingsPage({
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Manage Listings</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Review, approve, edit, and delete PGs across the platform.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Manage Listings</h1>
+          <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-wider mt-0.5">Review, approve, edit, and delete PGs across the platform.</p>
         </div>
       </div>
 
       {/* Tabs & Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-neutral-200 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-neutral-200/60 pb-4">
         <div className="flex gap-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
           <Link 
             href={`?tab=pending&query=${query}`} 
-            className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "pending" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "pending" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
           >
             Pending Review
           </Link>
           <Link
             href={`?tab=active&query=${query}`}
-            className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "active" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "active" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
           >
             Active PGs
           </Link>
           <Link
             href={`?tab=updated&query=${query}`}
-            className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "updated" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "updated" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
           >
             Updated Since Verified
           </Link>
           <Link
             href={`?tab=inactive&query=${query}`} 
-            className={`pb-2 px-4 font-bold transition-colors border-b-2 ${currentTab === "inactive" ? "border-primary-600 text-primary-600" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}
+            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "inactive" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
           >
             Inactive / Deleted
           </Link>
@@ -91,31 +91,31 @@ export default async function AdminListingsPage({
             name="query" 
             defaultValue={query} 
             placeholder="Search PGs..." 
-            className="px-3 py-2 border border-neutral-200 rounded-lg text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-3 py-2 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-xl text-[10px] font-bold uppercase tracking-wider w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-sm"
           />
-          <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 cursor-pointer">
+          <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-xl text-[10px] uppercase tracking-wider font-black hover:bg-neutral-800 cursor-pointer shadow-sm">
             Search
           </button>
         </form>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 overflow-hidden">
         <AdminListingsTableWrapper listings={listings} currentTab={currentTab} />
       </div>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 px-2">
-          <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
-            Showing <span className="font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-bold">{Math.min(currentPage * pageSize, totalCount)}</span> of <span className="font-bold">{totalCount}</span> PGs
+          <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+            Showing <span className="font-black text-neutral-900">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-black text-neutral-900">{Math.min(currentPage * pageSize, totalCount)}</span> of <span className="font-black text-neutral-900">{totalCount}</span> PGs
           </div>
           <div className="flex gap-1">
             {currentPage > 1 && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
                 Prev
               </Link>
             )}
             {currentPage < totalPages && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
                 Next
               </Link>
             )}

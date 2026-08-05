@@ -355,7 +355,7 @@ export default function NewListingPage() {
 
   const renderStep1 = () => (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Basic Details</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -466,7 +466,7 @@ export default function NewListingPage() {
     );
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
           <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">PG Details</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
             {tog2('Notice Period', formData.noticePeriod, 'noticePeriod')}
@@ -498,7 +498,7 @@ export default function NewListingPage() {
 
   const renderStep4 = () => (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
-      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Services</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
@@ -525,7 +525,7 @@ export default function NewListingPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">PG Amenities</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
           {AMENITIES_LIST.map(amenity => {
@@ -565,7 +565,7 @@ export default function NewListingPage() {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
       
       {/* Gallery */}
-      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Photos</h3>
         
         {formData.photos.length > 0 && (
@@ -599,7 +599,7 @@ export default function NewListingPage() {
       </div>
 
       {/* Pricing */}
-      <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 md:p-6">
         <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Pricing</h3>
         <p className="text-xs text-neutral-400 mb-4">Set rent and deposit for each room type.</p>
         

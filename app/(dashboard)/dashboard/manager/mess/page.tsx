@@ -98,8 +98,8 @@ export default function MessMenuPage() {
     <div className="max-w-5xl">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Mess Menu</h1>
-          <p className="text-sm text-neutral-500 mt-1">Hafte bhar ka khana plan karein</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Mess Menu</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Hafte bhar ka khana plan karein</p>
         </div>
         <div className="flex items-center gap-3">
           <select value={listingId} onChange={e => setListingId(e.target.value)} className="input-base w-48 bg-white">
@@ -112,37 +112,37 @@ export default function MessMenuPage() {
       </div>
 
       {loading ? (
-        <div className="card p-8 text-center text-neutral-400">Loading menu…</div>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-8 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-400">Loading menu…</div>
       ) : (
-        <div className="card overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-neutral-50 border-b border-neutral-200">
+              <thead className="bg-white/40 border-b border-neutral-200/60">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-neutral-600 w-32">Day</th>
-                  <th className="px-4 py-3 text-left font-semibold text-neutral-600">Breakfast</th>
-                  <th className="px-4 py-3 text-left font-semibold text-neutral-600">Lunch</th>
-                  <th className="px-4 py-3 text-left font-semibold text-neutral-600">Snacks</th>
-                  <th className="px-4 py-3 text-left font-semibold text-neutral-600">Dinner</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider w-32">Day</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider">Breakfast</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider">Lunch</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider">Snacks</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider">Dinner</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-200/60">
                 {DAYS.map(day => {
                   const m = menu.find(x => x.dayOfWeek === day.id)!;
                   return (
-                    <tr key={day.id} className="hover:bg-neutral-50">
-                      <td className="px-4 py-3 font-semibold text-neutral-900">{day.label}</td>
+                    <tr key={day.id} className="hover:bg-white/60 transition-colors">
+                      <td className="px-4 py-3 text-xs font-black text-neutral-900 uppercase tracking-wider">{day.label}</td>
                       <td className="px-2 py-2">
-                        <textarea value={m.breakfast || ""} onChange={e => handleChange(day.id, "breakfast", e.target.value)} rows={2} className="w-full text-xs p-2 border border-neutral-200 rounded resize-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Aloo paratha..." />
+                        <textarea value={m.breakfast || ""} onChange={e => handleChange(day.id, "breakfast", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Aloo paratha..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.lunch || ""} onChange={e => handleChange(day.id, "lunch", e.target.value)} rows={2} className="w-full text-xs p-2 border border-neutral-200 rounded resize-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Rajma chawal..." />
+                        <textarea value={m.lunch || ""} onChange={e => handleChange(day.id, "lunch", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Rajma chawal..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.snacks || ""} onChange={e => handleChange(day.id, "snacks", e.target.value)} rows={2} className="w-full text-xs p-2 border border-neutral-200 rounded resize-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Chai & biscuit..." />
+                        <textarea value={m.snacks || ""} onChange={e => handleChange(day.id, "snacks", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Chai & biscuit..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.dinner || ""} onChange={e => handleChange(day.id, "dinner", e.target.value)} rows={2} className="w-full text-xs p-2 border border-neutral-200 rounded resize-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Roti sabzi..." />
+                        <textarea value={m.dinner || ""} onChange={e => handleChange(day.id, "dinner", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Roti sabzi..." />
                       </td>
                     </tr>
                   );

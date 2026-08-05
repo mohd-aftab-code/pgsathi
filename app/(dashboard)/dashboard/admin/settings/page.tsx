@@ -82,20 +82,20 @@ export default function AdminSettingsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Global Settings</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Platform configuration for PGSathi admin.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Global Settings</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Platform configuration for PGSathi admin.</p>
         </div>
         <div className="flex gap-1.5">
           <button
             onClick={load}
-            className="h-8 w-8 flex items-center justify-center bg-white border border-neutral-200 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 hover:border-neutral-300 transition-colors shadow-sm"
+            className="h-8 w-8 flex items-center justify-center bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-white/80 transition-colors shadow-sm"
           >
             <RefreshCcw size={14} />
           </button>
           <button
             onClick={save}
             disabled={saving}
-            className="h-8 px-4 flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors shadow-sm"
+            className="h-8 px-4 flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-colors shadow-sm"
           >
             {saving ? <Loader2 size={12} className="animate-spin" /> : saved ? <CheckCircle2 size={12} /> : <Save size={12} />}
             {saving ? "Saving..." : saved ? "Saved!" : "Save"}
@@ -220,7 +220,7 @@ export default function AdminSettingsPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-1.5 h-9 px-5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[11px] font-bold uppercase tracking-wider rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-1.5 h-9 px-5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-colors shadow-sm"
         >
           {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
           {saving ? "Saving..." : saved ? "Settings Saved" : "Save Settings"}

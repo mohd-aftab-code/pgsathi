@@ -37,13 +37,13 @@ export default async function EnquiriesPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-neutral-200">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 flex items-center gap-2">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase flex items-center gap-2">
             <UserPlus className="text-violet-600" size={22} /> Enquiries & Leads
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            {totalAll} total · <span className="font-semibold text-orange-600">{pending.length} unread</span>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
+            {totalAll} total · <span className="text-orange-600">{pending.length} unread</span>
           </p>
         </div>
       </div>
@@ -51,16 +51,16 @@ export default async function EnquiriesPage() {
       {/* Upcoming Visits */}
       {visits.length > 0 && (
         <section>
-          <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+          <h2 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
             <Clock size={14} /> Scheduled Visits ({visits.length})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {visits.map(v => (
-              <div key={v.id} className="bg-white rounded-xl border border-neutral-200 shadow-sm p-4">
+              <div key={v.id} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-5">
                 <div className="flex justify-between items-start mb-3">
-                  <p className="font-bold text-neutral-900">{v.name}</p>
-                  <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase border ${
-                    v.status === "PENDING" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-green-50 text-green-700 border-green-200"
+                  <p className="font-black text-neutral-900 text-sm tracking-tight">{v.name}</p>
+                  <span className={`text-[9px] font-black px-2 py-0.5 rounded tracking-wider uppercase border ${
+                    v.status === "PENDING" ? "bg-amber-100/80 text-amber-800 border-amber-200/60" : "bg-emerald-100/80 text-emerald-800 border-emerald-200/60"
                   }`}>{v.status}</span>
                 </div>
                 <div className="space-y-1.5 text-sm text-neutral-600 mb-3">
@@ -96,33 +96,33 @@ export default async function EnquiriesPage() {
 
       {/* Leads Table */}
       <section>
-        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <h2 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
           <Mail size={14} /> General Enquiries ({leads.length})
         </h2>
 
         {leads.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-neutral-200 p-12 text-center">
-            <Mail size={36} className="mx-auto text-neutral-300 mb-3" />
-            <h3 className="font-bold text-neutral-700 mb-1">No Enquiries Yet</h3>
-            <p className="text-sm text-neutral-500">Leads from pgsathi.in will appear here automatically.</p>
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-12 text-center shadow-sm">
+            <Mail size={36} className="mx-auto text-violet-300 mb-3" />
+            <h3 className="text-lg font-black text-neutral-900 tracking-tight mb-1">No Enquiries Yet</h3>
+            <p className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">Leads from pgsathi.in will appear here automatically.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
             <div className="overflow-x-auto pb-8 md:px-1 md:-mx-1">
               <>
                 <table className="w-full text-sm hidden md:table">
-                  <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-200">
+                  <thead className="bg-white/40 text-neutral-500 text-[10px] tracking-wider font-bold uppercase border-b border-neutral-200/60">
                     <tr>
-                      <th className="px-5 py-3 text-left font-semibold">Name</th>
-                      <th className="px-5 py-3 text-left font-semibold">Contact</th>
-                      <th className="px-5 py-3 text-left font-semibold">Property</th>
-                      <th className="px-5 py-3 text-left font-semibold">Received</th>
-                      <th className="px-5 py-3 text-right font-semibold">Actions</th>
+                      <th className="px-5 py-3 text-left">Name</th>
+                      <th className="px-5 py-3 text-left">Contact</th>
+                      <th className="px-5 py-3 text-left">Property</th>
+                      <th className="px-5 py-3 text-left">Received</th>
+                      <th className="px-5 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-neutral-200/60">
                     {leads.map(lead => (
-                      <tr key={lead.id} className={`hover:bg-neutral-50/50 transition-colors ${!lead.isRead ? "bg-orange-50/30" : ""}`}>
+                      <tr key={lead.id} className={`hover:bg-white/80 transition-colors ${!lead.isRead ? "bg-orange-50/50" : ""}`}>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${!lead.isRead ? "bg-orange-100 text-orange-700" : "bg-neutral-100 text-neutral-600"}`}>
@@ -178,7 +178,7 @@ export default async function EnquiriesPage() {
                 </table>
                 <div className="md:hidden flex flex-col space-y-4 p-4">
                   {leads.map((lead) => (
-                    <div key={lead.id} className={`bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col gap-3 ${!lead.isRead ? "border-l-4 border-l-orange-400 bg-orange-50/10" : ""}`}>
+                    <div key={lead.id} className={`bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-3 ${!lead.isRead ? "border-l-4 border-l-orange-400 bg-orange-50/30" : ""}`}>
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-bold ${!lead.isRead ? "bg-orange-100 text-orange-700" : "bg-neutral-100 text-neutral-600"}`}>

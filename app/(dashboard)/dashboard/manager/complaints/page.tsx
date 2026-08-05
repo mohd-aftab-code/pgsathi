@@ -38,8 +38,8 @@ export default async function ComplaintsPage({
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900">Complaints</h1>
-          <p className="text-sm text-neutral-500 mt-1">{complaints.length} total</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Complaints</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">{complaints.length} total</p>
         </div>
         <ComplaintActions listings={listings} />
       </div>
@@ -60,29 +60,31 @@ export default async function ComplaintsPage({
       </form>
 
       {complaints.length === 0 ? (
-        <div className="bg-white p-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 pointer-events-none"></div>
-          <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
-            <Wrench size={40} />
+        <div className="bg-white/60 backdrop-blur-md p-12 sm:p-16 rounded-2xl shadow-sm border border-neutral-200/60 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/30 pointer-events-none"></div>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-violet-100/80 rounded-full flex items-center justify-center mx-auto mb-5 text-violet-600 relative z-10 shadow-sm border border-violet-200/60">
+            <Wrench size={32} />
           </div>
-          <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No issues found</h3>
-          <p className="text-neutral-500 max-w-md mx-auto mb-8 text-base font-medium relative z-10">Everything is running smoothly! Or try changing your filters.</p>
+          <h3 className="text-xl sm:text-2xl font-black text-neutral-900 mb-2 relative z-10 tracking-tight">No issues found</h3>
+          <p className="text-neutral-500 max-w-md mx-auto text-xs sm:text-sm font-medium relative z-10">Everything is running smoothly! Or try changing your filters.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {complaints.map((c) => (
-            <div key={c.id} className="bg-white p-5 rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 flex flex-wrap items-start justify-between gap-3">
+            <div key={c.id} className="bg-white/60 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-neutral-200/60 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-violet-200/60 hover:bg-white/80 transition-all duration-300 flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
+                <div className="flex items-center gap-2 flex-wrap mb-1.5">
                   <StatusBadge status={c.priority} />
                   <StatusBadge status={c.status}   />
-                  <span className="text-xs text-neutral-400">{c.category}</span>
+                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{c.category}</span>
                 </div>
-                <div className="font-semibold text-neutral-900">{c.title}</div>
-                {c.description && <div className="mt-1 text-sm text-neutral-500 line-clamp-2">{c.description}</div>}
-                <div className="mt-1 text-xs text-neutral-400">
-                  {c.listing.title}{c.tenant && ` · ${c.tenant.name}`} · {formatDate(c.createdAt)}
-                  {c.resolvedAt && ` · Resolved: ${formatDate(c.resolvedAt)}`}
+                <div className="font-black text-neutral-900 text-sm">{c.title}</div>
+                {c.description && <div className="mt-1 text-xs font-medium text-neutral-500 line-clamp-2">{c.description}</div>}
+                <div className="mt-2 text-[10px] font-bold text-neutral-400 uppercase tracking-wider flex flex-wrap gap-1">
+                  <span>{c.listing.title}</span>
+                  {c.tenant && <span>· {c.tenant.name}</span>}
+                  <span>· {formatDate(c.createdAt)}</span>
+                  {c.resolvedAt && <span className="text-emerald-600">· Resolved: {formatDate(c.resolvedAt)}</span>}
                 </div>
               </div>
               <ComplaintStatusSelect complaintId={c.id} currentStatus={c.status} />

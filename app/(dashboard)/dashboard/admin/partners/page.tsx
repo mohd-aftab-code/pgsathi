@@ -49,7 +49,11 @@ export default async function AdminPartnersPage({
   const tab = (label: string, val: string, n: number) => (
     <a
       href={val ? `/dashboard/admin/partners?status=${val}` : "/dashboard/admin/partners"}
-      className={`h-8 px-3 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${status === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"}`}
+      className={`h-8 px-3 rounded-xl text-[10px] font-black inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors shadow-sm ${
+        status === val
+          ? "bg-neutral-900 text-white"
+          : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white/80 hover:text-neutral-900"
+      }`}
     >
       {label} <span className={`text-[9px] ${status === val ? "text-white/70" : "text-neutral-400"}`}>{n}</span>
     </a>
@@ -59,8 +63,8 @@ export default async function AdminPartnersPage({
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Partners</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Partner applications approve karein aur accounts manage karein.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Partners</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Partner applications approve karein aur accounts manage karein.</p>
         </div>
       </div>
 
@@ -79,35 +83,35 @@ export default async function AdminPartnersPage({
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-            <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
-              <tr>
-                <th className="px-4 py-2 font-bold">Partner</th>
-                <th className="px-4 py-2 font-bold">Type</th>
-                <th className="px-4 py-2 font-bold">Contact</th>
-                <th className="px-4 py-2 font-bold text-center">Owners</th>
-                <th className="px-4 py-2 font-bold text-center">PGs</th>
-                <th className="px-4 py-2 font-bold text-center">Earnings</th>
-                <th className="px-4 py-2 font-bold">Status</th>
-                <th className="px-4 py-2 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-50 text-[11px]">
+          <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
+            <tr>
+              <th className="px-4 py-2 font-bold">Partner</th>
+              <th className="px-4 py-2 font-bold">Type</th>
+              <th className="px-4 py-2 font-bold">Contact</th>
+              <th className="px-4 py-2 font-bold text-center">Owners</th>
+              <th className="px-4 py-2 font-bold text-center">PGs</th>
+              <th className="px-4 py-2 font-bold text-center">Earnings</th>
+              <th className="px-4 py-2 font-bold">Status</th>
+              <th className="px-4 py-2 font-bold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-200/60 text-[11px] bg-white/60">
               {partners.map((p) => (
-                <tr key={p.id} className="hover:bg-violet-50/30 transition-colors group">
-                  <td className="px-4 py-2">
-                    <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 transition-colors">
-                      {p.user.name}
-                    </a>
-                    <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
-                  </td>
-                  <td className="px-4 py-2 text-neutral-600 font-medium">{TYPE_LABEL[p.type] ?? p.type}</td>
-                  <td className="px-4 py-2 text-neutral-600">
-                    <div className="font-medium text-[10px]">{p.user.phone ?? "—"}</div>
-                    <div className="text-[9px] text-neutral-400 truncate max-w-[140px]">{p.user.email}</div>
-                  </td>
-                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{p._count.owners}</td>
-                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{p._count.listings}</td>
-                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{p._count.earnings}</td>
+              <tr key={p.id} className="hover:bg-white/80 transition-colors group">
+                <td className="px-4 py-2">
+                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-black text-xs tracking-tight text-neutral-900 hover:text-violet-700 transition-colors uppercase">
+                    {p.user.name}
+                  </a>
+                  <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
+                </td>
+                <td className="px-4 py-2 text-[9px] font-bold text-neutral-600 uppercase tracking-wider">{TYPE_LABEL[p.type] ?? p.type}</td>
+                <td className="px-4 py-2 text-neutral-600">
+                  <div className="font-bold text-[10px] uppercase tracking-wider">{p.user.phone ?? "—"}</div>
+                  <div className="text-[9px] text-neutral-400 truncate max-w-[140px]">{p.user.email}</div>
+                </td>
+                <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.owners}</td>
+                <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.listings}</td>
+                <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.earnings}</td>
                   <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${statusStyle[p.status]}`}>{p.status}</span></td>
                   <td className="px-4 py-2 text-right">
                     <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
@@ -121,18 +125,18 @@ export default async function AdminPartnersPage({
           </div>
           
           {totalPages > 1 && (
-            <div className="px-4 py-2 border-t border-neutral-100 flex items-center justify-between">
-              <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
-                Showing <span className="font-bold">{(page - 1) * take + 1}</span> to <span className="font-bold">{Math.min(page * take, totalCount)}</span> of <span className="font-bold">{totalCount}</span>
+            <div className="px-4 py-3 border-t border-neutral-200/60 bg-white/40 flex items-center justify-between">
+              <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                Showing <span className="font-black text-neutral-600">{(page - 1) * take + 1}</span> to <span className="font-black text-neutral-600">{Math.min(page * take, totalCount)}</span> of <span className="font-black text-neutral-600">{totalCount}</span>
               </div>
               <div className="flex gap-1">
                 {page > 1 && (
-                  <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+                  <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 shadow-sm px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider">
                     Prev
                   </a>
                 )}
                 {page < totalPages && (
-                  <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+                  <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 shadow-sm px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider">
                     Next
                   </a>
                 )}
@@ -144,18 +148,18 @@ export default async function AdminPartnersPage({
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {partners.map((p) => (
-            <div key={`mob-${p.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${p.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-[13px] text-neutral-900 truncate block">
+                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate block">
                     {p.user.name}
                   </a>
-                  <div className="text-[10px] text-neutral-500 truncate">{p.user.phone ?? "No phone"} · {p.user.email}</div>
-                  <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider truncate">{p.user.phone ?? "No phone"} · {p.user.email}</div>
+                  <div className="text-[9px] text-neutral-400 font-black tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${statusStyle[p.status]}`}>{p.status}</span>
-                  <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-md uppercase">{TYPE_LABEL[p.type] ?? p.type}</span>
+                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shadow-sm ${statusStyle[p.status]}`}>{p.status}</span>
+                  <span className="text-[9px] font-black text-neutral-500 bg-white/60 border border-neutral-200/60 px-1.5 py-0.5 rounded-md uppercase shadow-sm">{TYPE_LABEL[p.type] ?? p.type}</span>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50/50 text-center">

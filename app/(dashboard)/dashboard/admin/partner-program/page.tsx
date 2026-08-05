@@ -16,14 +16,14 @@ export default async function PartnerProgramPage() {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Partner Program Settings</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Partner Program Settings</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
             Refer &amp; Earn ke rules — hold window, payout cycle, TDS aur tiers. Har change audit log me jata hai.
           </p>
         </div>
       </div>
 
-      <div className="flex items-start gap-2.5 rounded-xl border border-violet-200/60 bg-violet-50/50 px-4 py-3 text-[11px] font-medium text-violet-900">
+      <div className="flex items-start gap-2.5 rounded-xl border border-violet-200/60 bg-violet-50/60 backdrop-blur-md shadow-sm px-4 py-3 text-[10px] font-bold text-violet-900 uppercase tracking-wider">
         <Info size={14} className="text-violet-600 mt-0.5 shrink-0" />
         <p>
           Abhi ka setup: earning <b className="font-extrabold">{s.holdDays} din</b> hold rehti hai

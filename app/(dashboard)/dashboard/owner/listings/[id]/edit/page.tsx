@@ -382,7 +382,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
 
   const renderStep1 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Provide Details of PG</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -476,7 +476,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
 
   const renderStep3 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Provide Details of PG</h3>
         
         {/* "Available From" removed — see the new-listing form: it had no schema
@@ -566,7 +566,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
 
   const renderStep4 = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Available Services</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
           <div>
@@ -640,7 +640,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
       
       {/* Gallery */}
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Gallery</h3>
         
         {formData.photos.length > 0 && (
@@ -682,7 +682,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       </div>
 
       {/* Pricing */}
-      <div className="border border-neutral-200 rounded-2xl p-4 sm:p-6 bg-white">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6">
         <h3 className="text-lg font-bold text-neutral-800 mb-6 pb-4 border-b">Pricing Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div>

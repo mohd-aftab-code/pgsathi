@@ -65,18 +65,18 @@ export function TenantActions({ tenantId, listingId, forMonth, monthlyRent }: Pr
 
   return (
     <>
-      <div className="card p-4 space-y-2">
+      <div className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl shadow-sm p-4 space-y-2">
         <button
           onClick={() => setShowPayModal(true)}
           id="record-payment-btn"
-          className="btn-primary w-full text-sm"
+          className="btn-primary w-full text-[10px] uppercase tracking-wider font-black py-2.5"
         >
           <Receipt className="h-4 w-4" /> Record Rent Payment
         </button>
         <button
           onClick={markVacated}
           disabled={deleting}
-          className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-red-600 border border-red-200 hover:bg-red-50 transition"
+          className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[10px] uppercase tracking-wider font-black text-red-600 bg-white/40 border border-red-200/60 hover:bg-red-50/80 transition-colors shadow-sm disabled:opacity-50"
         >
           <Trash2 className="h-4 w-4" />
           {deleting ? "Processing…" : "Mark as Vacated"}
@@ -85,16 +85,16 @@ export function TenantActions({ tenantId, listingId, forMonth, monthlyRent }: Pr
 
       {/* Payment Modal */}
       {showPayModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="card p-4 sm:p-4 sm:p-6 w-full max-w-sm">
-            <h3 className="font-bold text-neutral-900 mb-4">Record Payment</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-xl p-4 sm:p-6 w-full max-w-sm">
+            <h3 className="font-black text-[10px] text-neutral-900 uppercase tracking-wider mb-4">Record Payment</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Amount (₹)</label>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Amount (₹)</label>
                 <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-base" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">Payment Method</label>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Payment Method</label>
                 <select value={method} onChange={e => setMethod(e.target.value)} className="input-base">
                   <option value="CASH">Cash</option>
                   <option value="UPI">UPI</option>
@@ -104,8 +104,8 @@ export function TenantActions({ tenantId, listingId, forMonth, monthlyRent }: Pr
               </div>
             </div>
             <div className="mt-5 flex gap-3">
-              <button onClick={() => setShowPayModal(false)} className="btn-outline flex-1 text-sm">Cancel</button>
-              <button onClick={recordPayment} disabled={recording} className="btn-primary flex-1 text-sm">
+              <button onClick={() => setShowPayModal(false)} className="btn-outline flex-1 text-[10px] uppercase tracking-wider font-black py-2">Cancel</button>
+              <button onClick={recordPayment} disabled={recording} className="btn-primary flex-1 text-[10px] uppercase tracking-wider font-black py-2 disabled:opacity-50">
                 {recording ? "Saving…" : "Save"}
               </button>
             </div>

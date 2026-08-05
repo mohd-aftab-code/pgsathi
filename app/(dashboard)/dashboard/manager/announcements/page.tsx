@@ -92,28 +92,28 @@ export default function AnnouncementsPage() {
           {[1,2].map(i => <div key={i} className="h-32 skeleton rounded-2xl" />)}
         </div>
       ) : announcements.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-12 text-center">
-          <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Megaphone className="text-violet-400" size={28} />
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-12 text-center">
+          <div className="w-16 h-16 bg-violet-100/80 rounded-full flex items-center justify-center mx-auto mb-4 border border-violet-200">
+            <Megaphone className="text-violet-600" size={28} />
           </div>
-          <h3 className="font-bold text-neutral-700 mb-1">No Announcements Yet</h3>
-          <p className="text-sm text-neutral-500 max-w-sm mx-auto">Click 'New Notice' to broadcast a message to your tenants (e.g. WiFi down, Maintenance tomorrow).</p>
+          <h3 className="text-lg font-black text-neutral-900 mb-1">No Announcements Yet</h3>
+          <p className="text-[11px] font-medium text-neutral-500 max-w-sm mx-auto">Click 'New Notice' to broadcast a message to your tenants (e.g. WiFi down, Maintenance tomorrow).</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {announcements.map(a => (
-            <div key={a.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 flex flex-col group relative">
+            <div key={a.id} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-5 flex flex-col group relative">
               <div className="flex items-start justify-between mb-3">
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase border ${a.listing ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-violet-50 text-violet-700 border-violet-100"}`}>
+                <span className={`text-[9px] font-black tracking-wider px-2 py-0.5 rounded uppercase border ${a.listing ? "bg-blue-100/80 text-blue-800 border-blue-200/60" : "bg-violet-100/80 text-violet-800 border-violet-200/60"}`}>
                   {a.listing ? a.listing.title : "All PGs"}
                 </span>
-                <button onClick={() => deleteAnn(a.id)} className="text-neutral-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1">
-                  <Trash2 size={16} />
+                <button onClick={() => deleteAnn(a.id)} className="text-neutral-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1 bg-white/60 rounded-lg hover:bg-red-50">
+                  <Trash2 size={14} />
                 </button>
               </div>
-              <h3 className="font-bold text-neutral-900 mb-2">{a.title}</h3>
-              <p className="text-sm text-neutral-600 mb-4 whitespace-pre-wrap flex-1">{a.message}</p>
-              <div className="text-xs text-neutral-400 pt-3 border-t border-neutral-100">
+              <h3 className="font-black text-neutral-900 mb-2">{a.title}</h3>
+              <p className="text-xs font-medium text-neutral-600 mb-4 whitespace-pre-wrap flex-1">{a.message}</p>
+              <div className="text-[10px] font-bold text-neutral-500 pt-3 border-t border-neutral-200/60 uppercase tracking-wider">
                 Published on {new Date(a.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
               </div>
             </div>
@@ -123,11 +123,11 @@ export default function AnnouncementsPage() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-          <form onSubmit={submit} className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 w-full max-w-md space-y-4">
-            <h3 className="text-lg font-bold text-neutral-900">Broadcast Notice</h3>
+          <form onSubmit={submit} className="bg-white/80 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-xl p-5 sm:p-6 w-full max-w-md space-y-4">
+            <h3 className="text-lg font-black text-neutral-900 uppercase tracking-tight">Broadcast Notice</h3>
             
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Target Audience</label>
+              <label className="block text-[10px] font-bold text-neutral-600 mb-1 uppercase tracking-wider">Target Audience</label>
               <select value={form.listingId} onChange={e => setForm({ ...form, listingId: e.target.value })} className="input-base">
                 <option value="">All Tenants (All PGs)</option>
                 {listings.map(l => <option key={l.id} value={l.id}>Only {l.title}</option>)}
@@ -135,12 +135,12 @@ export default function AnnouncementsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Subject / Title *</label>
+              <label className="block text-[10px] font-bold text-neutral-600 mb-1 uppercase tracking-wider">Subject / Title *</label>
               <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-base" placeholder="e.g. Scheduled Power Cut Tomorrow" required />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-neutral-600 mb-1">Message *</label>
+              <label className="block text-[10px] font-bold text-neutral-600 mb-1 uppercase tracking-wider">Message *</label>
               <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} className="input-base resize-none" rows={4} placeholder="Type your notice here..." required />
             </div>
 
