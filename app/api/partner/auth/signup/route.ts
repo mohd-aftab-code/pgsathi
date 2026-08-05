@@ -69,6 +69,19 @@ export async function POST(req: NextRequest) {
         { status: 429 }
       );
     }
+    
+    if (!emailInput) {
+      return NextResponse.json(
+        { success: false, message: "Email daalna zaroori hai" },
+        { status: 400 }
+      );
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailInput)) {
+      return NextResponse.json(
+        { success: false, message: "Sahi email daalein" },
+        { status: 400 }
+      );
+    }
 
     // ── uniqueness (phone and email are both unique on users) ─────────────
     const existingPhone = await db.user.findUnique({ where: { phone }, select: { id: true } });
@@ -79,12 +92,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fall back to a synthetic address (same convention as /api/auth/register)
-    const email = emailInput || `partner_${phone}@pgsathi.in`;
+    const email = emailInput;
     const existingEmail = await db.user.findUnique({ where: { email }, select: { id: true } });
     if (existingEmail) {
       return NextResponse.json(
-        { success: false, message: "Is email se account pehle se hai." },
+        { success: false, message: "Ye email pehle se kisi aur account me registered hai." },
         { status: 409 }
       );
     }
@@ -123,21 +135,13 @@ export async function POST(req: NextRequest) {
       return profile;
     });
 
-    if (email && !email.includes("@pgsathi.in")) {
-      await sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
-        console.error("[PARTNER_APP_EMAIL_ERROR]", e);
-      });
-    }
+    await sendPartnerApplicationReceivedEmail(email, name).catch((e) => {
+      console.error("[PARTNER_APP_EMAIL_ERROR]", e);
+    });
 
-    if (email && !email.includes("@pgsathi.in")) {
-      await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
-        console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
-      });
-    } else {
-      await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, "No email provided").catch((e) => {
-        console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
-      });
-    }
+    await sendAdminNewUserNotificationEmail(name, `PARTNER (${type})`, phone, email).catch((e) => {
+      console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
+    });
 
     return NextResponse.json(
       {

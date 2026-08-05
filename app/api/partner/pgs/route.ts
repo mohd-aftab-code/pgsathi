@@ -139,6 +139,13 @@ export async function POST(req: NextRequest) {
   if (!address) return NextResponse.json({ success: false, message: "Address daalein" }, { status: 400 });
   if (rent <= 0) return NextResponse.json({ success: false, message: "Sahi rent daalein" }, { status: 400 });
 
+  if (!ownerEmailInput) {
+    return NextResponse.json({ success: false, message: "Owner ka email daalna zaroori hai" }, { status: 400 });
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ownerEmailInput)) {
+    return NextResponse.json({ success: false, message: "Owner ka email sahi nahi hai" }, { status: 400 });
+  }
+
   try {
     // Resolve/create the city server-side (same logic as the owner flow).
     const city = await resolveCity({ pincode, cityName, stateName });
@@ -152,7 +159,7 @@ export async function POST(req: NextRequest) {
     // is a commission on your own purchase, renewing forever.
     if (
       (ctx.phone && ctx.phone === ownerPhone) ||
-      (ownerEmailInput && ctx.email.toLowerCase() === ownerEmailInput)
+      (ctx.email.toLowerCase() === ownerEmailInput)
     ) {
       return NextResponse.json(
         { success: false, message: "Apne hi number/email par owner account nahi bana sakte" },
@@ -167,15 +174,20 @@ export async function POST(req: NextRequest) {
     // PG, never buy a plan, and the whole flow stopped at registration.
     let ownerPassword: string | null = null;
     if (!owner) {
-      const email = ownerEmailInput || `owner_${ownerPhone}@pgsathi.in`;
-      const emailTaken = await db.user.findUnique({ where: { email }, select: { id: true } });
+      const emailTaken = await db.user.findUnique({ where: { email: ownerEmailInput }, select: { id: true } });
+      if (emailTaken) {
+        return NextResponse.json(
+          { success: false, message: "Ye email pehle se kisi aur account me registered hai" },
+          { status: 409 },
+        );
+      }
+
       ownerPassword = generateOwnerPassword();
       owner = await db.user.create({
         data: {
           name: ownerName,
           phone: ownerPhone,
-          // Fall back to a phone-based email if the chosen one is taken.
-          email: emailTaken ? `owner_${ownerPhone}@pgsathi.in` : email,
+          email: ownerEmailInput,
           passwordHash: await bcrypt.hash(ownerPassword, 10),
           role: "OWNER",
           isVerified: true,

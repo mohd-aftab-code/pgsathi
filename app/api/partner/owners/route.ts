@@ -75,6 +75,9 @@ export async function POST(req: NextRequest) {
   if (emailInput && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailInput)) {
     return NextResponse.json({ success: false, message: "Email sahi nahi hai" }, { status: 400 });
   }
+  if (!emailInput) {
+    return NextResponse.json({ success: false, message: "Owner ka email daalna zaroori hai" }, { status: 400 });
+  }
 
   // Self-referral guard: a partner adding themselves as their own owner would
   // earn commission on their own purchases, for as long as they kept renewing.
@@ -82,7 +85,7 @@ export async function POST(req: NextRequest) {
     where: { id: ctx.userId },
     select: { phone: true, email: true },
   });
-  if ((self?.phone && self.phone === phone) || (emailInput && self?.email?.toLowerCase() === emailInput)) {
+  if ((self?.phone && self.phone === phone) || (self?.email?.toLowerCase() === emailInput)) {
     return NextResponse.json(
       { success: false, message: "Apne hi number/email se owner nahi bana sakte" },
       { status: 400 },
@@ -117,16 +120,20 @@ export async function POST(req: NextRequest) {
   }
 
   const password = generateOwnerPassword();
-  const fallbackEmail = `owner_${phone}@pgsathi.in`;
-  const emailTaken = emailInput
-    ? await db.user.findUnique({ where: { email: emailInput }, select: { id: true } })
-    : null;
+  const emailTaken = await db.user.findUnique({ where: { email: emailInput }, select: { id: true } });
+
+  if (emailTaken) {
+    return NextResponse.json(
+      { success: false, message: "Ye email pehle se kisi aur account me registered hai" },
+      { status: 409 },
+    );
+  }
 
   const owner = await db.user.create({
     data: {
       name,
       phone,
-      email: emailInput && !emailTaken ? emailInput : fallbackEmail,
+      email: emailInput,
       passwordHash: await bcrypt.hash(password, 10),
       role: "OWNER",
       isVerified: true,
