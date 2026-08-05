@@ -52,37 +52,41 @@ export default function PartnerLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-violet-50 via-white to-violet-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
+    // Same dark shell as the admin portal login (bg-neutral-900 / card
+    // bg-neutral-800), so the two staff-facing login screens read as one system.
+    // Fixed dark rather than dark: variants — the admin page is dark in both
+    // themes, and a half-dark partner page would not match it in light mode.
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-neutral-900">
       <div className="w-full max-w-md">
         <Link href="/partner" className="flex items-center justify-center gap-2 mb-8 group">
           <div className="w-11 h-11 rounded-2xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25 group-hover:scale-105 transition-transform">
             <Handshake className="text-white" size={22} />
           </div>
           <div className="text-left">
-            <div className="font-extrabold text-neutral-900 dark:text-white leading-tight">PGSathi</div>
-            <div className="text-[11px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider">Partner Portal</div>
+            <div className="font-extrabold text-white leading-tight">PGSathi</div>
+            <div className="text-[11px] font-bold text-primary-400 uppercase tracking-wider">Partner Portal</div>
           </div>
         </Link>
 
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xl p-7 sm:p-8">
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-1">Welcome back</h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
+        <div className="bg-neutral-800 rounded-2xl border border-neutral-700/50 shadow-2xl p-7 sm:p-8">
+          <h1 className="text-2xl font-extrabold text-white mb-1">Welcome back</h1>
+          <p className="text-sm text-neutral-400 mb-6">
             Login to your partner account.
           </p>
 
           {error && (
-            <div className="mb-5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+            <div className="mb-5 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold text-neutral-300 mb-1.5">
                 Phone Number
               </label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-xl border-2 border-r-0 border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-sm text-neutral-500 dark:text-neutral-400">
+                <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-neutral-700 bg-neutral-900/50 text-sm text-neutral-400">
                   +91
                 </span>
                 <input
@@ -92,15 +96,15 @@ export default function PartnerLoginPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                   placeholder="Enter 10-digit number"
-                  className="w-full h-12 px-3 rounded-r-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition"
+                  className="w-full h-12 px-3 rounded-r-xl border border-neutral-700 bg-neutral-900/50 text-white placeholder:text-neutral-500 text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300">Password</label>
-                <Link href="/partner/forgot-password" className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline">
+                <label className="block text-xs font-bold text-neutral-300">Password</label>
+                <Link href="/partner/forgot-password" className="text-xs font-semibold text-primary-400 hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -110,12 +114,12 @@ export default function PartnerLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
-                  className="w-full h-12 px-3 pr-11 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition"
+                  className="w-full h-12 px-3 pr-11 rounded-xl border border-neutral-700 bg-neutral-900/50 text-white placeholder:text-neutral-500 text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-200 cursor-pointer"
                   aria-label={showPass ? "Hide password" : "Show password"}
                 >
                   {showPass ? <EyeOff size={17} /> : <Eye size={17} />}
@@ -123,7 +127,7 @@ export default function PartnerLoginPage() {
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-sm text-neutral-400 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={remember}
@@ -146,9 +150,9 @@ export default function PartnerLoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-6">
+          <p className="text-center text-sm text-neutral-400 mt-6">
             Partner account nahi hai?{" "}
-            <Link href="/partner/signup" className="font-bold text-primary-600 dark:text-primary-400 hover:underline">
+            <Link href="/partner/signup" className="font-bold text-primary-400 hover:underline">
               Register
             </Link>
           </p>
