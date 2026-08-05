@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock, Handshake } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock, Handshake, X, FileText, IndianRupee } from "lucide-react";
 import { CAPABILITY_META, NO_CAPABILITIES, readCapabilities, type PlanCapabilities } from "@/lib/plan-capabilities";
 
 type Feature = { name: string; included: boolean; comingSoon?: boolean };
@@ -180,274 +180,227 @@ export default function AdminPlansPage() {
       </div>
 
       {isFormOpen && (
-        <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-200 mb-8">
-          <h2 className="text-xl font-bold mb-6">{editingPlan ? "Edit Plan" : "Create Plan"}</h2>
-          <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Plan Name</label>
-              <input required type="text" className="w-full border rounded-xl p-2.5" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Slug (e.g. basic, pro)</label>
-              <input required type="text" className="w-full border rounded-xl p-2.5" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} />
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-neutral-200/60 mb-6 relative">
+          <button type="button" onClick={() => setIsFormOpen(false)} className="absolute top-4 right-4 p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"><X size={16} /></button>
+          <h2 className="text-sm font-black text-neutral-900 uppercase tracking-widest mb-4">{editingPlan ? "Edit Plan" : "Create Plan"}</h2>
+          <form onSubmit={handleSave} className="space-y-4">
+            {/* Basic Info */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Plan Name</label>
+                <input required type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-semibold focus:ring-1 focus:ring-violet-500" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Slug</label>
+                <input required type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Corner Badge</label>
+                <input type="text" maxLength={30} className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} />
+              </div>
+              <div className="col-span-1 md:col-span-3">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Tagline</label>
+                <input type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.tagline} onChange={e => setFormData({...formData, tagline: e.target.value})} />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Sort Order</label>
+                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.sortOrder} onChange={e => setFormData({...formData, sortOrder: e.target.value})} />
+              </div>
+              <div className="col-span-1 md:col-span-4 mt-1">
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${formData.recommended ? 'border-violet-300 bg-violet-50/50' : 'border-neutral-200 bg-neutral-50/50 hover:bg-neutral-100'}`}>
+                  <input type="checkbox" className="w-4 h-4 text-violet-600 rounded cursor-pointer" checked={formData.recommended} onChange={e => setFormData({...formData, recommended: e.target.checked})} />
+                  <Star size={14} className={formData.recommended ? 'text-violet-600' : 'text-neutral-400'} />
+                  <span className="text-[11px] font-bold text-neutral-800">Mark as Recommended</span>
+                </label>
+              </div>
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Tagline <span className="text-neutral-400 font-normal">(short line under the plan name)</span></label>
-              <input type="text" className="w-full border rounded-xl p-2.5" placeholder="e.g. Complete CRM — staff, team logins, audit trail." value={formData.tagline} onChange={e => setFormData({...formData, tagline: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Corner Badge <span className="text-neutral-400 font-normal">(optional, e.g. Unlimited)</span></label>
-              <input type="text" maxLength={30} className="w-full border rounded-xl p-2.5" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Display Order <span className="text-neutral-400 font-normal">(lower = shown first)</span></label>
-              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.sortOrder} onChange={e => setFormData({...formData, sortOrder: e.target.value})} />
-            </div>
-            <div className="md:col-span-2">
-              <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors ${formData.recommended ? 'border-primary-400 bg-primary-50' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}>
-                <input type="checkbox" className="w-5 h-5 text-primary-600 rounded cursor-pointer" checked={formData.recommended} onChange={e => setFormData({...formData, recommended: e.target.checked})} />
-                <Star size={16} className={formData.recommended ? 'text-primary-600' : 'text-neutral-400'} />
-                <span className="text-sm font-semibold text-neutral-800">Mark as “Recommended” <span className="font-normal text-neutral-500">— highlights this plan on the pricing &amp; upgrade pages</span></span>
-              </label>
+            {/* Pricing */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Monthly (₹)</label>
+                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">3 Months (₹)</label>
+                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.quarterlyPrice} onChange={e => setFormData({...formData, quarterlyPrice: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">6 Months (₹)</label>
+                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.halfYearlyPrice} onChange={e => setFormData({...formData, halfYearlyPrice: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Yearly (₹)</label>
+                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
+              </div>
             </div>
 
-            {/* Four billing cycles. Blank = that duration is not offered for this
-                plan, so owners never see it and it can't be bought. */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Monthly Price (₹)</label>
-              <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+            {/* Limits */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max PGs (-1=Unlmt)</label>
+                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxListings} onChange={e => setFormData({...formData, maxListings: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max Tenants (-1=Unlmt)</label>
+                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxTenants} onChange={e => setFormData({...formData, maxTenants: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max Photos</label>
+                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                3 Month Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
-              </label>
-              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.quarterlyPrice} onChange={e => setFormData({...formData, quarterlyPrice: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                6 Month Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
-              </label>
-              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.halfYearlyPrice} onChange={e => setFormData({...formData, halfYearlyPrice: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Yearly Price (₹) <span className="text-neutral-400 font-normal">— blank = not offered</span>
-              </label>
-              <input type="number" className="w-full border rounded-xl p-2.5" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Max PGs (Listings) [-1 for Unlimited]</label>
-              <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxListings} onChange={e => setFormData({...formData, maxListings: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Max Tenants [-1 for Unlimited]</label>
-              <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxTenants} onChange={e => setFormData({...formData, maxTenants: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Max Photos</label>
-              <input required type="number" className="w-full border rounded-xl p-2.5" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
-            </div>
-            
-            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
-              <div className="flex justify-between items-center mb-4 pb-4 border-b border-neutral-200">
-                <div>
-                  <h3 className="text-lg font-bold text-neutral-900">Features Checklist</h3>
-                  <p className="text-sm text-neutral-500">Add features and toggle if they are included in this plan.</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Capabilities */}
+              <div className="bg-white p-3 rounded-xl border border-neutral-100">
+                <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Feature Access (System)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {CAPABILITY_META.map((cap) => {
+                    const on = formData.capabilities[cap.key];
+                    return (
+                      <label key={cap.key} className={`flex items-start gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${on ? 'border-green-300 bg-green-50' : 'border-neutral-100 hover:bg-neutral-50'}`}>
+                        <input type="checkbox" className="w-3 h-3 mt-0.5 text-green-600 rounded cursor-pointer shrink-0" checked={on} onChange={() => toggleCapability(cap.key)} />
+                        <span className={`block text-[10px] font-bold leading-tight ${on ? 'text-green-800' : 'text-neutral-600'}`}>{cap.label}</span>
+                      </label>
+                    );
+                  })}
                 </div>
-                <button type="button" onClick={addFeature} className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-100 px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2 transition-colors">
-                  <Plus size={16} /> Add Feature
-                </button>
               </div>
-              <div className="space-y-3">
-                {formData.features.map((feat, idx) => (
-                  <div key={idx} className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 bg-white p-3 rounded-xl border border-neutral-200 shadow-sm transition-all focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100">
-                    <input
-                      type="text"
-                      placeholder="e.g. Audit log, Meter billing..."
-                      className="flex-1 min-w-[140px] border-none focus:ring-0 text-sm font-medium outline-none px-2"
-                      value={feat.name}
-                      onChange={e => updateFeature(idx, "name", e.target.value)}
-                    />
-                    <div className="hidden sm:block w-px h-6 bg-neutral-200"></div>
-                    <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer shrink-0 px-2 select-none">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-primary-600 rounded cursor-pointer"
-                        checked={feat.included}
-                        onChange={e => updateFeature(idx, "included", e.target.checked)}
-                      />
-                      <span className={feat.included ? 'text-green-600' : 'text-neutral-400'}>
-                        {feat.included ? 'Included' : 'Excluded'}
-                      </span>
-                    </label>
-                    <div className="hidden sm:block w-px h-6 bg-neutral-200"></div>
-                    {/* Coming-soon marks a feature as promised-but-not-live (amber clock on the cards). */}
-                    <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer shrink-0 px-2 select-none">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-amber-500 rounded cursor-pointer"
-                        checked={!!feat.comingSoon}
-                        onChange={e => updateFeature(idx, "comingSoon", e.target.checked)}
-                      />
-                      <span className={feat.comingSoon ? 'text-amber-600 flex items-center gap-1' : 'text-neutral-400 flex items-center gap-1'}>
-                        <Clock size={13} /> Soon
-                      </span>
-                    </label>
-                    <button type="button" onClick={() => removeFeature(idx)} className="text-neutral-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors shrink-0"><Trash2 size={18}/></button>
-                  </div>
-                ))}
-                {formData.features.length === 0 && (
-                  <div className="text-center py-8 text-neutral-500 bg-white rounded-xl border border-dashed border-neutral-300">
-                    <p className="text-sm font-medium">No features added yet.</p>
-                    <p className="text-xs mt-1">Click "Add Feature" to start building the checklist.</p>
-                  </div>
-                )}
+
+              {/* Feature Checklist */}
+              <div className="bg-white p-3 rounded-xl border border-neutral-100">
+                 <div className="flex justify-between items-center mb-2">
+                   <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Features Checklist (Display)</h3>
+                   <button type="button" onClick={addFeature} className="text-[10px] font-bold text-violet-600 hover:text-violet-700 uppercase tracking-wider bg-violet-50 px-2 py-0.5 rounded transition-colors">+ Add</button>
+                 </div>
+                 <div className="space-y-2">
+                  {formData.features.map((feat, idx) => (
+                    <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg border border-neutral-200 bg-neutral-50 focus-within:border-violet-300 focus-within:ring-1 focus-within:ring-violet-100">
+                      <input type="text" placeholder="Feature..." className="flex-1 bg-transparent border-none text-[11px] font-bold px-2 py-1 outline-none" value={feat.name} onChange={e => updateFeature(idx, "name", e.target.value)} />
+                      <label className="flex items-center gap-1 cursor-pointer shrink-0">
+                        <input type="checkbox" className="w-3 h-3 text-emerald-500 rounded" checked={feat.included} onChange={e => updateFeature(idx, "included", e.target.checked)} />
+                        <span className={`text-[9px] font-bold uppercase tracking-wider ${feat.included ? 'text-emerald-600' : 'text-neutral-400'}`}>Inc</span>
+                      </label>
+                      <label className="flex items-center gap-1 cursor-pointer shrink-0 ml-1 border-l border-neutral-200 pl-2">
+                        <input type="checkbox" className="w-3 h-3 text-amber-500 rounded" checked={!!feat.comingSoon} onChange={e => updateFeature(idx, "comingSoon", e.target.checked)} />
+                        <span className={`text-[9px] font-bold uppercase tracking-wider ${feat.comingSoon ? 'text-amber-600' : 'text-neutral-400'}`}>Soon</span>
+                      </label>
+                      <button type="button" onClick={() => removeFeature(idx)} className="text-neutral-400 hover:text-red-500 ml-1 p-1"><Trash2 size={13}/></button>
+                    </div>
+                  ))}
+                  {formData.features.length === 0 && <div className="text-[10px] text-neutral-400 italic mt-2">No display features added.</div>}
+                 </div>
               </div>
             </div>
 
-            {/* Capabilities — the actual feature switches this plan unlocks. These
-                drive the real gates in the app (CSV, ads, staff, leads, CRM). */}
-            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
-              <div className="mb-4 pb-4 border-b border-neutral-200">
-                <h3 className="text-lg font-bold text-neutral-900">Feature Access</h3>
-                <p className="text-sm text-neutral-500">Turn on what this plan unlocks. Ye seedhe app ke gates control karte hain.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {CAPABILITY_META.map((cap) => {
-                  const on = formData.capabilities[cap.key];
-                  return (
-                    <label key={cap.key} className={`flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors ${on ? 'border-green-300 bg-green-50' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}>
-                      <input type="checkbox" className="w-5 h-5 mt-0.5 text-green-600 rounded cursor-pointer shrink-0" checked={on} onChange={() => toggleCapability(cap.key)} />
-                      <span>
-                        <span className={`block text-sm font-bold ${on ? 'text-green-800' : 'text-neutral-700'}`}>{cap.label}</span>
-                        <span className="block text-xs text-neutral-500">{cap.hint}</span>
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Partner commission — what a partner earns when an owner buys this plan. */}
-            <div className="md:col-span-2 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 mt-2">
-              <div className="mb-4 pb-4 border-b border-neutral-200">
-                <h3 className="text-lg font-bold text-neutral-900">Partner Commission</h3>
-                <p className="text-sm text-neutral-500">Owner ye plan le to partner ko kitna mile. Ye earning apne aap ban jaati hai (admin baad mein badal bhi sakta hai).</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Commission type</label>
-                  <select className="w-full border rounded-xl p-2.5" value={formData.partnerCommissionType} onChange={e => setFormData({ ...formData, partnerCommissionType: e.target.value })}>
-                    <option value="NONE">None (admin manually set karega)</option>
-                    <option value="PERCENT">Percent of plan price (%)</option>
-                    <option value="FIXED">Fixed amount (₹)</option>
+            {/* Partner Comm */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+              <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Comm. Type</label>
+                  <select className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionType} onChange={e => setFormData({ ...formData, partnerCommissionType: e.target.value })}>
+                    <option value="NONE">None</option>
+                    <option value="PERCENT">Percent (%)</option>
+                    <option value="FIXED">Fixed (₹)</option>
                   </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    {formData.partnerCommissionType === "PERCENT" ? "Percent (%)" : formData.partnerCommissionType === "FIXED" ? "Amount (₹)" : "Value"}
-                  </label>
-                  <input
-                    type="number" min={0}
-                    disabled={formData.partnerCommissionType === "NONE"}
-                    className="w-full border rounded-xl p-2.5 disabled:bg-neutral-100 disabled:text-neutral-400"
-                    value={formData.partnerCommissionValue}
-                    onChange={e => setFormData({ ...formData, partnerCommissionValue: e.target.value })}
-                  />
-                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mt-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Commission kitne mahine tak</label>
-                  <select
-                    className="w-full border rounded-xl p-2.5"
-                    value={formData.partnerCommissionMonths}
-                    onChange={e => setFormData({ ...formData, partnerCommissionMonths: e.target.value })}
-                  >
-                    <option value="0">Lifetime (jab tak owner renew karta rahe)</option>
-                    <option value="12">12 mahine</option>
-                    <option value="24">24 mahine</option>
-                    <option value="1">Sirf pehla payment</option>
+              <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Value</label>
+                  <input type="number" min={0} disabled={formData.partnerCommissionType === "NONE"} className="w-full border-neutral-200 rounded-lg p-2 text-xs disabled:opacity-50 focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionValue} onChange={e => setFormData({ ...formData, partnerCommissionValue: e.target.value })} />
+              </div>
+              <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Duration (Months)</label>
+                  <select className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionMonths} onChange={e => setFormData({ ...formData, partnerCommissionMonths: e.target.value })}>
+                    <option value="0">Lifetime</option>
+                    <option value="12">12 Months</option>
+                    <option value="24">24 Months</option>
+                    <option value="1">1st Payment</option>
                   </select>
-                  {/* Existing attributions keep their own clock: the window is
-                      measured from when the owner was attributed, so changing
-                      this never rewrites what a partner has already earned. */}
-                  <p className="text-xs text-neutral-500 mt-1">
-                    Attribution ki date se gina jata hai. Purane owners par asar nahi padega.
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Referral bonus (referred owner ko)</label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number" min={0}
-                      className="w-full border rounded-xl p-2.5"
-                      value={formData.referralBonusDays}
-                      onChange={e => setFormData({ ...formData, referralBonusDays: e.target.value })}
-                    />
-                    <span className="text-sm font-semibold text-neutral-500 whitespace-nowrap">din extra</span>
-                  </div>
-                  <p className="text-xs text-neutral-500 mt-1">
-                    Referral link se aaye owner ko itne din extra milenge — ek baar, pehle paid plan par.
-                  </p>
-                </div>
               </div>
-
-              {formData.partnerCommissionType !== "NONE" && formData.price && (
-                <p className="text-sm text-green-700 font-semibold mt-3">
-                  Is plan par partner ko milega:{" "}
-                  ₹{formData.partnerCommissionType === "PERCENT"
-                    ? Math.round((parseInt(formData.price || "0") * parseInt(formData.partnerCommissionValue || "0")) / 100)
-                    : parseInt(formData.partnerCommissionValue || "0")}
-                  {" "}per payment
-                  {formData.partnerCommissionMonths !== "0" && ` · ${formData.partnerCommissionMonths} mahine tak`}
-                  {" "}(tier bonus alag se lagega)
-                </p>
-              )}
+              <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Ref Bonus (Days)</label>
+                  <input type="number" min={0} className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.referralBonusDays} onChange={e => setFormData({ ...formData, referralBonusDays: e.target.value })} />
+              </div>
             </div>
 
-            <div className="md:col-span-2 flex items-center gap-4 mt-4">
-              <button type="submit" className="bg-primary-500 text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer">Save Plan</button>
-              <button type="button" onClick={() => setIsFormOpen(false)} className="cursor-pointer px-6 py-2.5 rounded-xl font-bold text-neutral-500 bg-neutral-100 hover:bg-neutral-200">Cancel</button>
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" onClick={() => setIsFormOpen(false)} className="h-8 px-5 rounded-lg bg-white border border-neutral-200 text-neutral-600 text-[11px] font-bold hover:bg-neutral-50 transition-colors uppercase tracking-wider">Cancel</button>
+              <button type="submit" className="h-8 px-5 rounded-lg bg-violet-600 text-white text-[11px] font-bold hover:bg-violet-700 transition-colors uppercase tracking-wider shadow-sm">Save Plan</button>
             </div>
           </form>
         </div>
       )}
 
       {loading ? (
-        <div className="p-16 flex justify-center"><Loader2 size={32} className="animate-spin text-primary-500" /></div>
+        <div className="py-20 flex justify-center"><Loader2 size={24} className="animate-spin text-neutral-300" /></div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {plans.map(plan => (
-            <div key={plan.id} className={`bg-white/60 backdrop-blur-md flex flex-col rounded-2xl p-4 sm:p-5 border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200/60 hover:border-violet-300 hover:shadow-md transition-all'}`}>
-              <div className="flex justify-between items-start mb-3">
+            <div key={plan.id} className={`bg-white/60 backdrop-blur-md flex flex-col rounded-2xl border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200/60 hover:border-violet-300 hover:shadow-md transition-all'}`}>
+              <div className="p-4 border-b border-neutral-100/60 flex justify-between items-start">
                 <div>
-                  <h3 className="font-black text-lg text-neutral-900 leading-tight">{plan.name}</h3>
-                  <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{plan.slug}</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-lg text-neutral-900 leading-tight">{plan.name}</h3>
+                    {plan.recommended && <span className="bg-amber-100 text-amber-700 text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm">Hot</span>}
+                  </div>
+                  <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">{plan.slug}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-xl font-black text-violet-600">₹{plan.price}</div>
-                  <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">/ month</div>
+                  <div className="text-xl font-black text-neutral-900">₹{plan.price}</div>
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">/ mo</div>
                 </div>
               </div>
-              <div className="space-y-1.5 mb-4 text-[11px] font-bold text-neutral-600">
-                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxListings === -1 ? 'Unlimited' : `Up to ${plan.maxListings}`} PGs</div>
-                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxTenants === -1 ? 'Unlimited' : `Up to ${plan.maxTenants}`} Tenants</div>
-                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxPhotos} Photos</div>
-                {plan.partnerCommissionType !== 'NONE' && (
-                  <div className="flex items-center gap-1.5 font-extrabold text-violet-700 bg-violet-50 px-2 py-1 rounded-md w-max">
-                    <Handshake size={12} className="text-violet-600" /> 
-                    Partner: {plan.partnerCommissionType === 'PERCENT' ? `${plan.partnerCommissionValue}%` : `₹${plan.partnerCommissionValue}`}
+              <div className="p-4 flex-1">
+                {plan.tagline && <p className="text-[11px] font-medium text-neutral-500 mb-3 leading-tight">{plan.tagline}</p>}
+                
+                {/* Pricing Grid */}
+                <div className="grid grid-cols-3 gap-2 mb-4 bg-neutral-50/50 p-2 rounded-xl border border-neutral-100/50 text-center">
+                  <div>
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">3 Months</div>
+                    <div className="text-[11px] font-black text-neutral-700 mt-0.5">{plan.quarterlyPrice ? `₹${plan.quarterlyPrice}` : '—'}</div>
                   </div>
-                )}
+                  <div className="border-l border-neutral-200/60">
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">6 Months</div>
+                    <div className="text-[11px] font-black text-neutral-700 mt-0.5">{plan.halfYearlyPrice ? `₹${plan.halfYearlyPrice}` : '—'}</div>
+                  </div>
+                  <div className="border-l border-neutral-200/60">
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Yearly</div>
+                    <div className="text-[11px] font-black text-neutral-700 mt-0.5">{plan.yearlyPrice ? `₹${plan.yearlyPrice}` : '—'}</div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-[11px] font-bold text-neutral-600 mb-4">
+                  <div className="flex items-center gap-2"><ShieldCheck size={13} className="text-emerald-500" /> {plan.maxListings === -1 ? 'Unlimited PGs' : `Up to ${plan.maxListings} PGs`}</div>
+                  <div className="flex items-center gap-2"><ShieldCheck size={13} className="text-emerald-500" /> {plan.maxTenants === -1 ? 'Unlimited Tenants' : `Up to ${plan.maxTenants} Tenants`}</div>
+                  <div className="flex items-center gap-2"><ShieldCheck size={13} className="text-emerald-500" /> {plan.maxPhotos} Photos allowed</div>
+                  {plan.features?.map((f: Feature, i: number) => (
+                    <div key={i} className={`flex items-start gap-2 ${f.included ? '' : 'opacity-40 line-through'}`}>
+                      <ShieldCheck size={13} className={f.included ? 'text-emerald-500' : 'text-neutral-400'} />
+                      <span>{f.name} {f.comingSoon && <span className="text-[9px] text-amber-500 uppercase tracking-wider ml-1">Soon</span>}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 pt-3 border-t border-neutral-100 mt-auto">
-                <button onClick={() => handleOpenForm(plan)} className="cursor-pointer flex-1 p-1.5 bg-blue-50 text-blue-600 rounded-md font-bold hover:bg-blue-100 flex justify-center transition-colors"><Edit size={14} /></button>
-                <button onClick={() => toggleStatus(plan)} className={`cursor-pointer flex-1 p-1.5 rounded-md font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
-                  {plan.isActive ? <PowerOff size={14} /> : <Power size={14} />}
-                </button>
-                <button onClick={() => handleDelete(plan.id)} className="cursor-pointer flex-1 p-1.5 bg-red-50 text-red-600 rounded-md font-bold hover:bg-red-100 flex justify-center transition-colors"><Trash2 size={14} /></button>
+              <div className="bg-neutral-50/50 p-3 flex flex-col gap-2 border-t border-neutral-100/60">
+                <div className="flex flex-col gap-0.5">
+                  {plan.partnerCommissionType !== 'NONE' && (
+                    <div className="text-[10px] font-extrabold text-violet-700 flex items-center gap-1 uppercase tracking-wider">
+                      <Handshake size={10} /> Comm: {plan.partnerCommissionType === 'PERCENT' ? `${plan.partnerCommissionValue}%` : `₹${plan.partnerCommissionValue}`} {plan.partnerCommissionMonths === 0 ? '(Life)' : `(${plan.partnerCommissionMonths}m)`}
+                    </div>
+                  )}
+                  {plan.referralBonusDays > 0 && (
+                    <div className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 uppercase tracking-wider">
+                      <Star size={10} /> +{plan.referralBonusDays} Days Bonus
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 pt-2 border-t border-neutral-200/50">
+                  <button onClick={() => handleOpenForm(plan)} className="flex-1 p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md font-bold text-xs flex justify-center transition-colors"><Edit size={13} /></button>
+                  <button onClick={() => toggleStatus(plan)} className={`flex-1 p-1.5 rounded-md text-xs font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                    {plan.isActive ? <PowerOff size={13} /> : <Power size={13} />}
+                  </button>
+                  <button onClick={() => handleDelete(plan.id)} className="flex-1 p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-md font-bold text-xs flex justify-center transition-colors"><Trash2 size={13} /></button>
+                </div>
               </div>
             </div>
           ))}
