@@ -153,11 +153,6 @@ export default function PartnerLoginPage() {
             </Link>
           </p>
         </div>
-
-        <p className="text-center text-xs text-neutral-400 dark:text-neutral-500 mt-6">
-          Are you a PG owner or tenant?{" "}
-          <Link href="/login" className="font-semibold hover:underline">Main login</Link>
-        </p>
       </div>
     </div>
   );
