@@ -47,25 +47,27 @@ export default async function AdminPartnerEarningsPage({
 
   const tab = (label: string, val: string) => (
     <a href={`/dashboard/admin/partner-earnings?status=${val}`}
-      className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-1.5 ${status === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50"}`}>
-      {label} <span className={`text-xs ${status === val ? "text-white/70" : "text-neutral-400"}`}>{cntBy(val) || (val === "ALL" ? sums.reduce((s: any, x: any) => s + x._count._all, 0) : 0)}</span>
+      className={`h-8 px-3 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${status === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"}`}>
+      {label} <span className={`text-[9px] ${status === val ? "text-white/70" : "text-neutral-400"}`}>{cntBy(val) || (val === "ALL" ? sums.reduce((s: any, x: any) => s + x._count._all, 0) : 0)}</span>
     </a>
   );
 
   return (
-    <div className="space-y-5">
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex items-center gap-2 mb-1"><IndianRupee size={22} /> <h1 className="text-2xl font-extrabold">Partner Earnings</h1></div>
-        <p className="text-neutral-300 text-sm">Har earning ka amount manually set karein, approve aur pay karein. (Koi commission % nahi.)</p>
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Partner Earnings</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Har earning ka amount manually set karein, approve aur pay karein. (Koi commission % nahi.)</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4"><div className="text-xs text-neutral-500">Pending payout</div><div className="text-xl font-bold text-amber-600">{inr(sumBy("PENDING") + sumBy("APPROVED"))}</div></div>
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4"><div className="text-xs text-neutral-500">Paid out</div><div className="text-xl font-bold text-green-600">{inr(sumBy("PAID"))}</div></div>
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4"><div className="text-xs text-neutral-500">Awaiting amount</div><div className="text-xl font-bold text-neutral-900">{cntBy("PENDING")}</div></div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-3.5 shadow-sm"><div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">Pending payout</div><div className="text-xl font-black text-amber-600 leading-none mt-1">{inr(sumBy("PENDING") + sumBy("APPROVED"))}</div></div>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-3.5 shadow-sm"><div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">Paid out</div><div className="text-xl font-black text-green-600 leading-none mt-1">{inr(sumBy("PAID"))}</div></div>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-3.5 shadow-sm"><div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">Awaiting amount</div><div className="text-xl font-black text-neutral-900 leading-none mt-1">{cntBy("PENDING")}</div></div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {tab("Pending", "PENDING")}{tab("Approved", "APPROVED")}{tab("Paid", "PAID")}{tab("Cancelled", "CANCELLED")}{tab("All", "ALL")}
       </div>
 
@@ -75,31 +77,35 @@ export default async function AdminPartnerEarningsPage({
         <>
         <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[820px]">
-            <thead>
-              <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
-                <th className="px-5 py-3 font-bold">Partner</th>
-                <th className="px-3 py-3 font-bold">Owner</th>
-                <th className="px-3 py-3 font-bold">Plan</th>
-                <th className="px-3 py-3 font-bold">Date</th>
-                <th className="px-3 py-3 font-bold text-right">Amount</th>
-                <th className="px-3 py-3 font-bold">Status</th>
-                <th className="px-5 py-3 font-bold text-right">Action</th>
+            <table className="w-full text-left min-w-[700px]">
+            <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+              <tr>
+                <th className="px-4 py-2 font-bold">Partner</th>
+                <th className="px-4 py-2 font-bold">Owner</th>
+                <th className="px-4 py-2 font-bold">Plan</th>
+                <th className="px-4 py-2 font-bold">Date</th>
+                <th className="px-4 py-2 font-bold text-right">Amount</th>
+                <th className="px-4 py-2 font-bold">Status</th>
+                <th className="px-4 py-2 font-bold text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-50 text-[11px]">
               {earnings.map((e: any) => (
-                <tr key={e.id} className="hover:bg-neutral-50">
-                  <td className="px-5 py-3">
-                    <div className="font-semibold text-neutral-900">{e.partner.user.name}</div>
-                    <div className="text-xs text-neutral-400 tracking-widest">{e.partner.partnerCode}</div>
+                <tr key={e.id} className="hover:bg-neutral-50/70 transition-colors group">
+                  <td className="px-4 py-2">
+                    <div className="font-bold text-neutral-900">{e.partner.user.name}</div>
+                    <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{e.partner.partnerCode}</div>
                   </td>
-                  <td className="px-3 py-3 text-neutral-600 max-w-[180px] truncate">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
-                  <td className="px-3 py-3 text-neutral-600">{e.planNameSnapshot ?? "—"}</td>
-                  <td className="px-3 py-3 text-neutral-500">{fmtDate(e.createdAt)}</td>
-                  <td className="px-3 py-3 text-right font-bold text-neutral-900">{inr(e.amount)}</td>
-                  <td className="px-3 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-md ${statusStyle[e.status]}`}>{e.status}</span></td>
-                  <td className="px-5 py-3"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} /></td>
+                  <td className="px-4 py-2 text-neutral-600 max-w-[150px] truncate font-medium">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
+                  <td className="px-4 py-2 text-neutral-600 font-medium">{e.planNameSnapshot ?? "—"}</td>
+                  <td className="px-4 py-2 text-neutral-500 font-medium">{fmtDate(e.createdAt)}</td>
+                  <td className="px-4 py-2 text-right font-extrabold text-neutral-900">{inr(e.amount)}</td>
+                  <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${statusStyle[e.status]}`}>{e.status}</span></td>
+                  <td className="px-4 py-2 text-right">
+                    <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
+                      <AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} />
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -146,25 +152,25 @@ export default async function AdminPartnerEarningsPage({
 
       {/* Pagination */}
       {totalCount > pageSize && (
-        <div className="flex items-center justify-between bg-white border border-neutral-200/80 rounded-2xl px-5 py-3">
-          <span className="text-xs text-neutral-500 font-medium">
-            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of {totalCount} earnings
-          </span>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between mt-4 px-2">
+          <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+            Showing <span className="font-bold">{(page - 1) * pageSize + 1}</span>–<span className="font-bold">{Math.min(page * pageSize, totalCount)}</span> of <span className="font-bold">{totalCount}</span> earnings
+          </div>
+          <div className="flex gap-1">
             {page > 1 && (
               <a
                 href={`?status=${status}&page=${page - 1}`}
-                className="px-3 py-1.5 text-xs font-bold border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider"
               >
-                ← Prev
+                Prev
               </a>
             )}
             {page < Math.ceil(totalCount / pageSize) && (
               <a
                 href={`?status=${status}&page=${page + 1}`}
-                className="px-3 py-1.5 text-xs font-bold border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider"
               >
-                Next →
+                Next
               </a>
             )}
           </div>

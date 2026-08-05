@@ -87,24 +87,21 @@ export default function AdminUsersPage() {
   if (!data) return <div className="p-8 text-center text-red-500">Access Denied</div>;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck size={22} />
-              <h1 className="text-2xl font-extrabold">SaaS Client Management</h1>
-            </div>
-            <p className="text-neutral-300 text-sm">Manage PG owner trials, active subscriptions, and impersonate accounts for support.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <div className="flex items-center gap-2 mb-0.5">
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">SaaS Client Management</h1>
           </div>
-          <button
-            onClick={() => fetchData()}
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-colors shrink-0"
-          >
-            <RefreshCcw size={14} /> Refresh
-          </button>
+          <p className="text-neutral-500 text-xs font-medium">Manage PG owner trials, active subscriptions, and impersonate accounts.</p>
         </div>
+        <button
+          onClick={() => fetchData()}
+          className="inline-flex items-center gap-2 h-8 px-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-colors shrink-0 shadow-sm cursor-pointer"
+        >
+          <RefreshCcw size={12} /> Refresh
+        </button>
       </div>
 
       {/* Stats */}
@@ -115,24 +112,23 @@ export default function AdminUsersPage() {
           { label: "Active Tenants (CRM)", value: data.stats.totalTenants, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50" },
           { label: "Total Platform Leads", value: data.stats.totalLeads, icon: MousePointerClick, color: "text-amber-600", bg: "bg-amber-50" },
         ].map((s, i) => (
-          <div key={i} className="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${s.bg}`}>
-              <s.icon size={24} className={s.color} />
+          <div key={i} className="bg-white/60 backdrop-blur-md p-3.5 rounded-2xl border border-neutral-200/60 shadow-sm flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${s.bg}`}>
+              <s.icon size={16} className={s.color} />
             </div>
             <div>
-              <div className="text-2xl font-extrabold text-neutral-900">{s.value}</div>
-              <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">{s.label}</div>
+              <div className="text-xl font-black text-neutral-900 leading-none">{s.value}</div>
+              <div className="text-[10px] font-extrabold text-neutral-500 mt-1 uppercase tracking-wider">{s.label}</div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Owners Table */}
-      <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-neutral-200 bg-neutral-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-neutral-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-neutral-900">Registered PG Owners (Clients)</h2>
-            <p className="text-sm text-neutral-500">Manage trials, subscriptions, and perform account impersonations.</p>
+            <h2 className="text-[13px] font-extrabold text-neutral-900 uppercase tracking-wide">Registered Owners</h2>
           </div>
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <input 
@@ -140,108 +136,106 @@ export default function AdminUsersPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search by name, email..."
-              className="px-3 py-2 border border-neutral-200 rounded-lg text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-1.5 border border-neutral-200 rounded-lg text-xs w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 cursor-pointer">
+            <button type="submit" className="px-3 py-1.5 bg-neutral-900 text-white rounded-lg text-xs font-bold hover:bg-neutral-800 cursor-pointer">
               Search
             </button>
           </form>
         </div>
         
         <div className="overflow-x-auto hidden md:block">
-          <table className="w-full text-sm text-left min-w-[800px]">
-            <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase border-b border-neutral-200">
+          <table className="w-full text-left min-w-[700px]">
+            <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
               <tr>
-                <th className="px-6 py-4 font-semibold">Owner</th>
-                <th className="px-6 py-4 font-semibold text-center">PGs</th>
-                <th className="px-6 py-4 font-semibold text-center">Tenants</th>
-                <th className="px-6 py-4 font-semibold text-center">Leads</th>
-                <th className="px-6 py-4 font-semibold">SaaS Status</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-4 py-2 font-bold">Owner</th>
+                <th className="px-4 py-2 font-bold text-center">PGs</th>
+                <th className="px-4 py-2 font-bold text-center">Tenants</th>
+                <th className="px-4 py-2 font-bold text-center">Leads</th>
+                <th className="px-4 py-2 font-bold">SaaS Status</th>
+                <th className="px-4 py-2 font-bold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-50 text-[11px]">
               {data.owners.map((o: any) => (
-                <tr key={o.id} className="hover:bg-neutral-50 transition-colors">
-                  <td className="px-6 py-4">
+                <tr key={o.id} className="hover:bg-neutral-50/70 transition-colors group">
+                  <td className="px-4 py-2">
                     <a href={`/dashboard/admin/users/${o.id}`} className="font-bold text-neutral-900 hover:text-violet-700 transition-colors">
                       {o.name}
                     </a>
-                    <div className="text-xs text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
-                    {/* Partner-sourced owners carry a commission on every payment —
-                        the admin needs to see that before touching their plan. */}
+                    <div className="text-[10px] text-neutral-500">{o.phone || "No phone"} · {o.email}</div>
                     {o.partner && (
                       <a
                         href={`/dashboard/admin/partners/${o.partner.id}`}
-                        className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 hover:bg-violet-200 tracking-wide"
+                        className="inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 hover:bg-violet-200 tracking-wide uppercase"
                       >
                         Partner · {o.partner.partnerCode}
                       </a>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-center font-semibold text-neutral-700">{o.pgCount}</td>
-                  <td className="px-6 py-4 text-center font-semibold text-neutral-700">{o.tenantCount}</td>
-                  <td className="px-6 py-4 text-center font-semibold text-neutral-700">{o.leadCount}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{o.pgCount}</td>
+                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{o.tenantCount}</td>
+                  <td className="px-4 py-2 text-center font-bold text-neutral-700">{o.leadCount}</td>
+                  <td className="px-4 py-2">
                     {o.status === "FREE_TRIAL" && (
                       <div>
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-200 uppercase tracking-wider">
                           Active Trial
                         </span>
-                        <div className="text-[10px] text-neutral-500 mt-1">Ends: {new Date(o.trialEndDate).toLocaleDateString()}</div>
+                        <div className="text-[9px] text-neutral-400 font-bold mt-0.5">Ends: {new Date(o.trialEndDate).toLocaleDateString()}</div>
                       </div>
                     )}
                     {o.status === "PREMIUM" && (
                       <div>
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase tracking-wider">
                           Premium Active
                         </span>
-                        <div className="text-[10px] text-neutral-500 mt-1">Ends: {new Date(o.subscriptionEnd).toLocaleDateString()}</div>
+                        <div className="text-[9px] text-neutral-400 font-bold mt-0.5">Ends: {new Date(o.subscriptionEnd).toLocaleDateString()}</div>
                       </div>
                     )}
                     {o.status === "EXPIRED" && (
                       <div>
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-red-100 text-red-800 border border-red-200">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-100 text-red-800 border border-red-200 uppercase tracking-wider">
                           Trial Expired
                         </span>
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-4 py-2 text-right">
+                    <div className="flex items-center justify-end gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => handleImpersonate(o.id, o.name)}
-                        className="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 border border-orange-200 hover:bg-orange-200 transition"
+                        className="cursor-pointer text-[10px] font-bold px-2 py-1 rounded-md bg-orange-100 text-orange-700 hover:bg-orange-200 transition uppercase tracking-wider"
                       >
                         Login As
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition"
+                        className="cursor-pointer text-[10px] font-bold px-2 py-1 rounded-md bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition uppercase tracking-wider"
                       >
-                        +7D Trial
+                        +7D
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "activate_plan")} 
-                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                        className="cursor-pointer text-[10px] font-bold px-2 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition uppercase tracking-wider"
                       >
-                        Activate Pro
+                        Pro
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "delete")} 
-                        className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition"
+                        className="cursor-pointer text-[10px] font-bold px-2 py-1 rounded-md bg-red-100 text-red-700 hover:bg-red-200 transition uppercase tracking-wider"
                       >
-                        Delete
+                        Del
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
               {data.owners.length === 0 && (
-                <tr><td colSpan={6} className="px-6 py-8 text-center text-neutral-500">No PG owners found.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-6 text-center text-neutral-500 text-xs">No PG owners found.</td></tr>
               )}
             </tbody>
           </table>
@@ -334,22 +328,22 @@ export default function AdminUsersPage() {
         
         {/* Pagination Controls */}
         {data.pagination && data.pagination.totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-neutral-200 flex items-center justify-between">
-            <div className="text-sm text-neutral-500">
-              Showing page <span className="font-bold">{data.pagination.currentPage}</span> of <span className="font-bold">{data.pagination.totalPages}</span> (Total: {data.pagination.totalCount})
+          <div className="px-4 py-2 border-t border-neutral-100 flex items-center justify-between">
+            <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+              Showing <span className="font-black text-neutral-600">{data.pagination.currentPage}</span> of <span className="font-black text-neutral-600">{data.pagination.totalPages}</span> (Total: {data.pagination.totalCount})
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <button 
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={data.pagination.currentPage === 1}
-                className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-2 py-1 border border-neutral-200 rounded-md text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer uppercase tracking-wider"
               >
-                Previous
+                Prev
               </button>
               <button 
                 onClick={() => setPage(p => Math.min(data.pagination.totalPages, p + 1))}
                 disabled={data.pagination.currentPage === data.pagination.totalPages}
-                className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-2 py-1 border border-neutral-200 rounded-md text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer uppercase tracking-wider"
               >
                 Next
               </button>

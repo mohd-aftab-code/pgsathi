@@ -84,58 +84,54 @@ export default async function AdminReportsPage() {
   const maxListings = Math.max(...chartData.map((d) => d.listings), 1);
 
   return (
-    <div className="space-y-6">
-
+    <div className="space-y-4">
       {/* Header */}
-      <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-xl font-extrabold mb-0.5">Analytics & Reports</h1>
-            <p className="text-neutral-400 text-xs">Platform-wide metrics — {format(now, "MMMM yyyy")}</p>
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <a
-              href="/api/admin/reports/export?type=users"
-              className="text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5"
-            >
-              Export Users CSV
-            </a>
-            <a
-              href="/api/admin/reports/export?type=listings"
-              className="text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5"
-            >
-              Export Listings CSV
-            </a>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Analytics & Reports</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Platform-wide metrics — {format(now, "MMMM yyyy")}</p>
+        </div>
+        <div className="flex gap-1.5 flex-wrap">
+          <a
+            href="/api/admin/reports/export?type=users"
+            className="h-8 px-3 rounded-lg bg-white border border-neutral-200 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            Export Users CSV
+          </a>
+          <a
+            href="/api/admin/reports/export?type=listings"
+            className="h-8 px-3 rounded-lg bg-white border border-neutral-200 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            Export Listings CSV
+          </a>
         </div>
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Total Users", value: totalUsers, sub: `${totalOwners} owners · ${totalTenants} tenants`, icon: Users, color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
-          { label: "Total PGs", value: totalListings, sub: `${activeListings} active · ${pendingListings} pending`, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
-          { label: "Active Revenue", value: inr(totalRevenue), sub: `${subscriptions.length} active plans`, icon: IndianRupee, color: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
-          { label: "Total Leads", value: totalLeads.toLocaleString(), sub: `${totalReviews} platform reviews`, icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
+          { label: "Total Users", value: totalUsers, sub: `${totalOwners} owners · ${totalTenants} tenants`, icon: Users, color: "text-blue-600", bg: "bg-blue-50/50 border-blue-200/50" },
+          { label: "Total PGs", value: totalListings, sub: `${activeListings} active · ${pendingListings} pending`, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50/50 border-emerald-200/50" },
+          { label: "Active Revenue", value: inr(totalRevenue), sub: `${subscriptions.length} active plans`, icon: IndianRupee, color: "text-violet-600", bg: "bg-violet-50/50 border-violet-200/50" },
+          { label: "Total Leads", value: totalLeads.toLocaleString(), sub: `${totalReviews} platform reviews`, icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50/50 border-amber-200/50" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-200/80">
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 rounded-xl border ${s.bg}`}>
-                <s.icon size={18} className={s.color} />
-              </div>
+          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border ${s.bg}`}>
+            <div className="flex items-start justify-between mb-2">
+              <div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">{s.label}</div>
+              <div className={`p-1.5 rounded-lg bg-white border ${s.bg} bg-opacity-50`}><s.icon size={12} className={s.color} /></div>
             </div>
-            <div className="text-2xl font-black text-neutral-900">{s.value}</div>
-            <div className="text-xs font-medium text-neutral-500 mt-0.5">{s.label}</div>
-            <div className="text-[11px] text-neutral-400 mt-1">{s.sub}</div>
+            <div className="text-2xl font-black text-neutral-900 leading-none">{s.value}</div>
+            <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
           </div>
         ))}
       </div>
 
       {/* Listing Status Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
-            <Building2 size={15} className="text-violet-600" /> Listing Status Breakdown
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <Building2 size={12} className="text-violet-600" /> Listing Status Breakdown
           </h2>
           <div className="space-y-3">
             {[
@@ -167,9 +163,9 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* Subscription / Plan Distribution */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
-            <IndianRupee size={15} className="text-violet-600" /> Subscription Breakdown
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <IndianRupee size={12} className="text-violet-600" /> Subscription Breakdown
           </h2>
           {Object.keys(planDist).length === 0 ? (
             <div className="text-center py-8 text-neutral-400 text-sm">No active subscriptions</div>
@@ -206,9 +202,9 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* User Breakdown */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-4 flex items-center gap-2">
-            <Users size={15} className="text-blue-600" /> User Breakdown
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <Users size={12} className="text-blue-600" /> User Breakdown
           </h2>
           <div className="space-y-3">
             {[
@@ -237,10 +233,10 @@ export default async function AdminReportsPage() {
       {/* Monthly Trend Charts (bar chart using CSS) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* New Users */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-1">New Users / Month</h2>
-          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
-          <div className="flex items-end gap-2 h-28">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">New Users / Month</h2>
+          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+          <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
                 <span className="text-[9px] font-bold text-blue-600">{d.users}</span>
@@ -257,10 +253,10 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* New Leads */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-1">Leads / Month</h2>
-          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
-          <div className="flex items-end gap-2 h-28">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">Leads / Month</h2>
+          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+          <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
                 <span className="text-[9px] font-bold text-amber-600">{d.leads}</span>
@@ -277,10 +273,10 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* New Listings */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-200/80">
-          <h2 className="text-sm font-bold text-neutral-900 mb-1">New PGs Added / Month</h2>
-          <p className="text-xs text-neutral-400 mb-4">Last 6 months</p>
-          <div className="flex items-end gap-2 h-28">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
+          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">New PGs Added / Month</h2>
+          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+          <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
                 <span className="text-[9px] font-bold text-emerald-600">{d.listings}</span>
@@ -298,35 +294,35 @@ export default async function AdminReportsPage() {
       </div>
 
       {/* City-wise PG Distribution */}
-      <div className="bg-white rounded-2xl shadow-sm border border-neutral-200/80 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
-          <div className="flex items-center gap-2">
-            <MapPin size={15} className="text-violet-600" />
-            <h2 className="text-sm font-bold text-neutral-900">Top Cities by PG Count</h2>
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100/60">
+          <div className="flex items-center gap-1.5">
+            <MapPin size={12} className="text-violet-600" />
+            <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest">Top Cities by PG Count</h2>
           </div>
-          <Link href="/dashboard/admin/cities" className="text-xs font-bold text-violet-600 hover:underline">
+          <Link href="/dashboard/admin/cities" className="text-[10px] font-bold text-violet-600 hover:text-violet-700 uppercase tracking-wider">
             Manage Cities →
           </Link>
         </div>
         <div className="overflow-x-auto hidden md:block">
-          <table className="w-full text-sm">
+          <table className="w-full text-left">
             <thead>
-              <tr className="text-left text-[10px] uppercase tracking-wider text-neutral-400 bg-neutral-50 border-b border-neutral-100">
-                <th className="px-5 py-2.5 font-bold">#</th>
-                <th className="px-3 py-2.5 font-bold">City</th>
-                <th className="px-3 py-2.5 font-bold">State</th>
-                <th className="px-3 py-2.5 font-bold">PGs Listed</th>
-                <th className="px-3 py-2.5 font-bold">Distribution</th>
+              <tr className="text-left text-[9px] uppercase tracking-wider text-neutral-400 bg-neutral-50/50 border-b border-neutral-100/60">
+                <th className="px-4 py-2 font-bold">#</th>
+                <th className="px-4 py-2 font-bold">City</th>
+                <th className="px-4 py-2 font-bold">State</th>
+                <th className="px-4 py-2 font-bold">PGs Listed</th>
+                <th className="px-4 py-2 font-bold">Distribution</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-50">
+            <tbody className="divide-y divide-neutral-50/60 text-[11px]">
               {cityCounts.map((city, i) => (
                 <tr key={city.name} className="hover:bg-neutral-50/70 transition-colors">
-                  <td className="px-5 py-3 text-xs font-bold text-neutral-400">#{i + 1}</td>
-                  <td className="px-3 py-3 font-semibold text-neutral-800 text-sm">{city.name}</td>
-                  <td className="px-3 py-3 text-xs text-neutral-500">{city.state}</td>
-                  <td className="px-3 py-3">
-                    <span className="text-sm font-black text-violet-700">{city._count.listings}</span>
+                  <td className="px-4 py-2 font-bold text-neutral-400">#{i + 1}</td>
+                  <td className="px-4 py-2 font-bold text-neutral-900">{city.name}</td>
+                  <td className="px-4 py-2 font-medium text-neutral-500">{city.state}</td>
+                  <td className="px-4 py-2">
+                    <span className="text-[11px] font-black text-violet-700">{city._count.listings}</span>
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">

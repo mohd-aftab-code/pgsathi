@@ -76,8 +76,8 @@ export default async function AdminAuditLogsPage({
   const tab = (label: string, val: string) => (
     <Link
       href={val ? `/dashboard/admin/audit-logs?entity=${val}` : "/dashboard/admin/audit-logs"}
-      className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center ${
-        entity === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+      className={`h-8 px-3 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${
+        entity === val ? "bg-neutral-900 text-white" : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
       }`}
     >
       {label}
@@ -85,17 +85,17 @@ export default async function AdminAuditLogsPage({
   );
 
   return (
-    <div className="space-y-5">
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex items-center gap-2 mb-1">
-          <ShieldAlert size={22} /> <h1 className="text-2xl font-extrabold">Audit Logs</h1>
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Audit Logs</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">
+            Har money aur partner action ka record — kisne, kab, kya se kya kiya. {total} entries.
+          </p>
         </div>
-        <p className="text-neutral-300 text-sm">
-          Har money aur partner action ka record — kisne, kab, kya se kya kiya. {total} entries.
-        </p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {tab("All", "")}
         {tab("Earnings", "PartnerEarning")}
         {tab("Payouts", "PartnerPayout")}
@@ -108,35 +108,35 @@ export default async function AdminAuditLogsPage({
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm min-w-[820px]">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
-                  <th className="px-5 py-3 font-bold">When</th>
-                  <th className="px-3 py-3 font-bold">Admin</th>
-                  <th className="px-3 py-3 font-bold">Action</th>
-                  <th className="px-3 py-3 font-bold">Entity</th>
-                  <th className="px-5 py-3 font-bold">Before → After</th>
+              <table className="w-full text-left min-w-[800px]">
+              <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+                <tr>
+                  <th className="px-4 py-2 font-bold">When</th>
+                  <th className="px-4 py-2 font-bold">Admin</th>
+                  <th className="px-4 py-2 font-bold">Action</th>
+                  <th className="px-4 py-2 font-bold">Entity</th>
+                  <th className="px-4 py-2 font-bold">Before → After</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-50 text-[11px]">
                 {logs.map((l) => (
-                  <tr key={l.id} className="hover:bg-neutral-50 align-top">
-                    <td className="px-5 py-3 text-neutral-500 whitespace-nowrap">{fmtDateTime(l.createdAt)}</td>
-                    <td className="px-3 py-3 text-neutral-800">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
-                    <td className="px-3 py-3">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${actionStyle(l.action)}`}>
+                  <tr key={l.id} className="hover:bg-neutral-50/70 align-top transition-colors">
+                    <td className="px-4 py-2 text-neutral-500 whitespace-nowrap font-medium">{fmtDateTime(l.createdAt)}</td>
+                    <td className="px-4 py-2 text-neutral-800 font-bold">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
+                    <td className="px-4 py-2">
+                      <span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${actionStyle(l.action)}`}>
                         {ACTION_LABEL[l.action] ?? l.action}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-neutral-600 whitespace-nowrap">
+                    <td className="px-4 py-2 text-neutral-600 whitespace-nowrap font-bold text-[9px] uppercase tracking-wider">
                       {l.entity ? `${l.entity}${l.entityId ? ` #${l.entityId}` : ""}` : "—"}
                     </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-start gap-2">
+                    <td className="px-4 py-2">
+                      <div className="flex items-start gap-1.5">
                         <Snapshot data={l.before} tone="before" />
-                        <ArrowRight size={13} className="text-neutral-300 shrink-0 mt-0.5" />
+                        <ArrowRight size={10} className="text-neutral-400 shrink-0 mt-0.5" />
                         <Snapshot data={l.after} tone="after" />
                       </div>
                     </td>
@@ -183,20 +183,20 @@ export default async function AdminAuditLogsPage({
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-neutral-500">Page {page} of {totalPages}</span>
-              <div className="flex gap-2">
+            <div className="flex items-center justify-between mt-4 px-2">
+              <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Page <span className="font-bold">{page}</span> of <span className="font-bold">{totalPages}</span></span>
+              <div className="flex gap-1">
                 <Link
                   href={`/dashboard/admin/audit-logs?${entity ? `entity=${entity}&` : ""}page=${page - 1}`}
                   aria-disabled={page <= 1}
-                  className={`h-9 px-3 rounded-xl border border-neutral-200 text-sm font-semibold inline-flex items-center ${page <= 1 ? "opacity-40 pointer-events-none" : "hover:bg-neutral-50"}`}
+                  className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
                 >
-                  Previous
+                  Prev
                 </Link>
                 <Link
                   href={`/dashboard/admin/audit-logs?${entity ? `entity=${entity}&` : ""}page=${page + 1}`}
                   aria-disabled={page >= totalPages}
-                  className={`h-9 px-3 rounded-xl border border-neutral-200 text-sm font-semibold inline-flex items-center ${page >= totalPages ? "opacity-40 pointer-events-none" : "hover:bg-neutral-50"}`}
+                  className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
                 >
                   Next
                 </Link>

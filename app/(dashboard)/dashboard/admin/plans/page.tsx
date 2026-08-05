@@ -165,15 +165,17 @@ export default function AdminPlansPage() {
   };
 
   return (
-    <div>
-      <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        <h1 className="text-2xl font-extrabold mb-1 relative z-10 text-white">Subscription Plans</h1>
-        <p className="text-neutral-300 text-sm relative z-10">Manage pricing tiers for PG Owners.</p>
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Subscription Plans</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Manage pricing tiers for PG Owners.</p>
+        </div>
         <button 
           onClick={() => handleOpenForm()}
-          className="cursor-pointer mt-6 bg-white text-neutral-900 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-100 transition-colors"
+          className="cursor-pointer inline-flex items-center gap-2 h-8 px-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-colors shrink-0 shadow-sm"
         >
-          <Plus size={18} /> Add New Plan
+          <Plus size={14} /> Add Plan
         </button>
       </div>
 
@@ -416,36 +418,36 @@ export default function AdminPlansPage() {
       {loading ? (
         <div className="p-16 flex justify-center"><Loader2 size={32} className="animate-spin text-primary-500" /></div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {plans.map(plan => (
-            <div key={plan.id} className={`bg-white flex flex-col rounded-3xl p-5 sm:p-6 border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200'}`}>
-              <div className="flex justify-between items-start mb-4">
+            <div key={plan.id} className={`bg-white/60 backdrop-blur-md flex flex-col rounded-2xl p-4 sm:p-5 border shadow-sm ${!plan.isActive ? 'opacity-60 grayscale' : 'border-neutral-200/60 hover:border-violet-300 hover:shadow-md transition-all'}`}>
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-extrabold text-lg sm:text-xl text-neutral-900 leading-tight">{plan.name}</h3>
-                  <p className="text-[10px] sm:text-xs font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{plan.slug}</p>
+                  <h3 className="font-black text-lg text-neutral-900 leading-tight">{plan.name}</h3>
+                  <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{plan.slug}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-xl sm:text-2xl font-black text-primary-600">₹{plan.price}</div>
-                  <div className="text-[10px] sm:text-xs text-neutral-500">/ month</div>
+                  <div className="text-xl font-black text-violet-600">₹{plan.price}</div>
+                  <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">/ month</div>
                 </div>
               </div>
-              <div className="space-y-2 mb-5 text-sm text-neutral-600">
-                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxListings === -1 ? 'Unlimited' : `Up to ${plan.maxListings}`} PGs</div>
-                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxTenants === -1 ? 'Unlimited' : `Up to ${plan.maxTenants}`} Tenants</div>
-                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> {plan.maxPhotos} Photos</div>
+              <div className="space-y-1.5 mb-4 text-[11px] font-bold text-neutral-600">
+                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxListings === -1 ? 'Unlimited' : `Up to ${plan.maxListings}`} PGs</div>
+                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxTenants === -1 ? 'Unlimited' : `Up to ${plan.maxTenants}`} Tenants</div>
+                <div className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-500" /> {plan.maxPhotos} Photos</div>
                 {plan.partnerCommissionType !== 'NONE' && (
-                  <div className="flex items-center gap-2 font-medium text-primary-700 bg-primary-50 dark:bg-primary-950/40 p-1.5 rounded-lg w-max pr-3">
-                    <Handshake size={16} className="text-primary-600" /> 
+                  <div className="flex items-center gap-1.5 font-extrabold text-violet-700 bg-violet-50 px-2 py-1 rounded-md w-max">
+                    <Handshake size={12} className="text-violet-600" /> 
                     Partner: {plan.partnerCommissionType === 'PERCENT' ? `${plan.partnerCommissionValue}%` : `₹${plan.partnerCommissionValue}`}
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 pt-4 border-t border-neutral-100 mt-auto">
-                <button onClick={() => handleOpenForm(plan)} className="cursor-pointer flex-1 p-2 bg-blue-50 text-blue-600 rounded-lg font-semibold hover:bg-blue-100 flex justify-center"><Edit size={18} /></button>
-                <button onClick={() => toggleStatus(plan)} className={`cursor-pointer flex-1 p-2 rounded-lg font-semibold flex justify-center ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
-                  {plan.isActive ? <PowerOff size={18} /> : <Power size={18} />}
+              <div className="flex items-center gap-1.5 pt-3 border-t border-neutral-100 mt-auto">
+                <button onClick={() => handleOpenForm(plan)} className="cursor-pointer flex-1 p-1.5 bg-blue-50 text-blue-600 rounded-md font-bold hover:bg-blue-100 flex justify-center transition-colors"><Edit size={14} /></button>
+                <button onClick={() => toggleStatus(plan)} className={`cursor-pointer flex-1 p-1.5 rounded-md font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                  {plan.isActive ? <PowerOff size={14} /> : <Power size={14} />}
                 </button>
-                <button onClick={() => handleDelete(plan.id)} className="cursor-pointer flex-1 p-2 bg-primary-50 text-primary-600 rounded-lg font-semibold hover:bg-primary-100 flex justify-center"><Trash2 size={18} /></button>
+                <button onClick={() => handleDelete(plan.id)} className="cursor-pointer flex-1 p-1.5 bg-red-50 text-red-600 rounded-md font-bold hover:bg-red-100 flex justify-center transition-colors"><Trash2 size={14} /></button>
               </div>
             </div>
           ))}

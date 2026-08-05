@@ -78,153 +78,152 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
-
+    <div className="space-y-4 max-w-3xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-xl font-extrabold text-neutral-900">Global Settings</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">Platform configuration for PGSathi admin.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Global Settings</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Platform configuration for PGSathi admin.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <button
             onClick={load}
-            className="p-2 bg-white border border-neutral-200 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 transition-colors"
+            className="h-8 w-8 flex items-center justify-center bg-white border border-neutral-200 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 hover:border-neutral-300 transition-colors shadow-sm"
           >
-            <RefreshCcw size={15} />
+            <RefreshCcw size={14} />
           </button>
           <button
             onClick={save}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+            className="h-8 px-4 flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors shadow-sm"
           >
-            {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
-            {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
+            {saving ? <Loader2 size={12} className="animate-spin" /> : saved ? <CheckCircle2 size={12} /> : <Save size={12} />}
+            {saving ? "Saving..." : saved ? "Saved!" : "Save"}
           </button>
         </div>
       </div>
 
       {/* Trial Duration */}
-      <div className="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-sm">
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-neutral-100">
-          <div className="p-2.5 bg-blue-50 border border-blue-100 rounded-xl">
-            <Clock size={17} className="text-blue-600" />
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 sm:p-5 shadow-sm">
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-neutral-100/60">
+          <div className="p-2 bg-blue-50/80 border border-blue-100/60 rounded-lg">
+            <Clock size={14} className="text-blue-600" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-neutral-900">Free Trial Duration</h2>
-            <p className="text-xs text-neutral-500">Naye owners ko kitne din ka free trial milega</p>
+            <h2 className="text-[12px] font-black uppercase tracking-wide text-neutral-900 leading-none">Free Trial Duration</h2>
+            <p className="text-[10px] font-medium text-neutral-500 mt-0.5">Naye owners ko kitne din ka free trial milega</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
-            <label className="text-xs font-semibold text-neutral-600 mb-2 block">Trial Days</label>
+            <label className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-500 mb-1.5 block">Trial Days</label>
             <input
               type="number"
               min={1}
               max={90}
               value={settings.trialDays}
               onChange={(e) => set("trialDays", parseInt(e.target.value) || 14)}
-              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full px-3 h-8 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
             />
           </div>
           <div className="flex-1">
-            <label className="text-xs font-semibold text-neutral-600 mb-2 block">Default Plan Slug</label>
+            <label className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-500 mb-1.5 block">Default Plan Slug</label>
             <input
               type="text"
               value={settings.defaultTrialPlanSlug}
               onChange={(e) => set("defaultTrialPlanSlug", e.target.value)}
               placeholder="starter"
-              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full px-3 h-8 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
             />
           </div>
         </div>
-        <p className="text-[11px] text-neutral-400 mt-2">
-          Currently: <strong className="text-neutral-600">{settings.trialDays} days</strong> free trial on <strong className="text-neutral-600">{settings.defaultTrialPlanSlug}</strong> plan
+        <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-400 mt-2.5">
+          Currently: <strong className="text-neutral-700">{settings.trialDays} days</strong> free trial on <strong className="text-neutral-700">{settings.defaultTrialPlanSlug}</strong> plan
         </p>
       </div>
 
       {/* Announcement Banner */}
-      <div className="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-sm">
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-neutral-100">
-          <div className="p-2.5 bg-amber-50 border border-amber-100 rounded-xl">
-            <Bell size={17} className="text-amber-600" />
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 sm:p-5 shadow-sm">
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-neutral-100/60">
+          <div className="p-2 bg-amber-50/80 border border-amber-100/60 rounded-lg">
+            <Bell size={14} className="text-amber-600" />
           </div>
           <div className="flex-1">
-            <h2 className="text-sm font-bold text-neutral-900">Platform Announcement Banner</h2>
-            <p className="text-xs text-neutral-500">Site-wide message — sabko dikhega dashboard par</p>
+            <h2 className="text-[12px] font-black uppercase tracking-wide text-neutral-900 leading-none">Platform Announcement</h2>
+            <p className="text-[10px] font-medium text-neutral-500 mt-0.5">Site-wide message — sabko dikhega</p>
           </div>
           {/* Toggle */}
           <button
             onClick={() => set("announcementEnabled", !settings.announcementEnabled)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-              settings.announcementEnabled ? "bg-amber-500" : "bg-neutral-200"
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+              settings.announcementEnabled ? "bg-amber-500" : "bg-neutral-300"
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${
-                settings.announcementEnabled ? "translate-x-6" : "translate-x-1"
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform ${
+                settings.announcementEnabled ? "translate-x-4.5" : "translate-x-1"
               }`}
             />
           </button>
         </div>
 
         <div className={settings.announcementEnabled ? "" : "opacity-50 pointer-events-none"}>
-          <label className="text-xs font-semibold text-neutral-600 mb-2 block">Announcement Message</label>
+          <label className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-500 mb-1.5 block">Message</label>
           <textarea
             value={settings.announcementText}
             onChange={(e) => set("announcementText", e.target.value)}
-            placeholder="e.g. PGSathi 2.0 launch ho gaya! Nayi features explore karein."
-            rows={3}
-            className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+            placeholder="e.g. PGSathi 2.0 launch ho gaya!"
+            rows={2}
+            className="w-full px-3 py-2.5 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 resize-none shadow-sm transition-all"
           />
           {settings.announcementEnabled && settings.announcementText && (
-            <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 font-medium">
-              📢 Preview: {settings.announcementText}
+            <div className="mt-2.5 bg-amber-50 border border-amber-200/60 rounded-lg px-3 py-2 text-[10px] text-amber-800 font-bold uppercase tracking-wider">
+              📢 Preview: <span className="font-medium normal-case">{settings.announcementText}</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Maintenance Mode */}
-      <div className={`bg-white rounded-2xl border p-5 shadow-sm transition-colors ${settings.maintenanceMode ? "border-red-200 bg-red-50/30" : "border-neutral-200/80"}`}>
-        <div className="flex items-center gap-3">
-          <div className={`p-2.5 rounded-xl border ${settings.maintenanceMode ? "bg-red-50 border-red-100" : "bg-neutral-50 border-neutral-100"}`}>
-            <Wrench size={17} className={settings.maintenanceMode ? "text-red-600" : "text-neutral-500"} />
+      <div className={`backdrop-blur-md rounded-2xl border p-4 sm:p-5 shadow-sm transition-colors ${settings.maintenanceMode ? "border-red-200/60 bg-red-50/50" : "border-neutral-200/60 bg-white/60"}`}>
+        <div className="flex items-center gap-2.5">
+          <div className={`p-2 rounded-lg border ${settings.maintenanceMode ? "bg-red-100/50 border-red-200/60" : "bg-neutral-50/80 border-neutral-200/60"}`}>
+            <Wrench size={14} className={settings.maintenanceMode ? "text-red-600" : "text-neutral-500"} />
           </div>
           <div className="flex-1">
-            <h2 className="text-sm font-bold text-neutral-900">Maintenance Mode</h2>
-            <p className="text-xs text-neutral-500">Sabhi regular users ko maintenance page dikhegi. Admins still access kar sakte hain.</p>
+            <h2 className="text-[12px] font-black uppercase tracking-wide text-neutral-900 leading-none">Maintenance Mode</h2>
+            <p className="text-[10px] font-medium text-neutral-500 mt-0.5">Sabhi regular users ko maintenance page dikhegi.</p>
           </div>
           <button
             onClick={() => set("maintenanceMode", !settings.maintenanceMode)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-              settings.maintenanceMode ? "bg-red-500" : "bg-neutral-200"
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+              settings.maintenanceMode ? "bg-red-500" : "bg-neutral-300"
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${
-                settings.maintenanceMode ? "translate-x-6" : "translate-x-1"
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform ${
+                settings.maintenanceMode ? "translate-x-4.5" : "translate-x-1"
               }`}
             />
           </button>
         </div>
         {settings.maintenanceMode && (
-          <div className="mt-4 bg-red-100 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-800 font-semibold flex items-center gap-2">
-            <Shield size={14} className="shrink-0" />
-            ⚠️ Warning: Maintenance mode ON karne se platform users access nahi kar payenge!
+          <div className="mt-3 bg-red-50 border border-red-200/60 rounded-lg px-3 py-2 text-[10px] text-red-800 font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <Shield size={12} className="shrink-0" />
+            ⚠️ Users won't be able to access the app
           </div>
         )}
       </div>
 
       {/* Save Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-2">
         <button
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors shadow-md"
+          className="flex items-center gap-1.5 h-9 px-5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-[11px] font-bold uppercase tracking-wider rounded-lg transition-colors shadow-sm"
         >
-          {saving ? <Loader2 size={16} className="animate-spin" /> : saved ? <CheckCircle2 size={16} /> : <Save size={16} />}
-          {saving ? "Saving..." : saved ? "Settings Saved!" : "Save All Settings"}
+          {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
+          {saving ? "Saving..." : saved ? "Settings Saved" : "Save Settings"}
         </button>
       </div>
 

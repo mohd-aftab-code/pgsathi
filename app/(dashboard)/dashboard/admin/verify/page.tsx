@@ -49,9 +49,11 @@ export default async function AdminListingsPage({
 
   return (
     <div>
-      <div className="mb-5 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <h1 className="text-2xl font-extrabold mb-1">Manage Listings</h1>
-        <p className="text-neutral-300 text-sm">Review, approve, edit, and delete PGs across the platform.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Manage Listings</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5">Review, approve, edit, and delete PGs across the platform.</p>
+        </div>
       </div>
 
       {/* Tabs & Search */}
@@ -101,20 +103,19 @@ export default async function AdminListingsPage({
         <AdminListingsTableWrapper listings={listings} currentTab={currentTab} />
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6">
-          <div className="text-sm text-neutral-500">
+        <div className="flex items-center justify-between mt-4 px-2">
+          <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
             Showing <span className="font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-bold">{Math.min(currentPage * pageSize, totalCount)}</span> of <span className="font-bold">{totalCount}</span> PGs
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             {currentPage > 1 && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50">
-                Previous
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+                Prev
               </Link>
             )}
             {currentPage < totalPages && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="px-4 py-2 border border-neutral-200 rounded-lg text-sm font-semibold hover:bg-neutral-50">
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
                 Next
               </Link>
             )}

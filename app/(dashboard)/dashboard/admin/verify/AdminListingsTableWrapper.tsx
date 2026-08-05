@@ -88,39 +88,39 @@ export default function AdminListingsTableWrapper({
       )}
 
       <div className="overflow-x-auto hidden md:block">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
-            <tr className="bg-neutral-50/80 border-b border-neutral-200 text-xs uppercase tracking-wider font-bold text-neutral-700">
-              <th className="py-5 px-6 w-12">
+            <tr className="bg-neutral-50/80 border-b border-neutral-200 text-[10px] uppercase tracking-wider font-bold text-neutral-700">
+              <th className="py-2 px-4 w-10">
                 <input 
                   type="checkbox" 
-                  className="rounded border-neutral-300 w-4 h-4 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                  className="rounded border-neutral-300 w-3 h-3 text-primary-600 focus:ring-primary-500 cursor-pointer"
                   checked={selectedIds.length === listings.length && listings.length > 0}
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="py-5 px-6">PG Details</th>
-              <th className="py-5 px-6">Owner Info</th>
-              <th className="py-5 px-6">Location</th>
-              <th className="py-5 px-6 text-right">Actions</th>
+              <th className="py-2 px-4">PG Details</th>
+              <th className="py-2 px-4">Owner Info</th>
+              <th className="py-2 px-4">Location</th>
+              <th className="py-2 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-sm">
+          <tbody className="text-[11px]">
             {listings.map((listing) => (
               <tr key={listing.id} className={`border-b border-neutral-100 transition-colors group ${selectedIds.includes(listing.id) ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-neutral-50'}`}>
-                <td className="py-4 px-6">
+                <td className="py-2 px-4">
                   <input 
                     type="checkbox" 
-                    className="rounded border-neutral-300 w-4 h-4 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                    className="rounded border-neutral-300 w-3 h-3 text-primary-600 focus:ring-primary-500 cursor-pointer"
                     checked={selectedIds.includes(listing.id)}
                     onChange={() => toggleSelect(listing.id)}
                   />
                 </td>
-                <td className="py-4 px-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="font-extrabold text-neutral-900 text-base">{listing.title}</div>
+                <td className="py-2 px-4">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <div className="font-bold text-neutral-900 text-xs">{listing.title}</div>
                     {listing.hasPendingChanges && (
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded" title="Owner updated this listing after it was verified">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1 py-0.5 rounded" title="Owner updated this listing after it was verified">
                         Updated
                       </span>
                     )}
@@ -129,35 +129,35 @@ export default function AdminListingsTableWrapper({
                     {listing.partner && (
                       <Link
                         href={`/dashboard/admin/partners/${listing.partner.id}`}
-                        className="text-[10px] font-extrabold uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1.5 py-0.5 rounded hover:bg-violet-200 transition-colors"
+                        className="text-[9px] font-bold uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1 py-0.5 rounded hover:bg-violet-200 transition-colors"
                         title={`Registered by partner ${listing.partner.user?.name ?? ""} (${listing.partner.partnerCode})`}
                       >
                         Partner · {listing.partner.partnerCode}
                       </Link>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-neutral-700">
-                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
-                    <span className="bg-neutral-100 px-2 py-1 rounded-md border border-neutral-200">{listing.genderAllowed}</span>
-                    <span className="text-primary-700 font-bold">₹{listing.priceMin}</span>
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-neutral-600">
+                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
+                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">{listing.genderAllowed}</span>
+                    <span className="text-primary-700 font-extrabold">₹{listing.priceMin}</span>
                   </div>
                 </td>
-                <td className="py-4 px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold">
+                <td className="py-2 px-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold text-[10px]">
                       {listing.owner?.name?.charAt(0) || "U"}
                     </div>
                     <div>
-                      <div className="font-bold text-neutral-900">{listing.owner?.name || "Unknown"}</div>
-                      <div className="text-xs text-neutral-500">{listing.owner?.phone || "No phone"}</div>
+                      <div className="font-bold text-neutral-800">{listing.owner?.name || "Unknown"}</div>
+                      <div className="text-[10px] text-neutral-500">{listing.owner?.phone || "No phone"}</div>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-6 text-neutral-600 font-medium">
+                <td className="py-2 px-4 text-neutral-600 font-medium">
                   {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
                 </td>
-                <td className="py-4 px-6 text-right">
-                  <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                <td className="py-2 px-4 text-right">
+                  <div className="flex items-center justify-end gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                     <Link 
                       href={`/pg/${listing.slug}`} 
                       target="_blank"

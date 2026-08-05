@@ -86,28 +86,24 @@ export default async function AdminPayoutCyclePage() {
   });
 
   return (
-    <div className="space-y-5">
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-extrabold mb-1">Payout Cycle</h1>
-            <p className="text-neutral-300 text-sm max-w-2xl">
-              Har mahine yahan se partners ko payment karein. Commission har owner payment par banta hai —
-              approve karne ke baad hi paisa ja sakta hai. Payout pehle <b>PROCESSING</b> banta hai; UTR
-              record karne par hi COMPLETED hota hai.
-            </p>
-            <p className="text-neutral-400 text-xs mt-2">
-              Cycle date: har mahine ki {settings.payoutDayOfMonth} tareekh (agla{" "}
-              {nextPayoutDate(settings.payoutDayOfMonth).toLocaleDateString("en-IN", { day: "numeric", month: "long" })})
-              {" · "}minimum {inr(settings.minPayoutAmount)}
-              {" · "}
-              <Link href="/dashboard/admin/partner-program" className="underline hover:text-white">
-                settings badlein
-              </Link>
-            </p>
-          </div>
-          <BulkPayoutButton />
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Payout Cycle</h1>
+          <p className="text-neutral-500 text-xs font-medium mt-0.5 max-w-2xl">
+            Har mahine yahan se partners ko payment karein. Commission har owner payment par banta hai —
+            approve karne ke baad hi paisa ja sakta hai.
+          </p>
+          <p className="text-neutral-400 text-[10px] font-bold uppercase tracking-wider mt-1.5">
+            Cycle date: {settings.payoutDayOfMonth} (agla {nextPayoutDate(settings.payoutDayOfMonth).toLocaleDateString("en-IN", { day: "numeric", month: "short" })})
+            {" · "}Min {inr(settings.minPayoutAmount)}
+            {" · "}
+            <Link href="/dashboard/admin/partner-program" className="text-violet-600 hover:text-violet-700">
+              Settings
+            </Link>
+          </p>
         </div>
+        <BulkPayoutButton />
       </div>
 
       {/* ── Awaiting UTR ───────────────────────────────────────── */}
@@ -164,18 +160,18 @@ export default async function AdminPayoutCyclePage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, cls: "text-green-600 bg-green-50" },
-          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, cls: "text-amber-600 bg-amber-50" },
-          { label: "Partners", value: String(rows.length), sub: "jinka kuch bakaya hai", Icon: Users, cls: "text-blue-600 bg-blue-50" },
-          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, cls: "text-violet-600 bg-violet-50" },
+          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, cls: "text-emerald-600 bg-emerald-50 border-emerald-200" },
+          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, cls: "text-amber-600 bg-amber-50 border-amber-200" },
+          { label: "Partners", value: String(rows.length), sub: "jinka bakaya hai", Icon: Users, cls: "text-blue-600 bg-blue-50 border-blue-200" },
+          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, cls: "text-violet-600 bg-violet-50 border-violet-200" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl border border-neutral-200 p-4">
-            <div className="flex items-start justify-between mb-2">
-              <span className="text-xs text-neutral-500">{s.label}</span>
-              <div className={`p-1.5 rounded-lg ${s.cls}`}><s.Icon size={14} /></div>
+          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl border ${s.cls} p-3.5 shadow-sm`}>
+            <div className="flex items-start justify-between mb-1.5">
+              <span className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">{s.label}</span>
+              <div className={`p-1.5 rounded-lg ${s.cls} bg-opacity-50`}><s.Icon size={12} /></div>
             </div>
-            <div className="text-xl font-bold text-neutral-900">{s.value}</div>
-            <div className="text-[11px] text-neutral-400">{s.sub}</div>
+            <div className="text-xl font-black text-neutral-900 leading-none">{s.value}</div>
+            <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
           </div>
         ))}
       </div>
@@ -188,49 +184,49 @@ export default async function AdminPayoutCyclePage() {
         </div>
       ) : (
         <>
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden hidden md:block">
+        <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[760px]">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
-                  <th className="px-5 py-3 font-bold">Partner</th>
-                  <th className="px-3 py-3 font-bold text-center">Is mahine</th>
-                  <th className="px-3 py-3 font-bold text-right">Approval baaki</th>
-                  <th className="px-3 py-3 font-bold text-right">Dena hai</th>
-                  <th className="px-3 py-3 font-bold">Pichla payout</th>
-                  <th className="px-5 py-3 font-bold text-right">Action</th>
+            <table className="w-full text-left min-w-[700px]">
+              <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+                <tr>
+                  <th className="px-4 py-2 font-bold">Partner</th>
+                  <th className="px-4 py-2 font-bold text-center">Is mahine</th>
+                  <th className="px-4 py-2 font-bold text-right">Approval baaki</th>
+                  <th className="px-4 py-2 font-bold text-right">Dena hai</th>
+                  <th className="px-4 py-2 font-bold">Pichla payout</th>
+                  <th className="px-4 py-2 font-bold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-50 text-[11px]">
                 {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-neutral-50">
-                    <td className="px-5 py-3">
-                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-semibold text-neutral-900 hover:text-primary-600">
+                  <tr key={r.id} className="hover:bg-neutral-50/70 transition-colors group">
+                    <td className="px-4 py-2">
+                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-neutral-900 hover:text-violet-700 transition-colors">
                         {r.user.name}
                       </Link>
-                      <div className="text-xs text-neutral-400 tracking-widest">{r.partnerCode}</div>
+                      <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
                       {!r.hasPayoutDetails && (
-                        <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
-                          <AlertTriangle size={10} /> UPI/bank nahi bhara
+                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 tracking-wider uppercase">
+                          <AlertTriangle size={10} /> UPI/bank missing
                         </span>
                       )}
                       {r.status !== "APPROVED" && (
-                        <span className="inline-block mt-1 ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-600">
+                        <span className="inline-block mt-0.5 ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-neutral-200 text-neutral-600 tracking-wider uppercase">
                           {r.status}
                         </span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-center text-neutral-600">{r.thisMonthCount}</td>
-                    <td className="px-3 py-3 text-right text-amber-700">
+                    <td className="px-4 py-2 text-center text-neutral-600 font-bold">{r.thisMonthCount}</td>
+                    <td className="px-4 py-2 text-right font-bold text-amber-600">
                       {r.pendingTotal > 0 ? `${inr(r.pendingTotal)} (${r.pendingCount})` : "—"}
                     </td>
-                    <td className="px-3 py-3 text-right font-extrabold text-neutral-900">
+                    <td className="px-4 py-2 text-right font-black text-neutral-900">
                       {r.payableTotal > 0 ? inr(r.payableTotal) : "—"}
                     </td>
-                    <td className="px-3 py-3 text-neutral-500 text-xs">
-                      {r.payouts[0] ? `${inr(r.payouts[0].amount)} · ${fmtDate(r.payouts[0].paidAt)}` : "kabhi nahi"}
+                    <td className="px-4 py-2 text-neutral-500 font-medium">
+                      {r.payouts[0] ? `${inr(r.payouts[0].amount)} · ${fmtDate(r.payouts[0].paidAt)}` : "—"}
                     </td>
-                    <td className="px-5 py-3 text-right">
+                    <td className="px-4 py-2 text-right">
                       <CreatePayoutButton
                         partnerId={r.id}
                         count={r.payableCount}
