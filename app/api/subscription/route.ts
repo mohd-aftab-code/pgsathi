@@ -130,13 +130,11 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
 
-    // 3. Update User Role to OWNER if they were TENANT
-    if (session.user.role === "TENANT") {
-      await db.user.update({
-        where: { id: parseInt(session.user.id) },
-        data: { role: "OWNER" }
-      });
-    }
+    // There used to be a TENANT -> OWNER upgrade here. It is unreachable: the
+    // guard above returns 403 for anyone who is not already an OWNER, so a
+    // TENANT never gets this far. TypeScript flagged the comparison as having no
+    // overlap. Removed rather than kept as dead code — the webhook still does
+    // the upgrade, because payments arriving there have no session to guard.
 
     // 4. Partner commission for THIS payment. Recurring by construction — every
     //    renewal writes a new invoice and earns again; stop renewing and it stops.
