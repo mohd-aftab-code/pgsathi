@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   UserPlus, Loader2, Copy, Check, KeyRound, Building2, Search,
-  ShieldCheck, X, Phone, Plus,
+  ShieldCheck, Phone, Plus,
 } from "lucide-react";
 
 type Owner = {
@@ -48,11 +48,7 @@ export function OwnerManager() {
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [formOpen, setFormOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
   const [issued, setIssued] = useState<Issued>(null);
-  const [form, setForm] = useState({ name: "", phone: "", email: "", city: "" });
 
   async function load() {
     setLoading(true);
@@ -65,27 +61,7 @@ export function OwnerManager() {
   }
   useEffect(() => { load(); }, []);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true); setError("");
-    try {
-      const d = await fetch("/api/partner/owners", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      }).then((r) => r.json());
-      if (!d.success) { setError(d.message || "Owner registration failed"); return; }
-      setFormOpen(false);
-      setForm({ name: "", phone: "", email: "", city: "" });
-      if (d.data?.password) setIssued({ name: d.data.name, phone: d.data.phone, password: d.data.password });
-      else alert(d.message);
-      load();
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setBusy(false);
-    }
-  }
+
 
   async function resetPassword(o: Owner) {
     if (!confirm(`Create new password for ${o.name}? The old one will stop working.`)) return;
@@ -108,15 +84,9 @@ export function OwnerManager() {
         <div>
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">My Owners</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-            Register owners first, then list their PGs. Commission is earned on every payment made by the owner.
+            View all owners registered under your referral.
           </p>
         </div>
-        <button
-          onClick={() => { setFormOpen(true); setError(""); }}
-          className="inline-flex items-center gap-1.5 h-11 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold shadow-lg shadow-primary-500/25 transition-colors"
-        >
-          <UserPlus size={16} /> New Owner
-        </button>
       </div>
 
       {owners.length > 3 && (
@@ -141,7 +111,7 @@ export function OwnerManager() {
           </p>
           {owners.length === 0 && (
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              Start with "New Owner" — after that you can list their PGs.
+              Share your referral link from the Marketing section to add owners.
             </p>
           )}
         </div>
@@ -176,12 +146,6 @@ export function OwnerManager() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
-                <Link
-                  href={`/partner/pgs/new?owner=${o.id}`}
-                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-xs font-bold hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
-                >
-                  <Plus size={14} /> List their PG
-                </Link>
                 <button
                   onClick={() => resetPassword(o)}
                   className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-bold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
@@ -194,46 +158,7 @@ export function OwnerManager() {
         </div>
       )}
 
-      {/* ── Register form ─────────────────────────────────────────────── */}
-      {formOpen && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setFormOpen(false)}>
-          <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
-              <h3 className="font-bold text-neutral-900 dark:text-white">Register New Owner</h3>
-              <button onClick={() => setFormOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"><X size={16} /></button>
-            </div>
-            <form onSubmit={submit} className="p-5 space-y-3">
-              {error && <div className="rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</div>}
-              {[
-                { k: "name", label: "Owner's full name", ph: "e.g. Ramesh Gupta", req: true },
-                { k: "phone", label: "Phone number", ph: "10-digit", req: true },
-                { k: "email", label: "Email (optional)", ph: "owner@example.com", req: false },
-                { k: "city", label: "City (optional)", ph: "e.g. Allahabad", req: false },
-              ].map((f) => (
-                <div key={f.k}>
-                  <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">{f.label}</label>
-                  <input
-                    required={f.req}
-                    value={(form as any)[f.k]}
-                    onChange={(e) => setForm({ ...form, [f.k]: f.k === "phone" ? e.target.value.replace(/\D/g, "").slice(0, 10) : e.target.value })}
-                    placeholder={f.ph}
-                    className="w-full h-11 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-sm text-neutral-900 dark:text-white"
-                  />
-                </div>
-              ))}
-              <p className="text-[11px] text-neutral-400">
-                A password will be generated and shown on screen once — provide this to the owner.
-              </p>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setFormOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 font-bold text-sm text-neutral-700 dark:text-neutral-300">Cancel</button>
-                <button type="submit" disabled={busy} className="flex-1 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {busy ? <><Loader2 size={15} className="animate-spin" /> Creating…</> : "Register"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
 
       {/* ── Credentials, shown once ───────────────────────────────────── */}
       {issued && (

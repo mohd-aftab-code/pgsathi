@@ -21,14 +21,15 @@ const registerSchema = z.object({
   phone: z.string().length(10, "Phone number must be exactly 10 digits").regex(/^\d+$/, "Phone number must contain only digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["TENANT", "OWNER", "PARTNER"]).optional().default("TENANT"),
-  referralCode: z.string().optional()
+  referralCode: z.string().nullable().optional()
 });
 
 export const POST = withErrorHandler(async (req: NextRequest) => {
-  // IP-based rate limit: 5 registrations per hour per IP.
+  // IP-based rate limit: 5 registrations per hour per IP (100 in development).
   // Prevents account spam and phone-number enumeration.
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const rl = await checkRateLimit(`register:${ip}`, 5, 3600);
+  const rateLimitCount = process.env.NODE_ENV === "development" ? 100 : 5;
+  const rl = await checkRateLimit(`register:${ip}`, rateLimitCount, 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { success: false, message: "Too many registration attempts. Please try again later." },

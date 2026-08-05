@@ -130,11 +130,9 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
 
-    // There used to be a TENANT -> OWNER upgrade here. It is unreachable: the
-    // guard above returns 403 for anyone who is not already an OWNER, so a
-    // TENANT never gets this far. TypeScript flagged the comparison as having no
-    // overlap. Removed rather than kept as dead code — the webhook still does
-    // the upgrade, because payments arriving there have no session to guard.
+    // No TENANT -> OWNER upgrade here: the guard above already 403s anyone who
+    // is not an OWNER. The webhook still does it, since payments arriving there
+    // have no session to guard.
 
     // 4. Partner commission for THIS payment. Recurring by construction — every
     //    renewal writes a new invoice and earns again; stop renewing and it stops.

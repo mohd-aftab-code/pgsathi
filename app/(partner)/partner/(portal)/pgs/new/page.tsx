@@ -18,7 +18,7 @@ import { LocationStep, validateLocation } from "@/components/listings/LocationSt
 
 type StepType = 1 | 2 | 3 | 4 | 5;
 const STEPS = [
-  { id: 1, title: "Owner & Room" },
+  { id: 1, title: "Basic Details" },
   { id: 2, title: "Location" },
   { id: 3, title: "PG Details" },
   { id: 4, title: "Amenities" },
@@ -282,7 +282,7 @@ export default function PartnerNewPgPage() {
         <div className="space-y-6">
           <div className={card}>
             <h3 className="text-lg font-black text-neutral-900 dark:text-white mb-5 pb-3 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-2">
-              <User size={18} className="text-primary-500" /> Owner ki details
+              <User size={18} className="text-primary-500" /> Basic Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {prefilled && (

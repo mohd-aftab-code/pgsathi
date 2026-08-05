@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, IndianRupee, FileBarChart, Bell,
   User, Users, Settings, LogOut, X, Plus, LayoutGrid, Megaphone,
-  Target, Trophy
+  Target, Trophy, Package
 } from "lucide-react";
 import { ThemeToggle, applyStoredPartnerTheme } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
@@ -14,9 +14,9 @@ import { PartnerBell } from "./PartnerBell";
 const NAV = [
   { name: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
   { name: "Leads", href: "/partner/leads", icon: Target },
-  { name: "Owners", href: "/partner/owners", icon: Users },
   { name: "My PGs", href: "/partner/pgs", icon: Building2 },
   { name: "Earnings", href: "/partner/earnings", icon: IndianRupee },
+  { name: "Plans", href: "/partner/plans", icon: Package },
   { name: "Reports", href: "/partner/reports", icon: FileBarChart },
   { name: "Marketing", href: "/partner/marketing", icon: Megaphone },
   { name: "Leaderboard", href: "/partner/leaderboard", icon: Trophy },
@@ -36,8 +36,8 @@ const ACCOUNT = [
  * screen the moment an item is inserted into the list above.
  */
 const tab = (href: string) => NAV.find((n) => n.href === href)!;
-const TABS_LEFT = [tab("/partner/dashboard"), tab("/partner/owners")];
-const TABS_RIGHT = [tab("/partner/earnings")];
+const TABS_LEFT = [tab("/partner/dashboard"), tab("/partner/leads")];
+const TABS_RIGHT = [tab("/partner/pgs"), tab("/partner/earnings")];
 
 /**
  * Portal chrome: fixed sidebar on desktop, native-app bottom tab bar on mobile —
@@ -145,7 +145,7 @@ export function PartnerShell({
   const Brand = () => (
     <Link href="/partner/dashboard" className="flex items-center justify-center h-20 px-4 shrink-0 border-b border-neutral-200 dark:border-neutral-800">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logo-vertical.png" alt="PGSathi" className="h-14 w-auto object-contain" />
+            <img src="/partner%20logo.png" alt="PGSathi" className="h-14 w-auto object-contain" />
     </Link>
   );
 
@@ -177,7 +177,7 @@ export function PartnerShell({
             {/* Mobile top app bar: logo + code. Navigation lives in the bottom bar. */}
             <Link href="/partner/dashboard" className="lg:hidden flex items-center gap-2 min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-vertical.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
+              <img src="/partner%20logo.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
               <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
             </Link>
 
