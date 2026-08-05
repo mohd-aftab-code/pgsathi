@@ -4,6 +4,7 @@ import { Clock, XCircle, Ban, Handshake, LogOut } from "lucide-react";
 import { getPartnerContext } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
 import { PartnerShell } from "@/components/partner/PartnerShell";
+import { PartnerLogoutButton } from "@/components/partner/PartnerLogoutButton";
 
 /**
  * Guard for every authenticated Partner Portal page.
@@ -124,12 +125,11 @@ function StatusScreen({
             >
               Support
             </Link>
-            <Link
-              href="/api/auth/signout"
+            <PartnerLogoutButton
               className="flex-1 h-11 leading-[2.75rem] rounded-xl bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 font-bold text-sm hover:opacity-90 transition inline-flex items-center justify-center gap-1.5"
             >
               <LogOut size={15} /> Logout
-            </Link>
+            </PartnerLogoutButton>
           </div>
         </div>
       </div>

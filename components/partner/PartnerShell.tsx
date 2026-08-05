@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle, applyStoredPartnerTheme } from "./ThemeToggle";
 import { PartnerBell } from "./PartnerBell";
+import { PartnerLogoutButton } from "./PartnerLogoutButton";
 
 const NAV = [
   { name: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
@@ -189,14 +190,12 @@ export function PartnerShell({
             <div className="flex items-center gap-2 ml-auto">
               <PartnerBell />
               <ThemeToggle />
-              <Link
-                href="/api/auth/signout"
-                aria-label="Logout"
+              <PartnerLogoutButton
                 className="inline-flex items-center gap-1.5 h-9 px-2.5 sm:px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-sm font-semibold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
               >
                 <LogOut size={15} />
                 <span className="hidden sm:inline">Logout</span>
-              </Link>
+              </PartnerLogoutButton>
             </div>
           </div>
         </header>
@@ -298,12 +297,11 @@ export function PartnerShell({
                 </div>
               ))}
 
-              <Link
-                href="/api/auth/signout"
+              <PartnerLogoutButton
                 className="flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-bold text-sm"
               >
                 <LogOut size={16} /> Logout
-              </Link>
+              </PartnerLogoutButton>
             </div>
           </div>
         </div>

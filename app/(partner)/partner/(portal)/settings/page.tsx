@@ -4,6 +4,7 @@ import { requirePartner } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
 import { whatsappConfigured } from "@/lib/partner-notify";
 import { SettingsForm } from "@/components/partner/ProfileForms";
+import { PartnerLogoutButton } from "@/components/partner/PartnerLogoutButton";
 
 export const metadata = { title: "Settings — Partner | PGSathi" };
 
@@ -47,12 +48,11 @@ export default async function PartnerSettingsPage() {
           >
             Password badlein
           </Link>
-          <Link
-            href="/api/auth/signout"
+          <PartnerLogoutButton
             className="inline-flex items-center gap-1.5 h-11 px-5 rounded-xl border-2 border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/40"
           >
             <LogOut size={15} /> Logout
-          </Link>
+          </PartnerLogoutButton>
         </div>
       </div>
     </div>
