@@ -103,15 +103,15 @@ export default async function AdminAuditLogsPage({
       </div>
 
       {logs.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 py-16 text-center text-neutral-500">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">
           Abhi koi audit entry nahi.
         </div>
       ) : (
         <>
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[800px]">
-              <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+              <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
                 <tr>
                   <th className="px-4 py-2 font-bold">When</th>
                   <th className="px-4 py-2 font-bold">Admin</th>
@@ -122,7 +122,7 @@ export default async function AdminAuditLogsPage({
               </thead>
               <tbody className="divide-y divide-neutral-50 text-[11px]">
                 {logs.map((l) => (
-                  <tr key={l.id} className="hover:bg-neutral-50/70 align-top transition-colors">
+                  <tr key={l.id} className="hover:bg-violet-50/30 align-top transition-colors">
                     <td className="px-4 py-2 text-neutral-500 whitespace-nowrap font-medium">{fmtDateTime(l.createdAt)}</td>
                     <td className="px-4 py-2 text-neutral-800 font-bold">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
                     <td className="px-4 py-2">
@@ -150,10 +150,10 @@ export default async function AdminAuditLogsPage({
           {/* Mobile Cards */}
           <div className="grid grid-cols-1 gap-2 md:hidden">
             {logs.map((l) => (
-              <div key={`mob-${l.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+              <div key={`mob-${l.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
-                    <div className="font-bold text-sm text-neutral-900 truncate">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</div>
+                    <div className="font-bold text-[13px] text-neutral-900 truncate">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</div>
                     <div className="text-[9px] text-neutral-400 font-bold uppercase mt-0.5">{fmtDateTime(l.createdAt)}</div>
                   </div>
                   <div className="shrink-0">

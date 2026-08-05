@@ -202,11 +202,11 @@ export default function AdminCitiesPage() {
         </div>
       ) : (
         <>
-        <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[10px] uppercase tracking-wider text-neutral-400 bg-neutral-50 border-b border-neutral-100">
+                <tr className="text-left text-[10px] uppercase tracking-wider text-neutral-400 bg-neutral-50/40 border-b border-neutral-100/60">
                   <th className="px-5 py-3 font-bold">City</th>
                   <th className="px-3 py-3 font-bold">State</th>
                   <th className="px-3 py-3 font-bold">Slug</th>
@@ -336,7 +336,7 @@ export default function AdminCitiesPage() {
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {filtered.map((city) => (
-            <div key={`mob-${city.id}`} className={`bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2 ${!city.isActive ? "opacity-60" : ""}`}>
+            <div key={`mob-${city.id}`} className={`bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2 ${!city.isActive ? "opacity-60" : ""}`}>
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0 w-full">
                   {editingId === city.id ? (

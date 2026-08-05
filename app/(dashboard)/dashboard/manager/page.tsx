@@ -203,29 +203,29 @@ export default async function ManagerDashboardPage({
       </div>
 
       {/* ── KPI Cards ──────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map((k) => {
           const t = tone[k.color];
           return (
             <Link
               key={k.label}
               href={k.href}
-              className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white/70 backdrop-blur-md rounded-2xl p-3.5 border border-neutral-200/50 shadow-sm hover:shadow hover:-translate-y-0.5 hover:border-violet-200/80 transition-all duration-300 group flex flex-col justify-between"
             >
-              <div className="flex justify-between items-start mb-3">
-                <span className="text-sm font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{k.label}</span>
-                <div className={`p-2 rounded-lg ${t.bg}`}>
-                  <k.icon size={16} className={t.text} />
+              <div className="flex justify-between items-start mb-2.5 gap-2">
+                <span className="text-[10px] font-extrabold text-neutral-500 group-hover:text-neutral-700 transition-colors uppercase tracking-wider">{k.label}</span>
+                <div className={`p-1.5 rounded-lg shrink-0 ${t.bg}`}>
+                  <k.icon size={13} className={t.text} />
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-neutral-900">{k.value}</div>
+                <div className="text-xl md:text-2xl font-black text-neutral-900 truncate tracking-tight">{k.value}</div>
                 {k.bar !== null && (
                   <div className="mt-2 h-1.5 w-full rounded-full bg-neutral-100 overflow-hidden">
                     <div className={`h-full rounded-full ${t.bar}`} style={{ width: `${Math.min(100, k.bar)}%` }} />
                   </div>
                 )}
-                <div className="text-xs text-neutral-400 mt-1.5">{k.sub}</div>
+                <div className="text-[10px] text-neutral-400 mt-1.5 font-medium line-clamp-1">{k.sub}</div>
               </div>
             </Link>
           );
@@ -233,49 +233,50 @@ export default async function ManagerDashboardPage({
       </div>
 
       {/* ── Revenue & Analytics (Owner-Only) ───────────────────── */}
-      <div className="relative rounded-3xl border border-neutral-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
+      {/* ── Revenue & Analytics (Owner-Only) ───────────────────── */}
+      <div className="relative rounded-2xl border border-neutral-200/60 bg-white/80 backdrop-blur-xl shadow-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <TrendingUp size={18} className="text-violet-600" />
-            <h2 className="font-bold text-neutral-900 text-sm">Revenue & Analytics</h2>
-            <span className="text-xs text-neutral-400 font-medium">· {formatMonth(forMonth)}</span>
+            <TrendingUp size={14} className="text-violet-600" />
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide">Revenue & Analytics</h2>
+            <span className="text-[10px] text-neutral-400 font-bold">· {formatMonth(forMonth)}</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 text-xs font-medium text-neutral-500">
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /> Collected</span>
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-orange-500" /> Expenses</span>
+            <div className="flex items-center gap-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wide">
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" /> Collected</span>
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-500" /> Expenses</span>
             </div>
             {!isOwner && (
-              <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider flex items-center gap-1">
                 <Lock size={10} /> Owner Only
               </span>
             )}
           </div>
         </div>
 
-        <div className={`p-5 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
+        <div className={`p-4 ${!isOwner ? "blur-sm select-none pointer-events-none" : ""}`}>
           {/* Mini financial stats */}
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="p-3 rounded-xl bg-green-50">
-              <div className="text-xs font-semibold text-neutral-500 mb-0.5">Rent Collected</div>
-              <div className="text-lg sm:text-xl font-extrabold text-green-600">{formatINR(thisMonthIncome)}</div>
+          <div className="grid grid-cols-2 gap-2.5 mb-4">
+            <div className="p-2.5 rounded-xl bg-green-50/80 border border-green-100">
+              <div className="text-[10px] font-bold text-neutral-500 mb-0.5 uppercase tracking-wide">Rent Collected</div>
+              <div className="text-base sm:text-lg font-black text-green-600">{formatINR(thisMonthIncome)}</div>
             </div>
-            <div className="p-3 rounded-xl bg-orange-50">
-              <div className="text-xs font-semibold text-neutral-500 mb-0.5">Expenses</div>
-              <div className="text-lg sm:text-xl font-extrabold text-orange-600">{formatINR(thisMonthExpense)}</div>
+            <div className="p-2.5 rounded-xl bg-orange-50/80 border border-orange-100">
+              <div className="text-[10px] font-bold text-neutral-500 mb-0.5 uppercase tracking-wide">Expenses</div>
+              <div className="text-base sm:text-lg font-black text-orange-600">{formatINR(thisMonthExpense)}</div>
             </div>
           </div>
 
           {/* Collection progress bar */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between text-xs mb-1.5">
-              <span className="font-semibold text-neutral-600">This month's rent collection</span>
-              <span className="font-bold text-neutral-900">{collectionPct}%</span>
+          <div className="mb-4">
+            <div className="flex items-center justify-between text-[11px] mb-1.5">
+              <span className="font-bold text-neutral-600">This month's collection</span>
+              <span className="font-black text-neutral-900">{collectionPct}%</span>
             </div>
-            <div className="h-2.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-neutral-100 overflow-hidden">
               <div className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-600" style={{ width: `${Math.min(100, collectionPct)}%` }} />
             </div>
-            <div className="text-xs text-neutral-400 mt-1.5">
+            <div className="text-[10px] font-medium text-neutral-400 mt-1.5">
               {formatINR(collectedRent)} collected of {formatINR(expectedRent)} expected
             </div>
           </div>
@@ -289,59 +290,60 @@ export default async function ManagerDashboardPage({
         {!isOwner && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-md z-10">
             <div className="text-center px-6">
-              <div className="w-12 h-12 bg-amber-100 border-2 border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Lock size={22} className="text-amber-600" />
+              <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Lock size={18} className="text-amber-600" />
               </div>
-              <p className="font-bold text-neutral-800 mb-1">Owner Access Required</p>
-              <p className="text-xs text-neutral-500">Revenue data is only visible to the PG Owner. Contact your owner for financial reports.</p>
+              <p className="text-[13px] font-bold text-neutral-800 mb-1">Owner Access Required</p>
+              <p className="text-[11px] text-neutral-500 font-medium">Revenue data is only visible to the PG Owner. Contact your owner for financial reports.</p>
             </div>
           </div>
         )}
       </div>
 
       {/* ── Rent Pending + Action Items ─────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Rent Pending This Month (actionable) */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
-            <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
-              <Wallet size={16} className="text-neutral-500" />
-              Rent Pending — {formatMonth(forMonth)}
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <Wallet size={14} className="text-neutral-500" />
+              Rent Pending
+              <span className="text-[10px] text-neutral-400 font-bold">· {formatMonth(forMonth)}</span>
             </h2>
-            <Link href="/dashboard/manager/reminders" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+            <Link href="/dashboard/manager/reminders" className="text-[10px] uppercase tracking-wider font-extrabold text-violet-600 hover:text-violet-700">
               View All
             </Link>
           </div>
 
           <div className="flex-1">
             {pending.length === 0 ? (
-              <div className="text-center py-12 px-4">
-                <CheckCircle2 size={28} className="mx-auto text-green-400 mb-2" />
-                <p className="text-sm font-semibold text-neutral-700">Sab ne pay kar diya! 🎉</p>
-                <p className="text-xs text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
+              <div className="text-center py-10 px-4">
+                <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
+                <p className="text-[13px] font-bold text-neutral-700">Sab ne pay kar diya! 🎉</p>
+                <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
               </div>
             ) : (
-              <div className="divide-y divide-neutral-100">
+              <div className="divide-y divide-neutral-50">
                 {pending.slice(0, 6).map((t) => (
-                  <div key={t.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50/50 transition-colors">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div key={t.id} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-violet-50/30 transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
                         {initials(t.name)}
                       </div>
                       <div className="min-w-0">
-                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="font-semibold text-neutral-900 hover:underline truncate block">
+                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 truncate block">
                           {t.name}
                         </Link>
-                        <div className="text-xs text-neutral-400 truncate">
+                        <div className="text-[10px] font-medium text-neutral-400 truncate">
                           {t.listing?.title}
-                          {t.paid > 0 && <span className="text-amber-600"> · partial {formatINR(t.paid)} paid</span>}
+                          {t.paid > 0 && <span className="text-amber-600 font-bold"> · partial {formatINR(t.paid)} paid</span>}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
                       <div className="text-right">
-                        <div className="font-extrabold text-red-600 text-sm">{formatINR(t.due)}</div>
-                        <div className="text-[10px] text-neutral-400">pending</div>
+                        <div className="font-black text-red-600 text-[13px]">{formatINR(t.due)}</div>
+                        <div className="text-[9px] uppercase tracking-wider font-bold text-neutral-400">pending</div>
                       </div>
                       <a
                         href={buildRentReminderLink({
@@ -355,15 +357,15 @@ export default async function ManagerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                        className="p-1.5 rounded-md bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
                       >
-                        <MessageCircle size={15} />
+                        <MessageCircle size={14} />
                       </a>
                       <Link
                         href={`/dashboard/manager/payments/new?tenantId=${t.id}`}
-                        className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-900"
+                        className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 hover:text-violet-900 bg-violet-50/50 px-2 py-1.5 rounded-md border border-violet-100"
                       >
-                        Record <ArrowRight size={12} />
+                        Record <ArrowRight size={10} />
                       </Link>
                     </div>
                   </div>
@@ -374,13 +376,13 @@ export default async function ManagerDashboardPage({
         </div>
 
         {/* Action Items (open complaints) */}
-        <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between bg-neutral-50/50">
-            <h2 className="font-semibold text-neutral-800 flex items-center gap-2 text-sm">
-              <Wrench size={16} className="text-neutral-500" />
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <Wrench size={14} className="text-neutral-500" />
               Action Items
             </h2>
-            <Link href="/dashboard/manager/complaints" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+            <Link href="/dashboard/manager/complaints" className="text-[10px] uppercase tracking-wider font-extrabold text-violet-600 hover:text-violet-700">
               View All
             </Link>
           </div>
@@ -388,23 +390,23 @@ export default async function ManagerDashboardPage({
           <div className="p-4 flex-1">
             {openComplaints.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
-                <p className="text-xs text-neutral-500">You're all caught up!</p>
+                <CheckCircle2 size={20} className="mx-auto text-green-400 mb-2" />
+                <p className="text-[11px] font-bold text-neutral-500">You're all caught up!</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {openComplaints.map((c) => {
                   const isUrgent = c.priority === "URGENT" || c.priority === "HIGH";
                   return (
-                    <div key={c.id} className="flex gap-3">
+                    <div key={c.id} className="flex gap-2.5">
                       <div className="mt-0.5 relative">
-                        <div className={`w-2 h-2 rounded-full mt-1.5 ${isUrgent ? "bg-red-500" : "bg-orange-400"}`} />
-                        <div className="absolute top-4 left-1 w-px h-full bg-neutral-200 -z-10" />
+                        <div className={`w-1.5 h-1.5 rounded-full mt-1.5 ${isUrgent ? "bg-red-500" : "bg-orange-400"}`} />
+                        <div className="absolute top-4 left-0.5 w-px h-full bg-neutral-200 -z-10" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-neutral-800 line-clamp-1">{c.title}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">{c.listing?.title}</p>
-                        <p className="text-[10px] font-medium text-neutral-400 mt-1 uppercase">
+                        <p className="text-[13px] font-bold text-neutral-800 line-clamp-1">{c.title}</p>
+                        <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{c.listing?.title}</p>
+                        <p className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">
                           {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}
                         </p>
                       </div>

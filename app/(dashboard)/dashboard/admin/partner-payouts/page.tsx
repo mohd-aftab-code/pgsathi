@@ -177,17 +177,17 @@ export default async function AdminPayoutCyclePage() {
       </div>
 
       {rows.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-neutral-300 p-12 text-center">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-dashed border-neutral-300 p-12 text-center shadow-sm">
           <Wallet className="mx-auto text-neutral-300 mb-3" size={32} />
           <p className="font-bold text-neutral-700">Kisi partner ka kuch bakaya nahi</p>
           <p className="text-sm text-neutral-500 mt-1">Jab koi owner plan lega ya renew karega, commission yahan aa jayega.</p>
         </div>
       ) : (
         <>
-        <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-              <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+              <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
                 <tr>
                   <th className="px-4 py-2 font-bold">Partner</th>
                   <th className="px-4 py-2 font-bold text-center">Is mahine</th>
@@ -199,9 +199,9 @@ export default async function AdminPayoutCyclePage() {
               </thead>
               <tbody className="divide-y divide-neutral-50 text-[11px]">
                 {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-neutral-50/70 transition-colors group">
+                  <tr key={r.id} className="hover:bg-violet-50/30 transition-colors group">
                     <td className="px-4 py-2">
-                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-neutral-900 hover:text-violet-700 transition-colors">
+                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 transition-colors">
                         {r.user.name}
                       </Link>
                       <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
@@ -245,7 +245,7 @@ export default async function AdminPayoutCyclePage() {
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {rows.map((r) => (
-            <div key={`mob-${r.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${r.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
                   <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-sm text-neutral-900 truncate block">

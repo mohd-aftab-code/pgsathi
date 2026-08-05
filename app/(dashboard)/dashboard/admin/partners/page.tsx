@@ -16,30 +16,35 @@ const statusStyle: Record<string, string> = {
 export default async function AdminPartnersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; page?: string }>;
 }) {
   const sp = await searchParams;
   const status = sp.status ?? "";
+  const page = Math.max(1, parseInt(sp.page || "1", 10));
+  const take = 20;
+  const skip = (page - 1) * take;
 
   const where: any = {};
   if (status) where.status = status;
 
-  const [partners, counts] = await Promise.all([
+  const [partners, counts, totalCount] = await Promise.all([
     db.partnerProfile.findMany({
       where,
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      skip,
+      take,
       select: {
         id: true, partnerCode: true, type: true, status: true, city: true, createdAt: true,
         user: { select: { name: true, phone: true, email: true } },
-        // `owners` is the commission-bearing relation — a partner with many PGs
-        // but few owners generates far less than the PG count suggests.
         _count: { select: { listings: true, earnings: true, owners: true } },
       },
     }),
     db.partnerProfile.groupBy({ by: ["status"], _count: { _all: true } }),
+    db.partnerProfile.count({ where }),
   ]);
 
   const countBy = (s: string) => counts.find((c) => c.status === s)?._count._all ?? 0;
+  const totalPages = Math.ceil(totalCount / take);
 
   const tab = (label: string, val: string, n: number) => (
     <a
@@ -68,13 +73,13 @@ export default async function AdminPartnersPage({
       </div>
 
       {partners.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 py-16 text-center text-neutral-500">Koi partner nahi mila.</div>
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Koi partner nahi mila.</div>
       ) : (
         <>
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-            <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+            <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
               <tr>
                 <th className="px-4 py-2 font-bold">Partner</th>
                 <th className="px-4 py-2 font-bold">Type</th>
@@ -88,9 +93,9 @@ export default async function AdminPartnersPage({
             </thead>
             <tbody className="divide-y divide-neutral-50 text-[11px]">
               {partners.map((p) => (
-                <tr key={p.id} className="hover:bg-neutral-50/70 transition-colors group">
+                <tr key={p.id} className="hover:bg-violet-50/30 transition-colors group">
                   <td className="px-4 py-2">
-                    <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-neutral-900 hover:text-violet-700 transition-colors">
+                    <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 transition-colors">
                       {p.user.name}
                     </a>
                     <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
@@ -114,44 +119,79 @@ export default async function AdminPartnersPage({
             </tbody>
           </table>
           </div>
+          
+          {totalPages > 1 && (
+            <div className="px-4 py-2 border-t border-neutral-100 flex items-center justify-between">
+              <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+                Showing <span className="font-bold">{(page - 1) * take + 1}</span> to <span className="font-bold">{Math.min(page * take, totalCount)}</span> of <span className="font-bold">{totalCount}</span>
+              </div>
+              <div className="flex gap-1">
+                {page > 1 && (
+                  <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+                    Prev
+                  </a>
+                )}
+                {page < totalPages && (
+                  <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider">
+                    Next
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {partners.map((p) => (
-            <div key={`mob-${p.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${p.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-sm text-neutral-900 truncate block">
+                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-bold text-[13px] text-neutral-900 truncate block">
                     {p.user.name}
                   </a>
                   <div className="text-[10px] text-neutral-500 truncate">{p.user.phone ?? "No phone"} · {p.user.email}</div>
                   <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${statusStyle[p.status]}`}>{p.status}</span>
-                  <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded">{TYPE_LABEL[p.type] ?? p.type}</span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${statusStyle[p.status]}`}>{p.status}</span>
+                  <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-md uppercase">{TYPE_LABEL[p.type] ?? p.type}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50/50 text-center">
                 <div>
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Owners</div>
                   <div className="text-xs font-bold text-neutral-700">{p._count.owners}</div>
                 </div>
-                <div className="border-l border-neutral-100">
+                <div className="border-l border-neutral-100/60">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
                   <div className="text-xs font-bold text-neutral-700">{p._count.listings}</div>
                 </div>
-                <div className="border-l border-neutral-100">
+                <div className="border-l border-neutral-100/60">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Earnings</div>
                   <div className="text-xs font-bold text-neutral-700">{p._count.earnings}</div>
                 </div>
               </div>
-              <div className="mt-0.5">
+              <div className="mt-0.5 flex justify-end">
                 <AdminPartnerActions id={p.id} status={p.status} />
               </div>
             </div>
           ))}
+          
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-2">
+              {page > 1 && (
+                <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3 py-1.5 rounded-md shadow-sm uppercase tracking-wider">
+                  Prev
+                </a>
+              )}
+              {page < totalPages && (
+                <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3 py-1.5 rounded-md shadow-sm uppercase tracking-wider">
+                  Next
+                </a>
+              )}
+            </div>
+          )}
         </div>
         </>
       )}

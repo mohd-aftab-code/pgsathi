@@ -72,13 +72,13 @@ export default async function AdminPartnerEarningsPage({
       </div>
 
       {earnings.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 py-16 text-center text-neutral-500">Is filter mein koi earning nahi.</div>
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Is filter mein koi earning nahi.</div>
       ) : (
         <>
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-            <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+            <thead className="bg-neutral-50/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
               <tr>
                 <th className="px-4 py-2 font-bold">Partner</th>
                 <th className="px-4 py-2 font-bold">Owner</th>
@@ -91,15 +91,15 @@ export default async function AdminPartnerEarningsPage({
             </thead>
             <tbody className="divide-y divide-neutral-50 text-[11px]">
               {earnings.map((e: any) => (
-                <tr key={e.id} className="hover:bg-neutral-50/70 transition-colors group">
+                <tr key={e.id} className="hover:bg-violet-50/30 transition-colors group">
                   <td className="px-4 py-2">
-                    <div className="font-bold text-neutral-900">{e.partner.user.name}</div>
+                    <div className="font-bold text-[13px] text-neutral-900">{e.partner.user.name}</div>
                     <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{e.partner.partnerCode}</div>
                   </td>
                   <td className="px-4 py-2 text-neutral-600 max-w-[150px] truncate font-medium">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
                   <td className="px-4 py-2 text-neutral-600 font-medium">{e.planNameSnapshot ?? "—"}</td>
                   <td className="px-4 py-2 text-neutral-500 font-medium">{fmtDate(e.createdAt)}</td>
-                  <td className="px-4 py-2 text-right font-extrabold text-neutral-900">{inr(e.amount)}</td>
+                  <td className="px-4 py-2 text-right font-black text-neutral-900">{inr(e.amount)}</td>
                   <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${statusStyle[e.status]}`}>{e.status}</span></td>
                   <td className="px-4 py-2 text-right">
                     <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
@@ -116,32 +116,32 @@ export default async function AdminPartnerEarningsPage({
         {/* Mobile Cards */}
         <div className="grid grid-cols-1 gap-2 md:hidden">
           {earnings.map((e: any) => (
-            <div key={`mob-${e.id}`} className="bg-white border border-neutral-100 rounded-xl p-3 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${e.id}`} className="bg-white/80 backdrop-blur-xl border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <div className="font-bold text-sm text-neutral-900 truncate">{e.partner.user.name}</div>
+                  <div className="font-bold text-[13px] text-neutral-900 truncate">{e.partner.user.name}</div>
                   <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{e.partner.partnerCode}</div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${statusStyle[e.status]}`}>{e.status}</span>
-                  <span className="text-[10px] font-bold text-neutral-900">{inr(e.amount)}</span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${statusStyle[e.status]}`}>{e.status}</span>
+                  <span className="text-[10px] font-black text-neutral-900">{inr(e.amount)}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50/50 text-center">
                 <div className="truncate px-1">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Owner/PG</div>
                   <div className="text-[10px] font-semibold text-neutral-700 truncate">{e.owner?.name ?? e.listing?.title ?? "—"}</div>
                 </div>
-                <div className="border-l border-neutral-100 truncate px-1">
+                <div className="border-l border-neutral-100/60 truncate px-1">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Plan</div>
                   <div className="text-[10px] font-semibold text-neutral-700 truncate">{e.planNameSnapshot ?? "—"}</div>
                 </div>
-                <div className="border-l border-neutral-100 truncate px-1">
+                <div className="border-l border-neutral-100/60 truncate px-1">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Date</div>
                   <div className="text-[10px] font-semibold text-neutral-500 truncate">{fmtDate(e.createdAt)}</div>
                 </div>
               </div>
-              <div className="mt-0.5">
+              <div className="mt-0.5 flex justify-end">
                 <AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} />
               </div>
             </div>

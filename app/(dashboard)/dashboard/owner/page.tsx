@@ -302,29 +302,29 @@ export default async function OwnerDashboardPage({
       </div>
 
       {/* ── KPI row ─────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
         {kpis.map((k) => {
           const t = tone[k.color];
           return (
             <Link
               key={k.label}
               href={k.href}
-              className="bg-white rounded-2xl p-4 border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white/70 backdrop-blur-md rounded-2xl p-3.5 border border-neutral-200/50 shadow-sm hover:shadow hover:-translate-y-0.5 hover:border-violet-200/80 transition-all duration-300 group flex flex-col justify-between"
             >
-              <div className="flex justify-between items-start mb-3 gap-2">
-                <span className="text-xs md:text-sm font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors leading-tight">{k.label}</span>
+              <div className="flex justify-between items-start mb-2.5 gap-2">
+                <span className="text-[10px] font-extrabold text-neutral-500 group-hover:text-neutral-700 transition-colors uppercase tracking-wider">{k.label}</span>
                 <div className={`p-1.5 rounded-lg shrink-0 ${t.bg}`}>
-                  <k.icon size={15} className={t.text} />
+                  <k.icon size={13} className={t.text} />
                 </div>
               </div>
               <div>
-                <div className="text-xl md:text-2xl font-bold text-neutral-900 truncate">{k.value}</div>
+                <div className="text-xl md:text-2xl font-black text-neutral-900 truncate tracking-tight">{k.value}</div>
                 {k.bar !== null && (
                   <div className="mt-2 h-1.5 w-full rounded-full bg-neutral-100 overflow-hidden">
                     <div className={`h-full rounded-full ${t.bar}`} style={{ width: `${Math.min(100, k.bar)}%` }} />
                   </div>
                 )}
-                <div className="text-[11px] text-neutral-400 mt-1.5 line-clamp-1">{k.sub}</div>
+                <div className="text-[10px] text-neutral-400 mt-1.5 font-medium line-clamp-1">{k.sub}</div>
               </div>
             </Link>
           );
@@ -333,87 +333,87 @@ export default async function OwnerDashboardPage({
 
       {/* ── Per-PG comparison — the multi-property overview ──────── */}
       {listings.length > 1 && !listingId && (
-        <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-          <div className="px-5 py-4 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-              <Building2 size={16} className="text-violet-600" /> PG-wise Overview
-              <span className="text-xs text-neutral-400 font-medium">· {formatMonth(forMonth)}</span>
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <Building2 size={14} className="text-violet-600" /> PG-wise Overview
+              <span className="text-[10px] text-neutral-400 font-bold">· {formatMonth(forMonth)}</span>
             </h2>
-            <span className="text-xs text-neutral-400">Kisi bhi PG par click karke uska poora data dekhein</span>
+            <span className="text-[10px] font-medium text-neutral-400">Kisi bhi PG par click karke uska poora data dekhein</span>
           </div>
 
           {/* The table scrolls on its own so the page never scrolls sideways */}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[820px]">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50/70">
-                  <th className="px-5 py-2.5 font-bold">Property</th>
-                  <th className="px-3 py-2.5 font-bold">Occupancy</th>
-                  <th className="px-3 py-2.5 font-bold text-right">Tenants</th>
-                  <th className="px-3 py-2.5 font-bold text-right">Collected</th>
-                  <th className="px-3 py-2.5 font-bold text-right">Pending</th>
-                  <th className="px-3 py-2.5 font-bold text-right">Leads</th>
-                  <th className="px-3 py-2.5 font-bold text-right">Views</th>
-                  <th className="px-5 py-2.5 font-bold text-right">Issues</th>
+            <table className="w-full text-left min-w-[750px]">
+              <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
+                <tr>
+                  <th className="px-4 py-2 font-bold">Property</th>
+                  <th className="px-3 py-2 font-bold">Occupancy</th>
+                  <th className="px-3 py-2 font-bold text-right">Tenants</th>
+                  <th className="px-3 py-2 font-bold text-right">Collected</th>
+                  <th className="px-3 py-2 font-bold text-right">Pending</th>
+                  <th className="px-3 py-2 font-bold text-right">Leads</th>
+                  <th className="px-3 py-2 font-bold text-right">Views</th>
+                  <th className="px-4 py-2 font-bold text-right">Issues</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-50 text-[11px]">
                 {rows.map((r) => (
                   <tr key={r.id} className="hover:bg-violet-50/40 transition-colors group">
-                    <td className="px-5 py-3 max-w-[240px]">
-                      <Link href={`/dashboard/owner?listingId=${r.id}`} className="font-semibold text-neutral-900 group-hover:text-violet-700 truncate block">
+                    <td className="px-4 py-2 max-w-[200px]">
+                      <Link href={`/dashboard/owner?listingId=${r.id}`} className="font-bold text-neutral-900 group-hover:text-violet-700 truncate block">
                         {r.title}
                       </Link>
-                      <span className="text-[11px] text-neutral-400">{r.city?.name ?? "—"}</span>
+                      <span className="text-[10px] text-neutral-400 font-medium">{r.city?.name ?? "—"}</span>
                     </td>
-                    <td className="px-3 py-3 w-[140px]">
+                    <td className="px-3 py-2 w-[120px]">
                       {r.occupancy === null ? (
-                        <span className="text-xs text-neutral-400">no beds set</span>
+                        <span className="text-[10px] text-neutral-400">no beds set</span>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-16 rounded-full bg-neutral-100 overflow-hidden shrink-0">
+                        <div className="flex items-center gap-1.5">
+                          <div className="h-1.5 w-12 rounded-full bg-neutral-100 overflow-hidden shrink-0">
                             <div
                               className={`h-full rounded-full ${r.occupancy >= 85 ? "bg-green-500" : r.occupancy >= 60 ? "bg-amber-500" : "bg-red-500"}`}
                               style={{ width: `${Math.min(100, r.occupancy)}%` }}
                             />
                           </div>
-                          <span className="text-xs font-bold text-neutral-700 tabular-nums">{r.occupancy}%</span>
-                          <span className="text-[11px] text-neutral-400 tabular-nums">{r.occupied}/{r.beds}</span>
+                          <span className="text-[10px] font-bold text-neutral-700 tabular-nums">{r.occupancy}%</span>
+                          <span className="text-[9px] text-neutral-400 tabular-nums">({r.occupied}/{r.beds})</span>
                         </div>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-right font-semibold text-neutral-700 tabular-nums">{r.tenants}</td>
-                    <td className="px-3 py-3 text-right font-semibold text-green-600 tabular-nums">{formatINR(r.collected)}</td>
-                    <td className="px-3 py-3 text-right font-bold tabular-nums">
+                    <td className="px-3 py-2 text-right font-bold text-neutral-700 tabular-nums">{r.tenants}</td>
+                    <td className="px-3 py-2 text-right font-bold text-green-600 tabular-nums">{formatINR(r.collected)}</td>
+                    <td className="px-3 py-2 text-right font-extrabold tabular-nums">
                       <span className={r.pending > 0 ? "text-red-600" : "text-neutral-300"}>{formatINR(r.pending)}</span>
                     </td>
-                    <td className="px-3 py-3 text-right tabular-nums">
-                      <span className="font-semibold text-neutral-700">{r.leads}</span>
-                      {r.newLeads > 0 && <span className="ml-1 text-[10px] font-bold text-green-600">+{r.newLeads}</span>}
+                    <td className="px-3 py-2 text-right tabular-nums">
+                      <span className="font-bold text-neutral-700">{r.leads}</span>
+                      {r.newLeads > 0 && <span className="ml-1 text-[9px] font-black text-green-600">+{r.newLeads}</span>}
                     </td>
-                    <td className="px-3 py-3 text-right text-neutral-500 tabular-nums">{r.views}</td>
-                    <td className="px-5 py-3 text-right">
+                    <td className="px-3 py-2 text-right text-neutral-500 font-medium tabular-nums">{r.views}</td>
+                    <td className="px-4 py-2 text-right">
                       {r.issues > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-md">
-                          <AlertTriangle size={11} /> {r.issues}
+                        <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-md">
+                          <AlertTriangle size={10} /> {r.issues}
                         </span>
                       ) : (
-                        <span className="text-neutral-300">—</span>
+                        <span className="text-[10px] text-neutral-300">—</span>
                       )}
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
-                <tr className="bg-neutral-50 font-bold text-neutral-900 border-t-2 border-neutral-200">
-                  <td className="px-5 py-3">Total · {rows.length} PGs</td>
-                  <td className="px-3 py-3 text-xs tabular-nums">{occupancyPct ?? 0}% ({occupiedBeds}/{totalBeds})</td>
-                  <td className="px-3 py-3 text-right tabular-nums">{activeTenants}</td>
-                  <td className="px-3 py-3 text-right text-green-700 tabular-nums">{formatINR(collectedRent)}</td>
-                  <td className="px-3 py-3 text-right text-red-700 tabular-nums">{formatINR(pendingRent)}</td>
-                  <td className="px-3 py-3 text-right tabular-nums">{totalLeads}</td>
-                  <td className="px-3 py-3 text-right tabular-nums">{totalViews}</td>
-                  <td className="px-5 py-3 text-right tabular-nums">{openIssues}</td>
+                <tr className="bg-neutral-50/80 font-bold text-neutral-900 border-t border-neutral-200/80 text-[11px]">
+                  <td className="px-4 py-2 text-[10px] uppercase text-neutral-500">Total · {rows.length} PGs</td>
+                  <td className="px-3 py-2 tabular-nums">{occupancyPct ?? 0}% ({occupiedBeds}/{totalBeds})</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{activeTenants}</td>
+                  <td className="px-3 py-2 text-right text-green-700 tabular-nums">{formatINR(collectedRent)}</td>
+                  <td className="px-3 py-2 text-right text-red-700 tabular-nums">{formatINR(pendingRent)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{totalLeads}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{totalViews}</td>
+                  <td className="px-4 py-2 text-right tabular-nums">{openIssues}</td>
                 </tr>
               </tfoot>
             </table>
@@ -422,12 +422,12 @@ export default async function OwnerDashboardPage({
       )}
 
       {/* ── Money this month ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-          <div className="px-5 py-4 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-              <TrendingUp size={16} className="text-violet-600" /> Revenue &amp; Expenses
-              <span className="text-xs text-neutral-400 font-medium">· last 6 months</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <TrendingUp size={14} className="text-violet-600" /> Revenue &amp; Expenses
+              <span className="text-[10px] text-neutral-400 font-bold">· last 6 months</span>
             </h2>
             <div className="flex items-center gap-3 text-xs font-medium text-neutral-500">
               <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /> Received</span>
@@ -435,35 +435,35 @@ export default async function OwnerDashboardPage({
             </div>
           </div>
           <div className="p-5">
-            <div className="grid grid-cols-3 gap-3 mb-5">
+            <div className="grid grid-cols-3 gap-2.5 mb-4">
               {/* "Total Received" ≠ the Rent Collected KPI: this counts every payment
                   type (deposits, electricity, dues from other months) received this
                   month, while the KPI is strictly this month's rent. */}
-              <div className="p-3 rounded-xl bg-green-50">
-                <div className="text-[11px] font-semibold text-neutral-500 mb-0.5">Total Received</div>
-                <div className="text-base sm:text-xl font-extrabold text-green-600 truncate">{formatINR(monthIncome)}</div>
+              <div className="p-2.5 rounded-xl bg-green-50/80 border border-green-100">
+                <div className="text-[10px] font-bold text-neutral-500 mb-0.5 uppercase tracking-wide">Received</div>
+                <div className="text-sm sm:text-base font-black text-green-600 truncate">{formatINR(monthIncome)}</div>
               </div>
-              <div className="p-3 rounded-xl bg-orange-50">
-                <div className="text-[11px] font-semibold text-neutral-500 mb-0.5">Expenses</div>
-                <div className="text-base sm:text-xl font-extrabold text-orange-600 truncate">{formatINR(monthExpense)}</div>
+              <div className="p-2.5 rounded-xl bg-orange-50/80 border border-orange-100">
+                <div className="text-[10px] font-bold text-neutral-500 mb-0.5 uppercase tracking-wide">Expenses</div>
+                <div className="text-sm sm:text-base font-black text-orange-600 truncate">{formatINR(monthExpense)}</div>
               </div>
-              <div className={`p-3 rounded-xl ${netProfit >= 0 ? "bg-violet-50" : "bg-red-50"}`}>
-                <div className="text-[11px] font-semibold text-neutral-500 mb-0.5">Net</div>
-                <div className={`text-base sm:text-xl font-extrabold truncate ${netProfit >= 0 ? "text-violet-700" : "text-red-600"}`}>
+              <div className={`p-2.5 rounded-xl border ${netProfit >= 0 ? "bg-violet-50/80 border-violet-100" : "bg-red-50/80 border-red-100"}`}>
+                <div className="text-[10px] font-bold text-neutral-500 mb-0.5 uppercase tracking-wide">Net</div>
+                <div className={`text-sm sm:text-base font-black truncate ${netProfit >= 0 ? "text-violet-700" : "text-red-600"}`}>
                   {formatINR(netProfit)}
                 </div>
               </div>
             </div>
 
-            <div className="mb-5">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-neutral-600">{formatMonth(forMonth)} rent collection</span>
-                <span className="font-bold text-neutral-900">{collectionPct}%</span>
+            <div className="mb-4">
+              <div className="flex items-center justify-between text-[11px] mb-1.5">
+                <span className="font-bold text-neutral-600">{formatMonth(forMonth)} collection</span>
+                <span className="font-black text-neutral-900">{collectionPct}%</span>
               </div>
-              <div className="h-2.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+              <div className="h-2 w-full rounded-full bg-neutral-100 overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-600" style={{ width: `${Math.min(100, collectionPct)}%` }} />
               </div>
-              <div className="text-xs text-neutral-400 mt-1.5">
+              <div className="text-[10px] font-medium text-neutral-400 mt-1.5">
                 {formatINR(collectedRent)} collected of {formatINR(expectedRent)} expected
               </div>
             </div>
@@ -473,25 +473,25 @@ export default async function OwnerDashboardPage({
         </div>
 
         {/* Leads activity */}
-        <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-              <MessageSquare size={16} className="text-blue-600" /> Leads Activity
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <MessageSquare size={14} className="text-blue-600" /> Leads Activity
             </h2>
-            <span className="text-[11px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-full">7 Days</span>
+            <span className="text-[9px] uppercase tracking-wider font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-md">7 Days</span>
           </div>
-          <div className="p-5 flex-1 flex flex-col justify-center">
+          <div className="p-4 flex-1 flex flex-col justify-center">
             <LeadsChart data={chartData} />
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              <div className="p-3 rounded-xl bg-blue-50">
-                <div className="text-[11px] font-semibold text-neutral-500">Total Views</div>
-                <div className="text-lg font-extrabold text-blue-700 flex items-center gap-1.5">
-                  <Eye size={15} /> {totalViews}
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <div className="p-2.5 rounded-xl bg-blue-50/80 border border-blue-100">
+                <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Total Views</div>
+                <div className="text-base font-black text-blue-700 flex items-center gap-1">
+                  <Eye size={12} /> {totalViews}
                 </div>
               </div>
-              <div className="p-3 rounded-xl bg-purple-50">
-                <div className="text-[11px] font-semibold text-neutral-500">New Leads</div>
-                <div className="text-lg font-extrabold text-purple-700">{newLeads}</div>
+              <div className="p-2.5 rounded-xl bg-purple-50/80 border border-purple-100">
+                <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">New Leads</div>
+                <div className="text-base font-black text-purple-700">{newLeads}</div>
               </div>
             </div>
           </div>
@@ -499,53 +499,54 @@ export default async function OwnerDashboardPage({
       </div>
 
       {/* ── Rent pending + Recent leads + Issues ─────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Rent pending */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-              <Wallet size={16} className="text-red-500" /> Rent Pending — {formatMonth(forMonth)}
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <Wallet size={14} className="text-red-500" /> Rent Pending
+              <span className="text-[10px] text-neutral-400 font-bold">· {formatMonth(forMonth)}</span>
             </h2>
-            <Link href="/dashboard/manager/reminders" className="text-xs font-semibold text-violet-600 hover:text-violet-700">View All</Link>
+            <Link href="/dashboard/manager/reminders" className="text-[10px] uppercase tracking-wider font-extrabold text-violet-600 hover:text-violet-700">View All</Link>
           </div>
           <div className="flex-1">
             {!hasCrmData ? (
-              <div className="text-center py-12 px-6">
-                <div className="w-12 h-12 bg-violet-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <BedDouble size={22} className="text-violet-500" />
+              <div className="text-center py-10 px-6">
+                <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-violet-100">
+                  <BedDouble size={18} className="text-violet-500" />
                 </div>
-                <p className="text-sm font-semibold text-neutral-700">PG Manager abhi set up nahi hua</p>
-                <p className="text-xs text-neutral-500 mt-1 mb-4">Rooms, beds aur tenants add karein — phir rent, occupancy aur dues sab yahin dikhega.</p>
-                <Link href="/dashboard/manager" className="btn-primary py-2 px-4 text-sm rounded-lg inline-block">Set up PG Manager</Link>
+                <p className="text-[13px] font-bold text-neutral-700">PG Manager abhi set up nahi hua</p>
+                <p className="text-[11px] text-neutral-500 mt-1 mb-4 font-medium">Rooms, beds aur tenants add karein — phir rent, occupancy aur dues sab yahin dikhega.</p>
+                <Link href="/dashboard/manager" className="bg-neutral-900 text-white font-bold py-1.5 px-3 text-xs rounded-md inline-block">Set up PG Manager</Link>
               </div>
             ) : pending.length === 0 ? (
-              <div className="text-center py-12 px-4">
-                <CheckCircle2 size={28} className="mx-auto text-green-400 mb-2" />
-                <p className="text-sm font-semibold text-neutral-700">Sab ne pay kar diya! 🎉</p>
-                <p className="text-xs text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
+              <div className="text-center py-10 px-4">
+                <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
+                <p className="text-[13px] font-bold text-neutral-700">Sab ne pay kar diya! 🎉</p>
+                <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
               </div>
             ) : (
-              <div className="divide-y divide-neutral-100">
+              <div className="divide-y divide-neutral-50">
                 {pending.slice(0, 6).map((t) => (
-                  <div key={t.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50/50 transition-colors">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div key={t.id} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-violet-50/30 transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
                         {initials(t.name)}
                       </div>
                       <div className="min-w-0">
-                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="font-semibold text-neutral-900 hover:underline truncate block">
+                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="font-bold text-[13px] text-neutral-900 hover:text-violet-700 truncate block">
                           {t.name}
                         </Link>
-                        <div className="text-xs text-neutral-400 truncate">
+                        <div className="text-[10px] font-medium text-neutral-400 truncate">
                           {t.listing?.title}
-                          {t.paid > 0 && <span className="text-amber-600"> · partial {formatINR(t.paid)} paid</span>}
+                          {t.paid > 0 && <span className="text-amber-600 font-bold"> · partial {formatINR(t.paid)} paid</span>}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
                       <div className="text-right">
-                        <div className="font-extrabold text-red-600 text-sm">{formatINR(t.due)}</div>
-                        <div className="text-[10px] text-neutral-400">pending</div>
+                        <div className="font-black text-red-600 text-[13px]">{formatINR(t.due)}</div>
+                        <div className="text-[9px] uppercase tracking-wider font-bold text-neutral-400">pending</div>
                       </div>
                       <a
                         href={buildRentReminderLink({
@@ -559,15 +560,15 @@ export default async function OwnerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                        className="p-1.5 rounded-md bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
                       >
-                        <MessageCircle size={15} />
+                        <MessageCircle size={14} />
                       </a>
                     </div>
                   </div>
                 ))}
                 {pending.length > 6 && (
-                  <Link href="/dashboard/manager/reminders" className="block px-5 py-2.5 text-xs font-semibold text-violet-600 hover:bg-violet-50/50 text-center">
+                  <Link href="/dashboard/manager/reminders" className="block px-4 py-2 text-[10px] uppercase tracking-wider font-extrabold text-violet-600 hover:bg-violet-50 text-center">
                     +{pending.length - 6} more pending
                   </Link>
                 )}
@@ -577,26 +578,26 @@ export default async function OwnerDashboardPage({
         </div>
 
         {/* Open issues */}
-        <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-              <Wrench size={16} className="text-orange-500" /> Action Items
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
+            <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
+              <Wrench size={14} className="text-orange-500" /> Action Items
             </h2>
-            <Link href="/dashboard/manager/complaints" className="text-xs font-semibold text-violet-600 hover:text-violet-700">View All</Link>
+            <Link href="/dashboard/manager/complaints" className="text-[10px] uppercase tracking-wider font-extrabold text-violet-600 hover:text-violet-700">View All</Link>
           </div>
-          <div className="p-5 flex-1">
+          <div className="p-4 flex-1">
             {openComplaints.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
-                <p className="text-xs text-neutral-500">You're all caught up!</p>
+                <CheckCircle2 size={20} className="mx-auto text-green-400 mb-2" />
+                <p className="text-[11px] font-bold text-neutral-500">You're all caught up!</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {openComplaints.map((c) => {
                   const urgent = c.priority === "URGENT" || c.priority === "HIGH";
                   return (
-                    <div key={c.id} className="flex gap-3">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${urgent ? "bg-red-500" : "bg-orange-400"}`} />
+                    <div key={c.id} className="flex gap-2.5">
+                      <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${urgent ? "bg-red-500" : "bg-orange-400"}`} />
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-neutral-800 line-clamp-1">{c.title}</p>
                         <p className="text-xs text-neutral-500 mt-0.5 truncate">{c.listing?.title}</p>

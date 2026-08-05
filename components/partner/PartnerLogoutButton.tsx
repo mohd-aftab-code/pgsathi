@@ -6,17 +6,23 @@ import { signOut } from "next-auth/react";
 export function PartnerLogoutButton({
   children,
   className,
-  callbackUrl = "/",
+  callbackUrl,
 }: {
   children: ReactNode;
   className?: string;
   callbackUrl?: string;
 }) {
+  const handleLogout = () => {
+    // Prevent redirect loop / error page by ensuring a fully qualified URL for callbackUrl
+    const url = callbackUrl || (typeof window !== "undefined" ? window.location.origin : "/");
+    signOut({ callbackUrl: url });
+  };
+
   return (
     <button
       type="button"
       className={className}
-      onClick={() => signOut({ callbackUrl })}
+      onClick={handleLogout}
     >
       {children}
     </button>
