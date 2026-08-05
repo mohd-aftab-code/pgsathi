@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Handshake, Building2, IndianRupee, BarChart3, ShieldCheck, ArrowRight, Wallet, CheckCircle } from "lucide-react";
 
-import Footer from "@/components/common/Footer";
+import PartnerFooter from "@/components/partner/PartnerFooter";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
@@ -245,7 +245,7 @@ export default async function PartnerLandingPage() {
         </section>
       </main>
       
-      <Footer />
+      <PartnerFooter />
     </div>
   );
 }

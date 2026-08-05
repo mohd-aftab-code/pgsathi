@@ -90,12 +90,15 @@ export default function Footer() {
             </h4>
             <ul className="flex flex-col gap-3">
               {[
-                { label: "Join Partner Program", href: "/partner-program", highlight: true },
-                { label: "Partner Login", href: "/login" },
-                { label: "Partner Dashboard", href: "/dashboard/partner" },
-                { label: "Track Earnings", href: "/dashboard/partner/earnings" },
-                { label: "View Referred Owners", href: "/dashboard/partner/owners" },
-                { label: "Payout History", href: "/dashboard/partner/payouts" },
+                // The partner portal lives under /partner/*, not /dashboard/partner/*.
+                // These pointed at routes that never existed and 404'd, and
+                // "Partner Login" went to the general three-role login.
+                { label: "Join Partner Program", href: "/partner", highlight: true },
+                { label: "Partner Login", href: "/partner/login" },
+                { label: "Partner Dashboard", href: "/partner/dashboard" },
+                { label: "Track Earnings", href: "/partner/earnings" },
+                { label: "Onboarded PGs", href: "/partner/pgs" },
+                { label: "Payout Reports", href: "/partner/reports" },
               ].map(({ label, href, highlight }) => (
                 <li key={href}>
                   <Link href={href} className={`${highlight ? 'text-emerald-400 font-medium hover:text-emerald-300' : 'text-slate-400 hover:text-emerald-400'} text-sm transition-colors block`}>
@@ -195,7 +198,7 @@ export default function Footer() {
             <Link href="/search?gender=BOYS" className="hover:text-violet-400 transition-colors">Best Boys Hostels</Link>
             <Link href="/search?gender=GIRLS" className="hover:text-violet-400 transition-colors">Safe Girls PGs</Link>
             <Link href="/search?gender=COED" className="hover:text-violet-400 transition-colors">Co-living Spaces in India</Link>
-            <Link href="/partner-program" className="hover:text-emerald-400 transition-colors">Earn Money Referring PGs</Link>
+            <Link href="/partner" className="hover:text-emerald-400 transition-colors">Earn Money Referring PGs</Link>
           </div>
         </div>
       </div>

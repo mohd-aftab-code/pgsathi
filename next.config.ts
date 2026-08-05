@@ -97,6 +97,16 @@ const nextConfig = {
         destination: '/dashboard/manager/:path*',
         permanent: true,
       },
+      // There were two partner landing pages. /partner-program sat inside the
+      // (main) group, so it rendered the site Navbar and its CTAs pointed at
+      // /register — a visitor who came to join as a partner landed on the
+      // three-role tenant/owner form instead. /partner is the real one: partner
+      // header, partner CTAs. Old links and indexed URLs land there now.
+      {
+        source: '/partner-program',
+        destination: '/partner',
+        permanent: true,
+      },
     ];
   },
 

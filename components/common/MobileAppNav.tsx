@@ -7,8 +7,11 @@ import { Home, Search, User, PlusCircle, UserCircle2 } from "lucide-react";
 export function MobileAppNav({ session }: { session?: any }) {
   const pathname = usePathname();
 
-  // Hide global app nav inside the dashboard (dashboard has its own bottom nav)
-  if (pathname.startsWith("/dashboard")) return null;
+  // Hide global app nav inside the dashboard (dashboard has its own bottom nav).
+  // Same for the partner section: the portal has its own bottom nav, and on the
+  // public partner pages this bar was offering "List PG" and a general "Login" —
+  // dropping someone who came to join as a partner into the owner/tenant funnel.
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/partner")) return null;
 
   const isLoggedIn = !!session?.user;
 

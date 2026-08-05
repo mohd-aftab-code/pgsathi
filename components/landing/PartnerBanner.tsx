@@ -24,7 +24,7 @@ export default function PartnerBanner() {
           
           <div className="relative z-10 shrink-0">
             <Link 
-              href="/partner-program" 
+              href="/partner"
               className="bg-white text-primary-700 hover:bg-neutral-50 px-8 py-4 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 text-lg"
             >
               Become a Partner <ArrowRight size={20} />
