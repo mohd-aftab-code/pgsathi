@@ -15,7 +15,6 @@ export default async function OwnerSettingsPage() {
   });
 
   return (
-  return (
     <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6 max-w-4xl mx-auto">
       <div className="mb-6 border-b border-neutral-200/60 pb-4">
         <h1 className="text-xl font-black text-neutral-900 tracking-tight uppercase">Account Settings</h1>

@@ -107,7 +107,6 @@ export default async function TenantsPage({
 
       {/* Table */}
       {tenants.length === 0 ? (
-      {tenants.length === 0 ? (
         <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <EmptyState
             icon={Users}
