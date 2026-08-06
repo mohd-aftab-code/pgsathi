@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Info, Phone, Building } from "lucide-react";
 
-import logoImg from "@/app/assets/logo/logo.png";
+import logoImg from "@/app/assets/logo/logo in vertical.png";
 
 export default function Navbar({ user }: { user?: any }) {
   const [menuOpen, setMenuOpen] = useState(false);
