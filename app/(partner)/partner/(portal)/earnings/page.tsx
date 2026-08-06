@@ -65,7 +65,7 @@ export default async function PartnerEarningsPage({
       className={`h-9 px-3.5 rounded-xl text-sm font-semibold inline-flex items-center transition-colors shrink-0 ${
         status === val
           ? "bg-primary-500 text-white"
-          : "border-2 border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          : "border-2 border-neutral-200/60 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
       }`}
     >
       {label}
@@ -90,7 +90,7 @@ export default async function PartnerEarningsPage({
       </div>
 
       {/* ── Payout status strip ─────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
           <div className="inline-flex items-center gap-2">
             <Calendar size={15} className="text-primary-500" />
@@ -142,7 +142,7 @@ export default async function PartnerEarningsPage({
       </div>
 
       {list.rows.length === 0 ? (
-        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-16 text-center">
+        <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 py-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 grid place-items-center mx-auto mb-3">
             <IndianRupee className="text-neutral-400" size={22} />
           </div>
@@ -154,7 +154,7 @@ export default async function PartnerEarningsPage({
       ) : (
         <>
           {/* ── Desktop table ───────────────────────────────────── */}
-          <div className="hidden sm:block rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
+          <div className="hidden sm:block rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 overflow-hidden shadow-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-800/50">
@@ -172,7 +172,7 @@ export default async function PartnerEarningsPage({
                       {e.owner ? (
                         <>
                           <span className="font-semibold text-neutral-900 dark:text-white block truncate max-w-[220px]">{e.owner.name}</span>
-                          <span className="text-xs text-neutral-400">
+                          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
                             {e.invoice?.periodStart && e.invoice?.periodEnd
                               ? `${fmtDate(e.invoice.periodStart)} – ${fmtDate(e.invoice.periodEnd)}`
                               : e.listing?.city?.name ?? "—"}
@@ -183,7 +183,7 @@ export default async function PartnerEarningsPage({
                           <Link href={`/partner/pgs/${e.listing.id}`} className="font-semibold text-neutral-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate max-w-[220px]">
                             {e.listing.title}
                           </Link>
-                          <span className="text-xs text-neutral-400">{e.listing.city?.name ?? "—"}</span>
+                          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{e.listing.city?.name ?? "—"}</span>
                         </>
                       ) : (
                         <span className="text-neutral-400">—</span>
@@ -191,7 +191,7 @@ export default async function PartnerEarningsPage({
                     </td>
                     <td className="px-3 py-3 text-neutral-600 dark:text-neutral-300">
                       {e.planNameSnapshot ?? "—"}
-                      {e.invoice && <span className="text-xs text-neutral-400 block">{cycleLabel(e.invoice.billingCycle)} · {inr(e.planPriceSnapshot ?? 0)}</span>}
+                      {e.invoice && <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">{cycleLabel(e.invoice.billingCycle)} · {inr(e.planPriceSnapshot ?? 0)}</span>}
                     </td>
                     <td className="px-3 py-3 text-neutral-500 dark:text-neutral-400">{fmtDate(e.createdAt)}</td>
                     <td className="px-3 py-3 text-right">
@@ -205,7 +205,7 @@ export default async function PartnerEarningsPage({
                       )}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-xl ${
                         e.onHold && e.status === "PENDING" ? statusStyle.ON_HOLD : statusStyle[e.status] ?? statusStyle.PENDING
                       }`}>
                         {e.onHold && e.status === "PENDING" ? "ON HOLD" : e.status}
@@ -235,7 +235,7 @@ export default async function PartnerEarningsPage({
           {/* ── Mobile cards ──────────────────────────────────────── */}
           <div className="sm:hidden space-y-3">
             {list.rows.map((e) => (
-              <div key={e.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm">
+              <div key={e.id} className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-4 shadow-sm">
                 {/* Row 1: Name + Amount */}
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="min-w-0 flex-1">
@@ -261,7 +261,7 @@ export default async function PartnerEarningsPage({
                     <div className={`text-lg font-extrabold ${e.amount < 0 ? "text-red-600 dark:text-red-400" : "text-neutral-900 dark:text-white"}`}>
                       {inr(e.amount)}
                     </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1 ${
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-xl inline-block mt-1 ${
                       e.onHold && e.status === "PENDING" ? statusStyle.ON_HOLD : statusStyle[e.status] ?? statusStyle.PENDING
                     }`}>
                       {e.onHold && e.status === "PENDING" ? "ON HOLD" : e.status}
@@ -298,10 +298,10 @@ export default async function PartnerEarningsPage({
             <div className="flex items-center justify-between">
               <span className="text-xs text-neutral-500 dark:text-neutral-400">Page {list.page} of {list.totalPages}</span>
               <div className="flex gap-2">
-                <Link href={buildHref(page - 1)} aria-disabled={page <= 1} className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-sm font-semibold ${page <= 1 ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}>
+                <Link href={buildHref(page - 1)} aria-disabled={page <= 1} className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-sm font-semibold ${page <= 1 ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}>
                   <ChevronLeft size={15} /> Prev
                 </Link>
-                <Link href={buildHref(page + 1)} aria-disabled={page >= list.totalPages} className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-sm font-semibold ${page >= list.totalPages ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}>
+                <Link href={buildHref(page + 1)} aria-disabled={page >= list.totalPages} className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-sm font-semibold ${page >= list.totalPages ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}>
                   Next <ChevronRight size={15} />
                 </Link>
               </div>

@@ -37,10 +37,10 @@ export default async function PartnerPlansPage() {
           return (
             <div
               key={plan.id}
-              className={`relative rounded-3xl border-2 bg-white dark:bg-neutral-900 flex flex-col overflow-hidden ${
+              className={`relative rounded-3xl border-2 bg-white/60 backdrop-blur-md dark:bg-neutral-900 flex flex-col overflow-hidden ${
                 plan.recommended
                   ? "border-primary-500 shadow-xl shadow-primary-500/10"
-                  : "border-neutral-200 dark:border-neutral-800 shadow-sm"
+                  : "border-neutral-200/60 dark:border-neutral-800 shadow-sm"
               }`}
             >
               {plan.badge && (

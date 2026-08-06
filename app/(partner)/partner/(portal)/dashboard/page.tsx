@@ -10,6 +10,7 @@ import { getTierProgress } from "@/lib/partner-tier";
 import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
 import { StatCard } from "@/components/partner/StatCard";
 import { RegistrationsChart, EarningsChart } from "@/components/partner/PartnerCharts";
+import { ReferralLink } from "@/components/partner/ReferralLink";
 
 export const metadata = { title: "Partner Dashboard — PGSathi" };
 
@@ -51,7 +52,7 @@ export default async function PartnerDashboardPage() {
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   const tierColor =
-    tier.tier === "PLATINUM" ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+    tier.tier === "PLATINUM" ? "bg-slate-900 text-white dark:bg-white/60 backdrop-blur-md dark:text-slate-900"
     : tier.tier === "GOLD" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400"
     : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300";
 
@@ -72,19 +73,17 @@ export default async function PartnerDashboardPage() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
               {greeting}, {ctx.name.split(" ")[0]} 👋
             </h1>
-            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${tierColor}`}>
+            <span className={`px-2.5 py-1 rounded-2xl text-xs font-bold ${tierColor}`}>
               {tier.label} Partner
               {tier.bonusPercent > 0 && <span className="opacity-70"> · +{tier.bonusPercent}%</span>}
             </span>
           </div>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Share your referral link from Marketing for owners to register and list their PGs.
-          </p>
+          <ReferralLink link={`${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/r/${ctx.partnerCode}`} />
         </div>
       </div>
 
       {/* ── Tier progress ─────────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
           <h2 className="font-bold text-neutral-900 dark:text-white text-sm">
             {tier.next
@@ -126,7 +125,7 @@ export default async function PartnerDashboardPage() {
 
       {/* ── Charts ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+        <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-neutral-900 dark:text-white text-sm">PG Registrations</h2>
             <span className="text-[11px] font-bold px-2 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
@@ -136,7 +135,7 @@ export default async function PartnerDashboardPage() {
           <RegistrationsChart data={trend} />
         </section>
 
-        <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+        <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-neutral-900 dark:text-white text-sm">Earnings Trend</h2>
             <span className="text-[11px] font-bold px-2 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
@@ -148,7 +147,7 @@ export default async function PartnerDashboardPage() {
       </div>
 
       {/* ── Performance summary ───────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Performance Summary</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
@@ -182,8 +181,8 @@ export default async function PartnerDashboardPage() {
 
       {/* ── Recent PGs + Activity ─────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <section className="lg:col-span-2 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
+        <section className="lg:col-span-2 rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 overflow-hidden shadow-sm">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200/60 dark:border-neutral-800">
             <h2 className="font-bold text-neutral-900 dark:text-white text-sm">Recent PGs</h2>
             {/* -my-2 keeps the header height unchanged while giving the link a
                 thumb-sized hit box. */}
@@ -217,7 +216,7 @@ export default async function PartnerDashboardPage() {
                     {/* Badges: stack vertically on very small, side by side on sm+ */}
                     <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 shrink-0">
                       <span
-                        className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                        className={`text-[10px] font-bold px-2 py-1 rounded-xl ${
                           pg.plan === "PAID"
                             ? "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400"
                             : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
@@ -226,7 +225,7 @@ export default async function PartnerDashboardPage() {
                         {pg.plan}
                       </span>
                       <span
-                        className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                        className={`text-[10px] font-bold px-2 py-1 rounded-xl ${
                           pg.status === "ACTIVE"
                             ? "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
                             : "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
@@ -242,15 +241,15 @@ export default async function PartnerDashboardPage() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
-          <div className="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
+        <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-neutral-200/60 dark:border-neutral-800">
             <h2 className="font-bold text-neutral-900 dark:text-white text-sm flex items-center gap-2">
               <Activity size={15} className="text-primary-500" /> Recent Activity
             </h2>
           </div>
           <div className="p-5">
             {activity.length === 0 ? (
-              <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center py-8">
+              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider dark:text-neutral-500 text-center py-8">
                 Abhi koi activity nahi
               </p>
             ) : (

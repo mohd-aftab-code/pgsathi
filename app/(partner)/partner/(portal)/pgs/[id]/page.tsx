@@ -88,7 +88,7 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
       </Link>
 
       {/* Header */}
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">{listing.title}</h1>
@@ -97,7 +97,7 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-md ${statusStyle[listing.status] ?? statusStyle.INACTIVE}`}>{listing.status}</span>
+            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-xl ${statusStyle[listing.status] ?? statusStyle.INACTIVE}`}>{listing.status}</span>
             <EditPgForm
               id={listing.id}
               initial={{
@@ -126,11 +126,11 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
       </div>
 
       {/* Plan / subscription status */}
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Plan &amp; Subscription</h2>
         {sub ? (
           <div className="flex flex-wrap items-center gap-4">
-            <span className="inline-flex items-center gap-2 text-sm font-bold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/40 px-3 py-1.5 rounded-lg">
+            <span className="inline-flex items-center gap-2 text-sm font-bold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/40 px-3 py-1.5 rounded-2xl">
               <BadgeCheck size={16} /> Paid — {sub.plan.name}
             </span>
             <div className="text-sm text-neutral-600 dark:text-neutral-300 flex items-center gap-1.5">
@@ -200,7 +200,7 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
       </div>
 
       {/* Owner */}
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Owner</h2>
         <div className="space-y-2.5 text-sm">
           <div className="flex items-center gap-2 text-neutral-700 dark:text-neutral-300"><User size={15} className="text-neutral-400" /> {listing.owner.name}</div>
@@ -210,13 +210,13 @@ export default async function PartnerPgDetailPage({ params }: { params: Promise<
               <div className="flex items-center gap-2 text-neutral-700 dark:text-neutral-300"><Mail size={15} className="text-neutral-400" /> {listing.owner.email}</div>
             </>
           ) : (
-            <div className="text-xs text-neutral-400">Contact details are not available in your plan.</div>
+            <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Contact details are not available in your plan.</div>
           )}
         </div>
       </div>
 
       {listing.description && (
-        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+        <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
           <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-2">Description</h2>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{listing.description}</p>
         </div>

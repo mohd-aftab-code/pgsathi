@@ -33,7 +33,7 @@ export default async function PartnerReportsPage({
             className={`rounded-2xl border-2 p-4 transition-colors ${
               type === r.type
                 ? "border-primary-400 bg-primary-50 dark:bg-primary-950/40"
-                : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700"
+                : "border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700"
             }`}
           >
             <FileBarChart size={18} className={type === r.type ? "text-primary-600 dark:text-primary-400" : "text-neutral-400"} />
@@ -44,8 +44,8 @@ export default async function PartnerReportsPage({
       </div>
 
       {/* Preview + export */}
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm print:border-0 print:shadow-none">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 overflow-hidden shadow-sm print:border-0 print:shadow-none">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-neutral-200/60 dark:border-neutral-800">
           <div>
             <h2 className="font-bold text-neutral-900 dark:text-white">{data.title}</h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">{data.rows.length} rows · Partner {ctx.partnerCode}</p>
@@ -54,7 +54,7 @@ export default async function PartnerReportsPage({
             <PrintButton />
             <a
               href={`/api/partner/reports?type=${type}&format=csv`}
-              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-bold hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-bold hover:bg-neutral-100 dark:hover:bg-neutral-800"
             >
               <Download size={15} /> CSV
             </a>

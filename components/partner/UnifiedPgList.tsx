@@ -88,7 +88,7 @@ export function UnifiedPgList({ owners }: { owners: UnifiedOwner[] }) {
       {owners.map((o) => (
         <div key={o.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
           {/* Owner Header */}
-          <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 flex flex-wrap items-start justify-between gap-4">
+          <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
               <div className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
                 <UserPlus size={16} className="text-primary-500" />
@@ -103,7 +103,7 @@ export function UnifiedPgList({ owners }: { owners: UnifiedOwner[] }) {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-right">
+            <div className="flex flex-wrap sm:flex-nowrap items-center sm:items-start gap-3 sm:gap-4 sm:text-right sm:justify-end">
               {o.plan ? (
                 <div>
                   <div className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 inline-block">
@@ -136,10 +136,10 @@ export function UnifiedPgList({ owners }: { owners: UnifiedOwner[] }) {
                 <Link
                   key={l.id}
                   href={`/partner/pgs/${l.id}`}
-                  className="flex items-center justify-between p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors group"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors group gap-2"
                 >
                   <div>
-                    <div className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    <div className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
                       {l.title}
                     </div>
                     <div className="text-[10px] text-neutral-500 flex items-center gap-2 mt-0.5">
@@ -147,7 +147,7 @@ export function UnifiedPgList({ owners }: { owners: UnifiedOwner[] }) {
                       <span className="flex items-center gap-0.5"><Calendar size={10} /> {new Date(l.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                     <span className={`text-[9px] font-bold px-2 py-1 rounded-md ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>
                       {l.status}
                     </span>

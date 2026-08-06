@@ -175,11 +175,10 @@ export function PartnerShell({
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800">
           <div className="h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
-            {/* Mobile top app bar: logo + code. Navigation lives in the bottom bar. */}
+            {/* Mobile top app bar: logo. Navigation lives in the bottom bar. */}
             <Link href="/partner/dashboard" className="lg:hidden flex items-center gap-2 min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/partner%20logo.png" alt="PGSathi" className="h-9 w-auto object-contain shrink-0" />
-              <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 tracking-widest truncate">{partnerCode}</div>
             </Link>
 
             <div className="hidden lg:block text-sm text-neutral-500 dark:text-neutral-400">

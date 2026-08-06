@@ -70,7 +70,7 @@ export default async function PartnerProfilePage() {
       )}
 
       {/* Read-only account facts */}
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-3">Account</h2>
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div><span className="text-neutral-500 dark:text-neutral-400 block text-xs">Phone</span><span className="font-semibold text-neutral-900 dark:text-white">{profile.user.phone ?? "—"}</span></div>
@@ -78,12 +78,12 @@ export default async function PartnerProfilePage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Personal details</h2>
         <ProfileForm initial={{ name: profile.user.name, company: profile.company ?? "", city: profile.city ?? "", address: profile.address ?? "" }} />
       </div>
 
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Payout details</h2>
         <PayoutForm initial={{ panNumber: profile.panNumber ?? "", bankName: profile.bankName ?? "", bankAccountNo: profile.bankAccountNo ?? "", bankIfsc: profile.bankIfsc ?? "", upiId: profile.upiId ?? "" }} />
       </div>

@@ -39,7 +39,7 @@ export default async function PartnerLandingPage() {
           tenant/owner signup — so someone arriving to join as a partner ended up
           on the wrong form entirely. This page offers the two partner actions
           and nothing else. */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-neutral-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <Link href="/partner" className="flex items-center gap-2.5 min-w-0">
             <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25 shrink-0">
@@ -63,7 +63,7 @@ export default async function PartnerLandingPage() {
               <>
                 <Link
                   href="/partner/login"
-                  className="inline-flex items-center h-10 px-4 rounded-xl border-2 border-neutral-200 text-neutral-700 text-sm font-bold hover:bg-neutral-50 transition-colors"
+                  className="inline-flex items-center h-10 px-4 rounded-xl border-2 border-neutral-200/60 text-neutral-700 text-sm font-bold hover:bg-neutral-50 transition-colors"
                 >
                   Partner Login
                 </Link>
@@ -119,7 +119,7 @@ export default async function PartnerLandingPage() {
                   </Link>
                   <Link
                     href="/partner/login"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-900 font-bold text-lg border border-neutral-200 transition-all shadow-sm"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white/60 backdrop-blur-md hover:bg-neutral-50 text-neutral-900 font-bold text-lg border border-neutral-200/60 transition-all shadow-sm"
                   >
                     Partner Login
                   </Link>
@@ -134,7 +134,7 @@ export default async function PartnerLandingPage() {
 
               {/* Right Side Image/Visual */}
               <div className="relative">
-                <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-primary-900/5 border border-neutral-100 relative">
+                <div className="bg-white/60 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-primary-900/5 border border-neutral-100 relative">
                   <div className="absolute -top-4 -right-4 bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transform rotate-6 z-10">
                     Live Updates
                   </div>
@@ -163,9 +163,9 @@ export default async function PartnerLandingPage() {
                       { pg: "Sunshine Girls PG", plan: "Pro Plan • 1 Year", amount: "+₹1,200" },
                       { pg: "Royal Boys Hostel", plan: "Scale Plan • 6 Months", amount: "+₹2,500" },
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 sm:p-4 rounded-2xl border border-neutral-100 bg-neutral-50 hover:bg-white hover:shadow-md transition-all">
+                      <div key={i} className="flex items-center justify-between p-3 sm:p-4 rounded-2xl border border-neutral-100 bg-neutral-50 hover:bg-white/60 backdrop-blur-md hover:shadow-md transition-all">
                         <div className="flex items-center gap-3 sm:gap-4">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center text-primary-600 font-bold border border-neutral-200 shadow-sm">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/60 backdrop-blur-md flex items-center justify-center text-primary-600 font-bold border border-neutral-200/60 shadow-sm">
                             <Building2 size={18} />
                           </div>
                           <div>
@@ -175,7 +175,7 @@ export default async function PartnerLandingPage() {
                         </div>
                         <div className="text-right">
                           <div className="font-bold text-green-600 text-base sm:text-lg">{item.amount}</div>
-                          <div className="text-[10px] sm:text-xs font-medium text-neutral-400">Credited</div>
+                          <div className="text-[10px] sm:text-[10px] font-bold uppercase tracking-wider text-neutral-400">Credited</div>
                         </div>
                       </div>
                     ))}
@@ -187,7 +187,7 @@ export default async function PartnerLandingPage() {
         </section>
 
         {/* How it works */}
-        <section className="py-20 lg:py-24 bg-white relative border-b border-neutral-200">
+        <section className="py-20 lg:py-24 bg-white/60 backdrop-blur-md relative border-b border-neutral-200/60">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">How It Works</h2>
@@ -209,7 +209,7 @@ export default async function PartnerLandingPage() {
         </section>
         
         {/* Features / Benefits */}
-        <section className="py-20 lg:py-24 bg-neutral-50 border-b border-neutral-200">
+        <section className="py-20 lg:py-24 bg-neutral-50 border-b border-neutral-200/60">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">Partner Programme Benefits</h2>
@@ -218,7 +218,7 @@ export default async function PartnerLandingPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {FEATURES.map((f) => (
-                <div key={f.title} className="bg-white rounded-3xl p-8 border border-neutral-100 shadow-sm text-center hover:shadow-md transition-shadow">
+                <div key={f.title} className="bg-white/60 backdrop-blur-md rounded-3xl p-8 border border-neutral-100 shadow-sm text-center hover:shadow-md transition-shadow">
                   <div className="w-16 h-16 mx-auto rounded-2xl bg-neutral-50 border border-neutral-100 shadow-inner flex items-center justify-center text-primary-600 mb-6">
                     <f.Icon size={32} />
                   </div>
@@ -231,7 +231,7 @@ export default async function PartnerLandingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 lg:py-28 bg-white">
+        <section className="py-20 lg:py-28 bg-white/60 backdrop-blur-md">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-black text-neutral-900 mb-6 tracking-tight">Ready to start earning?</h2>
             <p className="text-lg md:text-xl text-neutral-600 mb-10 max-w-2xl mx-auto">Registration is completely free. Apply today and become a part of the PGSathi Partner network.</p>

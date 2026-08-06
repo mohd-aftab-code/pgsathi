@@ -96,14 +96,14 @@ function StatusScreen({
           </div>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xl p-8 text-center">
+        <div className="bg-white/60 backdrop-blur-md dark:bg-neutral-900 rounded-3xl border border-neutral-200/60 dark:border-neutral-800 shadow-xl p-8 text-center">
           <div className={`w-16 h-16 rounded-2xl grid place-items-center mx-auto mb-5 ${toneCls}`}>
             <view.Icon size={32} />
           </div>
           <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">{view.title}</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">{view.body}</p>
 
-          <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 px-4 py-3 mb-6 text-left">
+          <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200/60 dark:border-neutral-700 px-4 py-3 mb-6 text-left">
             <div className="flex items-center justify-between text-sm">
               <span className="text-neutral-500 dark:text-neutral-400">Partner</span>
               <span className="font-semibold text-neutral-900 dark:text-white">{name}</span>
@@ -121,7 +121,7 @@ function StatusScreen({
           <div className="flex gap-3">
             <Link
               href="/contact"
-              className="flex-1 h-11 leading-[2.75rem] rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+              className="flex-1 h-11 leading-[2.75rem] rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
             >
               Support
             </Link>

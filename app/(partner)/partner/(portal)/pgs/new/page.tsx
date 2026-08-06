@@ -176,8 +176,8 @@ export default function PartnerNewPgPage() {
   }
 
   // ── shared styling (matches owner form, dark-aware) ──
-  const card = "border border-neutral-100 dark:border-neutral-800 shadow-sm rounded-3xl p-5 md:p-8 bg-white dark:bg-neutral-900";
-  const inp = "w-full h-14 px-4 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800 dark:text-white focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm";
+  const card = "border border-neutral-100 dark:border-neutral-800 shadow-sm rounded-3xl p-5 md:p-8 bg-white/60 backdrop-blur-md dark:bg-neutral-900";
+  const inp = "w-full h-14 px-4 rounded-xl border border-neutral-200/60 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800 dark:text-white focus:bg-white/60 backdrop-blur-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all shadow-sm";
   const lbl = "block text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2";
   const yesNo = (field: keyof FormData, label: string) => (
     <div>
@@ -219,7 +219,7 @@ export default function PartnerNewPgPage() {
               { k: "Phone (login ID)", v: done.ownerLogin.phone },
               { k: "Password", v: done.ownerLogin.password },
             ].map((row) => (
-              <div key={row.k} className="rounded-xl bg-white dark:bg-neutral-900 border border-primary-100 dark:border-neutral-700 px-4 py-2.5 mb-2">
+              <div key={row.k} className="rounded-xl bg-white/60 backdrop-blur-md dark:bg-neutral-900 border border-primary-100 dark:border-neutral-700 px-4 py-2.5 mb-2">
                 <div className="text-[11px] text-neutral-500 dark:text-neutral-400">{row.k}</div>
                 <div className="text-lg font-extrabold tracking-wide text-neutral-900 dark:text-white">{row.v}</div>
               </div>
@@ -246,7 +246,7 @@ export default function PartnerNewPgPage() {
         )}
         <div className="flex gap-3 justify-center">
           <Link href="/partner/pgs" className="h-11 px-5 leading-[2.75rem] rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm">My PGs dekhein</Link>
-          <button onClick={() => { setDone(null); setForm(DEFAULT_FORM); setStep(1); }} className="h-11 px-5 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm">Add another</button>
+          <button onClick={() => { setDone(null); setForm(DEFAULT_FORM); setStep(1); }} className="h-11 px-5 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold text-sm">Add another</button>
         </div>
       </div>
     );
@@ -266,7 +266,7 @@ export default function PartnerNewPgPage() {
           <div className="absolute top-4 left-4 h-1 bg-primary-500 rounded-full transition-all duration-500" style={{ width: `calc(${((step - 1) / (STEPS.length - 1)) * 100}% - 1rem)` }} />
           {STEPS.map((s) => (
             <div key={s.id} className="relative z-10 flex flex-col items-center gap-1.5">
-              <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-xs transition-all ${step === s.id ? "bg-primary-500 text-white ring-4 ring-primary-100 dark:ring-primary-950" : step > s.id ? "bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400" : "bg-white dark:bg-neutral-800 text-neutral-400 border border-neutral-200 dark:border-neutral-700"}`}>
+              <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-xs transition-all ${step === s.id ? "bg-primary-500 text-white ring-4 ring-primary-100 dark:ring-primary-950" : step > s.id ? "bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400" : "bg-white/60 backdrop-blur-md dark:bg-neutral-800 text-neutral-400 border border-neutral-200/60 dark:border-neutral-700"}`}>
                 {step > s.id ? <CheckCircle2 size={16} /> : s.id}
               </div>
               <span className={`text-[11px] font-bold whitespace-nowrap ${step === s.id ? "text-neutral-900 dark:text-white" : "text-neutral-400"}`}>{s.title}</span>
@@ -420,7 +420,7 @@ export default function PartnerNewPgPage() {
             )}
             <label className="border-2 border-dashed border-primary-300 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-950/20 hover:bg-primary-50 dark:hover:bg-primary-950/40 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
               <input type="file" multiple accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
-              <div className="w-14 h-14 bg-white dark:bg-neutral-800 rounded-full grid place-items-center shadow-sm mb-3 text-primary-500">
+              <div className="w-14 h-14 bg-white/60 backdrop-blur-md dark:bg-neutral-800 rounded-full grid place-items-center shadow-sm mb-3 text-primary-500">
                 {uploading ? <Loader2 className="animate-spin" size={24} /> : <Upload size={24} />}
               </div>
               <p className="font-bold text-neutral-900 dark:text-white">{uploading ? "Uploading…" : "Upload Photos"}</p>
@@ -436,10 +436,10 @@ export default function PartnerNewPgPage() {
                 <div key={rt} className="border-2 border-neutral-100 dark:border-neutral-800 rounded-2xl p-4 bg-neutral-50/30 dark:bg-neutral-800/40">
                   <h4 className="font-bold text-neutral-800 dark:text-neutral-200 mb-3 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary-500" /> {ROOM_LABEL[rt] || rt}</h4>
                   <label className="block text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1">Rent (₹/mo) *</label>
-                  <input type="number" className="w-full h-11 px-3 mb-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none" placeholder="8000"
+                  <input type="number" className="w-full h-11 px-3 mb-3 rounded-xl border border-neutral-200/60 dark:border-neutral-700 bg-white/60 backdrop-blur-md dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none" placeholder="8000"
                     value={form.roomPrices[rt]?.rent || ""} onChange={(e) => set({ roomPrices: { ...form.roomPrices, [rt]: { rent: e.target.value, deposit: form.roomPrices[rt]?.deposit || "" } } })} />
                   <label className="block text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1">Deposit (₹)</label>
-                  <input type="number" className="w-full h-11 px-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none" placeholder="10000"
+                  <input type="number" className="w-full h-11 px-3 rounded-xl border border-neutral-200/60 dark:border-neutral-700 bg-white/60 backdrop-blur-md dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none" placeholder="10000"
                     value={form.roomPrices[rt]?.deposit || ""} onChange={(e) => set({ roomPrices: { ...form.roomPrices, [rt]: { rent: form.roomPrices[rt]?.rent || "", deposit: e.target.value } } })} />
                 </div>
               ))}
@@ -455,8 +455,8 @@ export default function PartnerNewPgPage() {
       )}
 
       {/* Nav bar — floats above the mobile tab bar */}
-      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 lg:relative lg:bottom-auto bg-white dark:bg-neutral-900 lg:bg-transparent border-t border-neutral-200 dark:border-neutral-800 lg:border-t-0 p-4 lg:p-0 z-40 flex items-center justify-between gap-3 lg:mt-6">
-        <button type="button" onClick={prev} className={`px-6 py-3 rounded-xl font-bold border-2 text-sm transition-colors ${step === 1 ? "opacity-0 pointer-events-none" : "border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300"}`}>Previous</button>
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 lg:relative lg:bottom-auto bg-white/60 backdrop-blur-md dark:bg-neutral-900 lg:bg-transparent border-t border-neutral-200/60 dark:border-neutral-800 lg:border-t-0 p-4 lg:p-0 z-40 flex items-center justify-between gap-3 lg:mt-6">
+        <button type="button" onClick={prev} className={`px-6 py-3 rounded-xl font-bold border-2 text-sm transition-colors ${step === 1 ? "opacity-0 pointer-events-none" : "border-neutral-200/60 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300"}`}>Previous</button>
         {step < 5 ? (
           <button type="button" onClick={next} className="px-8 py-3 rounded-xl font-bold bg-primary-500 hover:bg-primary-600 text-white text-sm shadow-lg shadow-primary-500/25">Save &amp; Continue</button>
         ) : (

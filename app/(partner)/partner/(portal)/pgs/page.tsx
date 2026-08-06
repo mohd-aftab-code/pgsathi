@@ -143,14 +143,14 @@ export default async function PartnerPgsPage({
             <Link
               href={buildHref(page - 1)}
               aria-disabled={page <= 1}
-              className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-sm font-semibold ${page <= 1 ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}
+              className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-sm font-semibold ${page <= 1 ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}
             >
               <ChevronLeft size={15} /> Prev
             </Link>
             <Link
               href={buildHref(page + 1)}
               aria-disabled={page >= totalPages}
-              className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 text-sm font-semibold ${page >= totalPages ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}
+              className={`inline-flex items-center gap-1 h-9 px-3 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 text-sm font-semibold ${page >= totalPages ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100 dark:hover:bg-neutral-800"} text-neutral-600 dark:text-neutral-300`}
             >
               Next <ChevronRight size={15} />
             </Link>

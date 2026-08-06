@@ -22,7 +22,7 @@ export default async function PartnerSettingsPage() {
         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">Notification preferences and account.</p>
       </div>
 
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Notifications</h2>
         <SettingsForm
           initial={{
@@ -36,7 +36,7 @@ export default async function PartnerSettingsPage() {
         />
       </div>
 
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-1">Account</h2>
         <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
           Password kabhi bhi yahan se badal sakte hain — logout karne ki zaroorat nahi.
@@ -44,7 +44,7 @@ export default async function PartnerSettingsPage() {
         <div className="flex flex-wrap gap-2">
           <Link
             href="/change-password"
-            className="inline-flex items-center gap-1.5 h-11 px-5 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 font-bold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            className="inline-flex items-center gap-1.5 h-11 px-5 rounded-xl border-2 border-neutral-200/60 dark:border-neutral-700 font-bold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
             Password badlein
           </Link>

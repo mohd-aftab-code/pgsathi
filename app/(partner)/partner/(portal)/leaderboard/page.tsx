@@ -33,7 +33,7 @@ export default async function PartnerLeaderboardPage() {
       </div>
 
       {/* ── Your tier ─────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
             <h2 className="font-bold text-neutral-900 dark:text-white">Aapka tier</h2>
@@ -44,7 +44,7 @@ export default async function PartnerLeaderboardPage() {
             </p>
           </div>
           <span className={`px-3 py-1.5 rounded-xl text-sm font-bold ${
-            tier.tier === "PLATINUM" ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+            tier.tier === "PLATINUM" ? "bg-slate-900 text-white dark:bg-white/60 backdrop-blur-md dark:text-slate-900"
             : tier.tier === "GOLD" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400"
             : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
           }`}>
@@ -82,7 +82,7 @@ export default async function PartnerLeaderboardPage() {
       </section>
 
       {/* ── Top 10 ────────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
+      <section className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 shadow-sm overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
           <Trophy size={16} className="text-amber-500" />
           <h2 className="font-bold text-neutral-900 dark:text-white text-sm">Is mahine ke top partners</h2>
@@ -103,7 +103,7 @@ export default async function PartnerLeaderboardPage() {
 
         {/* Outside the top 10 — still show where they stand. */}
         {board.you && board.you.rank > board.top.length && (
-          <div className="border-t-2 border-dashed border-neutral-200 dark:border-neutral-700">
+          <div className="border-t-2 border-dashed border-neutral-200/60 dark:border-neutral-700">
             <ul>
               <LeaderRow row={board.you} />
             </ul>
@@ -117,7 +117,7 @@ export default async function PartnerLeaderboardPage() {
         )}
       </section>
 
-      <p className="text-xs text-neutral-400 text-center">
+      <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider text-center">
         {board.total} partners is mahine active hain.
       </p>
     </div>
@@ -129,7 +129,7 @@ function LeaderRow({ row }: { row: { rank: number; name: string; partnerCode: st
 
   return (
     <li className={`flex items-center gap-3 px-5 py-3.5 ${row.isYou ? "bg-primary-50/60 dark:bg-primary-500/10" : ""}`}>
-      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-extrabold shrink-0 ${
+      <div className={`w-8 h-8 rounded-2xl flex items-center justify-center text-sm font-extrabold shrink-0 ${
         medal ? "text-lg" : "bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400"
       }`}>
         {medal ?? row.rank}
