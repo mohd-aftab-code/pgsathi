@@ -41,16 +41,16 @@ export default function PGCard({ pg }: PGCardProps) {
       </div>
       
       <div className="p-3 sm:p-4 flex-1 flex flex-col">
-        <div className="flex items-start justify-between gap-2 sm:gap-3 mb-1">
-          <h3 className="font-bold text-base sm:text-lg md:text-xl text-neutral-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-tight">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="font-bold text-base sm:text-lg md:text-xl text-neutral-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-tight pr-2">
             {pg.title}
           </h3>
-          <div className="text-right shrink-0">
-            <div className="font-black text-lg sm:text-xl md:text-2xl text-primary-700 whitespace-nowrap leading-none">
+          <div className="text-right shrink-0 mt-0.5">
+            <div className="font-bold text-base md:text-lg text-primary-700 whitespace-nowrap leading-none">
               ₹{pg.priceMin?.toLocaleString()}
               {pg.priceMax > pg.priceMin && <>&ndash;{pg.priceMax?.toLocaleString()}</>}
             </div>
-            <div className="text-[9px] sm:text-[10px] md:text-xs text-neutral-500 font-medium">/month</div>
+            <div className="text-[10px] md:text-xs text-neutral-500 font-medium mt-1">/month</div>
           </div>
         </div>
 
@@ -61,11 +61,11 @@ export default function PGCard({ pg }: PGCardProps) {
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 mb-4">
-          {pg.foodIncluded && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Utensils size={10} /> Food</span>}
-          {pg.laundryService && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Shirt size={10} /> Laundry</span>}
-          {pg.roomCleaning && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Brush size={10} /> Cleaning</span>}
-          {pg.parking && !pg.roomCleaning && <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200"><Car size={10} /> Parking</span>}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {pg.foodIncluded && <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200"><Utensils size={12} className="text-slate-500"/> Food</span>}
+          {pg.laundryService && <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200"><Shirt size={12} className="text-slate-500"/> Laundry</span>}
+          {pg.roomCleaning && <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200"><Brush size={12} className="text-slate-500"/> Cleaning</span>}
+          {pg.parking && !pg.roomCleaning && <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200"><Car size={12} className="text-slate-500"/> Parking</span>}
         </div>
 
         <div className="mt-auto pt-3 border-t border-neutral-100 flex items-center justify-between">
