@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
       {/* Trial Duration */}
       <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 sm:p-5 shadow-sm">
         <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-neutral-100/60">
-          <div className="p-2 bg-blue-50/80 border border-blue-100/60 rounded-lg">
+          <div className="p-2 bg-blue-50/80 border border-blue-100/60 rounded-2xl">
             <Clock size={14} className="text-blue-600" />
           </div>
           <div>
@@ -123,7 +123,7 @@ export default function AdminSettingsPage() {
               max={90}
               value={settings.trialDays}
               onChange={(e) => set("trialDays", parseInt(e.target.value) || 14)}
-              className="w-full px-3 h-8 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
+              className="w-full px-3 h-8 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
             />
           </div>
           <div className="flex-1">
@@ -133,7 +133,7 @@ export default function AdminSettingsPage() {
               value={settings.defaultTrialPlanSlug}
               onChange={(e) => set("defaultTrialPlanSlug", e.target.value)}
               placeholder="starter"
-              className="w-full px-3 h-8 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
+              className="w-full px-3 h-8 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 shadow-sm transition-all"
             />
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function AdminSettingsPage() {
       {/* Announcement Banner */}
       <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 sm:p-5 shadow-sm">
         <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-neutral-100/60">
-          <div className="p-2 bg-amber-50/80 border border-amber-100/60 rounded-lg">
+          <div className="p-2 bg-amber-50/80 border border-amber-100/60 rounded-2xl">
             <Bell size={14} className="text-amber-600" />
           </div>
           <div className="flex-1">
@@ -160,7 +160,7 @@ export default function AdminSettingsPage() {
             }`}
           >
             <span
-              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform ${
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white/60 backdrop-blur-md shadow-sm transition-transform ${
                 settings.announcementEnabled ? "translate-x-4.5" : "translate-x-1"
               }`}
             />
@@ -174,10 +174,10 @@ export default function AdminSettingsPage() {
             onChange={(e) => set("announcementText", e.target.value)}
             placeholder="e.g. PGSathi 2.0 launch ho gaya!"
             rows={2}
-            className="w-full px-3 py-2.5 bg-white border border-neutral-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 resize-none shadow-sm transition-all"
+            className="w-full px-3 py-2.5 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400 resize-none shadow-sm transition-all"
           />
           {settings.announcementEnabled && settings.announcementText && (
-            <div className="mt-2.5 bg-amber-50 border border-amber-200/60 rounded-lg px-3 py-2 text-[10px] text-amber-800 font-bold uppercase tracking-wider">
+            <div className="mt-2.5 bg-amber-50 border border-amber-200/60 rounded-2xl px-3 py-2 text-[10px] text-amber-800 font-bold uppercase tracking-wider">
               📢 Preview: <span className="font-medium normal-case">{settings.announcementText}</span>
             </div>
           )}
@@ -187,7 +187,7 @@ export default function AdminSettingsPage() {
       {/* Maintenance Mode */}
       <div className={`backdrop-blur-md rounded-2xl border p-4 sm:p-5 shadow-sm transition-colors ${settings.maintenanceMode ? "border-red-200/60 bg-red-50/50" : "border-neutral-200/60 bg-white/60"}`}>
         <div className="flex items-center gap-2.5">
-          <div className={`p-2 rounded-lg border ${settings.maintenanceMode ? "bg-red-100/50 border-red-200/60" : "bg-neutral-50/80 border-neutral-200/60"}`}>
+          <div className={`p-2 rounded-2xl border ${settings.maintenanceMode ? "bg-red-100/50 border-red-200/60" : "bg-neutral-50/80 border-neutral-200/60"}`}>
             <Wrench size={14} className={settings.maintenanceMode ? "text-red-600" : "text-neutral-500"} />
           </div>
           <div className="flex-1">
@@ -201,14 +201,14 @@ export default function AdminSettingsPage() {
             }`}
           >
             <span
-              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform ${
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white/60 backdrop-blur-md shadow-sm transition-transform ${
                 settings.maintenanceMode ? "translate-x-4.5" : "translate-x-1"
               }`}
             />
           </button>
         </div>
         {settings.maintenanceMode && (
-          <div className="mt-3 bg-red-50 border border-red-200/60 rounded-lg px-3 py-2 text-[10px] text-red-800 font-bold uppercase tracking-wider flex items-center gap-1.5">
+          <div className="mt-3 bg-red-50 border border-red-200/60 rounded-2xl px-3 py-2 text-[10px] text-red-800 font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Shield size={12} className="shrink-0" />
             ⚠️ Users won't be able to access the app
           </div>

@@ -70,7 +70,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
       </Link>
 
       {/* Profile header */}
-      <div className="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-sm">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/80 p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row gap-4 items-start">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-200 flex items-center justify-center font-black text-2xl text-violet-700 shrink-0">
             {user.name?.charAt(0)?.toUpperCase() || "?"}
@@ -92,7 +92,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
               {user.phone && <span className="flex items-center gap-1.5"><Phone size={13} /> {user.phone}</span>}
               <span className="flex items-center gap-1.5"><Calendar size={13} /> Joined {format(user.createdAt, "d MMM yyyy")}</span>
             </div>
-            <div className="flex flex-wrap gap-4 text-xs text-neutral-400">
+            <div className="flex flex-wrap gap-4 text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
               <span>ID: #{user.id}</span>
               {user.lastLoginAt && <span>Last login: {formatDistanceToNow(user.lastLoginAt, { addSuffix: true })}</span>}
               {user.partnerProfile && (
@@ -120,7 +120,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                 <span className="font-semibold text-neutral-400">koi nahi — self-registered</span>
               )}
               {user.partnerAttributedAt && (
-                <span className="text-xs text-neutral-400 ml-2">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider ml-2">
                   since {format(user.partnerAttributedAt, "d MMM yyyy")}
                 </span>
               )}
@@ -147,7 +147,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
           { label: "Subscriptions", value: user.subscriptions.length, icon: CreditCard, color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
           { label: "Active Plan", value: activeSubscription?.plan.name ?? "None", icon: Shield, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl border border-neutral-200/80 p-4 shadow-sm">
+          <div key={s.label} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/80 p-4 shadow-sm">
             <div className={`p-2 rounded-xl border ${s.bg} w-fit mb-3`}>
               <s.icon size={16} className={s.color} />
             </div>
@@ -160,7 +160,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Listings */}
         {user.role === "OWNER" && (
-          <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
               <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
                 <Building2 size={14} className="text-violet-600" /> Their Listings ({user._count.listings})
@@ -172,7 +172,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
             <div className="divide-y divide-neutral-50">
               {user.listings.map((l) => (
                 <div key={l.id} className="flex items-center gap-3 px-5 py-3">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                  <div className={`w-7 h-7 rounded-2xl flex items-center justify-center shrink-0 ${
                     l.status === "ACTIVE" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
                     l.status === "PENDING" ? "bg-amber-50 text-amber-600 border border-amber-100" :
                     "bg-neutral-100 text-neutral-400"
@@ -198,7 +198,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
         )}
 
         {/* Subscription History */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100">
             <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
               <CreditCard size={14} className="text-blue-600" /> Subscription History

@@ -32,8 +32,8 @@ export default async function InventoryPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Bed Inventory</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Bed Inventory</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
             Har property mein kitne bed khaali aur kitne bhare hain — ek nazar mein.
           </p>
           <p className="text-[10px] text-neutral-400 mt-1 font-bold">
@@ -46,7 +46,7 @@ export default async function InventoryPage() {
         </div>
         <Link
           href="/dashboard/owner/listings/new"
-          className="bg-violet-600 hover:bg-violet-700 text-white h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-1.5 shrink-0"
+          className="bg-violet-600 hover:bg-violet-700 text-white h-8 px-4 rounded-2xl text-[10px] font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-1.5 shrink-0"
         >
           <PlusCircle size={14} /> Add New PG
         </Link>
@@ -63,7 +63,7 @@ export default async function InventoryPage() {
             <div key={i} className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60 relative overflow-hidden group">
               <div className="flex items-center justify-between mb-2 relative z-10">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">{stat.label}</span>
-                <div className={`w-8 h-8 ${stat.bg} ${stat.color} border ${stat.border} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-8 h-8 ${stat.bg} ${stat.color} border ${stat.border} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                   <stat.icon size={14} />
                 </div>
               </div>
@@ -74,12 +74,12 @@ export default async function InventoryPage() {
       )}
 
       {listings.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-neutral-200/60 p-12 text-center">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 p-12 text-center">
           <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-500 border border-violet-100/60">
             <BedDouble size={24} />
           </div>
           <h3 className="text-lg font-black text-neutral-900 mb-2">No listings yet</h3>
-          <p className="text-neutral-500 mb-6 max-w-sm mx-auto text-xs font-medium">You need to add a PG listing before you can manage its rooms and beds.</p>
+          <p className="text-neutral-500 mb-6 max-w-sm mx-auto text-[10px] font-bold uppercase tracking-wider">You need to add a PG listing before you can manage its rooms and beds.</p>
           <Link
             href="/dashboard/owner/listings/new"
             className="bg-violet-600 hover:bg-violet-700 text-white h-9 px-6 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-colors shadow-sm inline-flex items-center gap-2"
@@ -100,7 +100,7 @@ export default async function InventoryPage() {
                 href={`/dashboard/manager/rooms?listingId=${listing.id}`}
                 className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 shadow-sm hover:shadow-md hover:border-violet-300 transition-all duration-300 group flex flex-col sm:flex-row sm:items-center gap-4"
               >
-                <div className="w-full sm:w-16 h-32 sm:h-16 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200">
+                <div className="w-full sm:w-16 h-32 sm:h-16 bg-neutral-100 rounded-xl overflow-hidden shrink-0 border border-neutral-200/60">
                   {listing.photos.length > 0 ? (
                     <img src={listing.photos[0].url} alt={listing.title} className="w-full h-full object-cover" />
                   ) : (
@@ -118,9 +118,9 @@ export default async function InventoryPage() {
                     </div>
                   )}
                   <div className="flex flex-wrap gap-1.5 mt-2">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white border border-neutral-200/80 px-2 py-0.5 rounded-md">{listing.rooms.length} Rooms</span>
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white border border-neutral-200/80 px-2 py-0.5 rounded-md">{listingBeds} Beds</span>
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">{listingOccupied} Occupied</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/80 px-2 py-0.5 rounded-xl">{listing.rooms.length} Rooms</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/80 px-2 py-0.5 rounded-xl">{listingBeds} Beds</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-xl">{listingOccupied} Occupied</span>
                   </div>
                 </div>
 

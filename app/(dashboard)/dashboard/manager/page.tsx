@@ -182,7 +182,7 @@ export default async function ManagerDashboardPage({
   return (
     <div className="space-y-6">
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-neutral-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
             {greeting}, {managerName} 👋
@@ -192,11 +192,11 @@ export default async function ManagerDashboardPage({
           </p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <PropertyFilterSelect listings={ownerListings} value={listingId} className="input-base text-sm w-44 cursor-pointer bg-white" />
-          <Link href="/dashboard/manager/tenants/new" className="btn-primary py-2 px-4 text-sm font-semibold rounded-lg shadow-sm">
+          <PropertyFilterSelect listings={ownerListings} value={listingId} className="input-base text-sm w-44 cursor-pointer bg-white/60 backdrop-blur-md" />
+          <Link href="/dashboard/manager/tenants/new" className="btn-primary py-2 px-4 text-sm font-semibold rounded-2xl shadow-sm">
             + Add Tenant
           </Link>
-          <Link href="/dashboard/manager/complaints/new" className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2 px-4 text-sm font-semibold rounded-lg shadow-sm transition-colors">
+          <Link href="/dashboard/manager/complaints/new" className="bg-white/60 backdrop-blur-md border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2 px-4 text-sm font-semibold rounded-2xl shadow-sm transition-colors">
             Log Issue
           </Link>
         </div>
@@ -214,7 +214,7 @@ export default async function ManagerDashboardPage({
             >
               <div className="flex justify-between items-start mb-2.5 gap-2">
                 <span className="text-[10px] font-extrabold text-neutral-500 group-hover:text-neutral-700 transition-colors uppercase tracking-wider">{k.label}</span>
-                <div className={`p-1.5 rounded-lg shrink-0 ${t.bg}`}>
+                <div className={`p-1.5 rounded-2xl shrink-0 ${t.bg}`}>
                   <k.icon size={13} className={t.text} />
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default async function ManagerDashboardPage({
 
       {/* ── Revenue & Analytics (Owner-Only) ───────────────────── */}
       {/* ── Revenue & Analytics (Owner-Only) ───────────────────── */}
-      <div className="relative rounded-2xl border border-neutral-200/60 bg-white/80 backdrop-blur-xl shadow-sm overflow-hidden">
+      <div className="relative rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md shadow-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <TrendingUp size={14} className="text-violet-600" />
@@ -247,7 +247,7 @@ export default async function ManagerDashboardPage({
               <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-500" /> Expenses</span>
             </div>
             {!isOwner && (
-              <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider flex items-center gap-1">
+              <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-xl uppercase tracking-wider flex items-center gap-1">
                 <Lock size={10} /> Owner Only
               </span>
             )}
@@ -293,7 +293,7 @@ export default async function ManagerDashboardPage({
               <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <Lock size={18} className="text-amber-600" />
               </div>
-              <p className="text-[13px] font-bold text-neutral-800 mb-1">Owner Access Required</p>
+              <p className="text-xs font-black uppercase tracking-tight text-neutral-800 mb-1">Owner Access Required</p>
               <p className="text-[11px] text-neutral-500 font-medium">Revenue data is only visible to the PG Owner. Contact your owner for financial reports.</p>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default async function ManagerDashboardPage({
       {/* ── Rent Pending + Action Items ─────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Rent Pending This Month (actionable) */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <Wallet size={14} className="text-neutral-500" />
@@ -319,7 +319,7 @@ export default async function ManagerDashboardPage({
             {pending.length === 0 ? (
               <div className="text-center py-10 px-4">
                 <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
-                <p className="text-[13px] font-bold text-neutral-700">Sab ne pay kar diya! 🎉</p>
+                <p className="text-xs font-black uppercase tracking-tight text-neutral-700">Sab ne pay kar diya! 🎉</p>
                 <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
               </div>
             ) : (
@@ -327,7 +327,7 @@ export default async function ManagerDashboardPage({
                 {pending.slice(0, 6).map((t) => (
                   <div key={t.id} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-violet-50/30 transition-colors">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
                         {initials(t.name)}
                       </div>
                       <div className="min-w-0">
@@ -357,13 +357,13 @@ export default async function ManagerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-1.5 rounded-md bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
+                        className="p-1.5 rounded-xl bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
                       >
                         <MessageCircle size={14} />
                       </a>
                       <Link
                         href={`/dashboard/manager/payments/new?tenantId=${t.id}`}
-                        className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 hover:text-violet-900 bg-violet-50/50 px-2 py-1.5 rounded-md border border-violet-100"
+                        className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 hover:text-violet-900 bg-violet-50/50 px-2 py-1.5 rounded-xl border border-violet-100"
                       >
                         Record <ArrowRight size={10} />
                       </Link>
@@ -376,7 +376,7 @@ export default async function ManagerDashboardPage({
         </div>
 
         {/* Action Items (open complaints) */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <Wrench size={14} className="text-neutral-500" />
@@ -404,7 +404,7 @@ export default async function ManagerDashboardPage({
                         <div className="absolute top-4 left-0.5 w-px h-full bg-neutral-200 -z-10" />
                       </div>
                       <div>
-                        <p className="text-[13px] font-bold text-neutral-800 line-clamp-1">{c.title}</p>
+                        <p className="text-xs font-black uppercase tracking-tight text-neutral-800 line-clamp-1">{c.title}</p>
                         <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{c.listing?.title}</p>
                         <p className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">
                           {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}

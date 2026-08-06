@@ -102,8 +102,8 @@ export default function ReportsPage() {
                 <button
                   key={v}
                   onClick={() => setView(v)}
-                  className={`text-[9px] font-black tracking-wider uppercase px-3 py-1.5 rounded-lg transition-all ${
-                    view === v ? "bg-white shadow-sm text-violet-700" : "text-neutral-500 hover:text-neutral-700 hover:bg-white/40"
+                  className={`text-[9px] font-black tracking-wider uppercase px-3 py-1.5 rounded-2xl transition-all ${
+                    view === v ? "bg-white/60 backdrop-blur-md shadow-sm text-violet-700" : "text-neutral-500 hover:text-neutral-700 hover:bg-white/40"
                   }`}
                 >
                   {v === "both" ? "Both" : v === "income" ? "Income" : "Expense"}
@@ -120,7 +120,7 @@ export default function ReportsPage() {
               return (
                 <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1 group relative">
                   {/* Tooltip */}
-                  <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none bg-neutral-900 text-white text-xs rounded-lg p-2 whitespace-nowrap left-1/2 -translate-x-1/2">
+                  <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none bg-neutral-900 text-white text-xs rounded-2xl p-2 whitespace-nowrap left-1/2 -translate-x-1/2">
                     <div className="text-green-400">↑ {formatINR(x.income)}</div>
                     <div className="text-red-400">↓ {formatINR(x.expense)}</div>
                   </div>
@@ -191,15 +191,15 @@ export default function ReportsPage() {
               />
             </div>
             <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider">
-              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-2xl border border-neutral-200/40">
                 <span className="text-neutral-500">Expected</span>
                 <span className="font-black text-neutral-800">{formatINR(c.expectedRent)}</span>
               </div>
-              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-2xl border border-neutral-200/40">
                 <span className="text-neutral-500">Collected</span>
                 <span className="font-black text-emerald-700">{formatINR(c.collectedRent)}</span>
               </div>
-              <div className="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-neutral-200/40">
+              <div className="flex justify-between items-center bg-white/40 p-2 rounded-2xl border border-neutral-200/40">
                 <span className="text-neutral-500">Pending</span>
                 <span className="font-black text-red-600">{formatINR(c.pendingRent)}</span>
               </div>
@@ -219,9 +219,9 @@ export default function ReportsPage() {
               ].map(s => {
                 const Icon = s.icon;
                 return (
-                  <div key={s.label} className="flex items-center justify-between bg-white/40 p-2 rounded-lg border border-neutral-200/40">
+                  <div key={s.label} className="flex items-center justify-between bg-white/40 p-2 rounded-2xl border border-neutral-200/40">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-2">
-                      <span className={`p-1.5 rounded-md ${s.cls}`}><Icon size={12} /></span>
+                      <span className={`p-1.5 rounded-xl ${s.cls}`}><Icon size={12} /></span>
                       {s.label}
                     </span>
                     <span className="font-black text-neutral-900 text-xs">{s.value}</span>

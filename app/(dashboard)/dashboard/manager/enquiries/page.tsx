@@ -71,19 +71,19 @@ export default async function EnquiriesPage() {
                   <p className="text-xs text-neutral-500 truncate">{v.listing.title}</p>
                 </div>
                 <div className="flex gap-2 pt-3 border-t border-neutral-100">
-                  <a href={`tel:${v.phone}`} className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+                  <a href={`tel:${v.phone}`} className="flex-1 text-center text-xs font-bold py-1.5 rounded-2xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
                     📞 Call
                   </a>
                   <a
                     href={`https://wa.me/91${sanitizePhone(v.phone)}?text=Hi%20${encodeURIComponent(v.name)}%2C%20confirming%20your%20visit%20at%20${encodeURIComponent(format(new Date(v.visitDate), "h:mm a, dd MMM"))}`}
                     target="_blank" rel="noreferrer"
-                    className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                    className="flex-1 text-center text-xs font-bold py-1.5 rounded-2xl bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
                   >
                     💬 WhatsApp
                   </a>
                   <Link
                     href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(v.name)}&phone=${encodeURIComponent(v.phone)}`}
-                    className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+                    className="flex-1 text-center text-xs font-bold py-1.5 rounded-2xl bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
                   >
                     ➜ Tenant
                   </Link>
@@ -133,7 +133,7 @@ export default async function EnquiriesPage() {
                                 {lead.name}
                                 {!lead.isRead && <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />}
                               </p>
-                              <p className="text-xs text-neutral-400 uppercase">{lead.source} Lead</p>
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider uppercase">{lead.source} Lead</p>
                             </div>
                           </div>
                         </td>
@@ -152,20 +152,20 @@ export default async function EnquiriesPage() {
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center justify-end gap-2">
-                            <a href={`tel:${lead.phone}`} title="Call" className="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+                            <a href={`tel:${lead.phone}`} title="Call" className="p-1.5 rounded-2xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
                               <Phone size={14} />
                             </a>
                             <a
                               href={`https://wa.me/91${sanitizePhone(lead.phone)}?text=Hi%20${encodeURIComponent(lead.name)}%2C%20I%20am%20calling%20from%20${encodeURIComponent(lead.listing.title)}.`}
                               target="_blank" rel="noreferrer" title="WhatsApp"
-                              className="p-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                              className="p-1.5 rounded-2xl bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
                             >
                               <MessageCircle size={14} />
                             </a>
                             <Link
                               href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
                               title="Convert to Tenant"
-                              className="px-2.5 py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-xs font-bold whitespace-nowrap"
+                              className="px-2.5 py-1.5 rounded-2xl bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-xs font-bold whitespace-nowrap"
                             >
                               ➜ Tenant
                             </Link>
@@ -198,30 +198,30 @@ export default async function EnquiriesPage() {
                       </div>
                       
                       {lead.message && (
-                        <div className="text-xs text-neutral-600 bg-neutral-50 p-2 rounded-lg italic">
+                        <div className="text-xs text-neutral-600 bg-neutral-50 p-2 rounded-2xl italic">
                           "{lead.message}"
                         </div>
                       )}
                       
                       <div className="grid grid-cols-2 gap-2 text-sm bg-neutral-50 p-3 rounded-xl border border-neutral-100">
                         <div>
-                          <span className="text-xs text-neutral-400 block mb-0.5">Property</span>
+                          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-0.5">Property</span>
                           <span className="font-semibold text-neutral-700 block truncate">{lead.listing.title}</span>
                         </div>
                         <div>
-                          <span className="text-xs text-neutral-400 block mb-0.5">Received</span>
+                          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-0.5">Received</span>
                           <span className="font-semibold text-neutral-700 block">{formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-2 pt-2 border-t border-neutral-100">
-                        <a href={`tel:${lead.phone}`} className="flex-1 text-center py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-xs font-bold flex justify-center items-center gap-1">
+                        <a href={`tel:${lead.phone}`} className="flex-1 text-center py-2 rounded-2xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-xs font-bold flex justify-center items-center gap-1">
                           <Phone size={14} /> Call
                         </a>
                         <a
                           href={`https://wa.me/91${sanitizePhone(lead.phone)}?text=Hi%20${encodeURIComponent(lead.name)}%2C%20I%20am%20calling%20from%20${encodeURIComponent(lead.listing.title)}.`}
                           target="_blank" rel="noreferrer"
-                          className="flex-1 text-center py-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors text-xs font-bold flex justify-center items-center gap-1"
+                          className="flex-1 text-center py-2 rounded-2xl bg-green-50 text-green-700 hover:bg-green-100 transition-colors text-xs font-bold flex justify-center items-center gap-1"
                         >
                           <MessageCircle size={14} /> WhatsApp
                         </a>
@@ -229,7 +229,7 @@ export default async function EnquiriesPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                          className="flex-[2] text-center py-2 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-xs font-bold"
+                          className="flex-[2] text-center py-2 rounded-2xl bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-xs font-bold"
                         >
                           Convert to Tenant
                         </Link>

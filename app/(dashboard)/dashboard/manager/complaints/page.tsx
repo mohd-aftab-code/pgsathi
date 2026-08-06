@@ -45,14 +45,14 @@ export default async function ComplaintsPage({
       </div>
 
       <form className="mb-6 flex flex-wrap gap-3">
-        <select name="status" defaultValue={status} className="input-base max-w-[160px] bg-white shadow-sm rounded-xl">
+        <select name="status" defaultValue={status} className="input-base max-w-[160px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl">
           <option value="">All Status</option>
           <option value="OPEN">Open</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="RESOLVED">Resolved</option>
           <option value="CLOSED">Closed</option>
         </select>
-        <select name="listingId" defaultValue={listingId ?? ""} className="input-base max-w-[200px] bg-white shadow-sm rounded-xl">
+        <select name="listingId" defaultValue={listingId ?? ""} className="input-base max-w-[200px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl">
           <option value="">All Properties</option>
           {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
         </select>
@@ -79,7 +79,7 @@ export default async function ComplaintsPage({
                   <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{c.category}</span>
                 </div>
                 <div className="font-black text-neutral-900 text-sm">{c.title}</div>
-                {c.description && <div className="mt-1 text-xs font-medium text-neutral-500 line-clamp-2">{c.description}</div>}
+                {c.description && <div className="mt-1 text-[10px] font-bold text-neutral-500 uppercase tracking-wider line-clamp-2">{c.description}</div>}
                 <div className="mt-2 text-[10px] font-bold text-neutral-400 uppercase tracking-wider flex flex-wrap gap-1">
                   <span>{c.listing.title}</span>
                   {c.tenant && <span>· {c.tenant.name}</span>}

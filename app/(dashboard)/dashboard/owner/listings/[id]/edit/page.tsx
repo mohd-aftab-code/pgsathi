@@ -358,7 +358,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
   // ════════════════════════════════════════════════════════
 
   const renderStepIndicator = () => (
-    <div className="flex w-full mb-8 rounded-xl overflow-x-auto whitespace-nowrap shadow-sm border border-neutral-200 snap-x hide-scrollbar">
+    <div className="flex w-full mb-8 rounded-xl overflow-x-auto whitespace-nowrap shadow-sm border border-neutral-200/60 snap-x hide-scrollbar">
       {STEPS.map((step, index) => {
         const isActive = currentStep === step.id;
         const isCompleted = currentStep > step.id;
@@ -369,7 +369,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             className={`flex-1 flex items-center justify-between px-4 py-3 min-w-[180px] md:min-w-0 border-r border-white/20 last:border-r-0 transition-colors snap-start
               ${isActive ? 'bg-primary-500 text-white font-bold' : 
                 isCompleted ? 'bg-primary-100 text-primary-800 font-medium' : 
-                'bg-white text-neutral-400 font-medium'}`}
+                'bg-white/60 backdrop-blur-md text-neutral-400 font-medium'}`}
           >
             <span className="text-xs uppercase tracking-wider hidden md:block">Step {step.id}</span>
             <span className="text-sm truncate mx-2">{step.title}</span>
@@ -389,7 +389,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             <label className="block text-sm font-semibold text-neutral-700 mb-2">PG / Flat Name *</label>
             <input 
               type="text" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none"
               placeholder="Enter PG Name"
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
@@ -399,7 +399,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Description *</label>
             <input 
               type="text" 
-              className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none"
               placeholder="Short catchy description"
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
@@ -435,7 +435,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
                 { id: "DORMITORY", label: "Dormitory" },
                 { id: "STUDIO", label: "Studio" },
               ].map((type) => (
-                <label key={type.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                <label key={type.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${formData.roomTypes.includes(type.id) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-neutral-200/60 hover:bg-neutral-50'}`}>
                   <input 
                     type="checkbox" 
                     className="w-4 h-4 text-primary-500 rounded border-neutral-300 focus:ring-primary-500"
@@ -646,7 +646,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
         {formData.photos.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {formData.photos.map((photo, i) => (
-              <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200 group shadow-sm">
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200/60 group shadow-sm">
                 <img src={photo.url} alt={`Upload ${i}`} className="w-full h-full object-cover" />
                 <button 
                   type="button"
@@ -676,7 +676,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
           )}
           <p className="font-bold text-neutral-800 mb-1">{uploadingImage ? "Uploading..." : "Click to Upload Photos"}</p>
           <p className="text-xs text-neutral-500 mb-6">Upload multiple high-quality images of your property</p>
-          <div className="bg-white text-primary-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-primary-100">Browse Files</div>
+          <div className="bg-white/60 backdrop-blur-md text-primary-600 font-bold px-6 py-2 rounded-full shadow-sm text-sm border border-primary-100">Browse Files</div>
           <p className="text-[10px] text-neutral-400 mt-4">Max size 5MB per image</p>
         </label>
       </div>
@@ -687,34 +687,34 @@ export default function EditListingPage({ params }: EditListingPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Min Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMin} onChange={e => setFormData({...formData, priceMin: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Max Rent (₹/mo) *</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMax} onChange={e => setFormData({...formData, priceMax: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.priceMax} onChange={e => setFormData({...formData, priceMax: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Security Deposit (₹)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.securityDeposit} onChange={e => setFormData({...formData, securityDeposit: e.target.value})} />
           </div>
         </div>
         <h3 className="text-md font-bold text-neutral-800 mb-4">Additional Charges (Optional)</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Maintenance (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.maintenanceCharge} onChange={e => setFormData({...formData, maintenanceCharge: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Electricity (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.electricityCharge} onChange={e => setFormData({...formData, electricityCharge: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Food / Mess (₹/mo)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.foodCharge} onChange={e => setFormData({...formData, foodCharge: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-2">Setup Fee (One-time)</label>
-            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
+            <input type="number" className="w-full h-12 px-4 rounded-xl border border-neutral-200/60 focus:ring-2 focus:ring-primary-500 outline-none" value={formData.setupFee} onChange={e => setFormData({...formData, setupFee: e.target.value})} />
           </div>
         </div>
       </div>
@@ -728,7 +728,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200 hover:text-primary-600 transition-colors">
+          <Link href="/dashboard/owner/listings" className="w-10 h-10 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 shadow-sm border border-neutral-200/60 hover:text-primary-600 transition-colors">
             <ArrowLeft size={20} />
           </Link>
           <div>
@@ -745,7 +745,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
                             window.location.reload();
             }
           }}
-          className="text-xs text-neutral-400 hover:text-red-500 border border-neutral-200 rounded-lg px-3 py-1.5 transition-colors"
+          className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider hover:text-red-500 border border-neutral-200/60 rounded-2xl px-3 py-1.5 transition-colors"
         >
           Clear Draft
         </button>
@@ -771,7 +771,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
 
       {/* Navigation Buttons — same mobile treatment as the new-listing form:
           floats above the app's bottom tab bar instead of being buried by it. */}
-      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white md:bg-transparent border-t border-neutral-200 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-6">
+      <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-0 right-0 md:relative md:bottom-auto bg-white/60 backdrop-blur-md md:bg-transparent border-t border-neutral-200/60 p-4 md:p-0 z-40 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] md:shadow-none flex items-center justify-between gap-3 md:pt-6">
         <button
           type="button"
           onClick={handlePrev}

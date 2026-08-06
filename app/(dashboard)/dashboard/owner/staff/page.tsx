@@ -103,7 +103,7 @@ export default function StaffPage() {
                   <h3 className="font-bold text-neutral-900">{s.name}</h3>
                   <div className="text-sm text-neutral-500 mt-0.5">{s.role} · {s.phone || "No phone"}</div>
                   {s.loginEmail && (
-                    <div className="text-xs font-semibold text-violet-600 mt-1.5 bg-violet-50 inline-block px-2 py-1 rounded-md">
+                    <div className="text-xs font-semibold text-violet-600 mt-1.5 bg-violet-50 inline-block px-2 py-1 rounded-xl">
                       Login ID: {s.loginEmail}
                     </div>
                   )}
@@ -112,7 +112,7 @@ export default function StaffPage() {
               </div>
               <div className="mt-4 pt-4 border-t border-neutral-100 flex items-center justify-between text-sm">
                 <div>
-                  <span className="text-xs text-neutral-400 block">Salary</span>
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Salary</span>
                   <strong className="text-neutral-900">{formatINR(s.salary)}</strong>
                 </div>
                 <button
@@ -188,7 +188,7 @@ export default function StaffPage() {
                       </span>
                     </label>
                     {myListings.length === 0 ? (
-                      <p className="text-xs text-neutral-400 py-2">Abhi koi PG nahi hai.</p>
+                      <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider py-2">Abhi koi PG nahi hai.</p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-1">
                         {myListings.map((l) => {
@@ -208,7 +208,7 @@ export default function StaffPage() {
                               className={`flex items-center gap-2 text-left px-3 py-2 rounded-xl border-2 text-xs font-semibold transition-colors ${
                                 on
                                   ? "border-primary-500 bg-primary-50 text-primary-700"
-                                  : "border-neutral-200 text-neutral-600 hover:border-neutral-300"
+                                  : "border-neutral-200/60 text-neutral-600 hover:border-neutral-300"
                               }`}
                             >
                               <span

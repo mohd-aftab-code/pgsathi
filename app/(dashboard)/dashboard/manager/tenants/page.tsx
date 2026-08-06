@@ -229,7 +229,7 @@ export default async function TenantsPage({
                 <Link
                   key={p}
                   href={pageHref(p)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-black transition-colors ${
+                  className={`px-3 py-1.5 rounded-2xl text-sm font-black transition-colors ${
                     p === page ? "bg-violet-600 text-white shadow-sm" : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-700 hover:bg-white/80"
                   }`}
                 >

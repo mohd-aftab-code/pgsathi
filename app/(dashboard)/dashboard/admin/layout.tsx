@@ -33,7 +33,7 @@ export default async function AdminDashboardLayout({
 
   // Sits at the bottom of the desktop rail — identity + logout
   const footer = (
-    <div className="rounded-xl bg-white border border-violet-100 p-3 shadow-sm">
+    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-violet-100 p-3 shadow-sm">
       <div className="flex items-center gap-2.5 mb-2.5">
         <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
           {initial}
@@ -45,7 +45,7 @@ export default async function AdminDashboardLayout({
           </p>
         </div>
       </div>
-      <LogoutButton className="w-full h-9 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer" />
+      <LogoutButton className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer" />
     </div>
   );
 
@@ -54,10 +54,10 @@ export default async function AdminDashboardLayout({
       <div className="min-h-screen bg-canvas">
         {/* Mobile top bar — the desktop rail carries identity and logout, but on a
             phone the rail is gone, so they live here instead. */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-neutral-200">
+        <header className="lg:hidden sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-neutral-200/60">
           <div className="h-14 px-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
+              <div className="w-8 h-8 rounded-2xl bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
                 {initial}
               </div>
               <div className="min-w-0">

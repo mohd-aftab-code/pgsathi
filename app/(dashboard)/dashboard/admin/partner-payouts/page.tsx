@@ -126,7 +126,7 @@ export default async function AdminPayoutCyclePage() {
                     <Link href={`/dashboard/admin/partners/${p.partner.id}`} className="font-semibold text-neutral-900 hover:text-violet-600">
                       {p.partner.user.name}
                     </Link>
-                    <div className="text-xs text-neutral-400 tracking-widest">{p.partner.partnerCode}</div>
+                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider tracking-widest">{p.partner.partnerCode}</div>
                   </td>
                   <td className="px-3 py-3 text-xs text-neutral-500">
                     {p.method}
@@ -168,7 +168,7 @@ export default async function AdminPayoutCyclePage() {
           <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl border ${s.borderCls} p-3.5 shadow-sm`}>
             <div className="flex items-start justify-between mb-1.5">
               <span className="text-[9px] font-black text-neutral-500 uppercase tracking-wider">{s.label}</span>
-              <div className={`p-1.5 rounded-lg ${s.iconBg}`}><s.Icon size={12} className={s.textCls} /></div>
+              <div className={`p-1.5 rounded-2xl ${s.iconBg}`}><s.Icon size={12} className={s.textCls} /></div>
             </div>
             <div className={`text-xl font-black leading-none ${s.textCls}`}>{s.value}</div>
             <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
@@ -177,7 +177,7 @@ export default async function AdminPayoutCyclePage() {
       </div>
 
       {rows.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-dashed border-neutral-300 p-12 text-center shadow-sm">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-dashed border-neutral-300 p-12 text-center shadow-sm">
           <Wallet className="mx-auto text-neutral-300 mb-3" size={32} />
           <p className="font-bold text-neutral-700">Kisi partner ka kuch bakaya nahi</p>
           <p className="text-sm text-neutral-500 mt-1">Jab koi owner plan lega ya renew karega, commission yahan aa jayega.</p>
@@ -206,12 +206,12 @@ export default async function AdminPayoutCyclePage() {
                       </Link>
                       <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
                       {!r.hasPayoutDetails && (
-                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-100 border border-amber-200/60 shadow-sm text-amber-700 tracking-wider uppercase">
+                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-xl bg-amber-100 border border-amber-200/60 shadow-sm text-amber-700 tracking-wider uppercase">
                           <AlertTriangle size={10} /> UPI/bank missing
                         </span>
                       )}
                       {r.status !== "APPROVED" && (
-                        <span className="inline-block mt-0.5 ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-neutral-200 text-neutral-600 tracking-wider uppercase">
+                        <span className="inline-block mt-0.5 ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-xl bg-neutral-200 text-neutral-600 tracking-wider uppercase">
                           {r.status}
                         </span>
                       )}

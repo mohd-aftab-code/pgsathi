@@ -59,7 +59,7 @@ export default async function OwnerReferPage() {
           <span className="text-[10px] font-bold uppercase tracking-widest opacity-90">Refer &amp; Earn</span>
         </div>
         <h1 className="text-xl font-black mb-1 tracking-tight">Apne jaan-pehchan ke PG owners ko bulayein</h1>
-        <p className="text-violet-100 text-xs font-medium max-w-2xl mt-1.5">
+        <p className="text-violet-100 text-[10px] font-bold uppercase tracking-wider max-w-2xl mt-1.5">
           {bonusDays > 0
             ? `Jo owner aapke link se join karke plan lega, use ${bonusDays} din extra free milenge — aur aapko bhi.`
             : "Jo owner aapke link se join karega, wo aapke naam ke saath judega."}
@@ -83,7 +83,7 @@ export default async function OwnerReferPage() {
           <h2 className="font-black text-neutral-900 text-sm uppercase tracking-wider">Aapke laye owners ({referred.length})</h2>
         </div>
         {referred.length === 0 ? (
-          <div className="px-5 py-10 text-center text-xs font-medium text-neutral-500 bg-white/20">
+          <div className="px-5 py-10 text-center text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-white/20">
             Abhi koi nahi — link share karke shuruaat karein.
           </div>
         ) : (
@@ -96,8 +96,8 @@ export default async function OwnerReferPage() {
                     {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </div>
                 </div>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm ${
-                  r.referralRewardAt ? "bg-emerald-100 text-emerald-700 border border-emerald-200" : "bg-neutral-100 text-neutral-500 border border-neutral-200"
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-xl uppercase tracking-wider shadow-sm ${
+                  r.referralRewardAt ? "bg-emerald-100 text-emerald-700 border border-emerald-200" : "bg-neutral-100 text-neutral-500 border border-neutral-200/60"
                 }`}>
                   {r.referralRewardAt ? "PAID PLAN" : "JOINED"}
                 </span>

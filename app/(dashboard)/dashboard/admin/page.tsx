@@ -60,8 +60,8 @@ export default async function AdminDashboardPage({
         {/* ── Compact Header ─────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
           <div>
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Admin Overview</h1>
-            <p className="text-neutral-500 text-xs font-medium mt-0.5">{format(now, "EEEE, d MMMM yyyy")} · Platform Statistics</p>
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Admin Overview</h1>
+            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{format(now, "EEEE, d MMMM yyyy")} · Platform Statistics</p>
           </div>
           <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-2.5 py-1.5 rounded-full shrink-0 shadow-sm uppercase tracking-wide">
             <span className="relative flex h-1.5 w-1.5">
@@ -77,7 +77,7 @@ export default async function AdminDashboardPage({
           {/* Pending Approvals */}
           <Link
             href="/dashboard/admin/verify"
-            className="group bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:border-amber-300 hover:shadow-md hover:bg-white transition-all flex flex-col relative overflow-hidden"
+            className="group bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:border-amber-300 hover:shadow-md hover:bg-white/60 backdrop-blur-md transition-all flex flex-col relative overflow-hidden"
           >
             <div className="flex justify-between items-start mb-2">
               <div className="text-amber-500 bg-amber-50 p-1.5 rounded-xl border border-amber-100/50">
@@ -95,12 +95,12 @@ export default async function AdminDashboardPage({
           </Link>
 
           {/* Active PGs */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white transition-all flex flex-col">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white/60 backdrop-blur-md transition-all flex flex-col">
             <div className="flex justify-between items-start mb-2">
               <div className="text-emerald-500 bg-emerald-50 p-1.5 rounded-xl border border-emerald-100/50">
                 <Building2 size={16} />
               </div>
-              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100/50 uppercase tracking-wider">
+              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-xl border border-emerald-100/50 uppercase tracking-wider">
                 {totalListings} total
               </span>
             </div>
@@ -109,12 +109,12 @@ export default async function AdminDashboardPage({
           </div>
 
           {/* Users */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white transition-all flex flex-col">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white/60 backdrop-blur-md transition-all flex flex-col">
             <div className="flex justify-between items-start mb-2">
               <div className="text-blue-500 bg-blue-50 p-1.5 rounded-xl border border-blue-100/50">
                 <Users size={16} />
               </div>
-              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/50 uppercase tracking-wider">
+              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-xl border border-blue-100/50 uppercase tracking-wider">
                 {totalOwners} owners
               </span>
             </div>
@@ -123,12 +123,12 @@ export default async function AdminDashboardPage({
           </div>
 
           {/* Revenue */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white transition-all flex flex-col">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-neutral-200/60 hover:bg-white/60 backdrop-blur-md transition-all flex flex-col">
             <div className="flex justify-between items-start mb-2">
               <div className="text-violet-500 bg-violet-50 p-1.5 rounded-xl border border-violet-100/50">
                 <BadgeIndianRupee size={16} />
               </div>
-              <span className="text-[9px] font-bold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded-md border border-violet-100/50 uppercase tracking-wider">
+              <span className="text-[9px] font-bold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded-xl border border-violet-100/50 uppercase tracking-wider">
                 {activeSubscriptions.length} plans
               </span>
             </div>
@@ -141,7 +141,7 @@ export default async function AdminDashboardPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
           {/* Listings table — 2/3 */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-neutral-200/80 overflow-hidden flex flex-col">
+          <div className="lg:col-span-2 bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/80 overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
               <div className="flex items-center gap-2">
                 <div className="text-violet-600">
@@ -153,7 +153,7 @@ export default async function AdminDashboardPage({
               </div>
               <Link
                 href="/dashboard/admin/verify"
-                className="text-[10px] font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-2.5 py-1 rounded-md transition-colors border border-violet-100 uppercase tracking-wider"
+                className="text-[10px] font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-2.5 py-1 rounded-xl transition-colors border border-violet-100 uppercase tracking-wider"
               >
                 Verify Pending →
               </Link>
@@ -176,7 +176,7 @@ export default async function AdminDashboardPage({
                     <tr key={listing.id} className="hover:bg-neutral-50/70 transition-colors group">
                       <td className="px-4 py-1.5">
                         <div className="flex items-center gap-2">
-                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-[10px] ${
+                          <div className={`w-6 h-6 rounded-2xl flex items-center justify-center shrink-0 text-[10px] ${
                             listing.status === "ACTIVE"
                               ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                               : listing.status === "PENDING"
@@ -197,7 +197,7 @@ export default async function AdminDashboardPage({
                         {listing.city?.name ?? "—"}
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-md inline-flex items-center gap-1 uppercase tracking-wider ${
+                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-xl inline-flex items-center gap-1 uppercase tracking-wider ${
                           listing.status === "ACTIVE"
                             ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
                             : listing.status === "PENDING"
@@ -234,12 +234,12 @@ export default async function AdminDashboardPage({
                   {page > 1 ? (
                     <Link
                       href={`?page=${page - 1}`}
-                      className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2 py-1 rounded-md transition-all uppercase tracking-wider"
+                      className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2 py-1 rounded-xl transition-all uppercase tracking-wider"
                     >
                       <ChevronLeft size={12} /> Prev
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-300 bg-neutral-50 border border-neutral-100 px-2 py-1 rounded-md cursor-not-allowed uppercase tracking-wider">
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-300 bg-neutral-50 border border-neutral-100 px-2 py-1 rounded-xl cursor-not-allowed uppercase tracking-wider">
                       <ChevronLeft size={12} /> Prev
                     </span>
                   )}
@@ -247,12 +247,12 @@ export default async function AdminDashboardPage({
                   {page < totalPages ? (
                     <Link
                       href={`?page=${page + 1}`}
-                      className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white border border-neutral-200 px-2 py-1 rounded-md transition-all uppercase tracking-wider"
+                      className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2 py-1 rounded-xl transition-all uppercase tracking-wider"
                     >
                       Next <ChevronRight size={12} />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-300 bg-neutral-50 border border-neutral-100 px-2 py-1 rounded-md cursor-not-allowed uppercase tracking-wider">
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-300 bg-neutral-50 border border-neutral-100 px-2 py-1 rounded-xl cursor-not-allowed uppercase tracking-wider">
                       Next <ChevronRight size={12} />
                     </span>
                   )}
@@ -286,9 +286,9 @@ export default async function AdminDashboardPage({
                   <Link
                     key={action.href}
                     href={action.href}
-                    className="w-full bg-white hover:bg-neutral-50 border border-neutral-100 hover:border-neutral-200 py-1.5 px-2 rounded-xl flex items-center gap-1.5 transition-all duration-150 group"
+                    className="w-full bg-white/60 backdrop-blur-md hover:bg-neutral-50 border border-neutral-100 hover:border-neutral-200/60 py-1.5 px-2 rounded-xl flex items-center gap-1.5 transition-all duration-150 group"
                   >
-                    <div className={`p-1 rounded-md ${action.bgClass} shrink-0`}>
+                    <div className={`p-1 rounded-xl ${action.bgClass} shrink-0`}>
                       <action.icon size={11} className={action.iconClass} />
                     </div>
                     <span className="flex-1 text-[10px] font-bold text-neutral-700 group-hover:text-neutral-900 truncate">{action.label}</span>
@@ -328,7 +328,7 @@ export default async function AdminDashboardPage({
                     <div className="min-w-0 flex-1">
                       <p className="text-[10px] font-bold text-neutral-800 truncate">{user.name || "—"}</p>
                     </div>
-                    <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md shrink-0 ${
+                    <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-xl shrink-0 ${
                       user.role === "OWNER" ? "bg-violet-50 text-violet-600 border border-violet-100" :
                       user.role === "ADMIN" ? "bg-red-50 text-red-600 border border-red-100" :
                       "bg-blue-50 text-blue-600 border border-blue-100"
@@ -377,7 +377,7 @@ export default async function AdminDashboardPage({
         <AlertCircle size={36} className="mx-auto mb-3 text-red-400" />
         <h2 className="text-lg font-bold mb-2">Dashboard Error</h2>
         <p className="text-sm text-red-600">Could not load the admin dashboard. Database connection issue or missing table.</p>
-        <div className="mt-4 text-xs font-mono bg-red-100 p-3 rounded-lg text-left overflow-auto">
+        <div className="mt-4 text-xs font-mono bg-red-100 p-3 rounded-2xl text-left overflow-auto">
           {error.message || String(error)}
         </div>
       </div>

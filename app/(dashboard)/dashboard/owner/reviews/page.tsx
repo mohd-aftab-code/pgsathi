@@ -43,7 +43,7 @@ export default async function OwnerReviewsPage() {
               <Star size={24} />
             </div>
             <h3 className="text-lg font-black text-neutral-900 mb-2">No reviews yet</h3>
-            <p className="text-xs font-medium text-neutral-500 max-w-sm mx-auto">Your PG reviews will appear here once tenants start reviewing.</p>
+            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider max-w-sm mx-auto">Your PG reviews will appear here once tenants start reviewing.</p>
           </div>
         ) : (
           <div className="divide-y divide-neutral-100/60">
@@ -91,9 +91,9 @@ export default async function OwnerReviewsPage() {
                     </div>
                     
                     {review.comment ? (
-                      <p className="text-neutral-700 leading-relaxed text-xs font-medium">{review.comment}</p>
+                      <p className="text-neutral-700 leading-relaxed text-[10px] font-bold uppercase tracking-wider">{review.comment}</p>
                     ) : (
-                      <p className="text-neutral-400 italic text-xs font-medium">No written feedback provided.</p>
+                      <p className="text-neutral-400 italic text-[10px] font-bold uppercase tracking-wider">No written feedback provided.</p>
                     )}
                     
                     {!review.isApproved && (
@@ -103,12 +103,12 @@ export default async function OwnerReviewsPage() {
                         </p>
                         <div className="flex items-center gap-2">
                           <form action={async () => { "use server"; await moderateReviewAction(review.id, "APPROVE"); }}>
-                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 hover:bg-emerald-200 transition-colors uppercase tracking-wider">
+                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 hover:bg-emerald-200 transition-colors uppercase tracking-wider">
                               Approve
                             </button>
                           </form>
                           <form action={async () => { "use server"; await moderateReviewAction(review.id, "REJECT"); }}>
-                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-rose-700 bg-rose-100 border border-rose-200 hover:bg-rose-200 transition-colors uppercase tracking-wider">
+                            <button type="submit" className="cursor-pointer px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-rose-700 bg-rose-100 border border-rose-200 hover:bg-rose-200 transition-colors uppercase tracking-wider">
                               Reject
                             </button>
                           </form>

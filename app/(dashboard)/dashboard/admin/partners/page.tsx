@@ -77,10 +77,10 @@ export default async function AdminPartnersPage({
       </div>
 
       {partners.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Koi partner nahi mila.</div>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Koi partner nahi mila.</div>
       ) : (
         <>
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
           <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
@@ -112,7 +112,7 @@ export default async function AdminPartnersPage({
                 <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.owners}</td>
                 <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.listings}</td>
                 <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.earnings}</td>
-                  <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wider uppercase ${statusStyle[p.status]}`}>{p.status}</span></td>
+                  <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-xl tracking-wider uppercase ${statusStyle[p.status]}`}>{p.status}</span></td>
                   <td className="px-4 py-2 text-right">
                     <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
                       <AdminPartnerActions id={p.id} status={p.status} />
@@ -158,8 +158,8 @@ export default async function AdminPartnersPage({
                   <div className="text-[9px] text-neutral-400 font-black tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shadow-sm ${statusStyle[p.status]}`}>{p.status}</span>
-                  <span className="text-[9px] font-black text-neutral-500 bg-white/60 border border-neutral-200/60 px-1.5 py-0.5 rounded-md uppercase shadow-sm">{TYPE_LABEL[p.type] ?? p.type}</span>
+                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-xl border shadow-sm ${statusStyle[p.status]}`}>{p.status}</span>
+                  <span className="text-[9px] font-black text-neutral-500 bg-white/60 border border-neutral-200/60 px-1.5 py-0.5 rounded-xl uppercase shadow-sm">{TYPE_LABEL[p.type] ?? p.type}</span>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50/50 text-center">
@@ -185,12 +185,12 @@ export default async function AdminPartnersPage({
           {totalPages > 1 && (
             <div className="flex justify-center gap-2 mt-2">
               {page > 1 && (
-                <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3 py-1.5 rounded-md shadow-sm uppercase tracking-wider">
+                <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-sm uppercase tracking-wider">
                   Prev
                 </a>
               )}
               {page < totalPages && (
-                <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3 py-1.5 rounded-md shadow-sm uppercase tracking-wider">
+                <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-sm uppercase tracking-wider">
                   Next
                 </a>
               )}

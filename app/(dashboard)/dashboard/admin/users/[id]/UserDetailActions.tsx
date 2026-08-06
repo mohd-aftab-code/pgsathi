@@ -89,7 +89,7 @@ export function UserDetailActions({
         <select
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value)}
-          className="text-xs font-semibold border border-neutral-200 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white text-neutral-700"
+          className="text-xs font-semibold border border-neutral-200/60 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white/60 backdrop-blur-md text-neutral-700"
         >
           <option value="TENANT">TENANT</option>
           <option value="OWNER">OWNER</option>
@@ -123,7 +123,7 @@ export function UserDetailActions({
       <button
         onClick={() => doAction("delete")}
         disabled={processing}
-        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-neutral-50 hover:bg-red-50 text-neutral-600 hover:text-red-700 border border-neutral-200 hover:border-red-200 rounded-xl transition-colors"
+        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-neutral-50 hover:bg-red-50 text-neutral-600 hover:text-red-700 border border-neutral-200/60 hover:border-red-200 rounded-xl transition-colors"
       >
         {processing ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
         Delete

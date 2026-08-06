@@ -119,7 +119,7 @@ export default async function AdminReportsPage() {
           <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border ${s.bg}`}>
             <div className="flex items-start justify-between mb-2">
               <div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">{s.label}</div>
-              <div className={`p-1.5 rounded-lg bg-white border ${s.bg} bg-opacity-50`}><s.icon size={12} className={s.color} /></div>
+              <div className={`p-1.5 rounded-2xl bg-white/60 backdrop-blur-md border ${s.bg} bg-opacity-50`}><s.icon size={12} className={s.color} /></div>
             </div>
             <div className="text-2xl font-black text-neutral-900 leading-none">{s.value}</div>
             <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
@@ -137,7 +137,7 @@ export default async function AdminReportsPage() {
             {[
               { label: "Active", count: activeListings, total: totalListings, color: "bg-emerald-500", textColor: "text-emerald-700", badgeBg: "bg-emerald-50 border-emerald-100", icon: CheckCircle2 },
               { label: "Pending Review", count: pendingListings, total: totalListings, color: "bg-amber-500", textColor: "text-amber-700", badgeBg: "bg-amber-50 border-amber-100", icon: Clock },
-              { label: "Inactive", count: inactiveListings, total: totalListings, color: "bg-neutral-400", textColor: "text-neutral-600", badgeBg: "bg-neutral-50 border-neutral-200", icon: XCircle },
+              { label: "Inactive", count: inactiveListings, total: totalListings, color: "bg-neutral-400", textColor: "text-neutral-600", badgeBg: "bg-neutral-50 border-neutral-200/60", icon: XCircle },
             ].map((s) => (
               <div key={s.label}>
                 <div className="flex items-center justify-between mb-1.5">

@@ -139,7 +139,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-2xl font-extrabold">{partner.user.name}</h1>
-              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-md ${statusStyle[partner.status]}`}>{partner.status}</span>
+              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-xl ${statusStyle[partner.status]}`}>{partner.status}</span>
             </div>
             <p className="text-neutral-300 text-sm">
               {TYPE_LABEL[partner.type] ?? partner.type} · <span className="tracking-widest font-bold">{partner.partnerCode}</span>
@@ -151,7 +151,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       </div>
 
       {/* ── Programme controls ─────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md p-5 shadow-sm">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
           <h2 className="font-bold text-neutral-900 text-sm">Partner controls</h2>
           <span className="text-xs text-neutral-500">
@@ -177,10 +177,10 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl border border-neutral-200 p-4">
+          <div key={s.label} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4">
             <div className="flex items-start justify-between mb-2">
               <span className="text-xs text-neutral-500">{s.label}</span>
-              <div className={`p-1.5 rounded-lg ${s.cls}`}><s.Icon size={14} /></div>
+              <div className={`p-1.5 rounded-2xl ${s.cls}`}><s.Icon size={14} /></div>
             </div>
             <div className="text-xl font-bold text-neutral-900">{s.value}</div>
           </div>
@@ -189,7 +189,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
 
       {/* Business summary — the whole money picture for this partner in one strip.
           Collection is what the owners actually paid; owed is commission not yet sent. */}
-      <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
         <h2 className="font-bold text-neutral-900 text-sm mb-4">Business summary</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
           {[
@@ -217,7 +217,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Contact + payout details — what the admin needs before paying */}
         <div className="space-y-5">
-          <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
             <h2 className="font-bold text-neutral-900 text-sm mb-3">Contact</h2>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2 text-neutral-700"><User size={14} className="text-neutral-400" /> {partner.user.name}</div>
@@ -225,13 +225,13 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
               <div className="flex items-center gap-2 text-neutral-700 break-all"><Mail size={14} className="text-neutral-400 shrink-0" /> {partner.user.email}</div>
               {partner.address && <div className="flex items-start gap-2 text-neutral-700"><MapPin size={14} className="text-neutral-400 shrink-0 mt-0.5" /> {partner.address}</div>}
               {partner.company && <div className="text-xs text-neutral-500 pt-1">Company: {partner.company}</div>}
-              <div className="text-xs text-neutral-400 pt-1">Joined {fmtDate(partner.user.createdAt)}</div>
-              {partner.approvedAt && <div className="text-xs text-neutral-400">Approved {fmtDate(partner.approvedAt)}</div>}
+              <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-1">Joined {fmtDate(partner.user.createdAt)}</div>
+              {partner.approvedAt && <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Approved {fmtDate(partner.approvedAt)}</div>}
               {partner.rejectReason && <div className="text-xs text-red-600 pt-1">Reject reason: {partner.rejectReason}</div>}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
             <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><Landmark size={15} className="text-neutral-400" /> Payout details</h2>
             {partner.upiId || partner.bankAccountNo ? (
               <div className="space-y-2 text-sm">
@@ -242,16 +242,16 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                 {partner.panNumber && <div><span className="text-neutral-500 text-xs block">PAN</span><span className="font-semibold text-neutral-900">{partner.panNumber}</span></div>}
               </div>
             ) : (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
                 Partner ne abhi payout details nahi bhare. Payment se pehle unse bharwa lein.
               </p>
             )}
           </div>
 
-          <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
             <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><Activity size={15} className="text-neutral-400" /> Recent activity</h2>
             {partner.activity.length === 0 ? (
-              <p className="text-xs text-neutral-400">Koi activity nahi</p>
+              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Koi activity nahi</p>
             ) : (
               <ul className="space-y-2.5">
                 {partner.activity.map((a) => (
@@ -271,7 +271,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
         {/* PGs + earnings + payouts */}
         <div className="lg:col-span-2 space-y-5">
           {/* Payout batch */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="font-bold text-neutral-900 text-sm">Payout</h2>
@@ -299,7 +299,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                       <span className="text-xs text-neutral-500">{p.method}{p.reference ? ` · ${p.reference}` : ""}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-neutral-400">{fmtDate(p.paidAt ?? p.createdAt)}</span>
+                      <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{fmtDate(p.paidAt ?? p.createdAt)}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusStyle[p.status]}`}>{p.status}</span>
                       {/* PROCESSING → record the UTR; COMPLETED → reverse if the
                           transfer bounced. Editing the earnings is never the answer. */}
@@ -312,8 +312,8 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           </div>
 
           {/* Earnings */}
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-200">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden">
+            <div className="px-5 py-4 border-b border-neutral-200/60">
               <h2 className="font-bold text-neutral-900 text-sm">Earnings ({partner.earnings.length})</h2>
             </div>
             {partner.earnings.length === 0 ? (
@@ -349,8 +349,8 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           </div>
 
           {/* PGs */}
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-200">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden">
+            <div className="px-5 py-4 border-b border-neutral-200/60">
               <h2 className="font-bold text-neutral-900 text-sm">Registered PGs ({partner.listings.length})</h2>
             </div>
             {partner.listings.length === 0 ? (

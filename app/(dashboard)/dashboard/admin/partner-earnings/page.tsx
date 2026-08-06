@@ -72,10 +72,10 @@ export default async function AdminPartnerEarningsPage({
       </div>
 
       {earnings.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Is filter mein koi earning nahi.</div>
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">Is filter mein koi earning nahi.</div>
       ) : (
         <>
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
             <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
@@ -100,7 +100,7 @@ export default async function AdminPartnerEarningsPage({
                   <td className="px-4 py-2 text-[10px] text-neutral-600 font-bold uppercase tracking-wider">{e.planNameSnapshot ?? "—"}</td>
                   <td className="px-4 py-2 text-[9px] text-neutral-500 font-bold uppercase tracking-wider">{fmtDate(e.createdAt)}</td>
                   <td className="px-4 py-2 text-right font-black text-neutral-900">{inr(e.amount)}</td>
-                  <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-md tracking-wider uppercase border shadow-sm ${statusStyle[e.status]}`}>{e.status}</span></td>
+                  <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-xl tracking-wider uppercase border shadow-sm ${statusStyle[e.status]}`}>{e.status}</span></td>
                   <td className="px-4 py-2 text-right">
                     <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
                       <AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} />
@@ -123,7 +123,7 @@ export default async function AdminPartnerEarningsPage({
                   <div className="text-[9px] text-neutral-400 font-black tracking-widest uppercase mt-0.5">{e.partner.partnerCode}</div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shadow-sm ${statusStyle[e.status]}`}>{e.status}</span>
+                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-xl border shadow-sm ${statusStyle[e.status]}`}>{e.status}</span>
                   <span className="text-[10px] font-black text-neutral-900">{inr(e.amount)}</span>
                 </div>
               </div>

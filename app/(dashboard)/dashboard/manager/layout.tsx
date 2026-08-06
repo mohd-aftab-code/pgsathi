@@ -72,7 +72,7 @@ export default async function ManagerDashboardLayout({
                   <span className="text-sm font-semibold text-neutral-800 line-clamp-1 max-w-[150px]">
                     {name}
                   </span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${roleBadgeCls}`}>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-xl uppercase tracking-wider ${roleBadgeCls}`}>
                     {managerRole}
                   </span>
                 </div>

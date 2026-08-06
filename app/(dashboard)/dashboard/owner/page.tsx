@@ -275,7 +275,7 @@ export default async function OwnerDashboardPage({
   return (
     <div className="space-y-6">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-neutral-200">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-900 tracking-tight">
             {greeting}, {ownerName} 👋
@@ -290,9 +290,9 @@ export default async function OwnerDashboardPage({
           <PropertyFilterSelect
             listings={listings}
             value={listingId}
-            className="input-base text-sm w-48 cursor-pointer bg-white"
+            className="input-base text-sm w-48 cursor-pointer bg-white/60 backdrop-blur-md"
           />
-          <Link href="/dashboard/manager/reports" className="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2.5 px-4 text-sm font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
+          <Link href="/dashboard/manager/reports" className="bg-white/60 backdrop-blur-md border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2.5 px-4 text-sm font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
             <BarChart3 size={16} /> Reports
           </Link>
           <Link href="/dashboard/owner/listings/new" className="bg-neutral-900 hover:bg-black text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2">
@@ -313,7 +313,7 @@ export default async function OwnerDashboardPage({
             >
               <div className="flex justify-between items-start mb-2.5 gap-2">
                 <span className="text-[10px] font-extrabold text-neutral-500 group-hover:text-neutral-700 transition-colors uppercase tracking-wider">{k.label}</span>
-                <div className={`p-1.5 rounded-lg shrink-0 ${t.bg}`}>
+                <div className={`p-1.5 rounded-2xl shrink-0 ${t.bg}`}>
                   <k.icon size={13} className={t.text} />
                 </div>
               </div>
@@ -333,7 +333,7 @@ export default async function OwnerDashboardPage({
 
       {/* ── Per-PG comparison — the multi-property overview ──────── */}
       {listings.length > 1 && !listingId && (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <Building2 size={14} className="text-violet-600" /> PG-wise Overview
@@ -394,7 +394,7 @@ export default async function OwnerDashboardPage({
                     <td className="px-3 py-2 text-right text-neutral-500 font-medium tabular-nums">{r.views}</td>
                     <td className="px-4 py-2 text-right">
                       {r.issues > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-md">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-xl">
                           <AlertTriangle size={10} /> {r.issues}
                         </span>
                       ) : (
@@ -423,13 +423,13 @@ export default async function OwnerDashboardPage({
 
       {/* ── Money this month ────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
+        <div className="lg:col-span-2 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <TrendingUp size={14} className="text-violet-600" /> Revenue &amp; Expenses
               <span className="text-[10px] text-neutral-400 font-bold">· last 6 months</span>
             </h2>
-            <div className="flex items-center gap-3 text-xs font-medium text-neutral-500">
+            <div className="flex items-center gap-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
               <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /> Received</span>
               <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-orange-500" /> Expenses</span>
             </div>
@@ -473,12 +473,12 @@ export default async function OwnerDashboardPage({
         </div>
 
         {/* Leads activity */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <MessageSquare size={14} className="text-blue-600" /> Leads Activity
             </h2>
-            <span className="text-[9px] uppercase tracking-wider font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-md">7 Days</span>
+            <span className="text-[9px] uppercase tracking-wider font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-xl">7 Days</span>
           </div>
           <div className="p-4 flex-1 flex flex-col justify-center">
             <LeadsChart data={chartData} />
@@ -501,7 +501,7 @@ export default async function OwnerDashboardPage({
       {/* ── Rent pending + Recent leads + Issues ─────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Rent pending */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <Wallet size={14} className="text-red-500" /> Rent Pending
@@ -515,14 +515,14 @@ export default async function OwnerDashboardPage({
                 <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-violet-100">
                   <BedDouble size={18} className="text-violet-500" />
                 </div>
-                <p className="text-[13px] font-bold text-neutral-700">PG Manager abhi set up nahi hua</p>
+                <p className="text-xs font-black uppercase tracking-tight text-neutral-700">PG Manager abhi set up nahi hua</p>
                 <p className="text-[11px] text-neutral-500 mt-1 mb-4 font-medium">Rooms, beds aur tenants add karein — phir rent, occupancy aur dues sab yahin dikhega.</p>
-                <Link href="/dashboard/manager" className="bg-neutral-900 text-white font-bold py-1.5 px-3 text-xs rounded-md inline-block">Set up PG Manager</Link>
+                <Link href="/dashboard/manager" className="bg-neutral-900 text-white font-bold py-1.5 px-3 text-xs rounded-xl inline-block">Set up PG Manager</Link>
               </div>
             ) : pending.length === 0 ? (
               <div className="text-center py-10 px-4">
                 <CheckCircle2 size={24} className="mx-auto text-green-400 mb-2" />
-                <p className="text-[13px] font-bold text-neutral-700">Sab ne pay kar diya! 🎉</p>
+                <p className="text-xs font-black uppercase tracking-tight text-neutral-700">Sab ne pay kar diya! 🎉</p>
                 <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{formatMonth(forMonth)} ke liye koi rent pending nahi.</p>
               </div>
             ) : (
@@ -530,7 +530,7 @@ export default async function OwnerDashboardPage({
                 {pending.slice(0, 6).map((t) => (
                   <div key={t.id} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-violet-50/30 transition-colors">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-red-50 text-red-700 border border-red-100 flex items-center justify-center font-bold text-[11px] shrink-0">
                         {initials(t.name)}
                       </div>
                       <div className="min-w-0">
@@ -560,7 +560,7 @@ export default async function OwnerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-1.5 rounded-md bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
+                        className="p-1.5 rounded-xl bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
                       >
                         <MessageCircle size={14} />
                       </a>
@@ -578,7 +578,7 @@ export default async function OwnerDashboardPage({
         </div>
 
         {/* Open issues */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/40">
             <h2 className="font-extrabold text-neutral-900 text-[13px] uppercase tracking-wide flex items-center gap-2">
               <Wrench size={14} className="text-orange-500" /> Action Items
@@ -615,7 +615,7 @@ export default async function OwnerDashboardPage({
       </div>
 
       {/* ── Recent leads ────────────────────────────────────────── */}
-      <div className="bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
             <MessageSquare size={16} className="text-blue-500" /> Recent Enquiries
@@ -631,7 +631,7 @@ export default async function OwnerDashboardPage({
               <MessageSquare size={22} className="text-neutral-300" />
             </div>
             <p className="text-sm text-neutral-500 font-medium">Abhi koi enquiry nahi aayi.</p>
-            <p className="text-xs text-neutral-400 mt-1">Achhi photos aur complete profile se 3x zyada leads aate hain.</p>
+            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mt-1">Achhi photos aur complete profile se 3x zyada leads aate hain.</p>
           </div>
         ) : (
           <div className="divide-y divide-neutral-100">
@@ -655,14 +655,14 @@ export default async function OwnerDashboardPage({
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 pl-12 sm:pl-0">
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-400 bg-neutral-100 px-2 py-1 rounded-md whitespace-nowrap">
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-400 bg-neutral-100 px-2 py-1 rounded-xl whitespace-nowrap">
                     <Clock size={11} /> {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
                   </span>
                   <a
                     href={`https://wa.me/91${sanitizePhone(lead.phone)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                    className="bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-2xl transition-colors whitespace-nowrap"
                   >
                     WhatsApp
                   </a>

@@ -107,12 +107,12 @@ export default function AnnouncementsPage() {
                 <span className={`text-[9px] font-black tracking-wider px-2 py-0.5 rounded uppercase border ${a.listing ? "bg-blue-100/80 text-blue-800 border-blue-200/60" : "bg-violet-100/80 text-violet-800 border-violet-200/60"}`}>
                   {a.listing ? a.listing.title : "All PGs"}
                 </span>
-                <button onClick={() => deleteAnn(a.id)} className="text-neutral-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1 bg-white/60 rounded-lg hover:bg-red-50">
+                <button onClick={() => deleteAnn(a.id)} className="text-neutral-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1 bg-white/60 rounded-2xl hover:bg-red-50">
                   <Trash2 size={14} />
                 </button>
               </div>
               <h3 className="font-black text-neutral-900 mb-2">{a.title}</h3>
-              <p className="text-xs font-medium text-neutral-600 mb-4 whitespace-pre-wrap flex-1">{a.message}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-4 whitespace-pre-wrap flex-1">{a.message}</p>
               <div className="text-[10px] font-bold text-neutral-500 pt-3 border-t border-neutral-200/60 uppercase tracking-wider">
                 Published on {new Date(a.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
               </div>

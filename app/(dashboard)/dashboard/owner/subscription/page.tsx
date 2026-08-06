@@ -59,7 +59,7 @@ export default async function OwnerSubscriptionPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">My Subscription</h1>
-        <p className="text-xs font-medium text-neutral-500 mt-0.5">Manage your billing, view plan details, and upgrade.</p>
+        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Manage your billing, view plan details, and upgrade.</p>
       </div>
 
       {/* Charged but no live plan. The owner cannot fix this themselves and has
@@ -115,7 +115,7 @@ export default async function OwnerSubscriptionPage() {
               
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 relative z-10 gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-700 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-md mb-2 shadow-sm border border-emerald-200/50">
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-700 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-xl mb-2 shadow-sm border border-emerald-200/50">
                     <CheckCircle2 size={12} strokeWidth={3} /> ACTIVE PLAN
                   </div>
                   <h2 className="text-2xl font-black text-emerald-950 uppercase tracking-tight">{activeSub.plan.name} Plan</h2>
@@ -170,17 +170,17 @@ export default async function OwnerSubscriptionPage() {
           {/* Actions Sidebar */}
           <div className="space-y-4">
             <div className="bg-neutral-900 rounded-2xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/60 backdrop-blur-md opacity-[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
               <h3 className="font-black text-sm uppercase tracking-wider mb-2 relative z-10 text-neutral-100">Need more features?</h3>
               <p className="text-[11px] font-medium text-neutral-400 mb-5 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
-              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white text-neutral-900 text-center font-black text-xs uppercase tracking-wider py-2.5 rounded-lg shadow-sm hover:bg-neutral-50 transition-colors relative z-10">
+              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white/60 backdrop-blur-md text-neutral-900 text-center font-black text-xs uppercase tracking-wider py-2.5 rounded-2xl shadow-sm hover:bg-neutral-50 transition-colors relative z-10">
                 Upgrade Plan
               </Link>
             </div>
 
             <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-neutral-200/60 shadow-sm">
               <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900 mb-4">Payment Method</h3>
-              <div className="flex items-center gap-3 p-3 border border-neutral-200 rounded-xl bg-neutral-50 mb-4">
+              <div className="flex items-center gap-3 p-3 border border-neutral-200/60 rounded-xl bg-neutral-50 mb-4">
                 <CreditCard className="text-neutral-400" />
                 <div>
                   <div className="text-sm font-bold text-neutral-900">Card ending in ••••</div>
@@ -205,7 +205,7 @@ export default async function OwnerSubscriptionPage() {
                   </a>
                   <a
                     href="mailto:pgsathi.support@gmail.com?subject=Subscription%20Support"
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl border-2 border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl border-2 border-neutral-200/60 hover:bg-neutral-50 text-neutral-700 text-sm font-bold transition-colors"
                   >
                     <Mail size={15} /> Email karein
                   </a>
@@ -275,7 +275,7 @@ export default async function OwnerSubscriptionPage() {
                       </td>
                       <td className="px-5 sm:px-6 py-3 text-right">
                         <span
-                          className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                          className={`text-[10px] font-bold px-2 py-1 rounded-xl ${
                             failed
                               ? "bg-red-50 text-red-700"
                               : inv.amount === 0

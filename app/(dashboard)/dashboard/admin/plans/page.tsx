@@ -181,33 +181,33 @@ export default function AdminPlansPage() {
 
       {isFormOpen && (
         <div className="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-neutral-200/60 mb-6 relative">
-          <button type="button" onClick={() => setIsFormOpen(false)} className="absolute top-4 right-4 p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"><X size={16} /></button>
+          <button type="button" onClick={() => setIsFormOpen(false)} className="absolute top-4 right-4 p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-2xl transition-colors"><X size={16} /></button>
           <h2 className="text-sm font-black text-neutral-900 uppercase tracking-widest mb-4">{editingPlan ? "Edit Plan" : "Create Plan"}</h2>
           <form onSubmit={handleSave} className="space-y-4">
             {/* Basic Info */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
               <div className="col-span-1 md:col-span-2">
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Plan Name</label>
-                <input required type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-semibold focus:ring-1 focus:ring-violet-500" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                <input required type="text" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs font-semibold focus:ring-1 focus:ring-violet-500" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
               </div>
               <div className="col-span-1">
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Slug</label>
-                <input required type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} />
+                <input required type="text" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} />
               </div>
               <div className="col-span-1">
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Corner Badge</label>
-                <input type="text" maxLength={30} className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} />
+                <input type="text" maxLength={30} className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} />
               </div>
               <div className="col-span-1 md:col-span-3">
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Tagline</label>
-                <input type="text" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.tagline} onChange={e => setFormData({...formData, tagline: e.target.value})} />
+                <input type="text" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.tagline} onChange={e => setFormData({...formData, tagline: e.target.value})} />
               </div>
               <div className="col-span-1">
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Sort Order</label>
-                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.sortOrder} onChange={e => setFormData({...formData, sortOrder: e.target.value})} />
+                <input type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.sortOrder} onChange={e => setFormData({...formData, sortOrder: e.target.value})} />
               </div>
               <div className="col-span-1 md:col-span-4 mt-1">
-                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${formData.recommended ? 'border-violet-300 bg-violet-50/50' : 'border-neutral-200 bg-neutral-50/50 hover:bg-neutral-100'}`}>
+                <label className={`flex items-center gap-2 p-2 rounded-2xl border cursor-pointer transition-colors ${formData.recommended ? 'border-violet-300 bg-violet-50/50' : 'border-neutral-200/60 bg-neutral-50/50 hover:bg-neutral-100'}`}>
                   <input type="checkbox" className="w-4 h-4 text-violet-600 rounded cursor-pointer" checked={formData.recommended} onChange={e => setFormData({...formData, recommended: e.target.checked})} />
                   <Star size={14} className={formData.recommended ? 'text-violet-600' : 'text-neutral-400'} />
                   <span className="text-[11px] font-bold text-neutral-800">Mark as Recommended</span>
@@ -216,50 +216,50 @@ export default function AdminPlansPage() {
             </div>
 
             {/* Pricing */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Monthly (₹)</label>
-                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+                <input required type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">3 Months (₹)</label>
-                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.quarterlyPrice} onChange={e => setFormData({...formData, quarterlyPrice: e.target.value})} />
+                <input type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.quarterlyPrice} onChange={e => setFormData({...formData, quarterlyPrice: e.target.value})} />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">6 Months (₹)</label>
-                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.halfYearlyPrice} onChange={e => setFormData({...formData, halfYearlyPrice: e.target.value})} />
+                <input type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.halfYearlyPrice} onChange={e => setFormData({...formData, halfYearlyPrice: e.target.value})} />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Yearly (₹)</label>
-                <input type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
+                <input type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs font-bold focus:ring-1 focus:ring-violet-500" value={formData.yearlyPrice} onChange={e => setFormData({...formData, yearlyPrice: e.target.value})} />
               </div>
             </div>
 
             {/* Limits */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max PGs (-1=Unlmt)</label>
-                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxListings} onChange={e => setFormData({...formData, maxListings: e.target.value})} />
+                <input required type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxListings} onChange={e => setFormData({...formData, maxListings: e.target.value})} />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max Tenants (-1=Unlmt)</label>
-                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxTenants} onChange={e => setFormData({...formData, maxTenants: e.target.value})} />
+                <input required type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxTenants} onChange={e => setFormData({...formData, maxTenants: e.target.value})} />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Max Photos</label>
-                <input required type="number" className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
+                <input required type="number" className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.maxPhotos} onChange={e => setFormData({...formData, maxPhotos: e.target.value})} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Capabilities */}
-              <div className="bg-white p-3 rounded-xl border border-neutral-100">
+              <div className="bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
                 <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Feature Access (System)</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {CAPABILITY_META.map((cap) => {
                     const on = formData.capabilities[cap.key];
                     return (
-                      <label key={cap.key} className={`flex items-start gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${on ? 'border-green-300 bg-green-50' : 'border-neutral-100 hover:bg-neutral-50'}`}>
+                      <label key={cap.key} className={`flex items-start gap-2 p-2 rounded-2xl border cursor-pointer transition-colors ${on ? 'border-green-300 bg-green-50' : 'border-neutral-100 hover:bg-neutral-50'}`}>
                         <input type="checkbox" className="w-3 h-3 mt-0.5 text-green-600 rounded cursor-pointer shrink-0" checked={on} onChange={() => toggleCapability(cap.key)} />
                         <span className={`block text-[10px] font-bold leading-tight ${on ? 'text-green-800' : 'text-neutral-600'}`}>{cap.label}</span>
                       </label>
@@ -269,20 +269,20 @@ export default function AdminPlansPage() {
               </div>
 
               {/* Feature Checklist */}
-              <div className="bg-white p-3 rounded-xl border border-neutral-100">
+              <div className="bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
                  <div className="flex justify-between items-center mb-2">
                    <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Features Checklist (Display)</h3>
                    <button type="button" onClick={addFeature} className="text-[10px] font-bold text-violet-600 hover:text-violet-700 uppercase tracking-wider bg-violet-50 px-2 py-0.5 rounded transition-colors">+ Add</button>
                  </div>
                  <div className="space-y-2">
                   {formData.features.map((feat, idx) => (
-                    <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg border border-neutral-200 bg-neutral-50 focus-within:border-violet-300 focus-within:ring-1 focus-within:ring-violet-100">
+                    <div key={idx} className="flex items-center gap-2 p-1.5 rounded-2xl border border-neutral-200/60 bg-neutral-50 focus-within:border-violet-300 focus-within:ring-1 focus-within:ring-violet-100">
                       <input type="text" placeholder="Feature..." className="flex-1 bg-transparent border-none text-[11px] font-bold px-2 py-1 outline-none" value={feat.name} onChange={e => updateFeature(idx, "name", e.target.value)} />
                       <label className="flex items-center gap-1 cursor-pointer shrink-0">
                         <input type="checkbox" className="w-3 h-3 text-emerald-500 rounded" checked={feat.included} onChange={e => updateFeature(idx, "included", e.target.checked)} />
                         <span className={`text-[9px] font-bold uppercase tracking-wider ${feat.included ? 'text-emerald-600' : 'text-neutral-400'}`}>Inc</span>
                       </label>
-                      <label className="flex items-center gap-1 cursor-pointer shrink-0 ml-1 border-l border-neutral-200 pl-2">
+                      <label className="flex items-center gap-1 cursor-pointer shrink-0 ml-1 border-l border-neutral-200/60 pl-2">
                         <input type="checkbox" className="w-3 h-3 text-amber-500 rounded" checked={!!feat.comingSoon} onChange={e => updateFeature(idx, "comingSoon", e.target.checked)} />
                         <span className={`text-[9px] font-bold uppercase tracking-wider ${feat.comingSoon ? 'text-amber-600' : 'text-neutral-400'}`}>Soon</span>
                       </label>
@@ -295,10 +295,10 @@ export default function AdminPlansPage() {
             </div>
 
             {/* Partner Comm */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-neutral-100">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white/60 backdrop-blur-md p-3 rounded-xl border border-neutral-100">
               <div className="col-span-2 md:col-span-1">
                   <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Comm. Type</label>
-                  <select className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionType} onChange={e => setFormData({ ...formData, partnerCommissionType: e.target.value })}>
+                  <select className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionType} onChange={e => setFormData({ ...formData, partnerCommissionType: e.target.value })}>
                     <option value="NONE">None</option>
                     <option value="PERCENT">Percent (%)</option>
                     <option value="FIXED">Fixed (₹)</option>
@@ -306,11 +306,11 @@ export default function AdminPlansPage() {
               </div>
               <div className="col-span-2 md:col-span-1">
                   <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Value</label>
-                  <input type="number" min={0} disabled={formData.partnerCommissionType === "NONE"} className="w-full border-neutral-200 rounded-lg p-2 text-xs disabled:opacity-50 focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionValue} onChange={e => setFormData({ ...formData, partnerCommissionValue: e.target.value })} />
+                  <input type="number" min={0} disabled={formData.partnerCommissionType === "NONE"} className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs disabled:opacity-50 focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionValue} onChange={e => setFormData({ ...formData, partnerCommissionValue: e.target.value })} />
               </div>
               <div className="col-span-2 md:col-span-1">
                   <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Duration (Months)</label>
-                  <select className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionMonths} onChange={e => setFormData({ ...formData, partnerCommissionMonths: e.target.value })}>
+                  <select className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.partnerCommissionMonths} onChange={e => setFormData({ ...formData, partnerCommissionMonths: e.target.value })}>
                     <option value="0">Lifetime</option>
                     <option value="12">12 Months</option>
                     <option value="24">24 Months</option>
@@ -319,13 +319,13 @@ export default function AdminPlansPage() {
               </div>
               <div className="col-span-2 md:col-span-1">
                   <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Ref Bonus (Days)</label>
-                  <input type="number" min={0} className="w-full border-neutral-200 rounded-lg p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.referralBonusDays} onChange={e => setFormData({ ...formData, referralBonusDays: e.target.value })} />
+                  <input type="number" min={0} className="w-full border-neutral-200/60 rounded-2xl p-2 text-xs focus:ring-1 focus:ring-violet-500" value={formData.referralBonusDays} onChange={e => setFormData({ ...formData, referralBonusDays: e.target.value })} />
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setIsFormOpen(false)} className="h-8 px-5 rounded-lg bg-white border border-neutral-200 text-neutral-600 text-[11px] font-bold hover:bg-neutral-50 transition-colors uppercase tracking-wider">Cancel</button>
-              <button type="submit" className="h-8 px-5 rounded-lg bg-violet-600 text-white text-[11px] font-bold hover:bg-violet-700 transition-colors uppercase tracking-wider shadow-sm">Save Plan</button>
+              <button type="button" onClick={() => setIsFormOpen(false)} className="h-8 px-5 rounded-2xl bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 text-[11px] font-bold hover:bg-neutral-50 transition-colors uppercase tracking-wider">Cancel</button>
+              <button type="submit" className="h-8 px-5 rounded-2xl bg-violet-600 text-white text-[11px] font-bold hover:bg-violet-700 transition-colors uppercase tracking-wider shadow-sm">Save Plan</button>
             </div>
           </form>
         </div>
@@ -395,11 +395,11 @@ export default function AdminPlansPage() {
                   )}
                 </div>
                 <div className="flex items-center gap-1 pt-2 border-t border-neutral-200/50">
-                  <button onClick={() => handleOpenForm(plan)} className="flex-1 p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md font-bold text-xs flex justify-center transition-colors"><Edit size={13} /></button>
-                  <button onClick={() => toggleStatus(plan)} className={`flex-1 p-1.5 rounded-md text-xs font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                  <button onClick={() => handleOpenForm(plan)} className="flex-1 p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl font-bold text-xs flex justify-center transition-colors"><Edit size={13} /></button>
+                  <button onClick={() => toggleStatus(plan)} className={`flex-1 p-1.5 rounded-xl text-xs font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
                     {plan.isActive ? <PowerOff size={13} /> : <Power size={13} />}
                   </button>
-                  <button onClick={() => handleDelete(plan.id)} className="flex-1 p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-md font-bold text-xs flex justify-center transition-colors"><Trash2 size={13} /></button>
+                  <button onClick={() => handleDelete(plan.id)} className="flex-1 p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl font-bold text-xs flex justify-center transition-colors"><Trash2 size={13} /></button>
                 </div>
               </div>
             </div>

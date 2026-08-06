@@ -27,7 +27,7 @@ function catStyle(n: number): string {
     3: "bg-amber-50 text-amber-700 border-amber-200",
     4: "bg-emerald-50 text-emerald-700 border-emerald-200",
   };
-  return styles[n] ?? "bg-neutral-100 text-neutral-600 border-neutral-200";
+  return styles[n] ?? "bg-neutral-100 text-neutral-600 border-neutral-200/60";
 }
 
 function RoomCard({ room }: { room: any }) {
@@ -60,7 +60,7 @@ function RoomCard({ room }: { room: any }) {
               {bed.isOccupied && tenant ? (
                 <Link
                   href={`/dashboard/manager/tenants/${tenant.id}`}
-                  className="group block rounded-lg border border-red-200 bg-red-50/90 hover:bg-red-100/90 p-2.5 text-center text-xs font-semibold transition-all hover:shadow-sm"
+                  className="group block rounded-2xl border border-red-200 bg-red-50/90 hover:bg-red-100/90 p-2.5 text-center text-xs font-semibold transition-all hover:shadow-sm"
                   title={`View ${tenant.name}'s full profile`}
                 >
                   <div className="font-extrabold text-[9px] uppercase tracking-widest mb-0.5 text-red-400">
@@ -269,7 +269,7 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
                       {categories.map((cat) => (
                         <div key={cat.count}>
                           <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                            <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${catStyle(cat.count)}`}>
+                            <span className={`text-xs font-bold px-2.5 py-1 rounded-2xl border ${catStyle(cat.count)}`}>
                               {sharingLabel(cat.count)}
                             </span>
                             <span className="text-xs text-neutral-500 font-medium">

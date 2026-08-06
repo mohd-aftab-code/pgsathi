@@ -92,7 +92,7 @@ export default async function OwnerDashboardLayout({
                   <span className="text-sm font-semibold text-neutral-800 line-clamp-1 max-w-[150px]">
                     {session.user.name || "Owner"}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary-50 text-primary-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-xl bg-primary-50 text-primary-600 uppercase tracking-wider">
                     {session.user.role || "OWNER"}
                   </span>
                 </div>

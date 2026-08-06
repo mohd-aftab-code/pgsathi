@@ -7,10 +7,10 @@ export default function OwnerNotificationsPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-neutral-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase flex items-center gap-2">
           <Bell className="text-violet-600" /> Notifications
         </h1>
-        <p className="text-xs font-medium text-neutral-500 mt-0.5">New leads, visits, payments and complaints — all in one place.</p>
+        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">New leads, visits, payments and complaints — all in one place.</p>
       </div>
       <NotificationsFeed />
     </div>

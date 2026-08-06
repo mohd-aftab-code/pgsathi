@@ -253,11 +253,11 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={() => setCycle(c)}
                       className={`relative text-left rounded-2xl border-2 p-3 transition-colors ${
-                        isOn ? "border-primary-500 bg-primary-50" : "border-neutral-200 hover:border-neutral-300"
+                        isOn ? "border-primary-500 bg-primary-50" : "border-neutral-200/60 hover:border-neutral-300"
                       }`}
                     >
                       {saving > 0 && (
-                        <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-green-100 text-green-700">
+                        <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-xl bg-green-100 text-green-700">
                           {saving}% off
                         </span>
                       )}
@@ -298,7 +298,7 @@ export default function CheckoutPage() {
                 <span>Total Amount</span>
                 <span>₹{totalAmount}</span>
               </div>
-              <p className="text-xs text-neutral-400 pt-1">
+              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-1">
                 GST included — no extra charges at payment.
               </p>
             </div>
@@ -350,7 +350,7 @@ export default function CheckoutPage() {
               {totalAmount === 0 ? "Activate Free Plan" : `Pay ₹${totalAmount} via Razorpay`}
             </button>
 
-            <div className="flex items-center justify-center gap-2 mt-6 text-xs text-neutral-400 font-medium">
+            <div className="flex items-center justify-center gap-2 mt-6 text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-medium">
               <ShieldCheck size={14} />
               {totalAmount === 0 ? "No card or payment details needed" : "100% Secure Encrypted Payment"}
             </div>

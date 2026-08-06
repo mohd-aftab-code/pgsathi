@@ -43,7 +43,7 @@ export default async function VisitsInboxPage({
     { value: "CONTACTED", label: "Contacted", cls: "bg-blue-50 text-blue-700 border-blue-200", active: "bg-blue-600 text-white border-blue-600" },
     { value: "VISIT_SCHEDULED", label: "Visit set", cls: "bg-violet-50 text-violet-700 border-violet-200", active: "bg-violet-600 text-white border-violet-600" },
     { value: "CONVERTED", label: "Converted", cls: "bg-green-50 text-green-700 border-green-200", active: "bg-green-600 text-white border-green-600" },
-    { value: "LOST", label: "Lost", cls: "bg-neutral-100 text-neutral-500 border-neutral-200", active: "bg-neutral-700 text-white border-neutral-700" },
+    { value: "LOST", label: "Lost", cls: "bg-neutral-100 text-neutral-500 border-neutral-200/60", active: "bg-neutral-700 text-white border-neutral-700" },
   ];
 
   // Build where clause
@@ -119,8 +119,8 @@ export default async function VisitsInboxPage({
     <div>
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Scheduled Visits & Leads</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Manage physical visits and tenant inquiries pipeline.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Scheduled Visits & Leads</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Manage physical visits and tenant inquiries pipeline.</p>
         </div>
       </div>
 
@@ -136,13 +136,13 @@ export default async function VisitsInboxPage({
                 <div key={visit.id} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm hover:shadow-md hover:border-violet-300 transition-all duration-300">
                   <div className="flex justify-between items-start mb-3">
                     <div className="font-bold text-sm text-neutral-900">{visit.name}</div>
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-xl uppercase tracking-wider ${visit.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
                       {visit.status}
                     </span>
                   </div>
                   <div className="text-xs text-neutral-600 mb-4 space-y-1.5 font-medium">
                     <div className="flex items-center gap-2"><Phone size={12} className="text-neutral-400"/> {visit.phone}</div>
-                    <div className="flex items-center gap-2 text-violet-700 font-bold bg-violet-50/80 w-fit px-2 py-1 rounded-md">
+                    <div className="flex items-center gap-2 text-violet-700 font-bold bg-violet-50/80 w-fit px-2 py-1 rounded-xl">
                       <CalendarDays size={12}/> {format(new Date(visit.visitDate), 'dd MMM yyyy, h:mm a')}
                     </div>
                   </div>
@@ -155,14 +155,14 @@ export default async function VisitsInboxPage({
                         href={`https://wa.me/91${sanitizePhone(visit.phone)}?text=Hi%20${visit.name},%20confirming%20your%20visit%20at%20${format(new Date(visit.visitDate), 'h:mm a')}`} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="text-emerald-600 bg-emerald-50 p-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                        className="text-emerald-600 bg-emerald-50 p-1.5 rounded-2xl hover:bg-emerald-100 transition-colors"
                       >
                         <MessageCircle size={14} />
                       </a>
                     ) : (
                       <Link
                         href="/dashboard/owner/subscription/upgrade"
-                        className="text-white bg-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-700 transition-colors text-[9px] font-bold shadow-sm uppercase tracking-wider"
+                        className="text-white bg-indigo-600 px-2 py-1 rounded-xl hover:bg-indigo-700 transition-colors text-[9px] font-bold shadow-sm uppercase tracking-wider"
                       >
                         Unlock WA
                       </Link>
@@ -172,12 +172,12 @@ export default async function VisitsInboxPage({
               ))}
             </div>
           ) : (
-            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-2xl shadow-sm border border-neutral-200/60 text-center text-neutral-500 relative overflow-hidden">
+            <div className="bg-white/60 backdrop-blur-md p-10 rounded-2xl shadow-sm border border-neutral-200/60 text-center text-neutral-500 relative overflow-hidden">
               <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-400 relative z-10">
                 <CalendarClock size={24} />
               </div>
               <h3 className="text-lg font-black text-neutral-900 mb-1 relative z-10">No physical visits scheduled</h3>
-              <p className="text-xs font-medium relative z-10">Tenants can book visits directly from your PG page.</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider relative z-10">Tenants can book visits directly from your PG page.</p>
             </div>
           )}
         </section>
@@ -195,7 +195,7 @@ export default async function VisitsInboxPage({
           <div className="mb-3 flex flex-wrap items-center gap-1.5">
             <Link
               href={`/dashboard/owner/leads${q ? `?q=${encodeURIComponent(q)}` : ""}`}
-              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-md border transition-colors uppercase tracking-wider ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200/60 hover:bg-neutral-50"}`}
+              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors uppercase tracking-wider ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white/60 backdrop-blur-md text-neutral-600 border-neutral-200/60 hover:bg-neutral-50"}`}
             >
               All <span className="tabular-nums ml-0.5">{totalLeads}</span>
             </Link>
@@ -206,13 +206,13 @@ export default async function VisitsInboxPage({
                 <Link
                   key={s.value}
                   href={href}
-                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-md border transition-colors hover:opacity-90 uppercase tracking-wider ${active ? s.active : s.cls}`}
+                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors hover:opacity-90 uppercase tracking-wider ${active ? s.active : s.cls}`}
                 >
                   {s.label} <span className="tabular-nums ml-0.5">{countBy[s.value] ?? 0}</span>
                 </Link>
               );
             })}
-            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-50 border border-neutral-200/60 px-2.5 py-1.5 rounded-md">
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-50 border border-neutral-200/60 px-2.5 py-1.5 rounded-xl">
               Conv: <span className="text-emerald-600 font-black tabular-nums">{convRate}%</span>{" "}
               <span className="text-neutral-400 font-medium">({convertedLeads}/{totalLeads})</span>
             </span>
@@ -261,7 +261,7 @@ export default async function VisitsInboxPage({
                                   <>
                                     <a 
                                       href={`tel:${lead.phone}`} 
-                                      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-2xl transition-colors"
                                     >
                                       <Phone size={12} /> Call
                                     </a>
@@ -269,7 +269,7 @@ export default async function VisitsInboxPage({
                                       href={`https://wa.me/91${sanitizePhone(lead.phone)}?text=Hi%20${lead.name},%20I%20am%20reaching%20out%20regarding%20your%20inquiry%20for%20${lead.listing.title}`} 
                                       target="_blank" 
                                       rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                      className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-2xl transition-colors"
                                     >
                                       <MessageCircle size={12} /> WhatsApp
                                     </a>
@@ -277,7 +277,7 @@ export default async function VisitsInboxPage({
                                 ) : (
                                   <Link
                                     href="/dashboard/owner/subscription/upgrade"
-                                    className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                                    className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-2xl transition-colors shadow-sm"
                                   >
                                     Unlock Number
                                   </Link>
@@ -291,7 +291,7 @@ export default async function VisitsInboxPage({
                                 {lead.listing.title} <ExternalLink size={12} />
                               </Link>
                               {lead.message && (
-                                <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-lg border border-neutral-100/60 inline-block font-medium">
+                                <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-2xl border border-neutral-100/60 inline-block font-medium">
                                   &ldquo;{lead.message}&rdquo;
                                 </div>
                               )}
@@ -309,7 +309,7 @@ export default async function VisitsInboxPage({
                               <LeadStatusControl leadId={lead.id} status={lead.status} followUpAt={lead.followUpAt?.toISOString() ?? null} notes={lead.notes ?? null} />
                               <Link
                                 href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                                className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2 py-1 rounded-md transition-colors uppercase tracking-wider"
+                                className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2 py-1 rounded-xl transition-colors uppercase tracking-wider"
                               >
                                 ➜ Convert
                               </Link>
@@ -346,7 +346,7 @@ export default async function VisitsInboxPage({
                           {lead.listing.title} <ExternalLink size={12} />
                         </Link>
                         {lead.message && (
-                          <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-lg border border-neutral-100/60 inline-block line-clamp-2 font-medium">
+                          <div className="text-[10px] text-neutral-500 italic bg-white/60 p-2 rounded-2xl border border-neutral-100/60 inline-block line-clamp-2 font-medium">
                             &ldquo;{lead.message}&rdquo;
                           </div>
                         )}
@@ -355,19 +355,19 @@ export default async function VisitsInboxPage({
                       <div className="pt-2.5 border-t border-neutral-100/60 flex items-center justify-between gap-2">
                         {hasAccess ? (
                           <div className="flex items-center gap-1.5">
-                            <a href={`tel:${lead.phone}`} className="h-8 px-2.5 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
+                            <a href={`tel:${lead.phone}`} className="h-8 px-2.5 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-2xl transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
                               <Phone size={12} /> Call
                             </a>
-                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="h-8 px-2.5 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
+                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="h-8 px-2.5 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-2xl transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
                               <MessageCircle size={12} /> WA
                             </a>
                           </div>
                         ) : (
-                          <Link href="/dashboard/owner/subscription/upgrade" className="text-[10px] bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg font-bold shadow-sm uppercase tracking-wider">Unlock</Link>
+                          <Link href="/dashboard/owner/subscription/upgrade" className="text-[10px] bg-indigo-600 text-white px-2.5 py-1.5 rounded-2xl font-bold shadow-sm uppercase tracking-wider">Unlock</Link>
                         )}
                         <Link
                           href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wider"
+                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2.5 py-1.5 rounded-2xl transition-colors uppercase tracking-wider"
                         >
                           Convert
                         </Link>
@@ -377,12 +377,12 @@ export default async function VisitsInboxPage({
                 </div>
               </div>
             ) : (
-              <div className="bg-white/80 backdrop-blur-xl p-16 rounded-3xl shadow-sm border border-neutral-200/60 text-center relative overflow-hidden">
+              <div className="bg-white/60 backdrop-blur-md p-16 rounded-3xl shadow-sm border border-neutral-200/60 text-center relative overflow-hidden">
                 <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6 text-neutral-400 relative z-10 shadow-inner">
                   <Mail size={40} />
                 </div>
                 <h3 className="text-2xl font-black text-neutral-900 mb-3 relative z-10">No leads found</h3>
-                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-xs font-medium relative z-10">
+                <p className="text-neutral-500 max-w-md mx-auto mb-8 text-[10px] font-bold uppercase tracking-wider relative z-10">
                   {q || status !== 'ALL' ? "Try adjusting your filters or search query." : "You haven't received any leads yet."}
                 </p>
               </div>
@@ -395,14 +395,14 @@ export default async function VisitsInboxPage({
                   <Link
                     href={`/dashboard/owner/leads?${q ? `q=${encodeURIComponent(q)}&` : ""}${stage ? `stage=${stage}&` : ""}page=${page - 1}`}
                     aria-disabled={page <= 1}
-                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider ${page <= 1 ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md"}`}
                   >
                     Prev
                   </Link>
                   <Link
                     href={`/dashboard/owner/leads?${q ? `q=${encodeURIComponent(q)}&` : ""}${stage ? `stage=${stage}&` : ""}page=${page + 1}`}
                     aria-disabled={page >= totalPages}
-                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200 px-2.5 py-1.5 rounded-md transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white"}`}
+                    className={`flex items-center gap-1 text-[10px] font-bold border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider ${page >= totalPages ? "opacity-40 pointer-events-none text-neutral-400 bg-neutral-50/50" : "text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md"}`}
                   >
                     Next
                   </Link>

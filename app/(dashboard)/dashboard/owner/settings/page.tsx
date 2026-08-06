@@ -18,7 +18,7 @@ export default async function OwnerSettingsPage() {
     <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm p-4 sm:p-6 max-w-4xl mx-auto">
       <div className="mb-6 border-b border-neutral-200/60 pb-4">
         <h1 className="text-xl font-black text-neutral-900 tracking-tight uppercase">Account Settings</h1>
-        <p className="text-xs font-medium text-neutral-500 mt-1">Manage your profile and preferences.</p>
+        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Manage your profile and preferences.</p>
       </div>
 
       <div className="grid gap-4 max-w-2xl">
@@ -29,14 +29,14 @@ export default async function OwnerSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-black text-neutral-900 leading-none">{user?.name}</h2>
-              <div className="text-[9px] font-black text-violet-700 bg-violet-100 px-2 py-0.5 rounded-md inline-block mt-1.5 uppercase tracking-wider shadow-sm">
+              <div className="text-[9px] font-black text-violet-700 bg-violet-100 px-2 py-0.5 rounded-xl inline-block mt-1.5 uppercase tracking-wider shadow-sm">
                 {user?.role}
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-white/60 rounded-lg border border-neutral-200/60 shadow-sm hover:bg-white/80 transition-colors">
+            <div className="flex items-center justify-between p-3 bg-white/60 rounded-2xl border border-neutral-200/60 shadow-sm hover:bg-white/80 transition-colors">
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-violet-400" />
                 <div>
@@ -46,7 +46,7 @@ export default async function OwnerSettingsPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-white/60 rounded-lg border border-neutral-200/60 shadow-sm hover:bg-white/80 transition-colors">
+            <div className="flex items-center justify-between p-3 bg-white/60 rounded-2xl border border-neutral-200/60 shadow-sm hover:bg-white/80 transition-colors">
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-violet-400" />
                 <div>
@@ -61,18 +61,18 @@ export default async function OwnerSettingsPage() {
 
         <div className="bg-rose-50/50 border border-rose-100/60 rounded-xl p-4 sm:p-5 mt-2">
           <h3 className="text-sm font-black text-rose-700 mb-1 uppercase tracking-wider">Danger Zone</h3>
-          <p className="text-xs font-medium text-rose-600/70 mb-4 max-w-lg">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-rose-600/70 mb-4 max-w-lg">
             Account deletion involves your listings, tenants, and billing history — our team handles this manually to make sure nothing is lost by mistake.
           </p>
           <Link
             href="/contact"
-            className="inline-block px-4 py-2 bg-rose-100 text-rose-700 font-black text-[10px] uppercase tracking-wider rounded-lg hover:bg-rose-200 transition-colors shadow-sm"
+            className="inline-block px-4 py-2 bg-rose-100 text-rose-700 font-black text-[10px] uppercase tracking-wider rounded-2xl hover:bg-rose-200 transition-colors shadow-sm"
           >
             Request Account Deletion
           </Link>
           <div className="border-t border-rose-200/60 pt-4 mt-4">
             <h3 className="text-xs font-bold text-neutral-800 mb-2 uppercase tracking-wider">Or simply sign out</h3>
-            <LogoutButton className="w-full flex justify-center py-2.5 bg-neutral-100/80 text-neutral-700 hover:bg-neutral-200 border border-neutral-200/60 rounded-lg font-bold text-xs uppercase tracking-wider shadow-sm transition-colors" />
+            <LogoutButton className="w-full flex justify-center py-2.5 bg-neutral-100/80 text-neutral-700 hover:bg-neutral-200 border border-neutral-200/60 rounded-2xl font-bold text-xs uppercase tracking-wider shadow-sm transition-colors" />
           </div>
         </div>
       </div>

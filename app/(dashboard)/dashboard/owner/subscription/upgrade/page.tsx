@@ -55,12 +55,12 @@ export default async function UpgradePage({
                   key={c}
                   href={`/dashboard/owner/subscription/upgrade?cycle=${c}`}
                   className={`relative px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
-                    on ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
+                    on ? "bg-white/60 backdrop-blur-md text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
                   }`}
                 >
                   {CYCLE_META[c].label}
                   {best > 0 && (
-                    <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-green-100 text-green-700">
+                    <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-xl bg-green-100 text-green-700">
                       {best}% off
                     </span>
                   )}
@@ -116,7 +116,7 @@ export default async function UpgradePage({
                       return (
                         <>
                           <span className={`text-2xl font-extrabold ${rec ? "text-white" : "text-neutral-400"}`}>—</span>
-                          <span className="block text-xs text-neutral-400 font-semibold mt-0.5">
+                          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-semibold mt-0.5">
                             {CYCLE_META[cycle].label} par available nahi
                           </span>
                         </>
@@ -127,7 +127,7 @@ export default async function UpgradePage({
                       <>
                         <span className={`text-4xl font-extrabold ${rec ? "text-white" : "text-neutral-900"}`}>₹{price.toLocaleString("en-IN")}</span>
                         <span className="text-neutral-500 font-medium">/{CYCLE_META[cycle].shortLabel.toLowerCase()}</span>
-                        <span className="block text-xs text-neutral-400 font-semibold mt-0.5">
+                        <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-semibold mt-0.5">
                           GST included
                           {CYCLE_META[cycle].months > 1 && ` · ₹${effectiveMonthly(price, cycle).toLocaleString("en-IN")}/month`}
                           {saving > 0 && ` · ${saving}% bachat`}
@@ -139,10 +139,10 @@ export default async function UpgradePage({
 
                 {/* Limits straight from the admin-controlled plan row */}
                 <div className={`flex flex-wrap gap-2 mb-5 text-[10px] font-bold uppercase tracking-wider ${rec ? "text-neutral-300" : "text-neutral-600"}`}>
-                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
+                  <span className={`px-2 py-1 rounded-2xl ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
                     {plan.maxTenants === -1 ? "Unlimited" : plan.maxTenants} tenants
                   </span>
-                  <span className={`px-2 py-1 rounded-lg ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
+                  <span className={`px-2 py-1 rounded-2xl ${rec ? "bg-white/10" : "bg-neutral-100/80 border border-neutral-200/60"}`}>
                     {plan.maxListings === -1 ? "Unlimited" : plan.maxListings} PGs
                   </span>
                 </div>
@@ -189,7 +189,7 @@ export default async function UpgradePage({
       </div>
 
       <div className="text-center mt-4">
-        <p className="text-xs font-medium text-neutral-500">Need help or offline activation? <Link href="/contact" className="font-black text-violet-600 hover:text-violet-700 hover:underline">Contact Support</Link></p>
+        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Need help or offline activation? <Link href="/contact" className="font-black text-violet-600 hover:text-violet-700 hover:underline">Contact Support</Link></p>
       </div>
     </div>
   );

@@ -44,10 +44,10 @@ export default function AnalyticsPage() {
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Analytics Dashboard</h1>
-          <p className="text-neutral-500 text-xs font-medium mt-0.5">Track how your PG listings are performing.</p>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Analytics Dashboard</h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Track how your PG listings are performing.</p>
         </div>
-        <button onClick={fetchAnalytics} className="flex items-center gap-2 h-8 px-3 bg-white border border-neutral-200 rounded-lg text-[10px] font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors shadow-sm">
+        <button onClick={fetchAnalytics} className="flex items-center gap-2 h-8 px-3 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl text-[10px] font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors shadow-sm">
           <RefreshCcw size={12} /> Refresh
         </button>
       </div>
@@ -140,7 +140,7 @@ export default function AnalyticsPage() {
           
           <div className="mt-auto space-y-1.5 pt-2">
             {data.sources.map((s: any, idx: number) => (
-              <div key={s.name} className="flex items-center justify-between text-[11px] bg-white border border-neutral-100 rounded-lg px-2.5 py-1.5">
+              <div key={s.name} className="flex items-center justify-between text-[11px] bg-white/60 backdrop-blur-md border border-neutral-100 rounded-2xl px-2.5 py-1.5">
                 <span className="flex items-center gap-1.5 font-bold text-neutral-600">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                   {s.name}

@@ -102,7 +102,7 @@ export default function MessMenuPage() {
           <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Hafte bhar ka khana plan karein</p>
         </div>
         <div className="flex items-center gap-3">
-          <select value={listingId} onChange={e => setListingId(e.target.value)} className="input-base w-48 bg-white">
+          <select value={listingId} onChange={e => setListingId(e.target.value)} className="input-base w-48 bg-white/60 backdrop-blur-md">
             {listings.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
           </select>
           <button onClick={saveMenu} disabled={saving || !listingId} className="btn-primary text-sm px-6">
@@ -133,16 +133,16 @@ export default function MessMenuPage() {
                     <tr key={day.id} className="hover:bg-white/60 transition-colors">
                       <td className="px-4 py-3 text-xs font-black text-neutral-900 uppercase tracking-wider">{day.label}</td>
                       <td className="px-2 py-2">
-                        <textarea value={m.breakfast || ""} onChange={e => handleChange(day.id, "breakfast", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Aloo paratha..." />
+                        <textarea value={m.breakfast || ""} onChange={e => handleChange(day.id, "breakfast", e.target.value)} rows={2} className="w-full text-[10px] font-bold uppercase tracking-wider p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Aloo paratha..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.lunch || ""} onChange={e => handleChange(day.id, "lunch", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Rajma chawal..." />
+                        <textarea value={m.lunch || ""} onChange={e => handleChange(day.id, "lunch", e.target.value)} rows={2} className="w-full text-[10px] font-bold uppercase tracking-wider p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Rajma chawal..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.snacks || ""} onChange={e => handleChange(day.id, "snacks", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Chai & biscuit..." />
+                        <textarea value={m.snacks || ""} onChange={e => handleChange(day.id, "snacks", e.target.value)} rows={2} className="w-full text-[10px] font-bold uppercase tracking-wider p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Chai & biscuit..." />
                       </td>
                       <td className="px-2 py-2">
-                        <textarea value={m.dinner || ""} onChange={e => handleChange(day.id, "dinner", e.target.value)} rows={2} className="w-full text-xs font-medium p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Roti sabzi..." />
+                        <textarea value={m.dinner || ""} onChange={e => handleChange(day.id, "dinner", e.target.value)} rows={2} className="w-full text-[10px] font-bold uppercase tracking-wider p-2 border border-neutral-200/60 rounded-xl resize-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 bg-white/50 backdrop-blur-sm" placeholder="Roti sabzi..." />
                       </td>
                     </tr>
                   );

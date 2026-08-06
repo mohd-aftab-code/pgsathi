@@ -302,7 +302,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             {selectedListing && rooms.length === 0 && (
-              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50/80 p-3 rounded-lg border border-red-200/60 shadow-sm">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50/80 p-3 rounded-2xl border border-red-200/60 shadow-sm">
                 Is PG mein koi Room add nahi kiya gaya hai. Pehle <strong className="font-black">Rooms & Beds</strong> section mein jaakar naya room add karein.
               </div>
             )}
@@ -332,7 +332,7 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
             )}
             
             {selectedRoom && beds.length === 0 && (
-              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50/80 p-3 rounded-lg border border-amber-200/60 shadow-sm">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50/80 p-3 rounded-2xl border border-amber-200/60 shadow-sm">
                 Is Room me koi Bed khali nahi hai. Kripya dusra room chunein.
               </div>
             )}

@@ -72,13 +72,13 @@ function ImpersonateSessionInner() {
 
   return (
     <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-neutral-200 shadow-xl p-8 max-w-sm w-full text-center">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-xl p-8 max-w-sm w-full text-center">
         {status === "loading" && (
           <>
             <div className="w-14 h-14 border-4 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
             <h2 className="text-lg font-bold text-neutral-900 mb-2">Setting up Impersonation</h2>
             <p className="text-sm text-neutral-500">{message}</p>
-            <p className="text-xs text-neutral-400 mt-3">Please wait, this only takes a moment...</p>
+            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mt-3">Please wait, this only takes a moment...</p>
           </>
         )}
         {status === "success" && (

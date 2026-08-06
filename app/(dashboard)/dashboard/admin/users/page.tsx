@@ -117,7 +117,7 @@ export default function AdminUsersPage() {
               <s.icon size={18} className={s.color} />
             </div>
             <div>
-              <div className="text-2xl font-black text-neutral-900 tracking-tight">{s.value}</div>
+              <div className="text-2xl font-black text-neutral-900 tracking-tight uppercase">{s.value}</div>
               <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">{s.label}</div>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function AdminUsersPage() {
                   <td className="px-4 py-2">
                     {o.status === "FREE_TRIAL" && (
                       <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-black bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-sm uppercase tracking-wider">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-sm uppercase tracking-wider">
                           Active Trial
                         </span>
                         <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.trialEndDate).toLocaleDateString()}</div>
@@ -187,7 +187,7 @@ export default function AdminUsersPage() {
                     )}
                     {o.status === "PREMIUM" && (
                       <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-black bg-emerald-100/80 text-emerald-800 border border-emerald-200/60 shadow-sm uppercase tracking-wider">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-emerald-100/80 text-emerald-800 border border-emerald-200/60 shadow-sm uppercase tracking-wider">
                           Premium Active
                         </span>
                         <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.subscriptionEnd).toLocaleDateString()}</div>
@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                     )}
                     {o.status === "EXPIRED" && (
                       <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-black bg-red-100/80 text-red-800 border border-red-200/60 shadow-sm uppercase tracking-wider">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-red-100/80 text-red-800 border border-red-200/60 shadow-sm uppercase tracking-wider">
                           Trial Expired
                         </span>
                       </div>
@@ -205,28 +205,28 @@ export default function AdminUsersPage() {
                     <div className="flex items-center justify-end gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => handleImpersonate(o.id, o.name)}
-                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-md bg-orange-100/80 border border-orange-200/60 shadow-sm text-orange-700 hover:bg-orange-200 transition-colors uppercase tracking-wider"
+                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-xl bg-orange-100/80 border border-orange-200/60 shadow-sm text-orange-700 hover:bg-orange-200 transition-colors uppercase tracking-wider"
                       >
                         Login As
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-md bg-white/60 border border-neutral-200/60 shadow-sm text-neutral-700 hover:bg-neutral-100 transition-colors uppercase tracking-wider"
+                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-xl bg-white/60 border border-neutral-200/60 shadow-sm text-neutral-700 hover:bg-neutral-100 transition-colors uppercase tracking-wider"
                       >
                         +7D
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "activate_plan")} 
-                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-md bg-violet-600 text-white hover:bg-violet-700 shadow-sm transition-colors uppercase tracking-wider"
+                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-xl bg-violet-600 text-white hover:bg-violet-700 shadow-sm transition-colors uppercase tracking-wider"
                       >
                         Pro
                       </button>
                       <button 
                         disabled={processing}
                         onClick={() => handleAction(o.id, "delete")} 
-                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-md bg-red-100/80 border border-red-200/60 shadow-sm text-red-700 hover:bg-red-200 transition-colors uppercase tracking-wider"
+                        className="cursor-pointer text-[9px] font-black px-2 py-1.5 rounded-xl bg-red-100/80 border border-red-200/60 shadow-sm text-red-700 hover:bg-red-200 transition-colors uppercase tracking-wider"
                       >
                         Del
                       </button>

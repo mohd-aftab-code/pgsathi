@@ -52,8 +52,8 @@ export default async function PaymentsPage({
       </div>
 
       <form className="mb-6 flex flex-wrap gap-3">
-        <input name="month" type="month" defaultValue={month} className="input-base max-w-[170px] bg-white shadow-sm rounded-xl" />
-        <select name="type" defaultValue={type} className="input-base max-w-[160px] bg-white shadow-sm rounded-xl">
+        <input name="month" type="month" defaultValue={month} className="input-base max-w-[170px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl" />
+        <select name="type" defaultValue={type} className="input-base max-w-[160px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl">
           <option value="">All Types</option>
           <option value="RENT">Rent</option>
           <option value="DEPOSIT">Deposit</option>

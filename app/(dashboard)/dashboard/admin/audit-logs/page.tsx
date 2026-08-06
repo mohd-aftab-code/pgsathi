@@ -76,7 +76,7 @@ export default async function AdminAuditLogsPage({
   const tab = (label: string, val: string) => (
     <Link
       href={val ? `/dashboard/admin/audit-logs?entity=${val}` : "/dashboard/admin/audit-logs"}
-      className={`h-8 px-3 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${
+      className={`h-8 px-3 rounded-2xl text-[10px] font-bold inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors ${
         entity === val ? "bg-neutral-900 text-white" : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white/80 hover:text-neutral-900"
       }`}
     >
@@ -103,7 +103,7 @@ export default async function AdminAuditLogsPage({
       </div>
 
       {logs.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">
+        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 py-16 text-center text-neutral-500 shadow-sm">
           Abhi koi audit entry nahi.
         </div>
       ) : (
@@ -126,7 +126,7 @@ export default async function AdminAuditLogsPage({
                     <td className="px-4 py-2 text-[9px] font-bold text-neutral-500 whitespace-nowrap uppercase tracking-wider">{fmtDateTime(l.createdAt)}</td>
                     <td className="px-4 py-2 text-neutral-900 font-black text-xs uppercase tracking-tight">{l.actor ?? adminName.get(l.adminId) ?? `#${l.adminId}`}</td>
                     <td className="px-4 py-2">
-                      <span className={`inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-md tracking-wider uppercase border shadow-sm ${actionStyle(l.action)}`}>
+                      <span className={`inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-xl tracking-wider uppercase border shadow-sm ${actionStyle(l.action)}`}>
                         {ACTION_LABEL[l.action] ?? l.action}
                       </span>
                     </td>
@@ -157,7 +157,7 @@ export default async function AdminAuditLogsPage({
                     <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{fmtDateTime(l.createdAt)}</div>
                   </div>
                   <div className="shrink-0">
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shadow-sm ${actionStyle(l.action)}`}>
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-xl border shadow-sm ${actionStyle(l.action)}`}>
                       {ACTION_LABEL[l.action] ?? l.action}
                     </span>
                   </div>

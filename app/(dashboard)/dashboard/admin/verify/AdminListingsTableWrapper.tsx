@@ -161,7 +161,7 @@ export default function AdminListingsTableWrapper({
                     <Link 
                       href={`/pg/${listing.slug}`} 
                       target="_blank"
-                      className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
+                      className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-colors" 
                       title="Preview"
                     >
                       <Eye size={18} />
@@ -204,8 +204,8 @@ export default function AdminListingsTableWrapper({
                 )}
               </div>
               <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-wider text-neutral-700 mt-1">
-                <span className="bg-white/60 px-2 py-1 rounded-md border border-neutral-200/60 shadow-sm">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
-                <span className="bg-white/60 px-2 py-1 rounded-md border border-neutral-200/60 shadow-sm">{listing.genderAllowed}</span>
+                <span className="bg-white/60 px-2 py-1 rounded-xl border border-neutral-200/60 shadow-sm">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
+                <span className="bg-white/60 px-2 py-1 rounded-xl border border-neutral-200/60 shadow-sm">{listing.genderAllowed}</span>
                 <span className="text-emerald-700 font-black">₹{listing.priceMin}</span>
               </div>
             </div>
@@ -225,7 +225,7 @@ export default function AdminListingsTableWrapper({
               <Link 
                 href={`/pg/${listing.slug}`} 
                 target="_blank"
-                className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" 
+                className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-colors" 
                 title="Preview"
               >
                 <Eye size={18} />
