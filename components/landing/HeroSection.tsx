@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import AuthProtectedLink from "@/components/common/AuthProtectedLink";
 import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2 } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
@@ -170,7 +171,7 @@ const FALLBACK_PHOTOS = [
 function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: any; fallbackPhoto: string; className: string }) {
   const photo = listing.photos?.[0]?.url || fallbackPhoto;
   return (
-    <Link
+    <AuthProtectedLink
       href={`/pg/${listing.city?.slug}/${listing.locality?.slug || "all"}/${listing.slug}`}
       className={`block bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden hover:-translate-y-1 hover:rotate-0 transition-all duration-300 ${className}`}
     >
@@ -200,6 +201,6 @@ function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: any; fal
           </span>
         </div>
       </div>
-    </Link>
+    </AuthProtectedLink>
   );
 }
