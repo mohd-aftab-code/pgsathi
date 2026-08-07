@@ -49,7 +49,7 @@ export default async function PartnerLandingPage() {
             }}
           />
           
-          <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="relative container-max px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
               {/* Left Content */}
               <div>
@@ -146,7 +146,7 @@ export default async function PartnerLandingPage() {
 
         {/* How it works */}
         <section className="py-20 lg:py-24 bg-white/60 backdrop-blur-md relative border-b border-neutral-200/60">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="container-max relative px-4 sm:px-6">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">How It Works</h2>
               <p className="text-neutral-500 text-lg max-w-2xl mx-auto">Start your business in three simple steps and begin earning from day one.</p>
@@ -168,7 +168,7 @@ export default async function PartnerLandingPage() {
         
         {/* Features / Benefits */}
         <section className="py-20 lg:py-24 bg-neutral-50 border-b border-neutral-200/60">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="container-max relative px-4 sm:px-6">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">Partner Programme Benefits</h2>
               <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">We've built a powerful dashboard for our partners where you can easily manage your entire business.</p>
@@ -190,7 +190,7 @@ export default async function PartnerLandingPage() {
 
         {/* CTA */}
         <section className="py-20 lg:py-28 bg-white/60 backdrop-blur-md">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <div className="container-max px-4 sm:px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-black text-neutral-900 mb-6 tracking-tight">Ready to start earning?</h2>
             <p className="text-lg md:text-xl text-neutral-600 mb-10 max-w-2xl mx-auto">Registration is completely free. Apply today and become a part of the PGSathi Partner network.</p>
             <Link
