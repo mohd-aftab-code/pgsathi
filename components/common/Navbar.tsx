@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Info, Phone, Building } from "lucide-react";
+import { Menu, X, Search, PlusCircle, LogIn, LayoutDashboard, Handshake, Phone, Building } from "lucide-react";
 
 import logoImg from "@/app/assets/logo/logo in vertical.png";
 
@@ -32,11 +32,11 @@ export default function Navbar({ user }: { user?: any }) {
             <Link href="/search" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Search size={16} /> Search PGs
             </Link>
-            <Link href="/about" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
-              <Info size={16} /> About Us
+            <Link href="/partner" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
+              <Handshake size={16} /> Partner
             </Link>
             <Link href="/pg-management-software" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
-              <Building size={16} /> Software
+              <Building size={16} /> PG Manager
             </Link>
             <Link href="/contact" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-600 font-medium text-sm transition-colors hover:bg-primary-50 hover:text-primary-700">
               <Phone size={16} /> Contact
@@ -73,11 +73,11 @@ export default function Navbar({ user }: { user?: any }) {
           <Link href="/search" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Search size={18} className="text-primary-600" /> Search PGs
           </Link>
-          <Link href="/about" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
-            <Info size={18} className="text-primary-600" /> About Us
+          <Link href="/partner" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
+            <Handshake size={18} className="text-primary-600" /> Partner
           </Link>
           <Link href="/pg-management-software" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
-            <Building size={18} className="text-primary-600" /> PG Software
+            <Building size={18} className="text-primary-600" /> PG Manager
           </Link>
           <Link href="/contact" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-medium bg-slate-50 active:bg-slate-100 transition-colors">
             <Phone size={18} className="text-primary-600" /> Contact
