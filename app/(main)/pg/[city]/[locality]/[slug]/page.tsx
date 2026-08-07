@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
@@ -75,8 +75,13 @@ export default async function PGDetailPage(props: {
 }) {
   const params = await props.params;
 
-  const pg = await getListingBySlug(params.slug);
   const session = await auth();
+  if (!session?.user) {
+    const callbackUrl = encodeURIComponent(`/pg/${params.city}/${params.locality}/${params.slug}`);
+    redirect(`/login?callbackUrl=${callbackUrl}`);
+  }
+
+  const pg = await getListingBySlug(params.slug);
 
   if (!pg) notFound();
 
