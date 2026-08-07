@@ -325,8 +325,12 @@ model PartnerProfile {
   city          String?       @db.VarChar(100)
   address       String?       @db.VarChar(300)
   // Payout details — needed before a payout can be marked paid
-  panNumber     String?       @db.VarChar(20)
-  bankName      String?       @db.VarChar(120)
+  panNumber         String?       @db.VarChar(20)
+  panImage          String?
+  aadhaarNumber     String?       @db.VarChar(20)
+  aadhaarFrontImage String?
+  aadhaarBackImage  String?
+  bankName          String?       @db.VarChar(120)
   bankAccountNo String?       @db.VarChar(30)
   bankIfsc      String?       @db.VarChar(15)
   upiId         String?       @db.VarChar(80)

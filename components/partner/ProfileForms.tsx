@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, Upload, X } from "lucide-react";
 
 const inp =
   "w-full h-11 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none";
@@ -132,6 +132,75 @@ export function SettingsForm({
 
 
 
+      <SaveBtn saving={saving} saved={saved} />
+    </form>
+  );
+}
+
+function ImageUpload({ label, value, onChange }: { label: string; value: string | null; onChange: (v: string | null) => void }) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files?.length) return;
+    setUploading(true);
+    try {
+      const file = e.target.files[0];
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      if (d.success) onChange(d.url);
+      else alert(d.message || "Upload failed");
+    } catch {
+      alert("Something went wrong");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div>
+      <label className={lbl}>{label}</label>
+      {value ? (
+        <div className="relative rounded-xl overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 h-32 group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={value} alt={label} className="w-full h-full object-cover" />
+          <button type="button" onClick={() => onChange(null)}
+            className="absolute top-2 right-2 bg-red-500 text-white w-7 h-7 rounded-full grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <X size={14} />
+          </button>
+        </div>
+      ) : (
+        <label className="border-2 border-dashed border-primary-300 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-950/20 hover:bg-primary-50 dark:hover:bg-primary-950/40 rounded-xl h-32 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
+          <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
+          <div className="w-10 h-10 bg-white/60 backdrop-blur-md dark:bg-neutral-800 rounded-full grid place-items-center shadow-sm mb-2 text-primary-500">
+            {uploading ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} />}
+          </div>
+          <p className="font-bold text-[11px] text-neutral-900 dark:text-white">{uploading ? "Uploading…" : "Upload Image"}</p>
+        </label>
+      )}
+    </div>
+  );
+}
+
+export function KycForm({ initial }: { initial: { aadhaarNumber: string; panImage: string | null; aadhaarFrontImage: string | null; aadhaarBackImage: string | null } }) {
+  const [f, setF] = useState(initial);
+  const { save, saving, saved, error } = useSave("kyc");
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); save(f); }} className="space-y-4">
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className={lbl}>Aadhaar Number</label>
+          <input className={inp} value={f.aadhaarNumber} onChange={(e) => setF({ ...f, aadhaarNumber: e.target.value })} placeholder="1234 5678 9012" />
+        </div>
+        <div className="hidden sm:block"></div>
+        <ImageUpload label="PAN Card Image" value={f.panImage} onChange={(v) => setF({ ...f, panImage: v })} />
+        <div className="hidden sm:block"></div>
+        <ImageUpload label="Aadhaar Front Image" value={f.aadhaarFrontImage} onChange={(v) => setF({ ...f, aadhaarFrontImage: v })} />
+        <ImageUpload label="Aadhaar Back Image" value={f.aadhaarBackImage} onChange={(v) => setF({ ...f, aadhaarBackImage: v })} />
+      </div>
+      <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Upload clear images of your documents for faster verification.</p>
       <SaveBtn saving={saving} saved={saved} />
     </form>
   );

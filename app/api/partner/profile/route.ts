@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const section = body.section as "profile" | "payout" | "settings";
+  const section = body.section as "profile" | "payout" | "settings" | "kyc";
 
   try {
     if (section === "profile") {
@@ -42,6 +42,16 @@ export async function PATCH(req: NextRequest) {
           bankAccountNo: body.bankAccountNo !== undefined ? String(body.bankAccountNo).replace(/\s/g, "") || null : undefined,
           bankIfsc: body.bankIfsc !== undefined ? String(body.bankIfsc).trim().toUpperCase() || null : undefined,
           upiId: body.upiId !== undefined ? String(body.upiId).trim() || null : undefined,
+        },
+      });
+    } else if (section === "kyc") {
+      await db.partnerProfile.update({
+        where: { id: ctx.partnerId },
+        data: {
+          aadhaarNumber: body.aadhaarNumber !== undefined ? String(body.aadhaarNumber).replace(/\s/g, "") || null : undefined,
+          panImage: body.panImage !== undefined ? String(body.panImage) || null : undefined,
+          aadhaarFrontImage: body.aadhaarFrontImage !== undefined ? String(body.aadhaarFrontImage) || null : undefined,
+          aadhaarBackImage: body.aadhaarBackImage !== undefined ? String(body.aadhaarBackImage) || null : undefined,
         },
       });
     } else if (section === "settings") {

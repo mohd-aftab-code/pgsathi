@@ -36,6 +36,10 @@ function prismaErrorCode(e: unknown): string | null {
 
 export type PayoutIdentity = {
   panNumber: string | null;
+  panImage?: string | null;
+  aadhaarNumber?: string | null;
+  aadhaarFrontImage?: string | null;
+  aadhaarBackImage?: string | null;
   upiId: string | null;
   bankName: string | null;
   bankAccountNo: string | null;
@@ -47,6 +51,10 @@ export type PayoutIdentity = {
 export function kycGaps(p: PayoutIdentity): string[] {
   const gaps: string[] = [];
   if (!p.panNumber) gaps.push("PAN number");
+  if (!p.panImage) gaps.push("PAN image");
+  if (!p.aadhaarNumber) gaps.push("Aadhaar number");
+  if (!p.aadhaarFrontImage) gaps.push("Aadhaar front image");
+  if (!p.aadhaarBackImage) gaps.push("Aadhaar back image");
   const hasUpi = Boolean(p.upiId);
   const hasBank = Boolean(p.bankName && p.bankAccountNo && p.bankIfsc);
   if (!hasUpi && !hasBank) gaps.push("UPI ID ya poora bank account (name + account no + IFSC)");
@@ -193,6 +201,10 @@ export async function createPayout(input: CreatePayoutInput): Promise<CreatePayo
       id: true,
       userId: true,
       panNumber: true,
+      panImage: true,
+      aadhaarNumber: true,
+      aadhaarFrontImage: true,
+      aadhaarBackImage: true,
       upiId: true,
       bankName: true,
       bankAccountNo: true,
@@ -465,7 +477,7 @@ export async function getBulkCandidates(): Promise<BulkCandidate[]> {
   const partners = await db.partnerProfile.findMany({
     where: { id: { in: grouped.map((g) => g.partnerId) } },
     select: {
-      id: true, partnerCode: true, panNumber: true, upiId: true,
+      id: true, partnerCode: true, panNumber: true, panImage: true, aadhaarNumber: true, aadhaarFrontImage: true, aadhaarBackImage: true, upiId: true,
       bankName: true, bankAccountNo: true, bankIfsc: true, kycVerifiedAt: true,
       status: true, archivedAt: true,
       user: { select: { name: true } },

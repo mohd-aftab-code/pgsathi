@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity } from "lucide-react";
+import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity, FileText } from "lucide-react";
 import { db } from "@/lib/db";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
 import { AdminPartnerControls } from "@/components/dashboard/AdminPartnerControls";
@@ -246,6 +246,46 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                 Partner ne abhi payout details nahi bhare. Payment se pehle unse bharwa lein.
               </p>
             )}
+          </div>
+
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
+            <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><FileText size={15} className="text-neutral-400" /> KYC Documents</h2>
+            <div className="space-y-3 text-sm">
+              <div>
+                <span className="text-neutral-500 text-xs block">Aadhaar Number</span>
+                <span className="font-semibold text-neutral-900">{partner.aadhaarNumber || "—"}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div>
+                  <span className="text-neutral-500 text-xs block mb-1">PAN Card</span>
+                  {partner.panImage ? (
+                    <a href={partner.panImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={partner.panImage} alt="PAN" className="w-full h-full object-cover" />
+                    </a>
+                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
+                </div>
+                <div>
+                  <span className="text-neutral-500 text-xs block mb-1">Aadhaar Front</span>
+                  {partner.aadhaarFrontImage ? (
+                    <a href={partner.aadhaarFrontImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={partner.aadhaarFrontImage} alt="Aadhaar Front" className="w-full h-full object-cover" />
+                    </a>
+                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
+                </div>
+                <div>
+                  <span className="text-neutral-500 text-xs block mb-1">Aadhaar Back</span>
+                  {partner.aadhaarBackImage ? (
+                    <a href={partner.aadhaarBackImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={partner.aadhaarBackImage} alt="Aadhaar Back" className="w-full h-full object-cover" />
+                    </a>
+                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">

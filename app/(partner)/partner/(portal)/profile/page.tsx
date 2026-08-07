@@ -2,7 +2,7 @@ import { ShieldCheck, ShieldAlert } from "lucide-react";
 import { requirePartner } from "@/lib/partner-auth";
 import { db } from "@/lib/db";
 import { kycGaps } from "@/lib/partner-payouts";
-import { ProfileForm, PayoutForm } from "@/components/partner/ProfileForms";
+import { ProfileForm, PayoutForm, KycForm } from "@/components/partner/ProfileForms";
 
 export const metadata = { title: "Profile — Partner | PGSathi" };
 
@@ -20,7 +20,7 @@ export default async function PartnerProfilePage() {
     where: { id: ctx.partnerId },
     select: {
       company: true, city: true, address: true, type: true, createdAt: true,
-      panNumber: true, bankName: true, bankAccountNo: true, bankIfsc: true, upiId: true,
+      panNumber: true, panImage: true, aadhaarNumber: true, aadhaarFrontImage: true, aadhaarBackImage: true, bankName: true, bankAccountNo: true, bankIfsc: true, upiId: true,
       kycVerifiedAt: true,
       user: { select: { name: true, phone: true, email: true } },
     },
@@ -86,6 +86,11 @@ export default async function PartnerProfilePage() {
       <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
         <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">Payout details</h2>
         <PayoutForm initial={{ panNumber: profile.panNumber ?? "", bankName: profile.bankName ?? "", bankAccountNo: profile.bankAccountNo ?? "", bankIfsc: profile.bankIfsc ?? "", upiId: profile.upiId ?? "" }} />
+      </div>
+
+      <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-white/60 backdrop-blur-md dark:bg-neutral-900 p-5 shadow-sm">
+        <h2 className="font-bold text-neutral-900 dark:text-white text-sm mb-4">KYC Documents</h2>
+        <KycForm initial={{ aadhaarNumber: profile.aadhaarNumber ?? "", panImage: profile.panImage ?? null, aadhaarFrontImage: profile.aadhaarFrontImage ?? null, aadhaarBackImage: profile.aadhaarBackImage ?? null }} />
       </div>
     </div>
   );
