@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/app/assets/logo/logo.png";
+import logoImg from "@/app/assets/logo/logo in vertical.png";
 import { Home, ArrowRight, Lock, CheckCircle, Phone, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";

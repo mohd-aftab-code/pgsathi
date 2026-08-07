@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/app/assets/logo/logo.png";
+import logoImg from "@/app/assets/logo/logo in vertical.png";
 import { signIn } from "next-auth/react";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 import {

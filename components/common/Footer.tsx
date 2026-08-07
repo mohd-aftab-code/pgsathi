@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin } from "lucide-react";
-import logoImg from "@/app/assets/logo/logo.png";
+import logoImg from "@/app/assets/logo/logo in vertical.png";
 import { CITIES } from "@/constants/cities";
 
 export default function Footer() {
