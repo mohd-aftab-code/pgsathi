@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Handshake, Building2, IndianRupee, BarChart3, ShieldCheck, ArrowRight, Wallet, CheckCircle } from "lucide-react";
 
 import PartnerFooter from "@/components/partner/PartnerFooter";
+import Navbar from "@/components/common/Navbar";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
@@ -34,50 +35,7 @@ export default async function PartnerLandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-neutral-50">
-      {/* Partner-only header. The main site Navbar used to sit here, and its
-          "Login" and "List PG" links dropped visitors into the general
-          tenant/owner signup — so someone arriving to join as a partner ended up
-          on the wrong form entirely. This page offers the two partner actions
-          and nothing else. */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-neutral-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-          <Link href="/partner" className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-primary-500 grid place-items-center shadow-lg shadow-primary-500/25 shrink-0">
-              <Handshake className="text-white" size={18} />
-            </div>
-            <div className="min-w-0">
-              <div className="font-extrabold text-neutral-900 text-sm leading-tight">PGSathi</div>
-              <div className="text-[10px] font-bold text-primary-600 uppercase tracking-wider">Partner</div>
-            </div>
-          </Link>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {session?.user ? (
-              <Link
-                href="/partner/dashboard"
-                className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-colors"
-              >
-                Dashboard <ArrowRight size={15} />
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/partner/login"
-                  className="inline-flex items-center h-10 px-4 rounded-xl border-2 border-neutral-200/60 text-neutral-700 text-sm font-bold hover:bg-neutral-50 transition-colors"
-                >
-                  Partner Login
-                </Link>
-                <Link
-                  href="/partner/signup"
-                  className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-colors"
-                >
-                  Join as Partner
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar user={session?.user} />
 
       <main className="flex-1">
         {/* Hero Section */}

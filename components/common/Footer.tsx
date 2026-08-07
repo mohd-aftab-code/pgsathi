@@ -128,6 +128,8 @@ export default function Footer() {
                 { label: "Contact Support", href: "/contact" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms & Conditions", href: "/terms" },
+                { label: "Refund Policy", href: "/refund" },
+                { label: "Data Collection", href: "/data-collection" },
               ].map(({ label, href }) => (
                 <li key={href}>
                   <Link href={href} className="text-slate-400 hover:text-blue-400 text-sm transition-colors block">
