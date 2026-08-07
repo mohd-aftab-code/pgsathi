@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/app/assets/logo/logo.png";
+import logoImg from "@/app/assets/logo/logo in vertical.png";
 
 interface Stat {
   value: string;
@@ -37,10 +37,10 @@ export default function AuthBrandPanel({
         <Image
           src={logoImg}
           alt="PGSathi Logo"
-          width={160}
-          height={56}
+          width={180}
+          height={64}
           priority
-          className="h-12 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform"
+          className="h-16 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform"
         />
       </Link>
 

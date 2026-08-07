@@ -144,10 +144,10 @@ function LoginContent() {
           <Image 
             src={logoImg} 
             alt="PGSathi Logo" 
-            width={140}
-            height={48}
+            width={180}
+            height={64}
             priority
-            className="h-10 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
+            className="h-14 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform" 
           />
         </Link>
 
@@ -403,10 +403,10 @@ export default function LoginPage() {
             <Image 
               src={logoImg} 
               alt="PGSathi Logo" 
-              width={140}
-              height={48}
+              width={180}
+              height={64}
               priority
-              className="h-10 w-auto object-contain mix-blend-multiply" 
+              className="h-14 w-auto object-contain mix-blend-multiply" 
             />
             <Loader2 size={24} className="animate-spin text-violet-600" />
           </div>
