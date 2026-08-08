@@ -24,7 +24,7 @@ export default async function AdminListingsPage({
     ? { status: "ACTIVE", hasPendingChanges: true }
     : { status: statusFilter };
   if (query) {
-    whereClause.title = { contains: query };
+    whereClause.title = { contains: query, mode: "insensitive" };
   }
 
   const [listings, totalCount] = await Promise.all([

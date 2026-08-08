@@ -36,7 +36,13 @@ export default function AdminListingsTableWrapper({
 
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
-    if (!confirm(`Are you sure you want to soft delete ${selectedIds.length} selected listings?`)) return;
+    
+    const isHardDelete = currentTab === "inactive";
+    const confirmMessage = isHardDelete 
+      ? `Are you sure you want to PERMANENTLY delete ${selectedIds.length} selected listings? This action cannot be undone.`
+      : `Are you sure you want to soft delete ${selectedIds.length} selected listings?`;
+
+    if (!confirm(confirmMessage)) return;
     
     setIsDeleting(true);
     const toastId = toast.loading(`Deleting ${selectedIds.length} listings...`);
@@ -44,7 +50,7 @@ export default function AdminListingsTableWrapper({
     try {
       // Execute deletions in sequence to avoid rate limiting
       for (const id of selectedIds) {
-        await fetch(`/api/listings/${id}`, { method: "DELETE" });
+        await fetch(`/api/listings/${id}${isHardDelete ? '?hard=true' : ''}`, { method: "DELETE" });
       }
       toast.success("Successfully deleted selected listings", { id: toastId });
       setSelectedIds([]);
