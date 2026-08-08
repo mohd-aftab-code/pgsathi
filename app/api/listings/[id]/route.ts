@@ -195,6 +195,8 @@ export async function DELETE(
     const { id } = await params;
     const listingId = parseInt(id);
     const ownerId = parseInt(session.user.id!);
+    const searchParams = req.nextUrl.searchParams;
+    const isHardDelete = searchParams.get("hard") === "true";
 
     // Verify ownership
     const existing = await db.listing.findUnique({ where: { id: listingId } });
@@ -203,6 +205,14 @@ export async function DELETE(
     }
     if (existing.ownerId !== ownerId && session.user.role !== "ADMIN") {
       return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
+    }
+
+    // Admins can perform hard deletes
+    if (isHardDelete && session.user.role === "ADMIN") {
+      await db.listing.delete({
+        where: { id: listingId },
+      });
+      return NextResponse.json({ success: true, message: "Listing permanently deleted" });
     }
 
     // Soft delete — isActive = false instead of actual delete

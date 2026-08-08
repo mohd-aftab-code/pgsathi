@@ -41,17 +41,22 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to soft delete this listing? It will become inactive.")) return;
+  const handleDelete = async (isHard: boolean = false) => {
+    const confirmMsg = isHard 
+      ? "Are you sure you want to PERMANENTLY delete this listing? This action cannot be undone."
+      : "Are you sure you want to soft delete this listing? It will become inactive.";
+    
+    if (!confirm(confirmMsg)) return;
+    
     setLoading("DELETE");
     try {
-      const res = await fetch(`/api/listings/${listingId}`, {
+      const res = await fetch(`/api/listings/${listingId}${isHard ? '?hard=true' : ''}`, {
         method: "DELETE"
       });
       if (res.ok) {
         router.refresh();
       } else {
-        alert("Failed to delete.");
+        alert(`Failed to ${isHard ? 'permanently ' : ''}delete.`);
       }
     } catch (error) {
       console.error(error);
@@ -159,12 +164,21 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       )}
 
       {/* Delete Button */}
-      {currentStatus !== "INACTIVE" && (
+      {currentStatus !== "INACTIVE" ? (
         <button 
-          onClick={handleDelete}
+          onClick={() => handleDelete(false)}
           disabled={loading !== null}
           className="cursor-pointer p-2 text-red-600 hover:bg-red-100 bg-white/60 shadow-sm border border-neutral-200/60 rounded-xl transition-colors disabled:opacity-50"
           title="Soft Delete Listing"
+        >
+          {loading === "DELETE" ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+        </button>
+      ) : (
+        <button 
+          onClick={() => handleDelete(true)}
+          disabled={loading !== null}
+          className="cursor-pointer p-2 text-white bg-red-600 hover:bg-red-700 shadow-sm border border-red-700/60 rounded-xl transition-colors disabled:opacity-50"
+          title="Permanently Delete Listing"
         >
           {loading === "DELETE" ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
         </button>
