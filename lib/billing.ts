@@ -8,7 +8,7 @@
  */
 import type { BillingCycle } from "@prisma/client";
 
-export const BILLING_CYCLES = ["MONTHLY", "QUARTERLY", "HALF_YEARLY", "YEARLY"] as const;
+export const BILLING_CYCLES = ["MONTHLY", "YEARLY"] as const;
 export type CycleId = (typeof BILLING_CYCLES)[number];
 
 type CycleMeta = {
@@ -21,8 +21,6 @@ type CycleMeta = {
 
 export const CYCLE_META: Record<CycleId, CycleMeta> = {
   MONTHLY:     { label: "Monthly",   shortLabel: "1 Month",  months: 1,  priceField: "price" },
-  QUARTERLY:   { label: "3 Months",  shortLabel: "3 Month",  months: 3,  priceField: "quarterlyPrice" },
-  HALF_YEARLY: { label: "6 Months",  shortLabel: "6 Month",  months: 6,  priceField: "halfYearlyPrice" },
   YEARLY:      { label: "1 Year",    shortLabel: "1 Year",   months: 12, priceField: "yearlyPrice" },
 };
 

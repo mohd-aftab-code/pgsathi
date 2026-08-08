@@ -3,14 +3,13 @@
  * Canonical owner subscription plan prices.
  * Server routes must derive amounts from here — never trust a client-supplied amount.
  */
-export type PlanId = "free" | "basic" | "pro" | "scale" | "enterprise";
+export type PlanId = "free" | "standard" | "pro" | "growth";
 
 export const PLANS: Record<PlanId, { name: string; price: number; duration: string }> = {
-  free:       { name: "Starter",    price: 0,    duration: "30 Days" },
-  basic:      { name: "Growth",     price: 1199, duration: "1 Month" },
-  pro:        { name: "Pro",        price: 1999, duration: "1 Month" },
-  scale:      { name: "Scale",      price: 3199, duration: "1 Month" },
-  enterprise: { name: "Enterprise", price: 5199, duration: "1 Month" },
+  free:     { name: "Starter",    price: 0,    duration: "30 Days" },
+  standard: { name: "Standard",   price: 1499, duration: "1 Month" },
+  pro:      { name: "Pro",        price: 2199, duration: "1 Month" },
+  growth:   { name: "Growth",     price: 3999, duration: "1 Month" },
 };
 
 /**
@@ -20,15 +19,14 @@ export const PLANS: Record<PlanId, { name: string; price: number; duration: stri
  * missing row can be re-created identically.
  */
 export const PLAN_LIMITS: Record<PlanId, { maxListings: number; maxPhotos: number; maxTenants: number }> = {
-  free:       { maxListings: 1,  maxPhotos: 5,  maxTenants: 5 },
-  basic:      { maxListings: 2,  maxPhotos: 10, maxTenants: 50 },
-  pro:        { maxListings: 3,  maxPhotos: 30, maxTenants: 100 },
-  scale:      { maxListings: 5,  maxPhotos: 60, maxTenants: 200 },
-  enterprise: { maxListings: -1, maxPhotos: 99, maxTenants: -1 },
+  free:     { maxListings: 1,  maxPhotos: 5,  maxTenants: 5 },
+  standard: { maxListings: 1,  maxPhotos: 15, maxTenants: 50 },
+  pro:      { maxListings: 3,  maxPhotos: 30, maxTenants: 150 },
+  growth:   { maxListings: -1, maxPhotos: 99, maxTenants: -1 },
 };
 
 export function isValidPlanId(planId: string): planId is PlanId {
-  return planId === "free" || planId === "basic" || planId === "pro" || planId === "scale" || planId === "enterprise";
+  return planId === "free" || planId === "standard" || planId === "pro" || planId === "growth";
 }
 
 export const GST_RATE = 0.18;

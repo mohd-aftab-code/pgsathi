@@ -23,15 +23,15 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
       </h1>
       <p className="mt-3 max-w-md text-neutral-500">
         Your current plan is <strong>{currentPlan}</strong>. To access the PG Manager dashboard,
-        you need to upgrade to the <strong>Growth</strong> or <strong>Pro</strong> plan.
+        you need to upgrade to the <strong>Standard</strong> or <strong>Pro</strong> plan.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 max-w-xl w-full">
-        {/* Growth */}
+        {/* Standard */}
         <div className="rounded-2xl border border-primary-200 bg-primary-50 p-6 text-left">
           <div className="flex items-center gap-2 mb-3">
             <Zap className="h-5 w-5 text-primary-600" />
-            <span className="font-bold text-primary-800">{PLANS.basic.name} — ₹{PLANS.basic.price}/mo</span>
+            <span className="font-bold text-primary-800">{PLANS.standard.name} — ₹{PLANS.standard.price}/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
             {["Tenant Management","Rent & Billing","WhatsApp Reminders","Complaints","Expenses","Reports & CSV Export"].map(f => (
@@ -52,7 +52,7 @@ export function PlanGate({ currentPlan = "STARTER" }: Props) {
             <span className="font-bold text-purple-800">{PLANS.pro.name} — ₹{PLANS.pro.price}/mo</span>
           </div>
           <ul className="space-y-1.5 text-sm text-neutral-700">
-            {["Everything in Growth","Staff & Payroll","Team Logins (Manager/Warden)","Audit Log","Advanced Reports"].map(f => (
+            {["Everything in Standard","Staff & Payroll","Team Logins (Manager/Warden)","Audit Log","Advanced Reports"].map(f => (
               <li key={f} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500 shrink-0" /> {f}
               </li>

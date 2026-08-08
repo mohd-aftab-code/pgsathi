@@ -10,10 +10,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { readCapabilities, NO_CAPABILITIES, type PlanCapabilities } from "@/lib/plan-capabilities";
 
-export type PlanTier = "NONE" | "STARTER" | "GROWTH" | "PRO" | "SCALE" | "ENTERPRISE";
+export type PlanTier = "NONE" | "STARTER" | "STANDARD" | "PRO" | "GROWTH";
 
 /** Every tier that counts as a paid subscription. Add new paid tiers here only. */
-export const PAID_TIERS: PlanTier[] = ["GROWTH", "PRO", "SCALE", "ENTERPRISE"];
+export const PAID_TIERS: PlanTier[] = ["STANDARD", "PRO", "GROWTH"];
 
 export function isPaidTier(tier: string): boolean {
   return (PAID_TIERS as string[]).includes(tier);
@@ -71,10 +71,9 @@ export const getPlanTier = cache(async (userId: number): Promise<PlanTier> => {
 
   const slug = sub.plan.slug.toUpperCase();
   // Order matters — check the highest tier first so a slug never falls through.
-  if (slug.includes("ENTERPRISE")) return "ENTERPRISE";
-  if (slug.includes("SCALE")) return "SCALE";
+  if (slug.includes("GROWTH") || slug.includes("ENTERPRISE") || slug.includes("SCALE")) return "GROWTH"; // legacy mapping
   if (slug.includes("PRO")) return "PRO";
-  if (slug.includes("GROWTH") || slug.includes("BASIC")) return "GROWTH";
+  if (slug.includes("STANDARD") || slug.includes("BASIC")) return "STANDARD";
   return "STARTER";
 });
 

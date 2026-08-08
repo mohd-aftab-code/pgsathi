@@ -19,7 +19,7 @@ type PlanShape = {
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const planId = searchParams?.get("plan") ?? "basic"; // any slug; the server validates at payment
+  const planId = searchParams?.get("plan") ?? "standard"; // any slug; the server validates at payment
   const cycleParam = searchParams?.get("cycle");
 
   // Plan shown here comes from the DB (super-admin controlled). Start from the
