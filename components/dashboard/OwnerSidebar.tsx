@@ -71,9 +71,9 @@ export function OwnerSidebar({
   children?: React.ReactNode;
 }) {
   const ownerNav = buildOwnerNav();
-  const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "SCALE" && tier !== "ENTERPRISE");
-  const displayTier = tier === "NONE" || tier === "STARTER" ? "Growth" : tier;
-  const isEnterprise = tier === "ENTERPRISE";
+  const showAds = showAdsProp ?? (tier !== "PRO" && tier !== "GROWTH");
+  const displayTier = tier === "NONE" || tier === "STARTER" ? "Standard" : tier;
+  const isEnterprise = tier === "GROWTH";
 
   const planWidget = (
     <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-violet-200/80 p-3.5 shadow-sm space-y-3 hover:shadow-md transition-shadow">
