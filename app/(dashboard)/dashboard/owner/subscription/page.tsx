@@ -56,18 +56,18 @@ export default async function OwnerSubscriptionPage() {
     !activeSub && invoices.some((i) => i.status === "PAID" && i.amount > 0);
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">My Subscription</h1>
-        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Manage your billing, view plan details, and upgrade.</p>
+    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-3xl font-black text-neutral-900 tracking-tight uppercase">My Subscription</h1>
+        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Manage your billing, view plan details, and upgrade.</p>
       </div>
 
       {/* Charged but no live plan. The owner cannot fix this themselves and has
           no way to even tell what went wrong, so say it plainly and give them a
           direct line rather than leaving them to guess. */}
       {paidButNotActive && (
-        <div className="mb-6 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5">
-          <div className="flex items-start gap-3">
+        <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-6 shadow-sm">
+          <div className="flex items-start gap-4">
             <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} />
             <div className="min-w-0">
               <h3 className="font-bold text-amber-900">Payment hua hai, par plan abhi active nahi dikh raha</h3>
@@ -106,14 +106,14 @@ export default async function OwnerSubscriptionPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
           
           {/* Active Plan Card */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-emerald-200/60 shadow-sm relative overflow-hidden">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 backdrop-blur-md rounded-3xl p-7 sm:p-10 border border-emerald-200/60 shadow-md relative overflow-hidden">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none"></div>
               
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 relative z-10 gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 relative z-10 gap-4">
                 <div>
                   <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-700 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-xl mb-2 shadow-sm border border-emerald-200/50">
                     <CheckCircle2 size={12} strokeWidth={3} /> ACTIVE PLAN
@@ -126,14 +126,14 @@ export default async function OwnerSubscriptionPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
-                <div className="bg-white/60 backdrop-blur-md p-4 rounded-xl shadow-sm border border-emerald-100/60">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                <div className="bg-white/60 backdrop-blur-md p-5 rounded-2xl shadow-sm border border-emerald-100/60">
                   <div className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold mb-1 flex items-center gap-1.5">
                     <CalendarDays size={14} /> Current Period Starts
                   </div>
                   <div className="font-black text-emerald-950 text-sm">{format(new Date(activeSub.startDate), 'dd MMM yyyy')}</div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-md p-4 rounded-xl shadow-sm border border-emerald-100/60">
+                <div className="bg-white/60 backdrop-blur-md p-5 rounded-2xl shadow-sm border border-emerald-100/60">
                   <div className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold mb-1 flex items-center gap-1.5">
                     <CalendarDays size={14} /> Next Billing Date
                   </div>
@@ -142,9 +142,9 @@ export default async function OwnerSubscriptionPage() {
               </div>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-neutral-200/60 shadow-sm">
-              <h3 className="text-sm uppercase tracking-wider font-black text-neutral-900 mb-5">Plan Features Included</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-white/60 backdrop-blur-md rounded-3xl p-7 sm:p-8 border border-neutral-200/60 shadow-sm">
+              <h3 className="text-sm uppercase tracking-wider font-black text-neutral-900 mb-6">Plan Features Included</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                     <ShieldCheck size={16} />
@@ -168,19 +168,19 @@ export default async function OwnerSubscriptionPage() {
           </div>
 
           {/* Actions Sidebar */}
-          <div className="space-y-4">
-            <div className="bg-neutral-900 rounded-2xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/60 backdrop-blur-md opacity-[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
-              <h3 className="font-black text-sm uppercase tracking-wider mb-2 relative z-10 text-neutral-100">Need more features?</h3>
-              <p className="text-[11px] font-medium text-neutral-400 mb-5 relative z-10">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
-              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white/60 backdrop-blur-md text-neutral-900 text-center font-black text-xs uppercase tracking-wider py-2.5 rounded-2xl shadow-sm hover:bg-neutral-50 transition-colors relative z-10">
+          <div className="space-y-6">
+            <div className="bg-neutral-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/60 backdrop-blur-md opacity-[0.05] rounded-full blur-3xl -translate-y-1/3 translate-x-1/3"></div>
+              <h3 className="font-black text-base uppercase tracking-wider mb-3 relative z-10 text-neutral-100">Need more features?</h3>
+              <p className="text-xs font-medium text-neutral-400 mb-6 relative z-10 leading-relaxed">Upgrade to a higher tier to add more PGs and get WhatsApp Lead Alerts.</p>
+              <Link href="/dashboard/owner/subscription/upgrade" className="block w-full bg-white text-neutral-900 text-center font-black text-xs uppercase tracking-wider py-3.5 rounded-2xl shadow-md hover:bg-neutral-100 transition-colors relative z-10">
                 Upgrade Plan
               </Link>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-neutral-200/60 shadow-sm">
-              <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900 mb-4">Payment Method</h3>
-              <div className="flex items-center gap-3 p-3 border border-neutral-200/60 rounded-xl bg-neutral-50 mb-4">
+            <div className="bg-white/60 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-neutral-200/60 shadow-sm">
+              <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900 mb-5">Payment Method</h3>
+              <div className="flex items-center gap-4 p-4 border border-neutral-200/60 rounded-2xl bg-neutral-50/80 mb-6">
                 <CreditCard className="text-neutral-400" />
                 <div>
                   <div className="text-sm font-bold text-neutral-900">Card ending in ••••</div>
@@ -190,22 +190,22 @@ export default async function OwnerSubscriptionPage() {
               {/* Self-service cancellation removed — a subscription is not ended
                   from here. Anything to do with billing goes through the team so
                   it can be checked and handled properly. */}
-              <div className="border-t border-neutral-100 pt-4">
-                <p className="text-sm font-bold text-neutral-900 mb-1">Plan ya billing me koi problem?</p>
-                <p className="text-xs text-neutral-500 mb-3">
+              <div className="border-t border-neutral-100 pt-6">
+                <p className="text-sm font-black text-neutral-900 mb-2">Plan ya billing me koi problem?</p>
+                <p className="text-xs text-neutral-500 mb-5 leading-relaxed">
                   Plan yahan se cancel nahi hota. Koi bhi sawaal ya dikkat ho to hamari team se
                   seedha baat karein — hum turant help karenge.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <a
                     href="tel:+919696110243"
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-colors"
                   >
                     <Phone size={15} /> Call karein
                   </a>
                   <a
                     href="mailto:pgsathi.support@gmail.com?subject=Subscription%20Support"
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl border-2 border-neutral-200/60 hover:bg-neutral-50 text-neutral-700 text-sm font-bold transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-xl border-2 border-neutral-200/60 hover:bg-neutral-50 text-neutral-700 text-sm font-bold transition-colors"
                   >
                     <Mail size={15} /> Email karein
                   </a>
@@ -222,10 +222,10 @@ export default async function OwnerSubscriptionPage() {
 
       {/* Payment history. One row per payment, so a renewal is its own line and
           the owner can always see exactly what they were charged and when. */}
-      <div className="mt-6 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-100/60 bg-white/40">
+      <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-neutral-200/60 shadow-sm overflow-hidden">
+        <div className="px-6 py-5 border-b border-neutral-100/60 bg-white/40">
           <h3 className="font-black text-sm uppercase tracking-wider text-neutral-900">Payment History</h3>
-          <p className="text-[10px] font-medium text-neutral-500 mt-1">
+          <p className="text-xs font-medium text-neutral-500 mt-1.5">
             Aapke saare payments. Kisi bhi dikkat par team ko yahi detail bata dijiye.
           </p>
         </div>
@@ -242,38 +242,38 @@ export default async function OwnerSubscriptionPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[620px]">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
-                  <th className="px-5 sm:px-6 py-3 font-bold">Date</th>
-                  <th className="px-3 py-3 font-bold">Plan</th>
-                  <th className="px-3 py-3 font-bold">Period</th>
-                  <th className="px-3 py-3 font-bold text-right">Amount</th>
-                  <th className="px-5 sm:px-6 py-3 font-bold text-right">Status</th>
+                <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50/50">
+                  <th className="px-6 py-4 font-bold">Date</th>
+                  <th className="px-4 py-4 font-bold">Plan</th>
+                  <th className="px-4 py-4 font-bold">Period</th>
+                  <th className="px-4 py-4 font-bold text-right">Amount</th>
+                  <th className="px-6 py-4 font-bold text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-neutral-100/80">
                 {invoices.map((inv) => {
                   const failed = inv.status !== "PAID" && inv.status !== "FREE";
                   return (
-                    <tr key={inv.id} className="hover:bg-neutral-50">
-                      <td className="px-5 sm:px-6 py-3 text-neutral-700">
+                    <tr key={inv.id} className="hover:bg-neutral-50/50 transition-colors">
+                      <td className="px-6 py-4 text-neutral-700">
                         {fmtDate(inv.paidAt ?? inv.invoiceDate)}
                         {inv.razorpayPayId && (
                           <div className="text-[10px] text-neutral-400 truncate max-w-[150px]">{inv.razorpayPayId}</div>
                         )}
                       </td>
-                      <td className="px-3 py-3 text-neutral-700">
+                      <td className="px-4 py-4 text-neutral-700">
                         {inv.subscription.plan.name}
                         <div className="text-[11px] text-neutral-400">{cycleLabel(inv.billingCycle)}</div>
                       </td>
-                      <td className="px-3 py-3 text-neutral-500 text-xs">
+                      <td className="px-4 py-4 text-neutral-500 text-xs">
                         {inv.periodStart && inv.periodEnd
                           ? `${fmtDate(inv.periodStart)} – ${fmtDate(inv.periodEnd)}`
                           : "—"}
                       </td>
-                      <td className="px-3 py-3 text-right font-bold text-neutral-900">
+                      <td className="px-4 py-4 text-right font-bold text-neutral-900">
                         ₹{inv.amount.toLocaleString("en-IN")}
                       </td>
-                      <td className="px-5 sm:px-6 py-3 text-right">
+                      <td className="px-6 py-4 text-right">
                         <span
                           className={`text-[10px] font-bold px-2 py-1 rounded-xl ${
                             failed
@@ -295,7 +295,7 @@ export default async function OwnerSubscriptionPage() {
         )}
 
         {invoices.some((i) => i.status !== "PAID" && i.status !== "FREE") && (
-          <div className="px-5 sm:px-6 py-3 border-t border-neutral-100 bg-red-50/50 text-xs text-red-700">
+          <div className="px-6 py-4 border-t border-neutral-100 bg-red-50/80 text-xs text-red-700 font-medium">
             Koi payment fail dikh raha hai? Agar aapke account se paisa kata hai to woh 5–7 working
             din mein apne aap wapas aa jaata hai. Jaldi chahiye to team ko call kar lijiye.
           </div>
