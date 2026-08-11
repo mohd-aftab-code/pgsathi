@@ -34,6 +34,7 @@ const NAV: SidebarNavGroup[] = [
     category: "People",
     items: [
       { name: "Users", href: "/dashboard/admin/users", icon: Users },
+      { name: "Tenants", href: "/dashboard/admin/tenants", icon: Users },
       { name: "Partners", href: "/dashboard/admin/partners", icon: Handshake },
     ],
   },
