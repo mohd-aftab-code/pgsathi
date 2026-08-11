@@ -46,6 +46,7 @@ export default async function AdminDashboardPage({
       db.user.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
+        where: { role: { in: ["TENANT", "OWNER"] } },
         select: { id: true, name: true, email: true, role: true, createdAt: true },
       }),
     ]);
@@ -321,6 +322,7 @@ export default async function AdminDashboardPage({
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[9px] shrink-0 ${
                       user.role === "OWNER" ? "bg-violet-100 text-violet-700" :
                       user.role === "ADMIN" ? "bg-red-100 text-red-700" :
+                      user.role === "PARTNER" ? "bg-emerald-100 text-emerald-700" :
                       "bg-blue-100 text-blue-700"
                     }`}>
                       {user.name?.charAt(0)?.toUpperCase() || "?"}
@@ -331,6 +333,7 @@ export default async function AdminDashboardPage({
                     <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-xl shrink-0 ${
                       user.role === "OWNER" ? "bg-violet-50 text-violet-600 border border-violet-100" :
                       user.role === "ADMIN" ? "bg-red-50 text-red-600 border border-red-100" :
+                      user.role === "PARTNER" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
                       "bg-blue-50 text-blue-600 border border-blue-100"
                     }`}>
                       {user.role}

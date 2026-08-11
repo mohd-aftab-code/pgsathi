@@ -74,7 +74,7 @@ export async function getPartnerContext(): Promise<PartnerContext | null> {
  */
 export async function requirePartner(): Promise<PartnerContext> {
   const ctx = await getPartnerContext();
-  if (!ctx) redirect("/partner/login");
+  if (!ctx) redirect("/login");
   if (ctx.status !== "APPROVED") redirect("/partner/dashboard");
   return ctx;
 }

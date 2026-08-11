@@ -13,7 +13,6 @@ const PUBLIC_AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 // Everything else under /partner requires an authenticated PARTNER.
 const PARTNER_PUBLIC_ROUTES = [
   "/partner",
-  "/partner/login",
   "/partner/signup",
   "/partner/forgot-password",
 ];
@@ -120,7 +119,7 @@ export async function proxy(request: NextRequest) {
 
   if (isPartnerRoute && !isPartnerPublic) {
     if (!isAuthenticated) {
-      const loginUrl = new URL("/partner/login", request.url);
+      const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return withRef(NextResponse.redirect(loginUrl));
     }
