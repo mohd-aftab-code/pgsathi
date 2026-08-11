@@ -98,7 +98,8 @@ export default function Footer() {
                 // These pointed at routes that never existed and 404'd, and
                 // "Partner Login" went to the general three-role login.
                 { label: "Join Partner Program", href: "/partner", highlight: true },
-                { label: "Partner Login", href: "/partner/login" },
+                { label: "Login", href: "/login" },
+                { label: "Register", href: "/register" },
                 { label: "Partner Dashboard", href: "/partner/dashboard" },
                 { label: "Track Earnings", href: "/partner/earnings" },
                 { label: "Onboarded PGs", href: "/partner/pgs" },

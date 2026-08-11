@@ -339,5 +339,174 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "Jul 2, 2026",
     author: "PGSathi Team",
     readTime: "4 min read"
+  },
+  {
+    id: "pg-near-delhi-university-du-north-south-campus",
+    title: "Best PG Near Delhi University (DU): North Campus & South Campus Complete Guide 2026",
+    excerpt: "Student of DU? Find the best PGs near Delhi University's North Campus (GTB Nagar, Kamla Nagar, Hudson Lane) and South Campus (Munirka, Satya Niketan) — zero brokerage, verified, and student-friendly.",
+    content: `
+      <p>Getting admission to <strong>Delhi University (DU)</strong> is a dream come true for millions of students across India. But after the admission letter, the real struggle begins — finding a safe, affordable, and comfortable <strong>PG near Delhi University</strong>. Whether you are heading to North Campus or South Campus, this guide covers everything you need to know.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">PGs Near DU North Campus</h2>
+      <p>North Campus is home to some of DU's most prestigious colleges — Hindu College, Miranda House, Kirori Mal College, and St. Stephen's. The surrounding areas are among India's most famous student hubs.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>GTB Nagar (Metro Station):</strong> The most popular locality for DU students. Walking distance from North Campus. Hundreds of affordable PGs for both boys and girls starting from ₹5,000/month. Lively market with dhabas, cafes, and stationery shops.</li>
+        <li><strong>Kamla Nagar:</strong> A student paradise. Known for affordable PGs with food included, this area offers a great social life with budget eateries and salons. Ideal for girls PGs — several PGs here have strict security and female wardens.</li>
+        <li><strong>Hudson Lane:</strong> The trendiest street near North Campus. Packed with cafes, restaurants, and PGs for students who want a premium co-living experience. Slightly higher rent (₹8,000–₹15,000/month) but fully furnished with AC and Wi-Fi.</li>
+        <li><strong>Vijay Nagar:</strong> A quieter alternative, perfect for studious students. Very economical double-sharing PGs available. Great connectivity to the Metro.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">PGs Near DU South Campus</h2>
+      <p>South Campus hosts Gargi College, Sri Venkateswara College, Dyal Singh College, and SRCC among others. The localities here are slightly more upscale but well-connected via Metro.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Munirka:</strong> The number one choice for South Campus students. Located between South Campus and JNU, it offers the most affordable PGs in South Delhi. Both Magenta and Pink Metro lines are easily accessible.</li>
+        <li><strong>Satya Niketan:</strong> Adjacent to South Campus, this locality has premium girls PGs with 24/7 security guards and CCTV. Slightly more expensive but worth it for the peace of mind.</li>
+        <li><strong>Hauz Khas:</strong> A premium area with modern co-living spaces. Ideal for students who can afford a slightly higher budget (₹12,000–₹20,000/month). Excellent metro connectivity and a vibrant nightlife.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">How Much Does a PG Cost Near Delhi University?</h2>
+      <p>Rents vary significantly based on the type of room and locality. Here is a rough guide for 2026:</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Triple Sharing (Non-AC):</strong> ₹4,000 – ₹6,000/month (food included in many cases)</li>
+        <li><strong>Double Sharing (AC + Wi-Fi):</strong> ₹7,000 – ₹11,000/month</li>
+        <li><strong>Single Room (Fully Furnished):</strong> ₹12,000 – ₹20,000/month</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Must-Check Before Finalizing Your DU PG</h2>
+      <ol class="list-decimal pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Verify the owner's identity</strong> — Always meet the actual owner, not just the caretaker.</li>
+        <li><strong>Read the rental agreement</strong> — Check lock-in period, notice period, and electricity billing method carefully.</li>
+        <li><strong>Confirm mess timings</strong> — If you have 8 AM classes, does the mess open in time for breakfast?</li>
+        <li><strong>Check Internet speed</strong> — Test Wi-Fi speed during peak hours (evenings), not just during the visit.</li>
+        <li><strong>Ask about guests and gate timings</strong> — Know the rules before you move in to avoid surprises.</li>
+      </ol>
+
+      <p class="mt-8 font-medium text-lg">Skip the broker drama. Find <a href="/search" class="text-primary-600 underline">verified Zero Brokerage PGs near Delhi University</a> on PGSathi and start your DU journey stress-free!</p>
+    `,
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1200",
+    category: "City Guide",
+    date: "August 10, 2026",
+    author: "PGSathi Team",
+    readTime: "7 min read"
+  },
+  {
+    id: "best-pg-in-noida-sector-wise-guide",
+    title: "Best PG in Noida: Sector-Wise Guide for Students & Working Professionals (2026)",
+    excerpt: "Looking for a PG in Noida? Our sector-wise guide covers the top localities — Sector 62, Sector 18, Knowledge Park (Greater Noida), and more — with budget ranges, amenities, and zero brokerage tips.",
+    content: `
+      <p>Noida has transformed from a quiet satellite city into one of India's most vibrant IT and educational hubs. With giants like TCS, Infosys, HCL, Samsung, and hundreds of startups, thousands of professionals and students pour into Noida every year — all searching for the perfect <strong>PG in Noida</strong>. This guide gives you a sector-by-sector breakdown so you can find your ideal accommodation fast.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Why Noida is a Top Destination for PG Seekers?</h2>
+      <p>Noida offers a unique blend of planned infrastructure, Metro connectivity, and green sectors. Unlike Old Delhi, you get wide roads, dedicated parking, power backup, and a much cleaner environment — all at a fraction of what you'd pay for similar amenities in Gurgaon or South Delhi.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Sector 62 — The IT Hub of Noida</h2>
+      <p>If you work in an IT company in Noida, Sector 62 is the holy grail of PG living. Home to TCS, IBM, Tech Mahindra, and Accenture's Noida offices, this sector has a massive supply of premium PGs for professionals.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Working professionals at IT companies</li>
+        <li><strong>Average Rent:</strong> ₹8,000 – ₹18,000/month (single and double sharing)</li>
+        <li><strong>Highlights:</strong> Metro connectivity (Blue Line), restaurants, gyms, and premium co-living spaces with food included</li>
+        <li><strong>Girls PG Availability:</strong> Excellent — with multiple verified ladies PGs with 24/7 guards</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Sector 18 (Atta Market) — Best for Amenities</h2>
+      <p>Sector 18 is Noida's commercial heart. While rents here are slightly higher, the convenience factor is unmatched — you're walking distance from Noida's best malls, restaurants, Metro stations, and hospitals.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Young professionals who value a vibrant lifestyle</li>
+        <li><strong>Average Rent:</strong> ₹10,000 – ₹22,000/month</li>
+        <li><strong>Highlights:</strong> DLF Mall, Gardens Galleria, excellent food options, Metro station right at your doorstep</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Sector 15 & 16 — Best Metro Connectivity</h2>
+      <p>For those who commute to Delhi daily, Sectors 15 and 16 are the smartest choice. The Blue Line Metro directly connects you to Rajiv Chowk, Connaught Place, and the entire Delhi Metro network.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> People working in Delhi but preferring Noida's lower rents</li>
+        <li><strong>Average Rent:</strong> ₹6,500 – ₹13,000/month</li>
+        <li><strong>Highlights:</strong> Best Metro connectivity, many affordable double-sharing options, markets nearby</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Knowledge Park, Greater Noida — The Student Zone</h2>
+      <p>If you are a student at Sharda University, Galgotias University, Bennett University, or GL Bajaj Institute, the Knowledge Park area is your best bet. It has a massive ecosystem built entirely around student life.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> College students in Greater Noida universities</li>
+        <li><strong>Average Rent:</strong> ₹3,500 – ₹9,000/month (very affordable with food included options)</li>
+        <li><strong>Highlights:</strong> Cheapest rents in NCR, lots of student cafes, 24/7 shops, and university shuttles</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Noida PG Budget Guide for 2026</h2>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Budget (under ₹7,000):</strong> Sectors 15, 16, 25, and Knowledge Park (Greater Noida)</li>
+        <li><strong>Mid-Range (₹7,000–₹14,000):</strong> Sectors 62, 63, 50 — mostly AC, Wi-Fi included, food optional</li>
+        <li><strong>Premium (₹14,000+):</strong> Sector 18, Sector 137 (near Expressway) — co-living spaces, gym, community events</li>
+      </ul>
+
+      <p class="mt-8 font-medium text-lg">Ready to find your perfect PG in Noida? Browse <a href="/search" class="text-primary-600 underline">verified zero brokerage PGs in Noida</a> on PGSathi and get direct access to genuine owners today!</p>
+    `,
+    image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&q=80&w=1200",
+    category: "City Guide",
+    date: "August 8, 2026",
+    author: "PGSathi Team",
+    readTime: "8 min read"
+  },
+  {
+    id: "best-pg-in-gurgaon-area-wise-guide",
+    title: "Best PG in Gurgaon (Gurugram): Area-Wise Guide for Corporate Professionals (2026)",
+    excerpt: "Moving to Gurgaon for work? Our area-wise guide covers the top PG localities — DLF Phase 3, Sector 14, Golf Course Road, MG Road — with rent ranges, commute tips, and how to find zero brokerage PGs.",
+    content: `
+      <p>Gurgaon (now officially Gurugram) is the corporate capital of India. With the headquarters of hundreds of MNCs, startups, and Fortune 500 companies, the demand for quality <strong>PG in Gurgaon</strong> has never been higher. But Gurgaon also has some of the highest rents in the NCR. This guide helps you find the best value-for-money PGs in the city.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Understanding Gurgaon's Layout</h2>
+      <p>Unlike Delhi or Noida, Gurgaon is not Metro-centric. While the Yellow Line (Delhi Metro) covers some areas and the Rapid Metro covers a few sectors, most professionals rely on office cabs, autos, or their own vehicles. This means <strong>proximity to your office</strong> is the single most important factor when choosing a PG in Gurgaon.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">DLF Phase 3 (U-Block, Sikanderpur) — Most Popular</h2>
+      <p>This is the most sought-after locality for young working professionals in Gurgaon. It is located right next to the MG Road Metro station and has a thriving nightlife, restaurants, and a huge supply of PGs and co-living spaces.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Professionals working near Cyber Hub, DLF Cyber City, or MG Road</li>
+        <li><strong>Average Rent:</strong> ₹12,000 – ₹25,000/month</li>
+        <li><strong>Highlights:</strong> Walking distance to Metro, premium co-living spaces, excellent food scene, vibrant social life</li>
+        <li><strong>Note:</strong> This is a premium area. For tighter budgets, consider Sikanderpur or Palam Vihar.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Sector 14 — Budget-Friendly Option</h2>
+      <p>Sector 14 is one of Gurgaon's oldest and most well-established residential sectors. It is quieter than DLF Phase 3 but offers significantly more affordable rent options.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Professionals on a budget who want a peaceful environment</li>
+        <li><strong>Average Rent:</strong> ₹7,000 – ₹14,000/month</li>
+        <li><strong>Highlights:</strong> Good local markets, connectivity to IFFCO Chowk Metro, lots of vegetarian food options</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Golf Course Road & Sector 43/44 — Premium Zone</h2>
+      <p>If you work at a company on Golf Course Road or Golf Course Extension Road, this is the ideal zone. Premium co-living spaces with gym, rooftop lounges, and housekeeping services are plentiful here.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Senior professionals, consultants, and expats</li>
+        <li><strong>Average Rent:</strong> ₹18,000 – ₹40,000/month</li>
+        <li><strong>Highlights:</strong> Luxury co-living spaces, no brokerage options on PGSathi, proximity to DLF Mega Mall, select retail outlets</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Palam Vihar — Best Value for Money</h2>
+      <p>Often overlooked, Palam Vihar offers excellent connectivity to both Gurgaon's corporate zones and IGI Airport. It is a well-planned residential colony with wide roads, parks, and relatively affordable rents compared to the main Gurgaon areas.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Who should live here:</strong> Professionals working near Udyog Vihar, Manesar, or IGI Airport</li>
+        <li><strong>Average Rent:</strong> ₹6,500 – ₹12,000/month</li>
+        <li><strong>Highlights:</strong> Peaceful environment, parks, good schools and hospitals nearby, best rent-to-quality ratio in Gurgaon</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Why Broker Fees Hurt More in Gurgaon</h2>
+      <p>Because rents in Gurgaon are already high, paying 1 month's rent as brokerage means you could easily be spending ₹15,000–₹25,000 just to find a place to live. Using a <strong>zero brokerage platform like PGSathi</strong> can save you a significant amount that you can use to set up your room or build an emergency fund.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Gurgaon PG Quick Tips for 2026</h2>
+      <ol class="list-decimal pl-5 mb-4 space-y-2 mt-4">
+        <li>Always check if electricity is included in the rent (Gurgaon has expensive commercial rates).</li>
+        <li>Verify the office cab pickup point — many companies have fixed pickup spots, and your PG should be nearby.</li>
+        <li>Prefer PGs with power backup, especially if you work from home — Gurgaon faces power cuts in summer.</li>
+        <li>Read the security deposit clause carefully — most PGs require 2–3 months of rent as deposit.</li>
+      </ol>
+
+      <p class="mt-8 font-medium text-lg">Don't let brokers eat your first salary. Explore <a href="/search" class="text-primary-600 underline">verified zero brokerage PGs in Gurgaon</a> on PGSathi and deal directly with genuine owners!</p>
+    `,
+    image: "https://images.unsplash.com/photo-1609587312208-cea54be969e7?auto=format&fit=crop&q=80&w=1200",
+    category: "City Guide",
+    date: "August 6, 2026",
+    author: "PGSathi Team",
+    readTime: "8 min read"
   }
 ];
