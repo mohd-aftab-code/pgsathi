@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { Wallet, AlertTriangle, IndianRupee, Users, Clock } from "lucide-react";
 import { CreatePayoutButton } from "@/components/dashboard/CreatePayoutButton";
 import { PayoutRowActions, BulkPayoutButton } from "@/components/dashboard/PayoutActions";
@@ -25,7 +26,7 @@ export default async function AdminPayoutCyclePage() {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const partners = await db.partnerProfile.findMany({
+  const partnerQuery = {
     where: { earnings: { some: { status: { in: ["PENDING", "APPROVED"] } } } },
     select: {
       id: true,
@@ -34,6 +35,10 @@ export default async function AdminPayoutCyclePage() {
       upiId: true,
       bankAccountNo: true,
       panNumber: true,
+      panImage: true,
+      aadhaarNumber: true,
+      aadhaarFrontImage: true,
+      aadhaarBackImage: true,
       bankName: true,
       bankIfsc: true,
       kycVerifiedAt: true,
@@ -44,7 +49,9 @@ export default async function AdminPayoutCyclePage() {
       },
       payouts: { orderBy: { paidAt: "desc" }, take: 1, select: { paidAt: true, amount: true } },
     },
-  });
+  } satisfies Prisma.PartnerProfileFindManyArgs;
+
+  const partners = await db.partnerProfile.findMany(partnerQuery);
 
   const rows = partners
     .map((p) => {
@@ -52,6 +59,7 @@ export default async function AdminPayoutCyclePage() {
       const pending = p.earnings.filter((e) => e.status === "PENDING");
       return {
         ...p,
+        payouts: p.payouts,
         payableTotal: payable.reduce((t, e) => t + e.amount, 0),
         payableCount: payable.length,
         pendingTotal: pending.reduce((t, e) => t + e.amount, 0),
