@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
-import { Wallet, AlertTriangle, IndianRupee, Users, Clock } from "lucide-react";
+import { Wallet, AlertTriangle, IndianRupee, Users, Clock, ShieldAlert } from "lucide-react";
 import { CreatePayoutButton } from "@/components/dashboard/CreatePayoutButton";
 import { PayoutRowActions, BulkPayoutButton } from "@/components/dashboard/PayoutActions";
+import { QuickKycVerifyButton } from "@/components/dashboard/QuickKycVerifyButton";
 import { kycGaps } from "@/lib/partner-payouts";
 import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
 
@@ -70,6 +71,9 @@ export default async function AdminPayoutCyclePage() {
         // table shows the same reason rather than letting the admin find out
         // by clicking.
         gaps: kycGaps(p),
+        // true when only gap is admin verification (all docs filled, just needs admin click)
+        kycAllFilled: kycGaps(p).filter((g) => g !== "admin verification").length === 0,
+        kycVerifiedAt: p.kycVerifiedAt,
       };
     })
     .sort((a, b) => b.payableTotal - a.payableTotal);
@@ -235,13 +239,36 @@ export default async function AdminPayoutCyclePage() {
                       {r.payouts[0] ? `${inr(r.payouts[0].amount)} · ${fmtDate(r.payouts[0].paidAt)}` : "—"}
                     </td>
                     <td className="px-4 py-2 text-right">
-                      <CreatePayoutButton
-                        partnerId={r.id}
-                        count={r.payableCount}
-                        amount={r.payableTotal}
-                        hasPayoutDetails={r.hasPayoutDetails}
-                        kycGaps={r.gaps}
-                      />
+                      {/* If all docs are present but admin hasn't verified yet — show quick verify */}
+                      {!r.kycVerifiedAt && r.kycAllFilled && r.payableTotal > 0 ? (
+                        <div className="inline-flex flex-col items-end gap-1">
+                          <QuickKycVerifyButton partnerId={r.id} />
+                          <Link
+                            href={`/dashboard/admin/partners/${r.id}`}
+                            className="text-[9px] text-neutral-400 hover:text-violet-600 font-bold uppercase tracking-wider"
+                          >
+                            Detail →
+                          </Link>
+                        </div>
+                      ) : r.gaps.length > 0 && r.payableTotal > 0 ? (
+                        <div className="inline-flex flex-col items-end gap-1">
+                          <Link
+                            href={`/dashboard/admin/partners/${r.id}`}
+                            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold hover:bg-amber-100 transition-colors"
+                          >
+                            <ShieldAlert size={11} /> KYC Incomplete
+                          </Link>
+                          <span className="text-[9px] text-amber-600">{r.gaps.filter(g => g !== "admin verification").slice(0,2).join(", ")}</span>
+                        </div>
+                      ) : (
+                        <CreatePayoutButton
+                          partnerId={r.id}
+                          count={r.payableCount}
+                          amount={r.payableTotal}
+                          hasPayoutDetails={r.hasPayoutDetails}
+                          kycGaps={r.gaps}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -294,13 +321,32 @@ export default async function AdminPayoutCyclePage() {
                 </div>
               </div>
               <div className="mt-0.5 flex justify-end">
-                <CreatePayoutButton
-                  partnerId={r.id}
-                  count={r.payableCount}
-                  amount={r.payableTotal}
-                  hasPayoutDetails={r.hasPayoutDetails}
-                        kycGaps={r.gaps}
-                />
+                {!r.kycVerifiedAt && r.kycAllFilled && r.payableTotal > 0 ? (
+                  <div className="flex flex-col items-end gap-1">
+                    <QuickKycVerifyButton partnerId={r.id} />
+                    <Link
+                      href={`/dashboard/admin/partners/${r.id}`}
+                      className="text-[9px] text-neutral-400 hover:text-violet-600 font-bold uppercase tracking-wider"
+                    >
+                      Detail →
+                    </Link>
+                  </div>
+                ) : r.gaps.length > 0 && r.payableTotal > 0 ? (
+                  <Link
+                    href={`/dashboard/admin/partners/${r.id}`}
+                    className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold"
+                  >
+                    <ShieldAlert size={11} /> KYC Incomplete →
+                  </Link>
+                ) : (
+                  <CreatePayoutButton
+                    partnerId={r.id}
+                    count={r.payableCount}
+                    amount={r.payableTotal}
+                    hasPayoutDetails={r.hasPayoutDetails}
+                    kycGaps={r.gaps}
+                  />
+                )}
               </div>
             </div>
           ))}
