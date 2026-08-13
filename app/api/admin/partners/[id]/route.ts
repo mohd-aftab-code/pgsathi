@@ -40,7 +40,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       id: true, status: true, userId: true, riskFlagged: true, riskReason: true,
       kycVerifiedAt: true, archivedAt: true, commissionOverridePercent: true,
       tierOverride: true, parentPartnerId: true, parentOverridePercent: true,
-      panNumber: true, upiId: true, bankName: true, bankAccountNo: true, bankIfsc: true,
+      panNumber: true, panImage: true, aadhaarNumber: true, aadhaarFrontImage: true, aadhaarBackImage: true,
+      upiId: true, bankName: true, bankAccountNo: true, bankIfsc: true,
       user: { select: { name: true, email: true } },
     },
   });

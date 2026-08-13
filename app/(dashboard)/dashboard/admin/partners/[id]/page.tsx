@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity, FileText } from "lucide-react";
+import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity, FileText, CheckCircle2, XCircle, ExternalLink, ShieldCheck, ShieldAlert } from "lucide-react";
 import { db } from "@/lib/db";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
 import { AdminPartnerControls } from "@/components/dashboard/AdminPartnerControls";
@@ -60,6 +60,8 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
   // computed by the same helpers the payout pipeline and commission engine use,
   // so the page can never disagree with what the API will do.
   const gaps = kycGaps(partner);
+  const kycMissingAdmin = gaps.filter((g) => g !== "admin verification");
+  const kycAllFilled = kycMissingAdmin.length === 0;
   const tier = await getTierProgress(partner.id, partner.tierOverride);
 
   // Candidate parents for the sub-partner hierarchy. Self is excluded because a
@@ -248,44 +250,101 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
             )}
           </div>
 
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
-            <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><FileText size={15} className="text-neutral-400" /> KYC Documents</h2>
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="text-neutral-500 text-xs block">Aadhaar Number</span>
-                <span className="font-semibold text-neutral-900">{partner.aadhaarNumber || "—"}</span>
+          {/* ── KYC Documents — premium redesign ─────────────── */}
+          <div className={`rounded-2xl border p-5 ${
+            partner.kycVerifiedAt
+              ? "bg-green-50/60 border-green-200"
+              : kycAllFilled
+              ? "bg-blue-50/60 border-blue-200"
+              : "bg-white/60 border-neutral-200/60"
+          } backdrop-blur-md`}>
+            {/* Header row */}
+            <div className="flex items-center gap-2 mb-4">
+              {partner.kycVerifiedAt
+                ? <ShieldCheck size={15} className="text-green-600 shrink-0" />
+                : kycAllFilled
+                ? <ShieldCheck size={15} className="text-blue-500 shrink-0" />
+                : <ShieldAlert size={15} className="text-amber-500 shrink-0" />}
+              <h2 className="font-bold text-neutral-900 text-sm">KYC Documents</h2>
+              <span className={`ml-auto text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                partner.kycVerifiedAt
+                  ? "bg-green-100 text-green-700"
+                  : kycAllFilled
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-amber-100 text-amber-700"
+              }`}>
+                {partner.kycVerifiedAt ? "✓ Verified" : kycAllFilled ? "Pending approval" : `${kycMissingAdmin.length} missing`}
+              </span>
+            </div>
+
+            {/* Aadhaar + PAN number row */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-white/80 rounded-xl border border-neutral-100 px-3 py-2.5">
+                <span className="text-neutral-400 text-[10px] font-bold uppercase tracking-wider block mb-0.5">Aadhaar No.</span>
+                <span className={`text-sm font-bold tracking-wider ${
+                  partner.aadhaarNumber ? "text-neutral-900" : "text-neutral-300"
+                }`}>{partner.aadhaarNumber || "Not filled"}</span>
               </div>
-              
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <div>
-                  <span className="text-neutral-500 text-xs block mb-1">PAN Card</span>
-                  {partner.panImage ? (
-                    <a href={partner.panImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={partner.panImage} alt="PAN" className="w-full h-full object-cover" />
-                    </a>
-                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
-                </div>
-                <div>
-                  <span className="text-neutral-500 text-xs block mb-1">Aadhaar Front</span>
-                  {partner.aadhaarFrontImage ? (
-                    <a href={partner.aadhaarFrontImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={partner.aadhaarFrontImage} alt="Aadhaar Front" className="w-full h-full object-cover" />
-                    </a>
-                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
-                </div>
-                <div>
-                  <span className="text-neutral-500 text-xs block mb-1">Aadhaar Back</span>
-                  {partner.aadhaarBackImage ? (
-                    <a href={partner.aadhaarBackImage} target="_blank" rel="noreferrer" className="block w-full h-20 rounded-lg border border-neutral-200 overflow-hidden hover:opacity-80 transition-opacity">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={partner.aadhaarBackImage} alt="Aadhaar Back" className="w-full h-full object-cover" />
-                    </a>
-                  ) : <span className="text-xs text-neutral-400">Not uploaded</span>}
-                </div>
+              <div className="bg-white/80 rounded-xl border border-neutral-100 px-3 py-2.5">
+                <span className="text-neutral-400 text-[10px] font-bold uppercase tracking-wider block mb-0.5">PAN No.</span>
+                <span className={`text-sm font-bold tracking-wider ${
+                  partner.panNumber ? "text-neutral-900" : "text-neutral-300"
+                }`}>{partner.panNumber || "Not filled"}</span>
               </div>
             </div>
+
+            {/* Document thumbnails */}
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "PAN Card", url: partner.panImage },
+                { label: "Aadhaar Front", url: partner.aadhaarFrontImage },
+                { label: "Aadhaar Back", url: partner.aadhaarBackImage },
+              ].map((doc) => (
+                <div key={doc.label}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-neutral-500 text-[10px] font-semibold">{doc.label}</span>
+                    {doc.url
+                      ? <CheckCircle2 size={10} className="text-green-500" />
+                      : <XCircle size={10} className="text-red-400" />}
+                  </div>
+                  {doc.url ? (
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group relative block w-full h-24 rounded-xl border-2 border-neutral-200 overflow-hidden hover:border-primary-400 transition-all"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={doc.url} alt={doc.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <ExternalLink size={16} className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="w-full h-24 rounded-xl border-2 border-dashed border-neutral-200 flex flex-col items-center justify-center gap-1">
+                      <FileText size={16} className="text-neutral-300" />
+                      <span className="text-[10px] text-neutral-400 font-medium">Not uploaded</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Verified timestamp or missing note */}
+            {partner.kycVerifiedAt ? (
+              <div className="mt-3 pt-3 border-t border-green-200 flex items-center gap-1.5 text-[11px] text-green-700 font-semibold">
+                <CheckCircle2 size={12} />
+                Verified on {fmtDate(partner.kycVerifiedAt)}
+              </div>
+            ) : !kycAllFilled ? (
+              <div className="mt-3 pt-3 border-t border-neutral-100 text-[11px] text-amber-700 font-medium">
+                Missing: {kycMissingAdmin.join(" · ")}
+              </div>
+            ) : (
+              <div className="mt-3 pt-3 border-t border-blue-100 text-[11px] text-blue-700 font-medium">
+                All documents submitted — verify karein upar Partner controls mein.
+              </div>
+            )}
           </div>
 
           <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">

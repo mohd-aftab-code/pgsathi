@@ -83,7 +83,7 @@ export function AdminPartnerControls({
             ? "Verified — is partner ka payout ban sakta hai."
             : missing.length
               ? `Partner ne abhi nahi diya: ${missing.join(", ")}`
-              : "Details aa gayi hain — verify karne par payout ban sakega."
+              : "Partner ne sabhi details bhar di hain — Verify karein taaki payout ban sake."
         }
       >
         {kycVerifiedAt ? (
@@ -98,13 +98,14 @@ export function AdminPartnerControls({
           <button
             onClick={() => post("kyc_verify")}
             disabled={!!busy || missing.length > 0}
-            title={missing.length ? "Pehle partner ko details bharni hongi" : undefined}
-            className="h-9 px-3 rounded-lg text-xs font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-40"
+            title={missing.length ? `Pehle ye zaroori hain: ${missing.join(", ")}` : "Click karein KYC verify karne ke liye"}
+            className="h-9 px-3 rounded-lg text-xs font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {spin("kyc_verify") ? <Loader2 size={13} className="animate-spin" /> : "Verify karein"}
+            {spin("kyc_verify") ? <Loader2 size={13} className="animate-spin" /> : missing.length ? "Details Missing" : "Verify karein ✓"}
           </button>
         )}
       </Block>
+
 
       {/* ── Risk flag ──────────────────────────────────────────── */}
       <Block
