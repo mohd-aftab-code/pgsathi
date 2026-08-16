@@ -9,6 +9,7 @@ import { CreatePayoutButton } from "@/components/dashboard/CreatePayoutButton";
 import { PayoutRowActions } from "@/components/dashboard/PayoutActions";
 import { kycGaps } from "@/lib/partner-payouts";
 import { getTierProgress } from "@/lib/partner-tier";
+import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
 export const metadata = { title: "Partner Detail — Admin | PGSathi" };
 
@@ -36,7 +37,15 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
   const partner = await db.partnerProfile.findUnique({
     where: { id: partnerId },
     include: {
-      user: { select: { name: true, phone: true, email: true, createdAt: true } },
+      user: { 
+        select: { 
+          name: true, phone: true, email: true, createdAt: true,
+          listings: {
+            orderBy: { createdAt: "desc" },
+            select: { id: true, title: true, status: true, createdAt: true, priceMin: true, city: { select: { name: true } } },
+          }
+        } 
+      },
       listings: {
         orderBy: { createdAt: "desc" },
         select: { id: true, title: true, status: true, createdAt: true, priceMin: true, city: { select: { name: true } } },
@@ -122,8 +131,13 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
   const payable = partner.earnings.filter((e) => e.status === "APPROVED" && !e.payoutId);
   const payableTotal = payable.reduce((t, e) => t + e.amount, 0);
 
+  const allListingsMap = new Map();
+  partner.listings.forEach(l => allListingsMap.set(l.id, l));
+  partner.user.listings.forEach(l => allListingsMap.set(l.id, l));
+  const allListings = Array.from(allListingsMap.values()).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
   const stats = [
-    { label: "Registered PGs", value: String(partner.listings.length), Icon: Building2, cls: "text-blue-600 bg-blue-50" },
+    { label: "Registered PGs", value: String(allListings.length), Icon: Building2, cls: "text-blue-600 bg-blue-50" },
     { label: "Pending", value: inr(pending), Icon: Clock, cls: "text-amber-600 bg-amber-50" },
     { label: "Approved (unpaid)", value: inr(approved), Icon: IndianRupee, cls: "text-violet-600 bg-violet-50" },
     { label: "Paid out", value: inr(paid), Icon: Wallet, cls: "text-green-600 bg-green-50" },
@@ -131,9 +145,7 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
 
   return (
     <div className="space-y-5">
-      <Link href="/dashboard/admin/partners" className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900">
-        <ArrowLeft size={16} /> All Partners
-      </Link>
+      <PartnerTabs />
 
       {/* Header */}
       <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
@@ -241,7 +253,6 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                 {partner.bankName && <div><span className="text-neutral-500 text-xs block">Bank</span><span className="font-semibold text-neutral-900">{partner.bankName}</span></div>}
                 {partner.bankAccountNo && <div><span className="text-neutral-500 text-xs block">Account</span><span className="font-semibold text-neutral-900">{partner.bankAccountNo}</span></div>}
                 {partner.bankIfsc && <div><span className="text-neutral-500 text-xs block">IFSC</span><span className="font-semibold text-neutral-900">{partner.bankIfsc}</span></div>}
-                {partner.panNumber && <div><span className="text-neutral-500 text-xs block">PAN</span><span className="font-semibold text-neutral-900">{partner.panNumber}</span></div>}
               </div>
             ) : (
               <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
@@ -450,13 +461,13 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           {/* PGs */}
           <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden">
             <div className="px-5 py-4 border-b border-neutral-200/60">
-              <h2 className="font-bold text-neutral-900 text-sm">Registered PGs ({partner.listings.length})</h2>
+              <h2 className="font-bold text-neutral-900 text-sm">Registered PGs ({allListings.length})</h2>
             </div>
-            {partner.listings.length === 0 ? (
+            {allListings.length === 0 ? (
               <p className="px-5 py-8 text-center text-sm text-neutral-500">Abhi koi PG register nahi kiya</p>
             ) : (
               <div className="divide-y divide-neutral-100">
-                {partner.listings.map((l) => (
+                {allListings.map((l) => (
                   <div key={l.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50">
                     <div className="min-w-0">
                       <div className="font-semibold text-neutral-900 truncate">{l.title}</div>

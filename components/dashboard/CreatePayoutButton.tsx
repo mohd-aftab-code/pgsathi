@@ -79,11 +79,27 @@ export function CreatePayoutButton({
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setOpen(false)}>
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onMouseDown={(e) => {
+            // Only close if clicking the backdrop itself (not the modal)
+            if (e.target === e.currentTarget && !busy) setOpen(false);
+          }}
+        >
+          <div
+            className="w-full max-w-md bg-white rounded-2xl shadow-2xl"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
               <h3 className="font-bold text-neutral-900">Record Payout</h3>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100"><X size={16} /></button>
+              <button
+                onClick={() => !busy && setOpen(false)}
+                disabled={busy}
+                className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-50"
+              >
+                <X size={16} />
+              </button>
             </div>
 
             <div className="p-5 space-y-4">
@@ -122,7 +138,7 @@ export function CreatePayoutButton({
               </p>
 
               <div className="flex gap-2 pt-1">
-                <button onClick={() => setOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700">Cancel</button>
+                <button onClick={() => setOpen(false)} disabled={busy} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700 disabled:opacity-50">Cancel</button>
                 <button onClick={submit} disabled={busy} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
                   {busy ? <><Loader2 size={15} className="animate-spin" /> Recording…</> : "Confirm Payout"}
                 </button>

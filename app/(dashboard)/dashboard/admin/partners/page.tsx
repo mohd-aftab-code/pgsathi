@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { Handshake } from "lucide-react";
+import { Handshake, Eye } from "lucide-react";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
+import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
 export const metadata = { title: "Partners — Admin | PGSathi" };
 
@@ -35,7 +36,7 @@ export default async function AdminPartnersPage({
       take,
       select: {
         id: true, partnerCode: true, type: true, status: true, city: true, createdAt: true,
-        user: { select: { name: true, phone: true, email: true } },
+        user: { select: { name: true, phone: true, email: true, _count: { select: { listings: true } } } },
         _count: { select: { listings: true, earnings: true, owners: true } },
       },
     }),
@@ -61,6 +62,7 @@ export default async function AdminPartnersPage({
 
   return (
     <div className="space-y-4">
+      <PartnerTabs />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
           <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Partners</h1>
@@ -110,11 +112,17 @@ export default async function AdminPartnersPage({
                   <div className="text-[9px] text-neutral-400 truncate max-w-[140px]">{p.user.email}</div>
                 </td>
                 <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.owners}</td>
-                <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.listings}</td>
+                <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.listings + (p.user?._count?.listings || 0)}</td>
                 <td className="px-4 py-2 text-center font-black text-neutral-700">{p._count.earnings}</td>
                   <td className="px-4 py-2"><span className={`inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded-xl tracking-wider uppercase ${statusStyle[p.status]}`}>{p.status}</span></td>
                   <td className="px-4 py-2 text-right">
-                    <div className="flex items-center justify-end opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <a
+                        href={`/dashboard/admin/partners/${p.id}`}
+                        className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-bold bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+                      >
+                        <Eye size={12} /> Details
+                      </a>
                       <AdminPartnerActions id={p.id} status={p.status} />
                     </div>
                   </td>
@@ -169,14 +177,20 @@ export default async function AdminPartnersPage({
                 </div>
                 <div className="border-l border-neutral-100/60">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
-                  <div className="text-xs font-bold text-neutral-700">{p._count.listings}</div>
+                  <div className="text-xs font-bold text-neutral-700">{p._count.listings + (p.user?._count?.listings || 0)}</div>
                 </div>
                 <div className="border-l border-neutral-100/60">
                   <div className="text-[9px] text-neutral-400 font-bold uppercase">Earnings</div>
                   <div className="text-xs font-bold text-neutral-700">{p._count.earnings}</div>
                 </div>
               </div>
-              <div className="mt-0.5 flex justify-end">
+              <div className="mt-0.5 flex justify-between items-center gap-2">
+                <a
+                  href={`/dashboard/admin/partners/${p.id}`}
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-bold bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+                >
+                  <Eye size={12} /> Details Dekho
+                </a>
                 <AdminPartnerActions id={p.id} status={p.status} />
               </div>
             </div>

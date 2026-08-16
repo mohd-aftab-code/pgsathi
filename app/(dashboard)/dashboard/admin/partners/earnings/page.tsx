@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { IndianRupee } from "lucide-react";
 import { AdminEarningActions } from "@/components/dashboard/AdminEarningActions";
+import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
 export const metadata = { title: "Partner Earnings — Admin | PGSathi" };
 
@@ -46,7 +47,7 @@ export default async function AdminPartnerEarningsPage({
   const cntBy = (s: string) => sums.find((x: any) => x.status === s)?._count._all ?? 0;
 
   const tab = (label: string, val: string) => (
-    <a href={`/dashboard/admin/partner-earnings?status=${val}`}
+    <a href={`/dashboard/admin/partners/earnings?status=${val}`}
       className={`h-8 px-3 rounded-xl text-[10px] font-black inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors shadow-sm ${status === val ? "bg-neutral-900 text-white" : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white/80 hover:text-neutral-900"}`}>
       {label} <span className={`text-[9px] ${status === val ? "text-white/70" : "text-neutral-400"}`}>{cntBy(val) || (val === "ALL" ? sums.reduce((s: any, x: any) => s + x._count._all, 0) : 0)}</span>
     </a>
@@ -54,6 +55,7 @@ export default async function AdminPartnerEarningsPage({
 
   return (
     <div className="space-y-4">
+      <PartnerTabs />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
           <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Partner Earnings</h1>

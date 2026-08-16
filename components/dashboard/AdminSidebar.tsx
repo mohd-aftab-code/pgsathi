@@ -42,9 +42,6 @@ const NAV: SidebarNavGroup[] = [
     category: "Money",
     items: [
       { name: "Plans", href: "/dashboard/admin/plans", icon: PieChart, hideMobile: true },
-      { name: "Earnings", href: "/dashboard/admin/partner-earnings", icon: IndianRupee, hideMobile: true },
-      { name: "Payouts", href: "/dashboard/admin/partner-payouts", icon: Wallet, hideMobile: true },
-      { name: "Program Rules", href: "/dashboard/admin/partner-program", icon: SlidersHorizontal, hideMobile: true },
     ],
   },
   {

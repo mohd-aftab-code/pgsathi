@@ -7,6 +7,7 @@ import { PayoutRowActions, BulkPayoutButton } from "@/components/dashboard/Payou
 import { QuickKycVerifyButton } from "@/components/dashboard/QuickKycVerifyButton";
 import { kycGaps } from "@/lib/partner-payouts";
 import { getProgramSettings, nextPayoutDate } from "@/lib/partner-settings";
+import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Payout Cycle — Admin | PGSathi" };
@@ -99,6 +100,7 @@ export default async function AdminPayoutCyclePage() {
 
   return (
     <div className="space-y-4">
+      <PartnerTabs />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
           <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Payout Cycle</h1>
@@ -110,7 +112,7 @@ export default async function AdminPayoutCyclePage() {
             Cycle date: {settings.payoutDayOfMonth} (agla {nextPayoutDate(settings.payoutDayOfMonth).toLocaleDateString("en-IN", { day: "numeric", month: "short" })})
             {" · "}Min {inr(settings.minPayoutAmount)}
             {" · "}
-            <Link href="/dashboard/admin/partner-program" className="text-violet-600 hover:text-violet-700">
+            <Link href="/dashboard/admin/partners/settings" className="text-violet-600 hover:text-violet-700">
               Settings
             </Link>
           </p>

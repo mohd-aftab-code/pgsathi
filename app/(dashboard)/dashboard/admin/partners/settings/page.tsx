@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Info } from "lucide-react";
 import { ensureProgramSettingsRow, nextPayoutDate } from "@/lib/partner-settings";
 import { PartnerProgramSettings } from "@/components/dashboard/PartnerProgramSettings";
+import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
 export const metadata = { title: "Partner Program Settings — Admin | PGSathi" };
 
@@ -10,6 +11,7 @@ export default async function PartnerProgramPage() {
 
   return (
     <div className="space-y-4">
+      <PartnerTabs />
       <Link href="/dashboard/admin" className="inline-flex items-center gap-1.5 text-[10px] font-bold text-neutral-400 hover:text-neutral-900 uppercase tracking-wider transition-colors">
         <ArrowLeft size={12} /> Admin
       </Link>

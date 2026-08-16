@@ -279,8 +279,8 @@ export default async function AdminDashboardPage({
                   { href: "/dashboard/admin/verify", icon: ShieldCheck, label: "Verify", iconClass: "text-amber-500", bgClass: "bg-amber-50/50", badge: pendingListings > 0 ? pendingListings : undefined },
                   { href: "/dashboard/admin/partners", icon: Handshake, label: "Partners", iconClass: "text-emerald-500", bgClass: "bg-emerald-50/50" },
                   { href: "/dashboard/admin/plans", icon: PieChart, label: "Plans", iconClass: "text-violet-500", bgClass: "bg-violet-50/50" },
-                  { href: "/dashboard/admin/partner-earnings", icon: IndianRupee, label: "Earnings", iconClass: "text-purple-500", bgClass: "bg-purple-50/50" },
-                  { href: "/dashboard/admin/partner-payouts", icon: Wallet, label: "Payouts", iconClass: "text-teal-500", bgClass: "bg-teal-50/50" },
+                  { href: "/dashboard/admin/partners/earnings", icon: IndianRupee, label: "Earnings", iconClass: "text-purple-500", bgClass: "bg-purple-50/50" },
+                  { href: "/dashboard/admin/partners/payouts", icon: Wallet, label: "Payouts", iconClass: "text-teal-500", bgClass: "bg-teal-50/50" },
                   { href: "/dashboard/admin/reports", icon: FileBarChart, label: "Reports", iconClass: "text-rose-500", bgClass: "bg-rose-50/50" },
                   { href: "/dashboard/admin/settings", icon: Settings, label: "Settings", iconClass: "text-neutral-500", bgClass: "bg-neutral-100/50" },
                 ].map((action) => (
