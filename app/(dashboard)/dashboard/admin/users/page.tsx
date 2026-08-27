@@ -10,11 +10,12 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [role, setRole] = useState("OWNER");
 
-  async function fetchData(currentPage = page, currentQuery = query) {
+  async function fetchData(currentPage = page, currentQuery = query, currentRole = role) {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/overview?page=${currentPage}&query=${encodeURIComponent(currentQuery)}`);
+      const res = await fetch(`/api/admin/overview?page=${currentPage}&query=${encodeURIComponent(currentQuery)}&role=${currentRole}`);
       const d = await res.json();
       if (d.success) setData(d.data);
       else toast.error(d.message || "Failed to load data");
@@ -25,7 +26,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  useEffect(() => { fetchData(page, query); }, [page, query]);
+  useEffect(() => { fetchData(page, query, role); }, [page, query, role]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,11 +125,26 @@ export default function AdminUsersPage() {
         ))}
       </div>
 
-      {/* Owners Table */}
+      {/* Role Tabs */}
+      <div className="flex gap-2">
+        {["OWNER", "TENANT"].map(r => (
+          <button
+            key={r}
+            onClick={() => { setRole(r); setPage(1); }}
+            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm ${
+              role === r ? "bg-violet-600 text-white" : "bg-white text-neutral-600 border border-neutral-200/60 hover:bg-neutral-50"
+            }`}
+          >
+            {r}s
+          </button>
+        ))}
+      </div>
+
+      {/* Users Table */}
       <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-neutral-200/60 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <h2 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">Registered Owners</h2>
+            <h2 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">Registered {role === "OWNER" ? "Owners" : "Tenants"}</h2>
           </div>
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <input 
@@ -148,11 +164,15 @@ export default function AdminUsersPage() {
           <table className="w-full text-left min-w-[700px]">
             <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
               <tr>
-                <th className="px-4 py-2 font-bold">Owner</th>
-                <th className="px-4 py-2 font-bold text-center">PGs</th>
-                <th className="px-4 py-2 font-bold text-center">Tenants</th>
-                <th className="px-4 py-2 font-bold text-center">Leads</th>
-                <th className="px-4 py-2 font-bold">SaaS Status</th>
+                <th className="px-4 py-2 font-bold">{role === "OWNER" ? "Owner" : "User"}</th>
+                {role === "OWNER" && (
+                  <>
+                    <th className="px-4 py-2 font-bold text-center">PGs</th>
+                    <th className="px-4 py-2 font-bold text-center">Tenants</th>
+                    <th className="px-4 py-2 font-bold text-center">Leads</th>
+                    <th className="px-4 py-2 font-bold">SaaS Status</th>
+                  </>
+                )}
                 <th className="px-4 py-2 font-bold text-right">Actions</th>
               </tr>
             </thead>
@@ -173,32 +193,36 @@ export default function AdminUsersPage() {
                       </a>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-center font-black text-neutral-700">{o.pgCount}</td>
-                  <td className="px-4 py-2 text-center font-black text-neutral-700">{o.tenantCount}</td>
-                  <td className="px-4 py-2 text-center font-black text-neutral-700">{o.leadCount}</td>
+                  <td className="px-4 py-2 text-center font-black text-neutral-700">{role === "OWNER" ? o.pgCount : "-"}</td>
+                  <td className="px-4 py-2 text-center font-black text-neutral-700">{role === "OWNER" ? o.tenantCount : "-"}</td>
+                  <td className="px-4 py-2 text-center font-black text-neutral-700">{role === "OWNER" ? o.leadCount : "-"}</td>
                   <td className="px-4 py-2">
-                    {o.status === "FREE_TRIAL" && (
-                      <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-sm uppercase tracking-wider">
-                          Active Trial
-                        </span>
-                        <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.trialEndDate).toLocaleDateString()}</div>
-                      </div>
-                    )}
-                    {o.status === "PREMIUM" && (
-                      <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-emerald-100/80 text-emerald-800 border border-emerald-200/60 shadow-sm uppercase tracking-wider">
-                          Premium Active
-                        </span>
-                        <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.subscriptionEnd).toLocaleDateString()}</div>
-                      </div>
-                    )}
-                    {o.status === "EXPIRED" && (
-                      <div>
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-red-100/80 text-red-800 border border-red-200/60 shadow-sm uppercase tracking-wider">
-                          Trial Expired
-                        </span>
-                      </div>
+                    {role === "OWNER" && (
+                      <>
+                        {o.status === "FREE_TRIAL" && (
+                          <div>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-sm uppercase tracking-wider">
+                              Active Trial
+                            </span>
+                            <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.trialEndDate).toLocaleDateString()}</div>
+                          </div>
+                        )}
+                        {o.status === "PREMIUM" && (
+                          <div>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-emerald-100/80 text-emerald-800 border border-emerald-200/60 shadow-sm uppercase tracking-wider">
+                              Premium Active
+                            </span>
+                            <div className="text-[9px] text-neutral-400 font-bold mt-0.5 uppercase tracking-wider">Ends: {new Date(o.subscriptionEnd).toLocaleDateString()}</div>
+                          </div>
+                        )}
+                        {o.status === "EXPIRED" && (
+                          <div>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-xl text-[9px] font-black bg-red-100/80 text-red-800 border border-red-200/60 shadow-sm uppercase tracking-wider">
+                              Trial Expired
+                            </span>
+                          </div>
+                        )}
+                      </>
                     )}
                   </td>
                   <td className="px-4 py-2 text-right">
@@ -235,7 +259,7 @@ export default function AdminUsersPage() {
                 </tr>
               ))}
               {data.owners.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-6 text-center text-neutral-500 text-xs">No PG owners found.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-6 text-center text-neutral-500 text-xs">No {role === "OWNER" ? "owners" : "tenants"} found.</td></tr>
               )}
             </tbody>
           </table>
@@ -322,7 +346,7 @@ export default function AdminUsersPage() {
             </div>
           ))}
           {data.owners.length === 0 && (
-            <div className="text-center text-neutral-500 py-6">No PG owners found.</div>
+            <div className="text-center p-4 text-neutral-500 text-xs">No {role === "OWNER" ? "owners" : "tenants"} found.</div>
           )}
         </div>
         

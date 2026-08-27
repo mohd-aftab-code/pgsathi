@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const page = Number(searchParams.get("page")) || 1;
     const query = searchParams.get("query") || "";
+    const roleFilter = searchParams.get("role") || "OWNER";
     const pageSize = 10;
 
     // 1. Get total stats
@@ -34,19 +35,19 @@ export async function GET(req: NextRequest) {
       db.pgTenant.count({ where: { status: "ACTIVE" } }), // total active tenants in CRM
     ]);
 
-    const ownersWhere: any = { role: "OWNER" };
+    const usersWhere: any = { role: roleFilter };
     if (query) {
-      ownersWhere.OR = [
+      usersWhere.OR = [
         { name: { contains: query } },
         { email: { contains: query } },
         { phone: { contains: query } },
       ];
     }
 
-    // 2. Get owners list with their CRM status (for Trial Management)
-    const [owners, filteredOwnersCount] = await Promise.all([
+    // 2. Get users list with their CRM status (for Trial Management)
+    const [users, filteredUsersCount] = await Promise.all([
       db.user.findMany({
-        where: ownersWhere,
+        where: usersWhere,
       select: {
         id: true,
         name: true,
@@ -70,10 +71,10 @@ export async function GET(req: NextRequest) {
       skip: (page - 1) * pageSize,
       take: pageSize
     }),
-    db.user.count({ where: ownersWhere })
+    db.user.count({ where: usersWhere })
   ]);
 
-    const ownersData = owners.map(o => {
+    const usersData = users.map(o => {
       // Calculate trial status (15 days from creation)
       const trialDays = 15;
       const trialEndDate = new Date(o.createdAt);
@@ -109,10 +110,10 @@ export async function GET(req: NextRequest) {
       success: true,
       data: {
         stats: { totalUsers, totalListings, totalLeads, totalTenants },
-        owners: ownersData,
+        owners: usersData,
         pagination: {
-          totalCount: filteredOwnersCount,
-          totalPages: Math.ceil(filteredOwnersCount / pageSize),
+          totalCount: filteredUsersCount,
+          totalPages: Math.ceil(filteredUsersCount / pageSize),
           currentPage: page,
         }
       }
