@@ -12,6 +12,58 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    id: "is-your-pg-safe-lessons-from-delhi-building-collapse",
+    title: "Is Your PG Safe? Lessons from the Recent Delhi Building Collapses & Safety Checks for Tenants",
+    excerpt: "Recent incidents in Old Rajinder Nagar, Mukherjee Nagar, and Karol Bagh are a wake-up call. Learn how to check building age and safety before renting a PG in Delhi.",
+    content: `
+      <p>The recent heart-wrenching building collapse and basement flooding incidents in major student and professional hubs of Delhi have sent shockwaves through the city. Tragedies in areas like <strong>Old Rajinder Nagar</strong>, <strong>Mukherjee Nagar</strong>, <strong>Karol Bagh (Bapa Nagar)</strong>, and <strong>Laxmi Nagar</strong> have raised serious questions about the infrastructure we trust with our lives.</p>
+      
+      <img src="/image.png" alt="Recent Delhi Building Collapse Incident Rescue Operations" class="w-full rounded-2xl my-6 object-cover shadow-md" />
+
+      <p>For thousands of students preparing for exams and working professionals who come to Delhi, finding a safe and comfortable place to live is the first major hurdle. Unfortunately, in the rush to find affordable housing, safety often takes a backseat.</p>
+      
+      <p>At <strong>PGSathi</strong>, your safety is our top priority. We believe that a PG or hostel should be your safe haven, not a structural hazard. Here is a comprehensive guide on how to evaluate the safety of a PG or hostel before you move in.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">1. How to Check the Age of the Building (Makaan Kitna Purana Hai?)</h2>
+      <p>One of the biggest risks in crowded urban areas like <strong>North Campus</strong> or <strong>South Campus</strong> is aging, poorly maintained buildings.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Ask for Property Documents:</strong> Don't hesitate to ask the landlord to see the property tax receipt or the building completion certificate.</li>
+        <li><strong>Talk to the Neighbors:</strong> Local shopkeepers and neighbors can reveal when the building was built and if it has a history of foundational issues.</li>
+        <li><strong>Observe the Architecture:</strong> If a building has 4-5 floors added recently but the ground floor looks decades old, it might be an unsafe extension.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">2. Inspect for Structural Damages (Cracks & Seepage)</h2>
+      <p>Never rent a room simply based on a fresh coat of paint. Look closer:</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Deep Cracks:</strong> Deep, diagonal cracks originating from corners of doors or pillars are massive red flags. They indicate structural shifting, which led to the collapses in <strong>Karol Bagh</strong>.</li>
+        <li><strong>Seepage and Dampness:</strong> Persistent damp walls (seelane) weaken the foundation over time.</li>
+      </ul>
+
+      <img src="/image copy.png" alt="Rescue operations in Delhi building collapse" class="w-full rounded-2xl my-6 object-cover shadow-md" />
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">3. Fire Safety and Emergency Exits</h2>
+      <p>The recent devastating fires in <strong>Mukherjee Nagar</strong> have highlighted that many buildings lack basic fire safety protocols.</p>
+      <ul class="list-disc pl-5 mb-4 space-y-2 mt-4">
+        <li><strong>Secondary Exit:</strong> Never rent a PG in a building that has only one narrow staircase. You need a clear escape route.</li>
+        <li><strong>Electrical Wiring:</strong> Look at the main meter board—if it looks like a messy, tangled bird’s nest of wires, it’s a major fire risk.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">4. Avoid Illegal Basements and Poor Ventilation</h2>
+      <p>The recent horrific basement flooding incident in <strong>Old Rajinder Nagar</strong> is a grim reminder of the dangers of illegal basements.</p>
+      <p>Unless basements have heavy-duty ventilation, water-pumping systems, and commercial safety clearances, absolutely avoid renting them. They are prone to severe waterlogging during monsoons and are deadly fire traps.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Why Choose PGSathi for a Safe Stay in Delhi?</h2>
+      <p>Navigating the PG market in Delhi can be overwhelming. You shouldn't have to compromise your peace of mind or safety to find a place near your office or college. By choosing your accommodation through a trusted platform, you reduce the risk of ending up in unverified or unsafe buildings.</p>
+      
+      <p class="mt-8 font-medium text-lg">Your life and safety are priceless. Be smart, ask the right questions, and let <a href="/search" class="text-primary-600 underline">PGSathi</a> guide you to a secure, comfortable, and verified home away from home!</p>
+    `,
+    image: "/image.png",
+    category: "Safety",
+    date: "September 6, 2026",
+    author: "PGSathi Team",
+    readTime: "5 min read"
+  },
+  {
     id: "benefits-of-pg-management-software",
     title: "Why Every PG Owner Needs PG Management Software in 2026",
     excerpt: "Managing a PG manually on paper is outdated. Discover how free PG management software can help you track rent, manage tenants, and grow your business.",
