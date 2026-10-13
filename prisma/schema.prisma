@@ -1508,3 +1508,25 @@ model RateLimit {
   @@index([expiresAt])
   @@map("rate_limits")
 }
+
+model ContactEnquiry {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(120)
+  email      String   @db.VarChar(255)
+  phone      String?  @db.VarChar(20)
+  subject    String   @db.VarChar(200)
+  message    String   @db.Text
+  status     String   @default("PENDING") @db.VarChar(30)
+  isRead     Boolean  @default(false)
+  adminNotes String?  @db.Text
+  ipAddress  String?  @db.VarChar(60)
+  userAgent  String?  @db.VarChar(300)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("contact_enquiries")
+}
+

@@ -13,7 +13,8 @@ import {
   getPartnerAlertEmail,
   getSubscriptionActiveEmail,
   getSubscriptionExpiryEmail,
-  getAdminNewUserNotificationEmail
+  getAdminNewUserNotificationEmail,
+  getContactEnquiryAdminEmail,
 } from "./email-templates";
 
 const FROM = process.env.FROM_EMAIL || "hello@pgsathi.in";
@@ -27,6 +28,70 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
+
+/**
+ * Universal email dispatcher:
+ * Uses Resend API if RESEND_API_KEY is configured,
+ * otherwise falls back to Nodemailer SMTP.
+ */
+export async function sendEmailMessage({
+  to,
+  subject,
+  html,
+  replyTo,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.FROM_EMAIL || FROM;
+
+  if (resendApiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromAddress,
+          to,
+          subject,
+          html,
+          reply_to: replyTo,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`[Email] Dispatched via Resend to ${to} (ID: ${data?.id})`);
+        return { success: true, messageId: data?.id, provider: "resend" };
+      }
+      console.error("[Email] Resend API error:", data);
+    } catch (err) {
+      console.error("[Email] Resend fetch exception:", err);
+    }
+  }
+
+  // Fallback to Nodemailer SMTP
+  try {
+    const info = await transporter.sendMail({
+      from: fromAddress,
+      to,
+      subject,
+      html,
+      replyTo,
+    });
+    console.log(`[Email] Dispatched via Nodemailer to ${to} (ID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId, provider: "nodemailer" };
+  } catch (smtpErr) {
+    console.error("[Email] Nodemailer sendMail failed:", smtpErr);
+    return { success: false, error: smtpErr };
+  }
+}
 
 // Send generic welcome email
 export async function sendWelcomeEmail(to: string, name: string, role: string, phone?: string, password?: string) {
@@ -217,10 +282,33 @@ export async function sendSubscriptionExpiryEmail(
 export async function sendAdminNewUserNotificationEmail(name: string, role: string, phone: string, email: string) {
   const adminEmail = process.env.ADMIN_EMAIL || "pgsathi.support@gmail.com";
   
-  await transporter.sendMail({
-    from: FROM,
+  await sendEmailMessage({
     to: adminEmail,
     subject: `New ${role} Registration: ${name}`,
     html: getAdminNewUserNotificationEmail(name, role, phone, email),
   });
 }
+
+// Send website contact enquiry notification to Super Admin
+export async function sendContactEnquiryEmail(data: {
+  name: string;
+  email: string;
+  phone?: string | null;
+  subject: string;
+  message: string;
+  enquiryId?: number;
+  createdAt?: string;
+  ipAddress?: string | null;
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL || "pgsathi.support@gmail.com";
+  const emailSubject = `[PGSathi Enquiry #${data.enquiryId ?? "New"}] ${data.subject} - ${data.name}`;
+  const html = getContactEnquiryAdminEmail(data);
+
+  return await sendEmailMessage({
+    to: adminEmail,
+    subject: emailSubject,
+    html,
+    replyTo: data.email,
+  });
+}
+

@@ -3,6 +3,7 @@
 import {
   LayoutDashboard, ShieldCheck, Users, PieChart, Settings, Handshake,
   IndianRupee, ShieldAlert, Wallet, FileBarChart, MapPin, Activity, SlidersHorizontal,
+  MessageSquare,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 
@@ -47,6 +48,7 @@ const NAV: SidebarNavGroup[] = [
   {
     category: "System",
     items: [
+      { name: "Enquiries", href: "/dashboard/admin/enquiries", icon: MessageSquare },
       { name: "Reports", href: "/dashboard/admin/reports", icon: FileBarChart, hideMobile: true },
       { name: "Audit Logs", href: "/dashboard/admin/audit-logs", icon: Activity, hideMobile: true },
       { name: "Settings", href: "/dashboard/admin/settings", icon: Settings, hideMobile: true },

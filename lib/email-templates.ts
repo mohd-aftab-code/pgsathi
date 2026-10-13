@@ -379,3 +379,83 @@ export function getAdminNewUserNotificationEmail(name: string, role: string, pho
   `;
   return baseTemplate(content, `New ${role} registration: ${name}`);
 }
+
+export function getContactEnquiryAdminEmail(data: {
+  name: string;
+  email: string;
+  phone?: string | null;
+  subject: string;
+  message: string;
+  enquiryId?: number;
+  createdAt?: string;
+  ipAddress?: string | null;
+}) {
+  const cleanPhone = data.phone ? data.phone.replace(/\D/g, "") : null;
+  const waUrl = cleanPhone ? `https://wa.me/91${cleanPhone.length === 10 ? cleanPhone : cleanPhone.slice(-10)}` : null;
+  const replyMailUrl = `mailto:${data.email}?subject=Re:%20${encodeURIComponent(data.subject)}%20-%20PGSathi%20Support`;
+  const adminUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"}/dashboard/admin/enquiries`;
+
+  const content = `
+    <h2>New Contact Enquiry Received 📩</h2>
+    <p>A new user inquiry has just been submitted via the <strong>PGSathi Contact Us</strong> form.</p>
+
+    <div class="card" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+      <p style="margin-bottom: 14px; color: #6d28d9; font-size: 13px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">
+        Enquiry Reference #${data.enquiryId ?? "NEW"}
+      </p>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 12px;">
+        <tr>
+          <td style="padding: 7px 0; color: #64748b; width: 110px; font-weight: 600;">Full Name:</td>
+          <td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${data.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Email:</td>
+          <td style="padding: 7px 0; color: #0f172a;">
+            <a href="mailto:${data.email}" style="color: #6d28d9; font-weight: 600; text-decoration: underline;">${data.email}</a>
+          </td>
+        </tr>
+        ${data.phone ? `
+        <tr>
+          <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Phone:</td>
+          <td style="padding: 7px 0; color: #0f172a;">
+            <a href="tel:${data.phone}" style="color: #0284c7; font-weight: 700; text-decoration: none;">${data.phone}</a>
+            ${waUrl ? `&nbsp; <a href="${waUrl}" style="color: #16a34a; font-weight: 600; text-decoration: none;">(WhatsApp)</a>` : ""}
+          </td>
+        </tr>
+        ` : ""}
+        <tr>
+          <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Subject:</td>
+          <td style="padding: 7px 0; color: #0f172a; font-weight: 600;">${data.subject}</td>
+        </tr>
+        ${data.createdAt ? `
+        <tr>
+          <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Received At:</td>
+          <td style="padding: 7px 0; color: #475569;">${data.createdAt}</td>
+        </tr>
+        ` : ""}
+      </table>
+
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+        <p style="font-weight: 700; color: #334155; margin-bottom: 8px;">Enquiry Message:</p>
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+      </div>
+    </div>
+
+    <div class="btn-container" style="text-align: center; margin: 28px 0 12px 0;">
+      <a href="${replyMailUrl}" class="btn" style="background-color: #6d28d9; margin-right: 8px; margin-bottom: 8px;">
+        ✉️ Reply to ${data.name}
+      </a>
+      ${waUrl ? `
+      <a href="${waUrl}" class="btn" style="background-color: #16a34a; margin-right: 8px; margin-bottom: 8px;">
+        💬 Chat on WhatsApp
+      </a>
+      ` : ""}
+      <a href="${adminUrl}" class="btn" style="background-color: #0f172a; margin-bottom: 8px;">
+        🛡️ View in Admin
+      </a>
+    </div>
+  `;
+  return baseTemplate(content, `New Enquiry: ${data.subject} from ${data.name}`);
+}
+

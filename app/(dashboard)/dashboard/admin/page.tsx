@@ -3,7 +3,7 @@ import {
   Users, Building2, ShieldAlert, BadgeIndianRupee, TrendingUp, Activity,
   ArrowRight, CheckCircle2, FileBarChart, ShieldCheck, Handshake, PieChart,
   IndianRupee, Wallet, Settings, AlertCircle, Clock, Zap,
-  BarChart3, UserCheck, ChevronLeft, ChevronRight,
+  BarChart3, UserCheck, ChevronLeft, ChevronRight, MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
@@ -29,6 +29,7 @@ export default async function AdminDashboardPage({
       recentListings,
       totalOwners,
       recentUsers,
+      unreadEnquiries,
     ] = await Promise.all([
       db.listing.count({ where: { status: "PENDING" } }),
       db.listing.count({ where: { status: "ACTIVE" } }),
@@ -49,6 +50,7 @@ export default async function AdminDashboardPage({
         where: { role: { in: ["TENANT", "OWNER"] } },
         select: { id: true, name: true, email: true, role: true, createdAt: true },
       }),
+      db.contactEnquiry.count({ where: { isRead: false } }),
     ]);
 
     const totalRevenue = activeSubscriptions.reduce((acc, sub) => acc + sub.amount, 0);
@@ -275,8 +277,9 @@ export default async function AdminDashboardPage({
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { href: "/dashboard/admin/users", icon: Users, label: "Users", iconClass: "text-blue-500", bgClass: "bg-blue-50/50" },
+                  { href: "/dashboard/admin/enquiries", icon: MessageSquare, label: "Enquiries", iconClass: "text-violet-500", bgClass: "bg-violet-50/50", badge: unreadEnquiries > 0 ? unreadEnquiries : undefined },
                   { href: "/dashboard/admin/verify", icon: ShieldCheck, label: "Verify", iconClass: "text-amber-500", bgClass: "bg-amber-50/50", badge: pendingListings > 0 ? pendingListings : undefined },
+                  { href: "/dashboard/admin/users", icon: Users, label: "Users", iconClass: "text-blue-500", bgClass: "bg-blue-50/50" },
                   { href: "/dashboard/admin/partners", icon: Handshake, label: "Partners", iconClass: "text-emerald-500", bgClass: "bg-emerald-50/50" },
                   { href: "/dashboard/admin/plans", icon: PieChart, label: "Plans", iconClass: "text-violet-500", bgClass: "bg-violet-50/50" },
                   { href: "/dashboard/admin/partners/earnings", icon: IndianRupee, label: "Earnings", iconClass: "text-purple-500", bgClass: "bg-purple-50/50" },

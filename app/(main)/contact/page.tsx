@@ -1,5 +1,6 @@
 import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { ContactForm } from "@/components/contact/ContactForm";
 
 export const metadata = {
   title: "Contact Us - PGSathi",
@@ -86,52 +87,7 @@ export default function ContactPage() {
 
           {/* ── Contact Form (Right Col) ── */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl border border-neutral-100">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center text-primary-600">
-                  <MessageSquare size={20} />
-                </div>
-                <h2 className="text-2xl font-bold text-neutral-900">Send us a message</h2>
-              </div>
-              
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-neutral-700">First Name</label>
-                    <input type="text" className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium" placeholder="John" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-neutral-700">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium" placeholder="Doe" />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-neutral-700">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" required className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium" placeholder="john@example.com" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-neutral-700">Subject</label>
-                  <select className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium appearance-none">
-                    <option>General Inquiry</option>
-                    <option>I'm a Tenant needing help</option>
-                    <option>I'm a PG Owner (CRM / Listing support)</option>
-                    <option>Partnerships / Business</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-neutral-700">Message <span className="text-red-500">*</span></label>
-                  <textarea rows={5} required className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all resize-none font-medium" placeholder="How can we help you?"></textarea>
-                </div>
-
-                <button type="button" className="btn-primary w-full py-4 rounded-xl text-base flex items-center justify-center gap-2 hover:-translate-y-0.5 transition-transform shadow-lg shadow-primary-500/30">
-                  <Send size={18} /> Send Message
-                </button>
-                <p className="text-xs text-center text-neutral-400 mt-4">By submitting this form, you agree to our privacy policy.</p>
-              </form>
-            </div>
+            <ContactForm />
           </div>
           
         </div>
