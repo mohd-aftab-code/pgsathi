@@ -7,6 +7,7 @@ import logoImg from "@/app/assets/logo/logo in vertical.png";
 import { Home, ArrowRight, Lock, CheckCircle, Phone, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
+import toast from "react-hot-toast";
 
 type Mode = "PHONE" | "EMAIL";
 
@@ -36,11 +37,15 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
 
     if (mode === "PHONE" && phone.length !== 10) {
-      setError("Please enter a valid 10-digit phone number.");
+      const err = "Please enter a valid 10-digit phone number.";
+      setError(err);
+      toast.error(err);
       return;
     }
     if (mode === "EMAIL" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
+      const err = "Please enter a valid email address.";
+      setError(err);
+      toast.error(err);
       return;
     }
 
@@ -60,12 +65,17 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (res.ok) {
+        toast.success("OTP sent successfully!");
         setStep("OTP");
       } else {
-        setError(data.message || "Failed to send OTP. Please try again.");
+        const err = data.message || "Failed to send OTP. Please try again.";
+        setError(err);
+        toast.error(err);
       }
     } catch (err) {
-      setError("Network error. Please check your connection.");
+      const errText = "Network error. Please check your connection.";
+      setError(errText);
+      toast.error(errText);
     } finally {
       setLoading(false);
     }
@@ -74,15 +84,21 @@ export default function ForgotPasswordPage() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length < 4) {
-      setError("Please enter a valid OTP.");
+      const err = "Please enter a valid OTP.";
+      setError(err);
+      toast.error(err);
       return;
     }
     if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+      const err = "Password must be at least 6 characters.";
+      setError(err);
+      toast.error(err);
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      const err = "Passwords do not match.";
+      setError(err);
+      toast.error(err);
       return;
     }
 
@@ -103,12 +119,17 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (res.ok) {
+        toast.success("Password reset successfully!");
         setStep("SUCCESS");
       } else {
-        setError(data.message || "Invalid OTP or failed to reset password.");
+        const err = data.message || "Invalid OTP or failed to reset password.";
+        setError(err);
+        toast.error(err);
       }
     } catch (err) {
-      setError("Network error. Please check your connection.");
+      const errText = "Network error. Please check your connection.";
+      setError(errText);
+      toast.error(errText);
     } finally {
       setLoading(false);
     }

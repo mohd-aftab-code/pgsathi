@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { Lock, Eye, EyeOff, Loader2, ShieldCheck, CheckCircle2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ChangePasswordPage() {
   const [current, setCurrent] = useState("");
@@ -21,8 +22,18 @@ export default function ChangePasswordPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (next.length < 6) { setError("Naya password kam se kam 6 characters ka ho"); return; }
-    if (next !== confirm) { setError("Dono passwords match nahi kar rahe"); return; }
+    if (next.length < 6) {
+      const err = "Naya password kam se kam 6 characters ka ho";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (next !== confirm) {
+      const err = "Dono passwords match nahi kar rahe";
+      setError(err);
+      toast.error(err);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -32,21 +43,23 @@ export default function ChangePasswordPage() {
         body: JSON.stringify({ currentPassword: current, newPassword: next }),
       });
       const data = await res.json();
-      if (!data.success) { setError(data.message ?? "Password badal nahi paya"); return; }
+      if (!data.success) {
+        const err = data.message ?? "Password badal nahi paya";
+        setError(err);
+        toast.error(err);
+        return;
+      }
 
+      toast.success("Password changed successfully!");
       setDone(true);
       // Sign out rather than redirect.
-      //
-      // `proxy.ts` decides the redirect at the edge by decoding the session
-      // cookie directly — it never runs the jwt callback, so the cookie still
-      // carries mustChangePassword even though the database no longer does.
-      // Navigating anywhere would simply bounce straight back here. Signing out
-      // discards that stale cookie, and the next login mints a clean one.
       setTimeout(() => {
         signOut({ callbackUrl: "/login?passwordChanged=1" });
       }, 1400);
     } catch {
-      setError("Kuch galat ho gaya. Dobara try karein.");
+      const err = "Kuch galat ho gaya. Dobara try karein.";
+      setError(err);
+      toast.error(err);
     } finally {
       setLoading(false);
     }

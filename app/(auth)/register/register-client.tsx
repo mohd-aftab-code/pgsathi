@@ -20,6 +20,7 @@ import {
   Loader2,
   CheckCircle2,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 type Role = "TENANT" | "OWNER" | "PARTNER";
 
@@ -46,11 +47,36 @@ function RegisterContent() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { setError("Please enter your full name"); return; }
-    if (phone.length !== 10) { setError("Please enter a valid 10-digit phone number"); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters long"); return; }
-    if (password !== confirmPassword) { setError("Passwords do not match"); return; }
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address"); return; }
+    if (!name.trim()) {
+      const err = "Please enter your full name";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (phone.length !== 10) {
+      const err = "Please enter a valid 10-digit phone number";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (password.length < 6) {
+      const err = "Password must be at least 6 characters long";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (password !== confirmPassword) {
+      const err = "Passwords do not match";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const err = "Please enter a valid email address";
+      setError(err);
+      toast.error(err);
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -64,6 +90,7 @@ function RegisterContent() {
 
       if (data.success) {
         setSuccess(true);
+        toast.success("Account created successfully!");
         if (role === "PARTNER") {
           // Partners require admin approval, don't auto login
           setTimeout(() => {
@@ -85,11 +112,15 @@ function RegisterContent() {
             role === "OWNER" ? "/dashboard/owner" : "/dashboard";
         }
       } else {
-        setError(data.message || "Registration failed. Please try again.");
+        const err = data.message || "Registration failed. Please try again.";
+        setError(err);
+        toast.error(err);
         setLoading(false);
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      const err = "Something went wrong. Please try again.";
+      setError(err);
+      toast.error(err);
       setLoading(false);
     }
   };

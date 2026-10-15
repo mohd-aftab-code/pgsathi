@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * One-click KYC verify button for the payout cycle page.
@@ -26,13 +27,17 @@ export function QuickKycVerifyButton({ partnerId }: { partnerId: number }) {
       });
       const d = await res.json();
       if (!d.success) {
-        setError(d.message || "Verify failed");
+        const err = d.message || "Verify failed";
+        setError(err);
+        toast.error(err);
         return;
       }
       setDone(true);
+      toast.success("KYC Verified successfully!");
       router.refresh();
     } catch {
       setError("Kuch galat ho gaya");
+      toast.error("Kuch galat ho gaya");
     } finally {
       setBusy(false);
     }

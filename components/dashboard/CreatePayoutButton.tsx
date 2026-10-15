@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Wallet, Loader2, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Pays out every approved-but-unpaid earning for one partner in a single batch.
@@ -43,10 +44,20 @@ export function CreatePayoutButton({
         body: JSON.stringify({ partnerId, method, reference }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Payout failed"); setBusy(false); return; }
+      if (!d.success) {
+        const err = d.message || "Payout failed";
+        setError(err);
+        toast.error(err);
+        setBusy(false);
+        return;
+      }
+      toast.success("Payout created successfully");
       setOpen(false);
       router.refresh();
-    } catch { setError("Something went wrong"); } finally { setBusy(false); }
+    } catch {
+      setError("Something went wrong");
+      toast.error("Something went wrong");
+    } finally { setBusy(false); }
   }
 
   if (count === 0) {

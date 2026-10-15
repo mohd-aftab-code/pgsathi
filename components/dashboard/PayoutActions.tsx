@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, X, CheckCircle2, Undo2, Layers } from "lucide-react";
+import toast from "react-hot-toast";
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
@@ -49,11 +50,18 @@ export function PayoutRowActions({
         ),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Action failed"); return; }
+      if (!d.success) {
+        const err = d.message || "Action failed";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success(mode === "complete" ? "Payout marked as completed!" : "Payout reversed successfully");
       setMode(null);
       router.refresh();
     } catch {
       setError("Kuch galat ho gaya");
+      toast.error("Kuch galat ho gaya");
     } finally {
       setBusy(false);
     }
@@ -197,11 +205,18 @@ export function BulkPayoutButton() {
         body: JSON.stringify({ mode: "bulk", method }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Bulk payout failed"); return; }
+      if (!d.success) {
+        const err = d.message || "Bulk payout failed";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success(d.message || "Bulk cycle payout executed");
       setResult({ results: d.data.results ?? [], skipped: d.data.skipped ?? [], message: d.message });
       router.refresh();
     } catch {
       setError("Kuch galat ho gaya");
+      toast.error("Kuch galat ho gaya");
     } finally {
       setBusy(false);
     }

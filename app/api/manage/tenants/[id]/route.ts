@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
 
     const tenant = await db.pgTenant.findFirst({
       where: { id: parseInt(id), ownerId: ctx.userId, deletedAt: null },
@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const { id } = await params;
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
 
     const data = await req.json();
     const existing = await db.pgTenant.findFirst({ where: { id: parseInt(id), ownerId: ctx.userId } });
@@ -55,11 +55,12 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     for (const f of fields) {
       if (data[f] !== undefined) {
         if (["monthlyRent","securityDeposit","rentDueDay","depositRefunded","roomId","bedId"].includes(f)) {
-          updateData[f] = data[f] !== null ? parseInt(data[f]) : null;
+          const parsed = data[f] !== null && data[f] !== "" ? parseInt(data[f], 10) : null;
+          updateData[f] = parsed !== null && !isNaN(parsed) ? parsed : null;
         } else if (["checkOutDate","noticeDate","expectedVacate"].includes(f)) {
           updateData[f] = data[f] ? new Date(data[f]) : null;
         } else {
-          updateData[f] = data[f];
+          updateData[f] = typeof data[f] === "string" ? (data[f].trim() || null) : data[f];
         }
       }
     }
@@ -82,7 +83,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
 
     const tenant = await db.pgTenant.findFirst({ where: { id: parseInt(id), ownerId: ctx.userId } });
     if (!tenant) return NextResponse.json({ success: false, message: "Tenant not found" }, { status: 404 });

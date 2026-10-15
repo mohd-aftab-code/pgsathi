@@ -49,15 +49,16 @@ export function LeadStatusControl({
     }
   }
 
-  function onStageChange(next: string) {
+  async function onStageChange(next: string) {
     setStage(next);
-    patch({ status: next });
+    await patch({ status: next });
+    toast.success("Lead status updated");
   }
 
   async function saveDetails() {
     await patch({ followUpAt: follow || null, notes: note });
     setOpen(false);
-    toast.success("Saved");
+    toast.success("Lead details saved");
   }
 
   const cur = LEAD_STAGES.find((s) => s.value === stage) ?? LEAD_STAGES[0];

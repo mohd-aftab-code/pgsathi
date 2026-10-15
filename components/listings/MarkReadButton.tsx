@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCheck, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface MarkReadButtonProps {
   leadId: number;
@@ -25,10 +26,13 @@ export default function MarkReadButton({ leadId, isRead }: MarkReadButtonProps) 
       const data = await res.json();
       if (data.success) {
         setRead(!read);
+        toast.success("Lead marked as read");
         router.refresh();
+      } else {
+        toast.error(data.message || "Failed to update lead");
       }
     } catch {
-      // silently fail
+      toast.error("Failed to update lead status");
     } finally {
       setLoading(false);
     }

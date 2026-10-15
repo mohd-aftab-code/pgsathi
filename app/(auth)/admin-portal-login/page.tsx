@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logoImg from "@/app/assets/logo/logo in vertical.png";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 import {
   Home,
   Mail,
@@ -31,7 +32,9 @@ function AdminLoginContent() {
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please enter email and password");
+      const err = "Please enter email and password";
+      setError(err);
+      toast.error(err);
       return;
     }
     setLoading(true);
@@ -43,13 +46,18 @@ function AdminLoginContent() {
         redirect: false,
       });
       if (res?.error) {
-        setError("Invalid admin credentials. Please try again.");
+        const err = "Invalid admin credentials. Please try again.";
+        setError(err);
+        toast.error(err);
         setLoading(false);
       } else {
+        toast.success("Admin login successful!");
         window.location.href = "/dashboard/admin";
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      const err = "Something went wrong. Please try again.";
+      setError(err);
+      toast.error(err);
       setLoading(false);
     }
   };

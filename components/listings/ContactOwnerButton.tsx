@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, Phone, X, CheckCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface Props {
   listingId: number;
@@ -35,8 +36,12 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
 
   const submitLead = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tenantName.trim() || !tenantPhone.trim() || tenantPhone.length < 10) {
-      alert("Please enter a valid name and phone number");
+    if (!tenantName.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+    if (!tenantPhone.trim() || tenantPhone.length < 10) {
+      toast.error("Please enter a valid 10-digit phone number");
       return;
     }
 
@@ -54,6 +59,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
         })
       });
 
+      toast.success("Contact details submitted successfully!");
       if (hasActiveSubscription) {
         // Reveal contact directly
         setShowPopup(false);
@@ -69,7 +75,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
       }
     } catch (error) {
       console.error("Failed to log lead", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

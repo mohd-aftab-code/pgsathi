@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, ShieldCheck, ShieldAlert, Flag, Percent, Network, Archive } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * The controls that decide what a partner is worth and whether they can be paid.
@@ -58,10 +59,17 @@ export function AdminPartnerControls({
         body: JSON.stringify({ action, ...extra }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Action failed"); return; }
+      if (!d.success) {
+        const err = d.message || "Action failed";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success(d.message || "Partner settings updated");
       router.refresh();
     } catch {
       setError("Kuch galat ho gaya");
+      toast.error("Kuch galat ho gaya");
     } finally {
       setBusy("");
     }

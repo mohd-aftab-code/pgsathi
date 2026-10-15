@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Check, Upload, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const inp =
   "w-full h-11 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none";
@@ -20,9 +21,19 @@ function useSave(section: string) {
         body: JSON.stringify({ section, ...payload }),
       });
       const d = await res.json();
-      if (!d.success) setError(d.message || "Save failed");
-      else { setSaved(true); setTimeout(() => setSaved(false), 2500); }
-    } catch { setError("Something went wrong"); } finally { setSaving(false); }
+      if (!d.success) {
+        const err = d.message || "Save failed";
+        setError(err);
+        toast.error(err);
+      } else {
+        setSaved(true);
+        toast.success("Changes saved successfully");
+        setTimeout(() => setSaved(false), 2500);
+      }
+    } catch {
+      setError("Something went wrong");
+      toast.error("Something went wrong");
+    } finally { setSaving(false); }
   }
   return { save, saving, saved, error };
 }
@@ -149,10 +160,14 @@ function ImageUpload({ label, value, onChange }: { label: string; value: string 
       fd.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const d = await res.json();
-      if (d.success) onChange(d.url);
-      else alert(d.message || "Upload failed");
+      if (d.success) {
+        onChange(d.url);
+        toast.success("Document uploaded successfully");
+      } else {
+        toast.error(d.message || "Upload failed");
+      }
     } catch {
-      alert("Something went wrong");
+      toast.error("Something went wrong with upload");
     } finally {
       setUploading(false);
     }

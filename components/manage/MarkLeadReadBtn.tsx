@@ -17,6 +17,7 @@ export function MarkLeadReadBtn({ leadId }: { leadId: number }) {
       const d = await res.json();
       if (!res.ok) throw new Error(d.message || "Failed to mark as read");
       
+      toast.success("Lead marked as read");
       router.refresh();
     } catch (err: any) {
       toast.error(err.message);

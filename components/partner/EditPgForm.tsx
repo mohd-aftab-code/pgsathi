@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Pencil, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Inline editor for the fields a partner is allowed to change on a PG.
@@ -32,10 +33,20 @@ export function EditPgForm({
         body: JSON.stringify(form),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Update failed"); setSaving(false); return; }
+      if (!d.success) {
+        const err = d.message || "Update failed";
+        setError(err);
+        toast.error(err);
+        setSaving(false);
+        return;
+      }
+      toast.success("PG updated successfully");
       setOpen(false);
       router.refresh();
-    } catch { setError("Something went wrong"); } finally { setSaving(false); }
+    } catch {
+      setError("Something went wrong");
+      toast.error("Something went wrong");
+    } finally { setSaving(false); }
   }
 
   const inp = "w-full h-11 px-3 rounded-xl border-2 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none";

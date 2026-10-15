@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Link2, X, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Moves an owner from one partner to another.
@@ -49,11 +50,18 @@ export function ReattributeOwner({
         }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "Change nahi hua"); return; }
+      if (!d.success) {
+        const err = d.message || "Change nahi hua";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success("Owner attribution updated successfully");
       setOpen(false);
       router.refresh();
     } catch {
       setError("Kuch galat ho gaya");
+      toast.error("Kuch galat ho gaya");
     } finally {
       setBusy(false);
     }

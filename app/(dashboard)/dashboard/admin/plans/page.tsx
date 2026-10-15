@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2, Plus, Edit, Trash2, ShieldCheck, PowerOff, Power, Star, Clock, Handshake, X, FileText, IndianRupee } from "lucide-react";
+import toast from "react-hot-toast";
 import { CAPABILITY_META, NO_CAPABILITIES, readCapabilities, type PlanCapabilities } from "@/lib/plan-capabilities";
 
 type Feature = { name: string; included: boolean; comingSoon?: boolean };
@@ -108,25 +109,39 @@ export default function AdminPlansPage() {
     const url = editingPlan ? `/api/admin/plans/${editingPlan.id}` : "/api/admin/plans";
     const method = editingPlan ? "PATCH" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    if (res.ok) {
-      setIsFormOpen(false);
-      fetchPlans();
-    } else {
-      alert("Failed to save plan.");
+      if (res.ok) {
+        toast.success(editingPlan ? "Plan updated successfully!" : "Plan created successfully!");
+        setIsFormOpen(false);
+        fetchPlans();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.message || "Failed to save plan.");
+      }
+    } catch {
+      toast.error("Failed to save plan. Please check network connection.");
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this plan? This could break active subscriptions.")) return;
-    const res = await fetch(`/api/admin/plans/${id}`, { method: "DELETE" });
-    if (res.ok) fetchPlans();
-    else alert("Failed to delete.");
+    try {
+      const res = await fetch(`/api/admin/plans/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Plan deleted successfully");
+        fetchPlans();
+      } else {
+        toast.error("Failed to delete plan.");
+      }
+    } catch {
+      toast.error("Failed to delete plan.");
+    }
   };
 
   const addFeature = () => {
@@ -156,12 +171,21 @@ export default function AdminPlansPage() {
   };
 
   const toggleStatus = async (plan: any) => {
-    const res = await fetch(`/api/admin/plans/${plan.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isActive: !plan.isActive }),
-    });
-    if (res.ok) fetchPlans();
+    try {
+      const res = await fetch(`/api/admin/plans/${plan.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !plan.isActive }),
+      });
+      if (res.ok) {
+        toast.success(plan.isActive ? "Plan deactivated" : "Plan activated");
+        fetchPlans();
+      } else {
+        toast.error("Failed to update status");
+      }
+    } catch {
+      toast.error("Failed to update status");
+    }
   };
 
   return (

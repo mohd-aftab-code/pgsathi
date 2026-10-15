@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, MapPin, CheckCircle2, Upload, Plus, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { LocationStep, validateLocation } from "@/components/listings/LocationStep";
 
 // ════════════════════════════════════════════════════════
@@ -153,6 +154,7 @@ export default function NewListingPage() {
     const problem = validateStep(currentStep);
     if (problem) {
       setError(problem);
+      toast.error(problem);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -209,8 +211,10 @@ export default function NewListingPage() {
         ...prev,
         photos: [...prev.photos, ...uploaded]
       }));
+      toast.success(`${uploaded.length} photo(s) uploaded successfully`);
     } catch (error) {
       setError("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.");
     } finally {
       setUploadingImage(false);
     }
@@ -232,6 +236,7 @@ export default function NewListingPage() {
       const problem = validateStep(step);
       if (problem) {
         setError(`Step ${step}: ${problem}`);
+        toast.error(`Step ${step}: ${problem}`);
         setCurrentStep(step);
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
@@ -296,13 +301,18 @@ export default function NewListingPage() {
       if (data.success) {
         // Clear saved draft on success
         localStorage.removeItem(DRAFT_KEY);
+        toast.success("Listing created successfully!");
         router.push("/dashboard/owner/listings");
       } else {
         console.error("Listing Creation Error:", data);
-        setError(data.message || "Failed to create listing");
+        const err = data.message || "Failed to create listing";
+        setError(err);
+        toast.error(err);
       }
-    } catch (err) {
-      setError("An unexpected error occurred");
+    } catch (err: any) {
+      const errText = err?.message || "An unexpected error occurred";
+      setError(errText);
+      toast.error(errText);
     } finally {
       setLoading(false);
     }

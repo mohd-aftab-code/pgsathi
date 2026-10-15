@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Edit, Eye, Trash2, Zap, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface ListingActionsProps {
   listingId: number;
@@ -25,12 +26,13 @@ export default function ListingActions({ listingId, listingSlug, status }: Listi
       });
       const data = await res.json();
       if (data.success) {
+        toast.success("Listing deleted successfully");
         router.refresh(); // Re-fetch page data
       } else {
-        alert(data.message || "Problem occurred while deleting.");
+        toast.error(data.message || "Problem occurred while deleting.");
       }
     } catch {
-      alert("Network error. Please try again.");
+      toast.error("Network error. Please try again.");
     } finally {
       setDeleting(false);
     }

@@ -6,6 +6,7 @@ import {
   UserPlus, Loader2, Copy, Check, KeyRound, Building2, Search,
   ShieldCheck, Phone, Plus,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 type Owner = {
   id: number;
@@ -65,13 +66,21 @@ export function OwnerManager() {
 
   async function resetPassword(o: Owner) {
     if (!confirm(`Create new password for ${o.name}? The old one will stop working.`)) return;
-    const d = await fetch(`/api/partner/owners/${o.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "reset_password" }),
-    }).then((r) => r.json()).catch(() => null);
-    if (d?.success) setIssued({ name: d.data.name, phone: d.data.phone, password: d.data.password });
-    else alert(d?.message ?? "Reset failed");
+    try {
+      const d = await fetch(`/api/partner/owners/${o.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset_password" }),
+      }).then((r) => r.json()).catch(() => null);
+      if (d?.success) {
+        setIssued({ name: d.data.name, phone: d.data.phone, password: d.data.password });
+        toast.success("New password generated successfully");
+      } else {
+        toast.error(d?.message ?? "Reset failed");
+      }
+    } catch {
+      toast.error("Failed to reset password");
+    }
   }
 
   const filtered = owners.filter(

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Check, ShieldCheck, Loader2, ArrowLeft, CreditCard, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
+import toast from "react-hot-toast";
 import { PLANS, isValidPlanId, GST_RATE } from "@/lib/plans";
 import { availableCycles, cycleSavingPercent, effectiveMonthly, isValidCycle, type CycleId } from "@/lib/billing";
 
@@ -81,7 +82,9 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError({ title: "Payment shuru nahi ho paaya", body: data.message || "Order banane mein dikkat aayi. Thodi der baad dobara koshish kijiye.", charged: false });
+        const title = "Payment shuru nahi ho paaya";
+        toast.error(data.message || title);
+        setError({ title, body: data.message || "Order banane mein dikkat aayi. Thodi der baad dobara koshish kijiye.", charged: false });
         setPaymentStep("IDLE");
         setLoading(false);
         return;
@@ -121,6 +124,7 @@ export default function CheckoutPage() {
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (response: any) {
+        toast.error("Payment failed. Please try again.");
         setError({ title: "Payment fail ho gaya", body: (response?.error?.description || "Bank ne payment reject kar diya.") + " Agar aapke account se paisa kata hai to 5-7 working din mein wapas aa jayega.", charged: true });
         setPaymentStep("IDLE");
         setLoading(false);
@@ -128,6 +132,7 @@ export default function CheckoutPage() {
       rzp.open();
 
     } catch (error) {
+      toast.error("Payment window nahi khul paayi");
       setError({ title: "Payment window nahi khul paayi", body: "Internet check karke dobara koshish kijiye. Aapse abhi tak koi paisa nahi liya gaya.", charged: false });
       setPaymentStep("IDLE");
       setLoading(false);
@@ -148,17 +153,20 @@ export default function CheckoutPage() {
 
       if (res.ok) {
         setPaymentStep("SUCCESS");
+        toast.success("Subscription activated successfully!");
         setTimeout(() => {
           router.push("/dashboard/owner/subscription");
           router.refresh();
         }, 2000);
       } else {
         const data = await res.json();
+        toast.error(data.message || "Plan activation error");
         setError({ title: "Paisa kat gaya par plan chalu nahi hua", body: (data.message || "") + " Ghabraiye mat - payment record ho chuka hai. Subscription page kholiye, wahan payment history dikhegi. Plan phir bhi na chale to team ko call kar lijiye, paisa kahin nahi jaata.", charged: true });
         setPaymentStep("IDLE");
         setLoading(false);
       }
     } catch (error) {
+      toast.error("Subscription activation failed");
       setError({ title: "Paisa kat gaya par plan chalu nahi hua", body: "Payment ho chuka hai. Subscription page par jaakar payment history dekhiye. Plan na dikhe to team ko call kar lijiye - paisa kahin nahi jaata.", charged: true });
       setPaymentStep("IDLE");
       setLoading(false);

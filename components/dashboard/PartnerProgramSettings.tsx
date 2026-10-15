@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Save, CheckCircle2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export type ProgramSettingsShape = {
   holdDays: number;
@@ -40,9 +41,17 @@ export function PartnerProgramSettings({ initial }: { initial: ProgramSettingsSh
         body: JSON.stringify(f),
       });
       const data = await res.json();
-      if (!data.success) { setError(data.message ?? "Save nahi hua"); return; }
+      if (!data.success) {
+        const err = data.message ?? "Save nahi hua";
+        setError(err);
+        toast.error(err);
+        return;
+      }
       setSaved(true);
+      toast.success("Partner program settings saved successfully!");
       setTimeout(() => setSaved(false), 2500);
+    } catch {
+      toast.error("Failed to save settings");
     } finally {
       setSaving(false);
     }

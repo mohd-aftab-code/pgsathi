@@ -12,7 +12,7 @@ const MAX_ROWS = 500;
 export async function POST(req: NextRequest) {
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) {
+    if (!ctx || !ctx.hasAccess) {
       return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
     }
 

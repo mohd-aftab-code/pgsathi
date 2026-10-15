@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, IndianRupee, Wallet, X, Loader2, PauseCircle, PlayCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Set amount / hold / approve / pay / cancel for one partner earning.
@@ -39,9 +40,16 @@ export function AdminEarningActions({
         body: JSON.stringify({ action, ...extra }),
       });
       const d = await res.json();
-      if (!d.success) alert(d.message || "Action failed");
-      else { setPayOpen(false); router.refresh(); }
-    } catch { alert("Something went wrong"); } finally { setBusy(""); }
+      if (!d.success) {
+        toast.error(d.message || "Action failed");
+      } else {
+        toast.success(d.message || `Action ${action} completed successfully`);
+        setPayOpen(false);
+        router.refresh();
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally { setBusy(""); }
   }
 
   const spin = (a: string) => busy === a;

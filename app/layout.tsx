@@ -4,6 +4,7 @@ import "./globals.css";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { InstallPWA } from "@/components/common/InstallPWA";
 import { MobileAppNav } from "@/components/common/MobileAppNav";
+import { ToasterProvider } from "@/components/common/ToasterProvider";
 import { themeInitScript } from "@/components/partner/ThemeToggle";
 import { auth } from "@/lib/auth";
 
@@ -185,6 +186,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-neutral-50 antialiased">
+        <ToasterProvider />
         <InstallPWA />
         {children}
         <MobileAppNav session={session} />

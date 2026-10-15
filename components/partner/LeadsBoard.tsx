@@ -5,6 +5,7 @@ import {
   Plus, Phone, MessageCircle, Loader2, Search, Trash2, CalendarClock,
   AlertTriangle, X, ChevronRight,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 type Lead = {
   id: number;
@@ -74,8 +75,16 @@ export function LeadsBoard() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (!data.success) { setError(data.message ?? "Update nahi hua"); return; }
+      if (!data.success) {
+        const err = data.message ?? "Update nahi hua";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success("Lead update ho gayi");
       await load();
+    } catch {
+      toast.error("Failed to update lead");
     } finally {
       setBusy(null);
     }
@@ -86,7 +95,10 @@ export function LeadsBoard() {
     setBusy(id);
     try {
       await fetch(`/api/partner/leads/${id}`, { method: "DELETE" });
+      toast.success(`${name} ko leads se hata diya`);
       await load();
+    } catch {
+      toast.error("Failed to delete lead");
     } finally {
       setBusy(null);
     }
@@ -300,8 +312,16 @@ function AddLeadModal({ onClose, onDone }: { onClose: () => void; onDone: () => 
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!data.success) { setError(data.message ?? "Add nahi hua"); return; }
+      if (!data.success) {
+        const err = data.message ?? "Add nahi hua";
+        setError(err);
+        toast.error(err);
+        return;
+      }
+      toast.success("Lead safaltapoorvak add ho gayi!");
       onDone();
+    } catch {
+      toast.error("Lead add karne mein error aaya");
     } finally {
       setSaving(false);
     }

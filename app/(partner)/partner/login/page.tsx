@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Loader2, Eye, EyeOff, Handshake, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Partner login — a separate page and entry point from the admin portal, as
@@ -23,14 +24,26 @@ export default function PartnerLoginPage() {
     e.preventDefault();
     setError("");
 
-    if (phone.length !== 10) return setError("10-digit phone number daalein");
-    if (!password) return setError("Password daalein");
+    if (phone.length !== 10) {
+      const err = "10-digit phone number daalein";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (!password) {
+      const err = "Password daalein";
+      setError(err);
+      toast.error(err);
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await signIn("credentials", { phone, password, redirect: false });
       if (res?.error) {
-        setError("Phone number ya password galat hai");
+        const err = "Phone number ya password galat hai";
+        setError(err);
+        toast.error(err);
         setLoading(false);
         return;
       }
@@ -39,14 +52,19 @@ export default function PartnerLoginPage() {
       // portal — an owner/tenant must not land on partner URLs.
       const session = await fetch("/api/auth/session").then((r) => r.json()).catch(() => null);
       if (session?.user?.role !== "PARTNER") {
-        setError("This is not a partner account. For Owner/tenant login, please use the main login page.");
+        const err = "This is not a partner account. For Owner/tenant login, please use the main login page.";
+        setError(err);
+        toast.error(err);
         setLoading(false);
         return;
       }
 
+      toast.success("Login successful!");
       window.location.href = "/partner/dashboard";
     } catch {
-      setError("Something went wrong. Please try again.");
+      const err = "Something went wrong. Please try again.";
+      setError(err);
+      toast.error(err);
       setLoading(false);
     }
   }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckCircle, XCircle, Loader2, Edit, Trash2, Power, PowerOff, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function AdminListingActions({ listingId, currentStatus }: { listingId: number, currentStatus: string }) {
   const [loading, setLoading] = useState<string | null>(null);
@@ -29,13 +30,15 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       });
 
       if (res.ok) {
+        toast.success(`Listing status updated to ${newStatus}`);
         router.refresh();
       } else {
-        alert("Action failed. Please try again.");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.message || "Action failed. Please try again.");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred.");
+      toast.error("An error occurred while updating status.");
     } finally {
       setLoading(null);
     }
@@ -54,12 +57,15 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
         method: "DELETE"
       });
       if (res.ok) {
+        toast.success(`Listing ${isHard ? 'permanently ' : ''}deleted successfully`);
         router.refresh();
       } else {
-        alert(`Failed to ${isHard ? 'permanently ' : ''}delete.`);
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.message || `Failed to ${isHard ? 'permanently ' : ''}delete.`);
       }
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete listing.");
     } finally {
       setLoading(null);
     }
@@ -82,16 +88,16 @@ export default function AdminListingActions({ listingId, currentStatus }: { list
       
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        toast.success(data.message || "Owner assigned successfully");
         setShowAssignModal(false);
         setAssignForm({ name: "", email: "", phone: "" });
         router.refresh();
       } else {
-        alert(`Error: ${data.message}`);
+        toast.error(data.message || "Failed to assign owner");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while assigning owner.");
+      toast.error("An error occurred while assigning owner.");
     } finally {
       setLoading(null);
     }

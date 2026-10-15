@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, X, Ban, RotateCcw, Loader2, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 /** Approve / reject / suspend / reactivate buttons for one partner row. */
 export function AdminPartnerActions({ id, status }: { id: number; status: string }) {
@@ -28,10 +29,14 @@ export function AdminPartnerActions({ id, status }: { id: number; status: string
         body: isDelete ? undefined : JSON.stringify({ status: newStatus, reason }),
       });
       const d = await res.json();
-      if (!d.success) alert(d.message || "Action failed");
-      else router.refresh();
+      if (!d.success) {
+        toast.error(d.message || "Action failed");
+      } else {
+        toast.success(isDelete ? "Partner deleted successfully" : `Partner status updated to ${newStatus}`);
+        router.refresh();
+      }
     } catch {
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setBusy("");
     }

@@ -25,6 +25,7 @@ export default function BookVisitModal({ listingId, ownerName }: { listingId: nu
       });
 
       if (!res.ok) throw new Error("Failed to book");
+      toast.success("Visit scheduled successfully!");
       setSuccess(true);
     } catch (error) {
       toast.error("Something went wrong");

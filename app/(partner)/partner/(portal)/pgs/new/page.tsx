@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, CheckCircle2, Upload, User } from "lucide-react";
+import toast from "react-hot-toast";
 import { LocationStep, validateLocation } from "@/components/listings/LocationStep";
 
 /**
@@ -108,7 +109,11 @@ export default function PartnerNewPgPage() {
         if (d.success) uploaded.push({ url: d.url, publicId: d.publicId });
       }
       setForm((f) => ({ ...f, photos: [...f.photos, ...uploaded] }));
-    } catch { setError("Photo upload failed. Please try again."); } finally { setUploading(false); }
+      toast.success(`${uploaded.length} photo(s) uploaded successfully`);
+    } catch {
+      setError("Photo upload failed. Please try again.");
+      toast.error("Photo upload failed. Please try again.");
+    } finally { setUploading(false); }
   }
 
   function validateStep(s: StepType): string | null {
@@ -129,7 +134,12 @@ export default function PartnerNewPgPage() {
 
   function next() {
     const p = validateStep(step);
-    if (p) { setError(p); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (p) {
+      setError(p);
+      toast.error(p);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setError("");
     if (step < 5) setStep((s) => (s + 1) as StepType);
   }
@@ -139,7 +149,13 @@ export default function PartnerNewPgPage() {
     setError("");
     for (const s of [1, 2, 5] as StepType[]) {
       const p = validateStep(s);
-      if (p) { setError(`Step ${s}: ${p}`); setStep(s); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      if (p) {
+        setError(`Step ${s}: ${p}`);
+        toast.error(`Step ${s}: ${p}`);
+        setStep(s);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
     }
     setLoading(true);
     let minRent = Infinity, maxRent = 0;
@@ -170,9 +186,21 @@ export default function PartnerNewPgPage() {
         }),
       });
       const d = await res.json();
-      if (!d.success) { setError(d.message || "PG register nahi ho paya"); setLoading(false); return; }
+      if (!d.success) {
+        const err = d.message || "PG register nahi ho paya";
+        setError(err);
+        toast.error(err);
+        setLoading(false);
+        return;
+      }
+      toast.success("PG safaltapoorvak register ho gaya!");
       setDone({ createdOwner: d.data?.createdOwner, ownerLogin: d.data?.ownerLogin ?? null });
-    } catch { setError("Something went wrong. Please try again."); setLoading(false); }
+    } catch {
+      const err = "Something went wrong. Please try again.";
+      setError(err);
+      toast.error(err);
+      setLoading(false);
+    }
   }
 
   // ── shared styling (matches owner form, dark-aware) ──

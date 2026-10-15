@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Eye, EyeOff, Handshake, CheckCircle2, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 
 const TYPES = [
   { value: "FREELANCER", label: "Freelancer" },
@@ -26,9 +27,24 @@ export default function PartnerSignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (form.name.trim().length < 2) return setError("Poora naam daalein");
-    if (form.phone.length !== 10) return setError("10-digit phone number daalein");
-    if (form.password.length < 8) return setError("Password kam se kam 8 characters ka ho");
+    if (form.name.trim().length < 2) {
+      const err = "Poora naam daalein";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (form.phone.length !== 10) {
+      const err = "10-digit phone number daalein";
+      setError(err);
+      toast.error(err);
+      return;
+    }
+    if (form.password.length < 8) {
+      const err = "Password kam se kam 8 characters ka ho";
+      setError(err);
+      toast.error(err);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -39,13 +55,18 @@ export default function PartnerSignupPage() {
       });
       const d = await res.json();
       if (!d.success) {
-        setError(d.message || "Registration nahi ho paya");
+        const err = d.message || "Registration nahi ho paya";
+        setError(err);
+        toast.error(err);
         setLoading(false);
         return;
       }
+      toast.success("Partner application submitted successfully!");
       setDone({ partnerCode: d.partnerCode });
     } catch {
-      setError("Something went wrong. Please try again.");
+      const err = "Something went wrong. Please try again.";
+      setError(err);
+      toast.error(err);
       setLoading(false);
     }
   }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Handshake, CheckCircle2, ArrowLeft, ShieldCheck } from "lucide-react";
+import toast from "react-hot-toast";
 
 /**
  * Partner password reset — partner-branded UI on top of the SAME OTP endpoints
@@ -22,7 +23,10 @@ export default function PartnerForgotPasswordPage() {
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setInfo("");
-    if (phone.length !== 10) return setError("10-digit phone number daalein");
+    if (phone.length !== 10) {
+      toast.error("10-digit phone number daalein");
+      return setError("10-digit phone number daalein");
+    }
 
     setLoading(true);
     try {
@@ -33,14 +37,18 @@ export default function PartnerForgotPasswordPage() {
       });
       const d = await res.json();
       if (!d.success) {
-        setError(d.message || "OTP nahi bhej paye");
+        const msg = d.message || "OTP nahi bhej paye";
+        setError(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
       setInfo("OTP aapke phone par bhej diya gaya hai.");
+      toast.success("OTP aapke phone par bhej diya gaya hai!");
       setStep("OTP");
     } catch {
       setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -49,8 +57,14 @@ export default function PartnerForgotPasswordPage() {
   async function resetPassword(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (otp.length < 4) return setError("OTP daalein");
-    if (newPassword.length < 8) return setError("Naya password kam se kam 8 characters ka ho");
+    if (otp.length < 4) {
+      toast.error("OTP daalein");
+      return setError("OTP daalein");
+    }
+    if (newPassword.length < 8) {
+      toast.error("Naya password kam se kam 8 characters ka ho");
+      return setError("Naya password kam se kam 8 characters ka ho");
+    }
 
     setLoading(true);
     try {
@@ -61,13 +75,17 @@ export default function PartnerForgotPasswordPage() {
       });
       const d = await res.json();
       if (!d.success) {
-        setError(d.message || "OTP galat hai ya expire ho gaya");
+        const msg = d.message || "OTP galat hai ya expire ho gaya";
+        setError(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
+      toast.success("Password safaltapoorvak badal gaya!");
       setStep("DONE");
     } catch {
       setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import toast from "react-hot-toast";
+import { AlertCircle, CheckCircle2, Plus } from "lucide-react";
 
 interface Listing { id: number; title: string }
 interface Prefill { name?: string; phone?: string; email?: string }
@@ -13,6 +15,9 @@ interface Prefill { name?: string; phone?: string; email?: string }
 export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[]; prefill?: Prefill }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
   type RoomOpt = {
     id: number; name: string; listingId: number; floor: string | null;
     price: number; sharing: number; freeBeds: number; totalBeds: number;
@@ -31,10 +36,15 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
     setSelectedRoom("");
     setBeds([]);
     setRentFromRoom(false);
+    setErrorMsg(null);
     if (!listingId) { setRooms([]); return; }
-    const res = await fetch(`/api/rooms?listingId=${listingId}`);
-    const d   = await res.json();
-    setRooms(d.data ?? []);
+    try {
+      const res = await fetch(`/api/rooms?listingId=${listingId}`);
+      const d   = await res.json();
+      setRooms(d.data ?? []);
+    } catch {
+      setRooms([]);
+    }
   }
 
   async function loadBeds(roomId: string) {
@@ -50,9 +60,13 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
       setRentFromRoom(true);
     }
 
-    const res = await fetch(`/api/beds?roomId=${roomId}`);
-    const d   = await res.json();
-    setBeds((d.data ?? []).filter((b: any) => !b.isOccupied));
+    try {
+      const res = await fetch(`/api/beds?roomId=${roomId}`);
+      const d   = await res.json();
+      setBeds((d.data ?? []).filter((b: any) => !b.isOccupied));
+    } catch {
+      setBeds([]);
+    }
   }
 
   /** "Double Sharing" from a bed count — matches the Rooms screen's wording. */
@@ -63,9 +77,34 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
     const fd   = new FormData(e.currentTarget);
     const body = Object.fromEntries(fd.entries());
+
+    if (!body.name || !String(body.name).trim()) {
+      const err = "Kripya Tenant ka Poora Naam (Full Name) bharein.";
+      setErrorMsg(err);
+      toast.error(err);
+      return;
+    }
+
+    if (!body.phone || !String(body.phone).trim()) {
+      const err = "Kripya Phone Number bharein.";
+      setErrorMsg(err);
+      toast.error(err);
+      return;
+    }
+
+    if (!body.listingId) {
+      const err = "Kripya PG Property select karein.";
+      setErrorMsg(err);
+      toast.error(err);
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch("/api/manage/tenants", {
@@ -74,11 +113,17 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
         body: JSON.stringify(body),
       });
       const d = await res.json();
-      if (!d.success) throw new Error(d.message);
-      toast.success("Tenant add ho gaya!");
-      router.push(`/dashboard/manager/tenants/${d.data.id}`);
+      if (!d.success) throw new Error(d.message || "Tenant add nahi ho saka");
+      setSuccessMsg("Tenant safaltapoorvak add ho gaya! Tenant profile open ho rahi hai...");
+      toast.success("Tenant safaltapoorvak add ho gaya!");
+      setTimeout(() => {
+        router.push(`/dashboard/manager/tenants/${d.data.id}`);
+        router.refresh();
+      }, 500);
     } catch (err: any) {
-      toast.error(err.message ?? "Kuch error aa gaya");
+      const msg = err.message ?? "Kuch error aa gaya";
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -302,23 +347,29 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
               </select>
             </div>
             {selectedListing && rooms.length === 0 && (
-              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50/80 p-3 rounded-2xl border border-red-200/60 shadow-sm">
-                Is PG mein koi Room add nahi kiya gaya hai. Pehle <strong className="font-black">Rooms & Beds</strong> section mein jaakar naya room add karein.
+              <div className="text-[11px] font-medium text-amber-800 bg-amber-50 p-3.5 rounded-2xl border border-amber-200/80 shadow-sm space-y-2">
+                <p>
+                  ℹ️ Is PG mein abhi koi Room add nahi kiya gaya hai. Aap abhi bina room assign kiye tenant add kar sakte hain, ya pehle room create kar sakte hain.
+                </p>
+                <Link
+                  href="/dashboard/manager/rooms"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 hover:text-violet-900 underline"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Rooms & Beds section mein naya room banayein ↗
+                </Link>
               </div>
             )}
             
             {rooms.length > 0 && (
               <div>
-                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Room *</label>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Room (Optional)</label>
                 <select
-                  name="roomId" required value={selectedRoom}
+                  name="roomId" value={selectedRoom}
                   onChange={(e) => loadBeds(e.target.value)}
                   className="input-base"
                 >
-                  <option value="">Select Room...</option>
-                  {/* Sharing type and price come from how the room was set up in
-                      Rooms, so the person adding a tenant picks by what the room
-                      actually is rather than by number alone. */}
+                  <option value="">Baad mein assign karein (No Room)</option>
                   {rooms.map((r) => (
                     <option key={r.id} value={r.id} disabled={r.freeBeds === 0}>
                       Room {r.name}
@@ -333,15 +384,15 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
             
             {selectedRoom && beds.length === 0 && (
               <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50/80 p-3 rounded-2xl border border-amber-200/60 shadow-sm">
-                Is Room me koi Bed khali nahi hai. Kripya dusra room chunein.
+                Is Room mein koi Bed khali nahi hai. Tenant bina bed assignment ke add hoga (ya doosra room chunein).
               </div>
             )}
 
             {beds.length > 0 && (
               <div>
-                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Available Bed *</label>
-                <select name="bedId" required className="input-base">
-                  <option value="">Select Bed...</option>
+                <label className="block text-[9px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Available Bed (Optional)</label>
+                <select name="bedId" className="input-base">
+                  <option value="">Baad mein assign karein (No Bed)</option>
                   {beds.map((b) => <option key={b.id} value={b.id}>Bed {b.name}</option>)}
                 </select>
               </div>
@@ -355,13 +406,27 @@ export function AddTenantForm({ listings, prefill = {} }: { listings: Listing[];
           </p>
         </div>
 
+        {errorMsg && (
+          <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-start gap-2 shadow-sm">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-start gap-2 shadow-sm">
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
         <button
           type="submit"
-          disabled={loading || !selectedListing || (!!selectedListing && rooms.length === 0) || (!!selectedRoom && beds.length === 0)}
+          disabled={loading || !selectedListing}
           id="submit-add-tenant"
-          className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed py-3 font-bold"
         >
-          {loading ? "Saving…" : "Add Tenant"}
+          {loading ? "Saving Tenant…" : "Add Tenant"}
         </button>
       </div>
     </form>

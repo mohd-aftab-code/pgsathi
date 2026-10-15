@@ -10,7 +10,7 @@ import { getManageContext, logPgAudit } from "@/lib/manage-auth";
 export async function GET(req: NextRequest) {
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) {
+    if (!ctx || !ctx.hasAccess) {
       return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
     }
 
@@ -60,15 +60,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const ctx = await getManageContext();
-    if (!ctx || !ctx.hasPaidPlan) {
-      return NextResponse.json({ success: false, message: "Upgrade required" }, { status: 403 });
+    if (!ctx || !ctx.hasAccess) {
+      return NextResponse.json({ success: false, message: "Active subscription or trial required" }, { status: 403 });
     }
 
     const data = await req.json();
 
+    const name = String(data.name ?? "").trim();
+    const phone = String(data.phone ?? "").trim();
+    const rawListingId = parseInt(String(data.listingId ?? ""), 10);
+
     // Validate required fields
-    if (!data.name || !data.phone || !data.listingId) {
-      return NextResponse.json({ success: false, message: "name, phone, listingId are required" }, { status: 400 });
+    if (!name || !phone || isNaN(rawListingId)) {
+      return NextResponse.json({ success: false, message: "Full Name, Phone number, and PG Property are required" }, { status: 400 });
     }
 
     // Subscription & Tenant Limit Check
@@ -82,76 +86,131 @@ export async function POST(req: NextRequest) {
       orderBy: { endDate: "desc" }
     });
 
-    if (!activeSub) {
-      return NextResponse.json({ success: false, message: "Active subscription required to add tenants" }, { status: 403 });
-    }
-
     const currentTenantsCount = await db.pgTenant.count({
       where: { ownerId: ctx.userId, deletedAt: null }
     });
 
-    if (activeSub.plan.maxTenants !== -1 && currentTenantsCount >= activeSub.plan.maxTenants) {
-      return NextResponse.json({ success: false, message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxTenants} tenants.` }, { status: 403 });
+    if (activeSub) {
+      if (activeSub.plan.maxTenants !== -1 && currentTenantsCount >= activeSub.plan.maxTenants) {
+        return NextResponse.json({
+          success: false,
+          message: `Limit reached: Your plan allows a maximum of ${activeSub.plan.maxTenants} tenants. Upgrade to add more.`
+        }, { status: 403 });
+      }
+    } else if (ctx.hasAccess) {
+      // Free trial limit (up to 50 tenants)
+      const trialMaxTenants = 50;
+      if (currentTenantsCount >= trialMaxTenants) {
+        return NextResponse.json({
+          success: false,
+          message: `Trial limit reached: Your free trial allows a maximum of ${trialMaxTenants} tenants. Upgrade to add more.`
+        }, { status: 403 });
+      }
+    } else {
+      return NextResponse.json({ success: false, message: "Active subscription or trial required to add tenants" }, { status: 403 });
     }
 
     // Verify listing belongs to this owner
+    if (ctx.allowedListingIds && !ctx.allowedListingIds.includes(rawListingId)) {
+      return NextResponse.json({ success: false, message: "You are not authorized for this property" }, { status: 403 });
+    }
+
     const listing = await db.listing.findFirst({
-      where: { id: parseInt(data.listingId), ownerId: ctx.userId },
+      where: { id: rawListingId, ownerId: ctx.userId },
     });
     if (!listing) {
-      return NextResponse.json({ success: false, message: "Listing not found" }, { status: 404 });
+      return NextResponse.json({ success: false, message: "Property not found or does not belong to you" }, { status: 404 });
+    }
+
+    // Safe parser helpers
+    const parseSafeInt = (val: any, fallback: number = 0): number => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const parsed = parseInt(String(val), 10);
+      return isNaN(parsed) ? fallback : parsed;
+    };
+
+    const cleanStr = (val: any): string | null => {
+      if (val === undefined || val === null) return null;
+      const s = String(val).trim();
+      return s.length > 0 ? s : null;
+    };
+
+    const roomId = data.roomId && !isNaN(parseInt(String(data.roomId), 10)) ? parseInt(String(data.roomId), 10) : null;
+    const bedId = data.bedId && !isNaN(parseInt(String(data.bedId), 10)) ? parseInt(String(data.bedId), 10) : null;
+
+    // Optional verification of room and bed
+    if (roomId) {
+      const room = await db.room.findFirst({
+        where: { id: roomId, listingId: rawListingId }
+      });
+      if (!room) {
+        return NextResponse.json({ success: false, message: "Selected room does not belong to this property" }, { status: 400 });
+      }
+    }
+
+    if (bedId) {
+      const bed = await db.bed.findFirst({
+        where: { id: bedId, room: { listingId: rawListingId } }
+      });
+      if (!bed) {
+        return NextResponse.json({ success: false, message: "Selected bed does not belong to this property" }, { status: 400 });
+      }
     }
 
     // Try to auto-link with an existing User account
     const existingUser = await db.user.findUnique({
-      where: { phone: data.phone }
+      where: { phone }
     });
+
+    const monthlyRent = parseSafeInt(data.monthlyRent, 0);
+    const securityDeposit = parseSafeInt(data.securityDeposit, 0);
+    const rentDueDay = Math.min(31, Math.max(1, parseSafeInt(data.rentDueDay, 5)));
 
     const tenant = await db.pgTenant.create({
       data: {
-        userId:           existingUser ? existingUser.id : null,
-        ownerId:          ctx.userId,
-        listingId:        parseInt(data.listingId),
-        roomId:           data.roomId ? parseInt(data.roomId) : null,
-        bedId:            data.bedId  ? parseInt(data.bedId)  : null,
-        name:             data.name,
-        phone:            data.phone,
-        email:            data.email   ?? null,
-        gender:           data.gender  ?? "MALE",
-        idType:           data.idType  ?? null,
-        idNumber:         data.idNumber ?? null,
-        guardianName:             data.guardianName  ?? null,
-        guardianPhone:            data.guardianPhone ?? null,
-        guardianRelation:         data.guardianRelation ?? null,
-        permanentAddress:         data.permanentAddress ?? null,
-        occupation:               data.occupation ?? "STUDENT",
-        workplace:                data.workplace ?? null,
-        workplaceId:              data.workplaceId ?? null,
-        workplaceAddress:         data.workplaceAddress ?? null,
-        policeVerificationStatus: data.policeVerificationStatus ?? "NOT_SUBMITTED",
-        policeVerificationRef:    data.policeVerificationRef ?? null,
-        bloodGroup:               data.bloodGroup ?? null,
-        vehicleType:              data.vehicleType ?? "NONE",
-        vehicleNumber:            data.vehicleNumber ?? null,
-        monthlyRent:              parseInt(data.monthlyRent ?? 0),
-        securityDeposit:  parseInt(data.securityDeposit ?? 0),
-        rentDueDay:       parseInt(data.rentDueDay ?? 5),
-        checkInDate:      data.checkInDate ? new Date(data.checkInDate) : new Date(),
-        notes:            data.notes ?? null,
-        status:           "ACTIVE",
+        userId:                   existingUser ? existingUser.id : null,
+        ownerId:                  ctx.userId,
+        listingId:                rawListingId,
+        roomId,
+        bedId,
+        name,
+        phone,
+        email:                    cleanStr(data.email),
+        gender:                   cleanStr(data.gender) ?? "MALE",
+        idType:                   cleanStr(data.idType),
+        idNumber:                 cleanStr(data.idNumber),
+        guardianName:             cleanStr(data.guardianName),
+        guardianPhone:            cleanStr(data.guardianPhone),
+        guardianRelation:         cleanStr(data.guardianRelation),
+        permanentAddress:         cleanStr(data.permanentAddress),
+        occupation:               cleanStr(data.occupation) ?? "STUDENT",
+        workplace:                cleanStr(data.workplace),
+        workplaceId:              cleanStr(data.workplaceId),
+        workplaceAddress:         cleanStr(data.workplaceAddress),
+        policeVerificationStatus: cleanStr(data.policeVerificationStatus) ?? "NOT_SUBMITTED",
+        policeVerificationRef:    cleanStr(data.policeVerificationRef),
+        bloodGroup:               cleanStr(data.bloodGroup),
+        vehicleType:              cleanStr(data.vehicleType) ?? "NONE",
+        vehicleNumber:            cleanStr(data.vehicleNumber),
+        monthlyRent,
+        securityDeposit,
+        rentDueDay,
+        checkInDate:              data.checkInDate ? new Date(data.checkInDate) : new Date(),
+        notes:                    cleanStr(data.notes),
+        status:                   "ACTIVE",
       },
     });
 
     // If a bed was allocated, mark it as occupied
-    if (data.bedId) {
-      await db.bed.update({ where: { id: parseInt(data.bedId) }, data: { isOccupied: true } });
+    if (bedId) {
+      await db.bed.update({ where: { id: bedId }, data: { isOccupied: true } });
     }
 
     await logPgAudit(ctx.userId, ctx.name, `Added tenant: ${tenant.name}`, "PgTenant");
     return NextResponse.json({ success: true, data: tenant }, { status: 201 });
   } catch (err: any) {
     console.error("[manage/tenants POST]", err);
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message || "Failed to create tenant" }, { status: 500 });
   }
 }
 
