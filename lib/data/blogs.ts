@@ -99,40 +99,40 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2 class="text-2xl font-black text-neutral-900 mt-10 mb-4 tracking-tight">3. Traditional Brokers vs. Direct Online Listing on PGSathi</h2>
       <p>Let's compare the economics and operational benefits of listing your PG on a modern digital platform versus relying on traditional property brokers:</p>
 
-      <div class="my-6 overflow-x-auto">
-        <table class="w-full text-sm text-left border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
+      <div class="my-6 overflow-x-auto rounded-2xl border border-neutral-200 shadow-sm">
+        <table class="w-full text-sm text-left min-w-[520px]">
           <thead class="bg-neutral-900 text-white text-xs uppercase tracking-wider">
             <tr>
-              <th class="p-3.5">Feature / Parameter</th>
-              <th class="p-3.5">Traditional Local Broker</th>
-              <th class="p-3.5 bg-primary-600 text-white">Listing on PGSathi</th>
+              <th class="p-3 sm:p-3.5">Feature / Parameter</th>
+              <th class="p-3 sm:p-3.5">Traditional Local Broker</th>
+              <th class="p-3 sm:p-3.5 bg-neutral-800 text-primary-400 font-extrabold">Listing on PGSathi</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-200 bg-white">
             <tr>
-              <td class="p-3.5 font-bold text-neutral-800">Brokerage Fees</td>
-              <td class="p-3.5 text-red-600 font-semibold">15 to 30 days rent per tenant</td>
-              <td class="p-3.5 text-emerald-600 font-black">₹0 (Zero Brokerage Forever)</td>
+              <td class="p-3 sm:p-3.5 font-bold text-neutral-800">Brokerage Fees</td>
+              <td class="p-3 sm:p-3.5 text-red-600 font-semibold">15 to 30 days rent per tenant</td>
+              <td class="p-3 sm:p-3.5 text-emerald-600 font-black">₹0 (Zero Brokerage Forever)</td>
             </tr>
             <tr>
-              <td class="p-3.5 font-bold text-neutral-800">Lead Volume & Reach</td>
-              <td class="p-3.5 text-neutral-600">Limited to 1-2 local streets</td>
-              <td class="p-3.5 text-neutral-800 font-bold">Pan-India students & professionals moving to your city</td>
+              <td class="p-3 sm:p-3.5 font-bold text-neutral-800">Lead Volume & Reach</td>
+              <td class="p-3 sm:p-3.5 text-neutral-600">Limited to 1-2 local streets</td>
+              <td class="p-3 sm:p-3.5 text-neutral-800 font-bold">Pan-India students & professionals moving to your city</td>
             </tr>
             <tr>
-              <td class="p-3.5 font-bold text-neutral-800">Tenant Quality</td>
-              <td class="p-3.5 text-neutral-600">Unfiltered, random walk-ins</td>
-              <td class="p-3.5 text-neutral-800 font-bold">Verified students and corporate working professionals</td>
+              <td class="p-3 sm:p-3.5 font-bold text-neutral-800">Tenant Quality</td>
+              <td class="p-3 sm:p-3.5 text-neutral-600">Unfiltered, random walk-ins</td>
+              <td class="p-3 sm:p-3.5 text-neutral-800 font-bold">Verified students and corporate working professionals</td>
             </tr>
             <tr>
-              <td class="p-3.5 font-bold text-neutral-800">Time to Fill Empty Beds</td>
-              <td class="p-3.5 text-neutral-600">2 to 6 weeks of waiting</td>
-              <td class="p-3.5 text-emerald-600 font-bold">24 to 72 hours</td>
+              <td class="p-3 sm:p-3.5 font-bold text-neutral-800">Time to Fill Empty Beds</td>
+              <td class="p-3 sm:p-3.5 text-neutral-600">2 to 6 weeks of waiting</td>
+              <td class="p-3 sm:p-3.5 text-emerald-600 font-bold">24 to 72 hours</td>
             </tr>
             <tr>
-              <td class="p-3.5 font-bold text-neutral-800">Management Tools</td>
-              <td class="p-3.5 text-neutral-600">None (Paper diaries & cash books)</td>
-              <td class="p-3.5 text-primary-700 font-bold">Free Smart Dashboard (Beds, Rent, KYC & Complaints)</td>
+              <td class="p-3 sm:p-3.5 font-bold text-neutral-800">Management Tools</td>
+              <td class="p-3 sm:p-3.5 text-neutral-600">None (Paper diaries & cash books)</td>
+              <td class="p-3 sm:p-3.5 text-primary-700 font-bold">Free Smart Dashboard (Beds, Rent, KYC & Complaints)</td>
             </tr>
           </tbody>
         </table>
@@ -156,16 +156,16 @@ export const BLOG_POSTS: BlogPost[] = [
         <li><strong>Real-Time Complaint Tracking:</strong> When plumbing leaks or Wi-Fi drops occur, tenants log tickets directly from their smartphone. You can assign staff members and resolve issues before they lead to room vacancies.</li>
       </ul>
 
-      <div class="my-10 p-8 bg-neutral-900 text-white rounded-3xl text-center relative overflow-hidden">
-        <h3 class="text-2xl md:text-3xl font-black mb-3">Ready to Fill Your Vacant Beds Today?</h3>
-        <p class="text-neutral-300 max-w-xl mx-auto mb-6 text-sm md:text-base">
+      <div class="my-8 sm:my-10 p-5 sm:p-8 bg-neutral-900 text-white rounded-2xl sm:rounded-3xl text-center relative overflow-hidden">
+        <h3 class="text-xl sm:text-2xl md:text-3xl font-black mb-3">Ready to Fill Your Vacant Beds Today?</h3>
+        <p class="text-neutral-300 max-w-xl mx-auto mb-6 text-xs sm:text-sm md:text-base leading-relaxed">
           Join thousands of successful PG and hostel owners across India who save lakhs in brokerage and maintain 100% occupancy with PGSathi. List your property in less than 5 minutes—completely free!
         </p>
-        <div class="flex flex-wrap items-center justify-center gap-4">
-          <a href="/dashboard/owner/listings/new" class="px-7 py-3.5 bg-primary-500 hover:bg-primary-600 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-primary-500/30">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <a href="/dashboard/owner/listings/new" class="w-full sm:w-auto px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-primary-500/30 text-xs sm:text-sm text-center">
             List Your PG for Free Now →
           </a>
-          <a href="/for-owners" class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/20">
+          <a href="/for-owners" class="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/20 text-xs sm:text-sm text-center">
             Learn More About Owner Benefits
           </a>
         </div>
