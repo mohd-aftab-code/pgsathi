@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const [enquiries, total, unreadCount, pendingCount, resolvedCount] = await Promise.all([
+    const [enquiries, filteredTotal, totalCount, unreadCount, pendingCount, resolvedCount] = await Promise.all([
       db.contactEnquiry.findMany({
         where,
         orderBy: { createdAt: "desc" },
@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       db.contactEnquiry.count({ where }),
+      db.contactEnquiry.count(),
       db.contactEnquiry.count({ where: { isRead: false } }),
       db.contactEnquiry.count({ where: { status: "PENDING" } }),
       db.contactEnquiry.count({ where: { status: "RESOLVED" } }),
@@ -57,11 +58,11 @@ export async function GET(req: NextRequest) {
       pagination: {
         page,
         limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+        total: filteredTotal,
+        totalPages: Math.ceil(filteredTotal / limit),
       },
       counts: {
-        total,
+        total: totalCount,
         unread: unreadCount,
         pending: pendingCount,
         resolved: resolvedCount,

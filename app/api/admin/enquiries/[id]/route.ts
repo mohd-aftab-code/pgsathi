@@ -37,6 +37,9 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, enquiry: updated });
   } catch (error: any) {
+    if (error?.code === "P2025") {
+      return NextResponse.json({ error: "Enquiry not found" }, { status: 404 });
+    }
     console.error("[Admin Enquiry PATCH] Error:", error);
     return NextResponse.json({ error: "Failed to update enquiry" }, { status: 500 });
   }
@@ -64,6 +67,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: "Enquiry deleted successfully" });
   } catch (error: any) {
+    if (error?.code === "P2025") {
+      return NextResponse.json({ error: "Enquiry not found" }, { status: 404 });
+    }
     console.error("[Admin Enquiry DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to delete enquiry" }, { status: 500 });
   }

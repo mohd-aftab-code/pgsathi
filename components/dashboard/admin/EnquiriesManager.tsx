@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Mail,
   Phone,
@@ -55,6 +55,17 @@ export function EnquiriesManager({
   const [isLoading, setIsLoading] = useState(false);
   const [adminNoteText, setAdminNoteText] = useState("");
   const [isUpdatingNote, setIsUpdatingNote] = useState(false);
+  const isFirstRender = useRef(true);
+
+  const getWhatsAppUrl = (phone: string | null | undefined, name: string) => {
+    if (!phone) return null;
+    const digits = phone.replace(/\D/g, "");
+    if (!digits) return null;
+    const normalized = digits.length === 10 ? `91${digits}` : digits;
+    return `https://wa.me/${normalized}?text=Hi%20${encodeURIComponent(
+      name
+    )},%20thank%20you%20for%20contacting%20PGSathi.`;
+  };
 
   const fetchEnquiries = async () => {
     setIsLoading(true);
@@ -80,6 +91,10 @@ export function EnquiriesManager({
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       fetchEnquiries();
     }, 250);
@@ -126,6 +141,16 @@ export function EnquiriesManager({
         if (selectedEnquiry?.id === enquiryId) {
           setSelectedEnquiry((prev) => (prev ? { ...prev, status: newStatus } : null));
         }
+        setCounts((c) => {
+          const oldItem = enquiries.find((e) => e.id === enquiryId);
+          if (!oldItem || oldItem.status === newStatus) return c;
+          const next = { ...c };
+          if (oldItem.status === "PENDING") next.pending = Math.max(0, next.pending - 1);
+          if (oldItem.status === "RESOLVED") next.resolved = Math.max(0, next.resolved - 1);
+          if (newStatus === "PENDING") next.pending += 1;
+          if (newStatus === "RESOLVED") next.resolved += 1;
+          return next;
+        });
         toast.success(`Status updated to ${newStatus}`);
       }
     } catch {
@@ -140,6 +165,16 @@ export function EnquiriesManager({
         method: "DELETE",
       });
       if (res.ok) {
+        setCounts((c) => {
+          const item = enquiries.find((e) => e.id === enquiryId);
+          if (!item) return c;
+          return {
+            total: Math.max(0, c.total - 1),
+            unread: item.isRead ? c.unread : Math.max(0, c.unread - 1),
+            pending: item.status === "PENDING" ? Math.max(0, c.pending - 1) : c.pending,
+            resolved: item.status === "RESOLVED" ? Math.max(0, c.resolved - 1) : c.resolved,
+          };
+        });
         setEnquiries((prev) => prev.filter((item) => item.id !== enquiryId));
         if (selectedEnquiry?.id === enquiryId) setSelectedEnquiry(null);
         toast.success("Enquiry deleted");
@@ -322,12 +357,7 @@ export function EnquiriesManager({
         ) : (
           <div className="divide-y divide-neutral-100">
             {enquiries.map((item) => {
-              const cleanPhone = item.phone ? item.phone.replace(/\D/g, "") : null;
-              const waNumber = cleanPhone
-                ? cleanPhone.length === 10
-                  ? `91${cleanPhone}`
-                  : cleanPhone
-                : null;
+              const waUrl = getWhatsAppUrl(item.phone, item.name);
 
               return (
                 <div
@@ -387,11 +417,9 @@ export function EnquiriesManager({
                   {/* Right Actions */}
                   <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
                     {/* WhatsApp */}
-                    {waNumber && (
+                    {waUrl && (
                       <a
-                        href={`https://wa.me/${waNumber}?text=Hi%20${encodeURIComponent(
-                          item.name
-                        )},%20thank%20you%20for%20contacting%20PGSathi.`}
+                        href={waUrl}
                         target="_blank"
                         rel="noreferrer"
                         title="Chat on WhatsApp"
@@ -595,14 +623,9 @@ export function EnquiriesManager({
                 >
                   <Mail size={13} /> Reply by Email
                 </a>
-                {selectedEnquiry.phone && (
+                {selectedEnquiry.phone && getWhatsAppUrl(selectedEnquiry.phone, selectedEnquiry.name) && (
                   <a
-                    href={`https://wa.me/91${selectedEnquiry.phone.replace(
-                      /\D/g,
-                      ""
-                    )}?text=Hi%20${encodeURIComponent(
-                      selectedEnquiry.name
-                    )},%20I'm%20from%20PGSathi%20Support.`}
+                    href={getWhatsAppUrl(selectedEnquiry.phone, selectedEnquiry.name)!}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm"

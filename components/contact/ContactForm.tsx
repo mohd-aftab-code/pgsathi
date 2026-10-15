@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, CheckCircle2, AlertCircle, Loader2, Sparkles, MessageSquare } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Loader2, Sparkles, MessageSquare, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 
 const SUBJECT_OPTIONS = [
@@ -230,18 +230,21 @@ export function ContactForm() {
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-neutral-700">Subject</label>
-          <select
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium appearance-none text-neutral-900 cursor-pointer"
-          >
-            {SUBJECT_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              className="w-full px-4 pr-10 py-3.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium appearance-none text-neutral-900 cursor-pointer"
+            >
+              {SUBJECT_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+          </div>
         </div>
 
         <div className="space-y-2">

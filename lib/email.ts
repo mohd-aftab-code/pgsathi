@@ -77,6 +77,11 @@ export async function sendEmailMessage({
   }
 
   // Fallback to Nodemailer SMTP
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn(`[Email] Skipping email dispatch to ${to}: No RESEND_API_KEY or SMTP credentials configured.`);
+    return { success: false, skipped: true, error: "No email provider configured" };
+  }
+
   try {
     const info = await transporter.sendMail({
       from: fromAddress,

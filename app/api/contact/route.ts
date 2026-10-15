@@ -29,11 +29,11 @@ export async function POST(req: NextRequest) {
 
     const { firstName, lastName, name, email, phone, subject, message } = body;
 
-    // Resolve name
-    const resolvedName = (name || `${firstName || ""} ${lastName || ""}`).trim();
-    const cleanEmail = (email || "").trim().toLowerCase();
-    const cleanPhone = (phone || "").trim();
-    const cleanSubject = (subject || "General Inquiry").trim();
+    // Resolve name & sanitize inputs against schema VarChar limits
+    const resolvedName = (name || `${firstName || ""} ${lastName || ""}`).trim().slice(0, 120);
+    const cleanEmail = (email || "").trim().toLowerCase().slice(0, 255);
+    const cleanPhone = (phone || "").trim().slice(0, 20);
+    const cleanSubject = (subject || "General Inquiry").trim().slice(0, 200);
     const cleanMessage = (message || "").trim();
 
     // Validation
