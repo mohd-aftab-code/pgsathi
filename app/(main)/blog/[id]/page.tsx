@@ -30,6 +30,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     canonicalPath: `/blog/${post.id}`,
     publishedTime: post.date,
     authors: [post.author],
+    keywords: post.keywords,
   });
 }
 
@@ -41,18 +42,35 @@ export default async function BlogPostPage(props: Props) {
     notFound();
   }
 
+  const fullImageUrl = post.image.startsWith("http")
+    ? post.image
+    : `https://pgsathi.in${post.image}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": post.title,
-    "image": [post.image],
+    "description": post.excerpt,
+    "image": [fullImageUrl],
     "datePublished": post.date,
     "dateModified": post.date,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://pgsathi.in/blog/${post.id}`
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PGSathi",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://pgsathi.in/logo-vertical.png"
+      }
+    },
     "author": [{
-        "@type": "Person",
-        "name": post.author,
-        "url": "https://pgsathi.in/about"
-      }]
+      "@type": "Person",
+      "name": post.author,
+      "url": "https://pgsathi.in/about"
+    }]
   };
 
   return (
