@@ -258,9 +258,9 @@ export default async function SearchPage(props: {
           />
         </div>
 
-        {/* Search Header */}
-        <div className="bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 pointer-events-none"></div>
+        {/* Search Header - overflow-visible ensures dropdowns float out cleanly */}
+        <div className="bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 text-white shadow-xl relative z-30">
+          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 pointer-events-none rounded-2xl sm:rounded-3xl overflow-hidden"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-400 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">

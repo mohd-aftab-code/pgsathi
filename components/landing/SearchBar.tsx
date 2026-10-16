@@ -5,7 +5,19 @@ import { useRouter } from "next/navigation";
 import { Search, MapPin, Building, ChevronDown, MapPinIcon } from "lucide-react";
 import { CITIES } from "@/constants/cities";
 
-export default function SearchBar({ initialCity = "", initialGender = "", initialQuery = "", cities = CITIES as any[] }) {
+interface SearchBarProps {
+  initialCity?: string;
+  initialGender?: string;
+  initialQuery?: string;
+  cities?: Array<{ id?: number; name: string; slug: string; priority?: number }>;
+}
+
+export default function SearchBar({
+  initialCity = "",
+  initialGender = "",
+  initialQuery = "",
+  cities = CITIES as any[]
+}: SearchBarProps) {
   const router = useRouter();
   
   // Custom Searchable Dropdown state for City
@@ -106,7 +118,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
     >
       
       {/* 1. Searchable City Custom Dropdown */}
-      <div ref={cityRef} className="relative w-full min-w-0 lg:flex-[1.1] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-l-full lg:rounded-r-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-20">
+      <div ref={cityRef} className={`relative w-full min-w-0 lg:flex-[1.1] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-l-full lg:rounded-r-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none ${isCityOpen ? 'z-40' : 'z-20'}`}>
         <MapPin className="text-neutral-400 shrink-0 ml-1" size={16} />
         <input 
           type="text" 
@@ -122,7 +134,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         <ChevronDown size={14} className={`text-neutral-400 shrink-0 transition-transform ${isCityOpen ? "rotate-180" : ""}`} />
         
         {isCityOpen && (
-          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[220px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[240px] overflow-y-auto z-50">
+          <div className="absolute top-[calc(100%+8px)] left-0 w-full sm:w-[260px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[260px] overflow-y-auto z-[100]">
             {filteredCities.length > 0 ? (
               filteredCities.map(c => (
                 <div 
@@ -131,9 +143,10 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
                     setCityInput(c.name);
                     setIsCityOpen(false);
                   }}
-                  className="px-4 py-2.5 text-neutral-700 hover:bg-primary-50 hover:text-primary-700 cursor-pointer text-sm font-medium transition-colors"
+                  className="px-4 py-2.5 text-neutral-700 hover:bg-primary-50 hover:text-primary-700 cursor-pointer text-sm font-semibold transition-colors flex items-center gap-2"
                 >
-                  {c.name}
+                  <MapPin size={14} className="text-primary-500 shrink-0" />
+                  <span>{c.name}</span>
                 </div>
               ))
             ) : (
@@ -144,7 +157,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
       </div>
 
       {/* 2. Free Text Search (Area/Location) with Auto-complete */}
-      <div ref={localityRef} className="relative w-full min-w-0 lg:flex-[1.6] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none z-10">
+      <div ref={localityRef} className={`relative w-full min-w-0 lg:flex-[1.6] lg:border-r border-neutral-200 bg-white lg:bg-transparent rounded-xl lg:rounded-none border lg:border-none px-2 h-14 lg:h-12 flex items-center transition-all focus-within:bg-neutral-50 hover:bg-neutral-50 shadow-sm lg:shadow-none ${isLocalityOpen ? 'z-30' : 'z-10'}`}>
         <Search className="text-neutral-400 shrink-0 ml-1" size={16} />
         <input 
           type="text"
@@ -160,7 +173,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         />
         
         {isLocalityOpen && query.length >= 2 && (
-          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[300px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[300px] overflow-y-auto z-50">
+          <div className="absolute top-[calc(100%+8px)] left-0 w-full sm:w-[320px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[300px] overflow-y-auto z-[100]">
             {isLoadingLocalities ? (
               <div className="px-4 py-3 text-sm text-neutral-500 text-center animate-pulse">Searching localities...</div>
             ) : localities.length > 0 ? (

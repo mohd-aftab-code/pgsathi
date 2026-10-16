@@ -182,7 +182,7 @@ export function buildCityFilterClause(citySlug: string) {
 /**
  * Returns a deduplicated, cleanly labelled list of searchable cities for dropdowns.
  */
-export function getNormalizedCityList(rawCities: Array<{ id: number; name: string; slug: string; priority?: number }>) {
+export function getNormalizedCityList(rawCities: Array<{ id?: number; name: string; slug: string; priority?: number }>) {
   const seenCanonical = new Set<string>();
   const result: Array<{ name: string; slug: string }> = [];
 
