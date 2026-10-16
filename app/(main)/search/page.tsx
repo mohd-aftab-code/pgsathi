@@ -8,7 +8,13 @@ import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
 import { safeJsonLd } from "@/lib/json-ld";
-import { buildCityFilterClause, getNormalizedCityList, CITY_ALIASES } from "@/lib/city-filter";
+import {
+  buildCityFilterClause,
+  getNormalizedCityList,
+  getFeaturedCityPills,
+  CITY_ALIASES,
+} from "@/lib/city-filter";
+import { MapPin, X, SlidersHorizontal, Sparkles } from "lucide-react";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -31,7 +37,6 @@ export async function generateMetadata(props: {
     description = `Looking for a ${genderText}PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
   }
 
-  // Canonical: point Google to the clean SEO URL instead of /search?city=noida
   const canonicalUrl = (city && city !== "all")
     ? `https://pgsathi.in/pg-in-${city}`
     : `https://pgsathi.in/search`;
@@ -152,7 +157,7 @@ export default async function SearchPage(props: {
   else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
   // Direct real-time fetch (no stale cache lag)
-  const [listings, totalCount, rawCities] = await Promise.all([
+  const [listings, totalCount, rawCities, cityCounts] = await Promise.all([
     db.listing.findMany({
       where,
       include: {
@@ -169,16 +174,59 @@ export default async function SearchPage(props: {
       where: { isActive: true },
       orderBy: { priority: "asc" },
     }),
+    db.listing.groupBy({
+      by: ["cityId"],
+      where: { isActive: true, status: "ACTIVE" },
+      _count: { id: true },
+    }),
   ]);
 
-  // Clean deduplicated cities list
+  // Clean deduplicated cities list & live city pills
   const cities = getNormalizedCityList(rawCities);
+  const cityPills = getFeaturedCityPills(cityCounts, rawCities);
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Friendly city display label
   const activeCityName = citySlug && citySlug !== "all"
     ? cities.find(c => c.slug === citySlug)?.name || citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")
     : null;
+
+  // Active filters helper for removable tags
+  const activeFilters: Array<{ label: string; paramKey: string; href: string }> = [];
+  if (activeCityName) {
+    const p = new URLSearchParams();
+    if (gender) p.set("gender", gender);
+    if (budget) p.set("budget", budget);
+    if (amenitiesStr) p.set("amenities", amenitiesStr);
+    if (queryParam) p.set("q", queryParam);
+    activeFilters.push({ label: `City: ${activeCityName}`, paramKey: "city", href: `/search?${p.toString()}` });
+  }
+  if (gender && gender !== "all") {
+    const p = new URLSearchParams();
+    if (citySlug) p.set("city", citySlug);
+    if (budget) p.set("budget", budget);
+    if (amenitiesStr) p.set("amenities", amenitiesStr);
+    if (queryParam) p.set("q", queryParam);
+    const gLabel = gender === "BOYS" ? "Boys PG" : gender === "GIRLS" ? "Girls PG" : "Co-ed";
+    activeFilters.push({ label: gLabel, paramKey: "gender", href: `/search?${p.toString()}` });
+  }
+  if (budget) {
+    const p = new URLSearchParams();
+    if (citySlug) p.set("city", citySlug);
+    if (gender) p.set("gender", gender);
+    if (amenitiesStr) p.set("amenities", amenitiesStr);
+    if (queryParam) p.set("q", queryParam);
+    const bLabel = budget === "under5k" ? "< ₹5k" : budget === "5k-10k" ? "₹5k-₹10k" : "> ₹10k";
+    activeFilters.push({ label: `Budget: ${bLabel}`, paramKey: "budget", href: `/search?${p.toString()}` });
+  }
+  if (amenitiesStr) {
+    const p = new URLSearchParams();
+    if (citySlug) p.set("city", citySlug);
+    if (gender) p.set("gender", gender);
+    if (budget) p.set("budget", budget);
+    if (queryParam) p.set("q", queryParam);
+    activeFilters.push({ label: `Amenities (${amenitiesStr.split(",").length})`, paramKey: "amenities", href: `/search?${p.toString()}` });
+  }
 
   // SEO: ItemList Schema for Rich Snippets
   const itemListSchema = {
@@ -192,77 +240,158 @@ export default async function SearchPage(props: {
   };
 
   return (
-    <div className="bg-neutral-50 min-h-screen py-8">
+    <div className="bg-neutral-50 min-h-screen py-4 sm:py-8">
       {/* JSON-LD Schema Markup for Search Results */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }}
       />
-      <div className="container-max section-padding">
+      <div className="container-max section-padding px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <Breadcrumbs
-          items={[
-            ...(activeCityName ? [{ label: `PGs in ${activeCityName}`, href: `/pg-in-${citySlug}` }] : []),
-            { label: "Search Results" }
-          ]}
-        />
-
-        {/* Search Header */}
-        <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-            {activeCityName ? `Verified PGs in ${activeCityName}` : "Find Your Perfect PG"}
-          </h1>
-          <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} initialQuery={queryParam || ""} cities={cities} />
+        <div className="mb-4">
+          <Breadcrumbs
+            items={[
+              ...(activeCityName ? [{ label: `PGs in ${activeCityName}`, href: `/pg-in-${citySlug}` }] : []),
+              { label: "Search Results" }
+            ]}
+          />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        {/* Search Header */}
+        <div className="bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 text-white shadow-xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 pointer-events-none"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-400 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+                Zero Brokerage Discovery
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black mb-4 sm:mb-6 text-white tracking-tight">
+              {activeCityName ? `Verified PGs in ${activeCityName}` : "Find Your Perfect PG"}
+            </h1>
+            <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} initialQuery={queryParam || ""} cities={cities} />
+          </div>
+        </div>
 
-          <Suspense fallback={<div className="w-full lg:w-64 shrink-0 animate-pulse bg-white rounded-2xl h-[600px] border border-neutral-200"></div>}>
+        {/* ── Mobile-First Quick City Switcher Pills (Horizontal Scroll) ── */}
+        <div className="mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none flex items-center gap-2 py-1">
+          <Link
+            href="/search"
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 border min-h-[38px] ${
+              !citySlug || citySlug === "all"
+                ? "bg-primary-600 text-white border-primary-600 shadow-md"
+                : "bg-white text-neutral-700 border-neutral-200 hover:border-primary-400 shadow-sm"
+            }`}
+          >
+            <span>All Cities</span>
+          </Link>
+          {cityPills
+            .filter((c) => c.count > 0)
+            .map((c) => {
+              const isActive = citySlug === c.slug;
+              return (
+                <Link
+                  key={c.slug}
+                  href={`/search?city=${c.slug}`}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 border min-h-[38px] ${
+                    isActive
+                      ? "bg-primary-600 text-white border-primary-600 shadow-md shadow-primary-600/20"
+                      : "bg-white text-neutral-700 border-neutral-200 hover:border-primary-400 shadow-sm"
+                  }`}
+                >
+                  <MapPin size={12} className={isActive ? "text-white" : "text-primary-500"} />
+                  <span>{c.name}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
+                      isActive ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-600"
+                    }`}
+                  >
+                    {c.count}
+                  </span>
+                </Link>
+              );
+            })}
+        </div>
+
+        {/* ── Active Filter Tags Row ── */}
+        {activeFilters.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-5 pb-3 border-b border-neutral-200/80">
+            <span className="text-xs font-extrabold text-neutral-500 uppercase tracking-wide mr-1">
+              Active:
+            </span>
+            {activeFilters.map((f, idx) => (
+              <Link
+                key={idx}
+                href={f.href}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-50 text-primary-800 text-xs font-bold border border-primary-200 hover:bg-primary-100 transition-colors"
+                title={`Remove ${f.label}`}
+              >
+                <span>{f.label}</span>
+                <X size={12} className="text-primary-600 hover:text-primary-900" />
+              </Link>
+            ))}
+            <Link
+              href="/search"
+              className="text-xs text-neutral-500 hover:text-neutral-900 underline font-semibold ml-2"
+            >
+              Clear All
+            </Link>
+          </div>
+        )}
+
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <Suspense fallback={<div className="w-full lg:w-64 shrink-0 animate-pulse bg-white rounded-3xl h-[600px] border border-neutral-200"></div>}>
             <SearchFilters cities={cities} />
           </Suspense>
 
           {/* Results Grid */}
           <main className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-neutral-200 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-neutral-200 gap-3">
               <div>
-                <h2 className="text-xl font-bold text-neutral-900">
-                  {activeCityName ? `PGs in ${activeCityName}` : "All Properties"}
+                <h2 className="text-lg sm:text-xl font-black text-neutral-900 tracking-tight">
+                  {activeCityName ? `Verified PGs in ${activeCityName}` : "All Verified Properties"}
                 </h2>
-                <p className="text-sm text-neutral-500">
-                  Showing {listings.length} of {totalCount} verified zero brokerage properties
+                <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+                  Showing <strong className="text-neutral-900">{listings.length}</strong> of {totalCount} verified zero brokerage {listings.length === 1 ? "PG" : "PGs"}
                 </p>
               </div>
-              <SearchSort />
+              <div className="w-full sm:w-auto">
+                <SearchSort />
+              </div>
             </div>
 
             {listings.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-neutral-200 shadow-sm">
+              <div className="bg-white rounded-3xl p-8 sm:p-12 text-center border border-neutral-200 shadow-sm max-w-xl mx-auto my-8">
                 <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🔍</span>
+                  <MapPin className="w-8 h-8 text-neutral-400" />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-2">No PGs found in this location</h3>
-                <p className="text-neutral-500 mb-6 max-w-md mx-auto text-sm">
-                  We couldn't find any listings matching your exact filters. Try clearing your budget or amenities filter to see all properties in this city.
+                <h3 className="text-xl font-black text-neutral-900 mb-2">
+                  No PGs found {activeCityName ? `in ${activeCityName}` : "matching your search"}
+                </h3>
+                <p className="text-neutral-500 mb-6 text-xs sm:text-sm leading-relaxed">
+                  We couldn't find any listings matching these exact filters. Try tapping on <strong>All Cities</strong> or another popular city above.
                 </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <Link href="/search" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-md">
+                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                  <Link href="/search" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-colors shadow-md min-h-[44px] flex items-center justify-center">
                     View All Available PGs
                   </Link>
-                  <Link href="/dashboard/owner/listings/new" className="bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
+                  <Link href="/dashboard/owner/listings/new" className="bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-colors min-h-[44px] flex items-center justify-center">
                     List Your PG for Free
                   </Link>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {listings.map(pg => (
                   <PGCard key={pg.id} pg={pg as any} />
                 ))}
               </div>
             )}
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
+            <div className="mt-8">
+              <Pagination currentPage={currentPage} totalPages={totalPages} />
+            </div>
           </main>
         </div>
       </div>

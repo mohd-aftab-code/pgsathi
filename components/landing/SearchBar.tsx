@@ -122,7 +122,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         <ChevronDown size={14} className={`text-neutral-400 shrink-0 transition-transform ${isCityOpen ? "rotate-180" : ""}`} />
         
         {isCityOpen && (
-          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[220px] bg-white border border-neutral-200 shadow-xl rounded-xl overflow-hidden py-2 max-h-[240px] overflow-y-auto">
+          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[220px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[240px] overflow-y-auto z-50">
             {filteredCities.length > 0 ? (
               filteredCities.map(c => (
                 <div 
@@ -160,7 +160,7 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
         />
         
         {isLocalityOpen && query.length >= 2 && (
-          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[300px] bg-white border border-neutral-200 shadow-xl rounded-xl overflow-hidden py-2 max-h-[300px] overflow-y-auto">
+          <div className="absolute top-[calc(100%+8px)] left-0 w-full md:w-[300px] bg-white border border-neutral-200 shadow-2xl rounded-2xl overflow-hidden py-2 max-h-[300px] overflow-y-auto z-50">
             {isLoadingLocalities ? (
               <div className="px-4 py-3 text-sm text-neutral-500 text-center animate-pulse">Searching localities...</div>
             ) : localities.length > 0 ? (

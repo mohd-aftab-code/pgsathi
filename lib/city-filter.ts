@@ -219,3 +219,46 @@ export function getNormalizedCityList(rawCities: Array<{ id: number; name: strin
 
   return result;
 }
+
+/**
+ * Returns city pills with aggregated live counts for mobile quick-filter pill bar.
+ */
+export function getFeaturedCityPills(
+  cityCounts: Array<{ cityId: number | null; _count: { id: number } }>,
+  rawCities: Array<{ id: number; name: string; slug: string }>
+) {
+  const idToSlug = new Map<number, string>();
+  for (const c of rawCities) {
+    idToSlug.set(c.id, c.slug);
+  }
+
+  const canonicalCounts: Record<string, number> = {};
+  for (const row of cityCounts) {
+    if (!row.cityId) continue;
+    const slug = idToSlug.get(row.cityId);
+    if (!slug) continue;
+    const alias = CITY_ALIASES[slug.toLowerCase()];
+    const canonical = alias ? alias.canonicalSlug : slug;
+    canonicalCounts[canonical] = (canonicalCounts[canonical] || 0) + row._count.id;
+  }
+
+  const primaryCities = [
+    { name: "Noida", slug: "noida" },
+    { name: "Delhi", slug: "delhi" },
+    { name: "Prayagraj", slug: "allahabad" },
+    { name: "Ghaziabad", slug: "ghaziabad" },
+    { name: "Kota", slug: "kota" },
+    { name: "Indore", slug: "indore" },
+    { name: "Mumbai", slug: "mumbai" },
+    { name: "Hyderabad", slug: "hyderabad" },
+    { name: "Chennai", slug: "chennai" },
+    { name: "Kolkata", slug: "kolkata" },
+    { name: "Sikar", slug: "sikar" },
+  ];
+
+  return primaryCities.map((c) => ({
+    ...c,
+    count: canonicalCounts[c.slug] || 0,
+  }));
+}
+
