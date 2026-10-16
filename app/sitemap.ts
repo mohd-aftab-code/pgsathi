@@ -81,12 +81,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Static core routes
+  // Static core routes (only clean 200 OK indexable pages)
   const staticRoutes = [
     '',
-    '/search',
-    '/login',
-    '/register',
     '/about',
     '/contact',
     '/blog',
