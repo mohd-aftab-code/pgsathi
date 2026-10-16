@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Filter, X } from "lucide-react";
+import { Filter, X, RotateCcw } from "lucide-react";
 
-export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
+export default function SearchFilters({ cities = [] }: { cities?: Array<{ name: string; slug: string }> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -15,8 +15,32 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
     searchParams.get("amenities")?.split(",").filter(Boolean) || []
   );
 
+  // Keep state in sync when URL changes (e.g. from SearchBar or browser back/forward)
+  useEffect(() => {
+    setCity(searchParams.get("city") || "all");
+    setBudget(searchParams.get("budget") || "");
+    setAmenities(searchParams.get("amenities")?.split(",").filter(Boolean) || []);
+  }, [searchParams]);
+
+  // When city changes, apply immediately so user instantly sees all PGs in that city!
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (newCity && newCity !== "all") {
+      params.set("city", newCity);
+    } else {
+      params.delete("city");
+    }
+    // Reset page to 1
+    params.delete("page");
+
+    setIsMobileOpen(false);
+    router.push(`/search?${params.toString()}`);
+  };
+
   const handleBudgetChange = (val: string) => {
-    setBudget(prev => prev === val ? "" : val); // toggle
+    setBudget(prev => (prev === val ? "" : val));
   };
 
   const handleAmenityChange = (amenity: string) => {
@@ -38,9 +62,20 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
     if (amenities.length > 0) params.set("amenities", amenities.join(","));
     else params.delete("amenities");
 
-    setIsMobileOpen(false); // Close drawer on apply
+    params.delete("page");
+    setIsMobileOpen(false);
     router.push(`/search?${params.toString()}`);
   };
+
+  const clearAllFilters = () => {
+    setCity("all");
+    setBudget("");
+    setAmenities([]);
+    setIsMobileOpen(false);
+    router.push("/search");
+  };
+
+  const hasActiveFilters = (city && city !== "all") || !!budget || amenities.length > 0;
 
   return (
     <>
@@ -48,16 +83,16 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
         <button 
           onClick={() => setIsMobileOpen(true)}
-          className="bg-neutral-900 text-white px-6 py-3 rounded-full font-bold shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex items-center gap-2"
+          className="bg-neutral-900 text-white px-6 py-3.5 rounded-full font-bold shadow-[0_8px_30px_rgb(0,0,0,0.25)] flex items-center gap-2 text-sm border border-neutral-700 active:scale-95 transition-transform"
         >
-          <Filter size={18} /> Filters
+          <Filter size={18} /> Filters {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-emerald-400" />}
         </button>
       </div>
 
       {/* Overlay for mobile */}
       {isMobileOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/60 z-50 transition-opacity"
+          className="lg:hidden fixed inset-0 bg-black/60 z-50 transition-opacity backdrop-blur-sm"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -68,100 +103,104 @@ export default function SearchFilters({ cities = [] }: { cities?: any[] }) {
         lg:relative lg:translate-x-0 lg:w-64 lg:shrink-0 lg:bg-transparent lg:shadow-none lg:h-auto lg:overflow-visible lg:z-0
         ${isMobileOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
-        <div className="bg-white p-5 lg:rounded-2xl lg:shadow-sm lg:border lg:border-neutral-200 lg:sticky lg:top-24 h-full lg:h-auto flex flex-col">
+        <div className="bg-white p-5 lg:rounded-3xl lg:shadow-sm lg:border lg:border-neutral-200 lg:sticky lg:top-24 h-full lg:h-auto flex flex-col">
           <div className="flex items-center justify-between font-bold text-lg mb-4 pb-4 border-b border-neutral-100 shrink-0">
-            <div className="flex items-center gap-2">
-              <Filter size={20} /> Filters
+            <div className="flex items-center gap-2 text-neutral-900">
+              <Filter size={18} className="text-primary-600" /> Filters
             </div>
-            <button 
-              className="lg:hidden p-2 -mr-2 text-neutral-500 hover:text-neutral-900"
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-1">
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-xs text-neutral-500 hover:text-neutral-900 flex items-center gap-1 font-semibold px-2 py-1 rounded-lg hover:bg-neutral-100 transition-colors"
+                  title="Reset all filters"
+                >
+                  <RotateCcw size={12} /> Reset
+                </button>
+              )}
+              <button 
+                className="lg:hidden p-2 text-neutral-500 hover:text-neutral-900"
+                onClick={() => setIsMobileOpen(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto lg:overflow-visible">
-            {/* CITY FILTER */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">Location</h3>
+          <div className="flex-1 overflow-y-auto lg:overflow-visible space-y-6">
+            {/* CITY / LOCATION FILTER */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-extrabold text-xs text-neutral-500 uppercase tracking-wider">City / Location</h3>
+                <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">Instant</span>
+              </div>
               <select 
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full bg-neutral-50 border border-neutral-200 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none"
+                onChange={(e) => handleCityChange(e.target.value)}
+                className="w-full bg-neutral-50 border border-neutral-200 text-sm font-semibold text-neutral-900 rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none cursor-pointer transition-all shadow-sm"
               >
-                <option value="all">All Cities</option>
+                <option value="all">All Cities & Locations</option>
                 {cities.map(c => (
-                  <option key={c.slug} value={c.slug}>{c.name}</option>
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
             
             {/* BUDGET FILTER */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">Budget</h3>
-              <div className="space-y-3 lg:space-y-2">
-                <label className="flex items-center gap-3 lg:gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                  <input 
-                    type="checkbox" 
-                    checked={budget === "under5k"}
-                    onChange={() => handleBudgetChange("under5k")}
-                    className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 lg:w-auto lg:h-auto" 
-                  />
-                  Under ₹5,000
-                </label>
-                <label className="flex items-center gap-3 lg:gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                  <input 
-                    type="checkbox" 
-                    checked={budget === "5k-10k"}
-                    onChange={() => handleBudgetChange("5k-10k")}
-                    className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 lg:w-auto lg:h-auto" 
-                  />
-                  ₹5,000 - ₹10,000
-                </label>
-                <label className="flex items-center gap-3 lg:gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
-                  <input 
-                    type="checkbox" 
-                    checked={budget === "above10k"}
-                    onChange={() => handleBudgetChange("above10k")}
-                    className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 lg:w-auto lg:h-auto" 
-                  />
-                  Above ₹10,000
-                </label>
+            <div>
+              <h3 className="font-extrabold text-xs text-neutral-500 mb-3 uppercase tracking-wider">Monthly Budget</h3>
+              <div className="space-y-2.5">
+                {[
+                  { id: "under5k", label: "Under ₹5,000" },
+                  { id: "5k-10k", label: "₹5,000 - ₹10,000" },
+                  { id: "above10k", label: "Above ₹10,000" },
+                ].map((b) => (
+                  <label key={b.id} className="flex items-center gap-3 text-xs font-semibold text-neutral-700 cursor-pointer hover:text-primary-600 transition-colors">
+                    <input 
+                      type="checkbox" 
+                      checked={budget === b.id}
+                      onChange={() => handleBudgetChange(b.id)}
+                      className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer" 
+                    />
+                    <span>{b.label}</span>
+                  </label>
+                ))}
               </div>
             </div>
 
-            {/* AMENITIES FILTER */}
+            {/* HOUSE RULES & AMENITIES */}
             <div>
-              <h3 className="font-semibold text-sm text-neutral-500 mb-3 uppercase tracking-wider">House Rules & Amenities</h3>
-              <div className="space-y-3 lg:space-y-2">
+              <h3 className="font-extrabold text-xs text-neutral-500 mb-3 uppercase tracking-wider">Amenities & Rules</h3>
+              <div className="space-y-2.5">
                 {[
-                  { id: "noticePeriod", label: "No Notice Period" },
-                  { id: "gateClosingTime", label: "No Gate Closing" },
                   { id: "foodIncluded", label: "Food Included" },
+                  { id: "gateClosingTime", label: "No Gate Closing" },
+                  { id: "noticePeriod", label: "No Notice Period" },
                   { id: "laundryService", label: "Laundry Service" },
                   { id: "roomCleaning", label: "Room Cleaning" },
                 ].map(rule => (
-                  <label key={rule.id} className="flex items-center gap-3 lg:gap-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
+                  <label key={rule.id} className="flex items-center gap-3 text-xs font-semibold text-neutral-700 cursor-pointer hover:text-primary-600 transition-colors">
                     <input 
                       type="checkbox" 
                       checked={amenities.includes(rule.id)}
                       onChange={() => handleAmenityChange(rule.id)}
-                      className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 lg:w-auto lg:h-auto" 
+                      className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer" 
                     />
-                    {rule.label}
+                    <span>{rule.label}</span>
                   </label>
                 ))}
               </div>
             </div>
           </div>
           
-          <div className="pt-5 shrink-0">
+          <div className="pt-6 shrink-0 border-t border-neutral-100 mt-4">
             <button 
               onClick={applyFilters}
-              className="w-full bg-primary-500 text-white font-bold py-3.5 lg:py-2 lg:bg-primary-100 lg:text-primary-700 rounded-xl lg:hover:bg-primary-200 transition-colors cursor-pointer"
+              className="w-full bg-primary-600 hover:bg-primary-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-primary-600/25 transition-all text-sm cursor-pointer min-h-[44px]"
             >
-              Show Results
+              Apply Filters
             </button>
           </div>
         </div>

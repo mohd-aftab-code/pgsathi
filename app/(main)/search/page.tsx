@@ -7,35 +7,8 @@ import Breadcrumbs from "@/components/common/Breadcrumbs";
 import Pagination from "@/components/search/Pagination";
 import { Suspense } from "react";
 import Link from "next/link";
-import { unstable_cache } from "next/cache";
-import { Metadata } from "next";
 import { safeJsonLd } from "@/lib/json-ld";
-
-const getSearchResults = unstable_cache(
-  async (where: any, orderBy: any, page: number, itemsPerPage: number) => {
-    const [listings, totalCount, cities] = await Promise.all([
-      db.listing.findMany({
-        where,
-        include: {
-          city: true,
-          locality: true,
-          photos: { take: 1 },
-        },
-        orderBy,
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-      }),
-      db.listing.count({ where }),
-      db.city.findMany({
-        where: { isActive: true },
-        orderBy: { priority: "asc" },
-      }),
-    ]);
-    return { listings, totalCount, cities };
-  },
-  ["search-results"],
-  { revalidate: 60 } // 1 minute — balances DB load against new listings showing up promptly
-);
+import { buildCityFilterClause, getNormalizedCityList, CITY_ALIASES } from "@/lib/city-filter";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -67,7 +40,7 @@ export async function generateMetadata(props: {
     title,
     description,
     robots: {
-      index: false,   // Do NOT index /search?city=noida — use /pg-in-noida instead
+      index: false,
       follow: true,
     },
     alternates: {
@@ -93,55 +66,59 @@ export default async function SearchPage(props: {
   const queryParam = searchParams.q as string | undefined;
   const pageParam = searchParams.page as string | undefined;
 
-  const currentPage = pageParam ? parseInt(pageParam) : 1;
+  const currentPage = pageParam ? Math.max(1, parseInt(pageParam)) : 1;
   const ITEMS_PER_PAGE = 18;
-
-  // Log Search Analytics (Fire & Forget)
-  if (queryParam || citySlug) {
-    // db.searchAnalytic.create({
-    //   data: {
-    //     query: queryParam ? queryParam.substring(0, 250) : null,
-    //     citySlug: citySlug && citySlug !== "all" ? citySlug : null,
-    //   }
-    // }).catch(console.error);
-  }
 
   // Build query
   const where: any = { isActive: true, status: "ACTIVE" };
+  const andConditions: any[] = [];
 
+  // 1. City / Location Filter with full alias coverage
+  // (e.g., 'noida' finds all listings in Noida + Gautam Buddha Nagar, 'delhi' finds South Delhi/Delhi)
+  if (citySlug && citySlug !== "all") {
+    const cityClause = buildCityFilterClause(citySlug);
+    if (cityClause) {
+      andConditions.push(cityClause);
+    }
+  }
+
+  // 2. Keyword Search across Title, Address, Landmark, Area, Locality, and City Name/State
   if (queryParam) {
     const stopWords = ["pg", "in", "near", "hostel", "room", "rooms", "boys", "girls", "for", "rent", "best", "top", "at", "around", "the", "a", "an", "is", "of", "and"];
 
-    // Clean and split the search query into meaningful keywords
     const keywords = queryParam
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, '')
       .split(/\s+/)
       .filter(word => word.length > 2 && !stopWords.includes(word));
 
-    if (keywords.length > 0) {
-      // Find listings that match ALL keywords across any of the relevant fields
-      where.AND = keywords.map(keyword => ({
-        OR: [
-          { title: { contains: keyword, mode: "insensitive" } },
-          { address: { contains: keyword, mode: "insensitive" } },
-          { landmark: { contains: keyword, mode: "insensitive" } },
-          { locality: { name: { contains: keyword, mode: "insensitive" } } },
-        ]
-      }));
-    } else {
-      // Fallback if all words were stop words or too short
-      where.OR = [
-        { title: { contains: queryParam, mode: "insensitive" } },
-        { address: { contains: queryParam, mode: "insensitive" } },
-        { landmark: { contains: queryParam, mode: "insensitive" } },
-        { locality: { name: { contains: queryParam, mode: "insensitive" } } },
+    const keywordCondition = (kw: string) => {
+      const alias = CITY_ALIASES[kw.toLowerCase()];
+      const orList: any[] = [
+        { title: { contains: kw, mode: "insensitive" } },
+        { address: { contains: kw, mode: "insensitive" } },
+        { landmark: { contains: kw, mode: "insensitive" } },
+        { areaLocality: { contains: kw, mode: "insensitive" } },
+        { locality: { name: { contains: kw, mode: "insensitive" } } },
+        { city: { name: { contains: kw, mode: "insensitive" } } },
+        { city: { state: { contains: kw, mode: "insensitive" } } },
       ];
+      if (alias) {
+        orList.push({ city: { slug: { in: alias.slugs } } });
+        orList.push({ city: { name: { in: alias.names, mode: "insensitive" } } });
+      }
+      return { OR: orList };
+    };
+
+    if (keywords.length > 0) {
+      andConditions.push(...keywords.map(keywordCondition));
+    } else {
+      andConditions.push(keywordCondition(queryParam));
     }
   }
 
-  if (citySlug && citySlug !== "all") {
-    where.city = { slug: citySlug };
+  if (andConditions.length > 0) {
+    where.AND = andConditions;
   }
 
   if (gender && gender !== "all") {
@@ -174,10 +151,34 @@ export default async function SearchPage(props: {
   else if (sortBy === "price_desc") orderBy = [{ priceMin: "desc" }];
   else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
-  // Fetch listings, total count and cities (cached — see getSearchResults above)
-  const { listings, totalCount, cities } = await getSearchResults(where, orderBy, currentPage, ITEMS_PER_PAGE);
+  // Direct real-time fetch (no stale cache lag)
+  const [listings, totalCount, rawCities] = await Promise.all([
+    db.listing.findMany({
+      where,
+      include: {
+        city: true,
+        locality: true,
+        photos: { take: 1 },
+      },
+      orderBy,
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
+    }),
+    db.listing.count({ where }),
+    db.city.findMany({
+      where: { isActive: true },
+      orderBy: { priority: "asc" },
+    }),
+  ]);
 
+  // Clean deduplicated cities list
+  const cities = getNormalizedCityList(rawCities);
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Friendly city display label
+  const activeCityName = citySlug && citySlug !== "all"
+    ? cities.find(c => c.slug === citySlug)?.name || citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")
+    : null;
 
   // SEO: ItemList Schema for Rich Snippets
   const itemListSchema = {
@@ -186,7 +187,7 @@ export default async function SearchPage(props: {
     "itemListElement": listings.map((pg, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://pgsathi.in/pg/${pg.slug}`
+      "url": `https://pgsathi.in/pg/${pg.city?.slug || "all"}/${pg.locality?.slug || "all"}/${pg.slug}`
     }))
   };
 
@@ -202,14 +203,16 @@ export default async function SearchPage(props: {
         {/* Breadcrumb */}
         <Breadcrumbs
           items={[
-            ...(citySlug && citySlug !== "all" ? [{ label: `PGs in ${citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")}`, href: `/pg-in-${citySlug}` }] : []),
+            ...(activeCityName ? [{ label: `PGs in ${activeCityName}`, href: `/pg-in-${citySlug}` }] : []),
             { label: "Search Results" }
           ]}
         />
 
         {/* Search Header */}
         <div className="bg-primary-900 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-xl">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">Find Your Perfect PG</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">
+            {activeCityName ? `Verified PGs in ${activeCityName}` : "Find Your Perfect PG"}
+          </h1>
           <SearchBar initialCity={citySlug === "all" ? "" : citySlug} initialGender={gender === "all" ? "" : gender} initialQuery={queryParam || ""} cities={cities} />
         </div>
 
@@ -220,45 +223,47 @@ export default async function SearchPage(props: {
           </Suspense>
 
           {/* Results Grid */}
-          <div className="flex-1">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold">
-                {totalCount} PGs Found
-              </h2>
-              <Suspense fallback={<div className="w-40 h-9 bg-white border border-neutral-200 rounded-lg animate-pulse" />}>
-                <SearchSort />
-              </Suspense>
+          <main className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-neutral-200 gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-neutral-900">
+                  {activeCityName ? `PGs in ${activeCityName}` : "All Properties"}
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Showing {listings.length} of {totalCount} verified zero brokerage properties
+                </p>
+              </div>
+              <SearchSort />
             </div>
 
-            {listings.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {listings.map(pg => (
-                    <PGCard key={pg.id} pg={pg} />
-                  ))}
-                </div>
-                <Pagination totalPages={totalPages} currentPage={currentPage} />
-              </>
-            ) : (
+            {listings.length === 0 ? (
               <div className="bg-white rounded-3xl p-12 text-center border border-neutral-200 shadow-sm">
-                <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">🔍</span>
+                <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🔍</span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">
-                  No PGs found {citySlug && citySlug !== "all" ? `in ${citySlug.charAt(0).toUpperCase() + citySlug.slice(1).replace(/-/g, " ")}` : ""}
-                </h3>
-                <p className="text-neutral-500 mb-6">
-                  {citySlug && citySlug !== "all" && !queryParam && !budget && !amenitiesStr && !gender 
-                    ? "We are currently expanding our network and will be launching in this city very soon!"
-                    : "We couldn't find any listings matching your criteria. Try adjusting your filters."}
+                <h3 className="text-xl font-bold text-neutral-900 mb-2">No PGs found in this location</h3>
+                <p className="text-neutral-500 mb-6 max-w-md mx-auto text-sm">
+                  We couldn't find any listings matching your exact filters. Try clearing your budget or amenities filter to see all properties in this city.
                 </p>
-                <Link href="/search" className="inline-block bg-primary-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary-600 transition-colors">
-                  Clear Filters
-                </Link>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Link href="/search" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-md">
+                    View All Available PGs
+                  </Link>
+                  <Link href="/dashboard/owner/listings/new" className="bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
+                    List Your PG for Free
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {listings.map(pg => (
+                  <PGCard key={pg.id} pg={pg as any} />
+                ))}
               </div>
             )}
-          </div>
 
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
+          </main>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2 } from "lucid
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
+import { getNormalizedCityList } from "@/lib/city-filter";
 
 const getHeroData = unstable_cache(
   async () => {
@@ -98,7 +99,7 @@ export default async function HeroSection() {
             </div>
 
             <div className="bg-white p-2 md:p-2.5 rounded-2xl border border-neutral-200 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8 sticky top-[72px] md:relative md:top-0 z-40 transition-all">
-              <SearchBar cities={cities} />
+              <SearchBar cities={getNormalizedCityList(cities)} />
             </div>
 
             <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-x-6 sm:gap-y-3 text-sm">

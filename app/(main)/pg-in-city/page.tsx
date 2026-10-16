@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 
 import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
+import { buildCityFilterClause } from "@/lib/city-filter";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -14,15 +15,20 @@ export async function generateMetadata(props: {
   const city = (searchParams.city as string) || "city";
   const cityName = city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, " ");
 
-  const cityObj = await db.city.findUnique({
+  const cityObj = await db.city.findFirst({
     where: { slug: city }
   });
 
   const title = cityObj?.metaTitle || `Best PGs & Hostels in ${cityName} - Zero Brokerage`;
   const description = cityObj?.metaDesc || `Looking for a PG in ${cityName}? Find 100% verified properties, top amenities, and direct owner contacts with zero brokerage on PGSathi.`;
 
+  const cityClause = buildCityFilterClause(city);
   const listingCount = await db.listing.count({
-    where: { city: { slug: city }, status: "ACTIVE" }
+    where: {
+      status: "ACTIVE",
+      isActive: true,
+      ...(cityClause ? cityClause : { city: { slug: city } })
+    }
   });
 
   return constructMetadata({

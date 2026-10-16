@@ -78,9 +78,17 @@ export default function SearchBar({ initialCity = "", initialGender = "", initia
     e.preventDefault();
     const params = new URLSearchParams();
     if (query) params.set("q", query);
-    
-    const matchedCity = cities.find((c: any) => c.name.toLowerCase() === cityInput.toLowerCase());
-    const finalCitySlug = matchedCity ? matchedCity.slug : (cityInput ? cityInput.toLowerCase().replace(/\s+/g, '-') : "all");
+    const trimmedCity = cityInput.trim().toLowerCase();
+    const matchedCity = trimmedCity
+      ? cities.find((c: any) => 
+          c.name.toLowerCase() === trimmedCity ||
+          c.slug.toLowerCase() === trimmedCity ||
+          c.name.toLowerCase().includes(trimmedCity)
+        )
+      : null;
+    const finalCitySlug = matchedCity 
+      ? matchedCity.slug 
+      : (trimmedCity ? trimmedCity.replace(/\s+/g, '-') : "all");
     
     if (finalCitySlug && finalCitySlug !== "all") params.set("city", finalCitySlug);
     if (gender && gender !== "all") params.set("gender", gender);

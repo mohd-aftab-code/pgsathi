@@ -7,12 +7,17 @@ import slugify from "slugify";
 
 import { unstable_cache } from "next/cache";
 
+import { buildCityFilterClause } from "@/lib/city-filter";
+
 const getCachedListings = unstable_cache(
   async (citySlug: string | null, gender: string | null, limit: number) => {
     const where: any = { isActive: true, status: "ACTIVE" };
 
     if (citySlug) {
-      where.city = { slug: citySlug };
+      const cityClause = buildCityFilterClause(citySlug);
+      if (cityClause) {
+        where.AND = [cityClause];
+      }
     }
     
     if (gender) {
