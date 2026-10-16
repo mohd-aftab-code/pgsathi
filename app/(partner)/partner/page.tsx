@@ -6,28 +6,28 @@ import Navbar from "@/components/common/Navbar";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
-  title: "PGSathi Partner Programme | Refer PGs & Earn Money Online",
-  description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners in your city and earn guaranteed lifetime commissions on every paid conversion.",
+  title: "PGSathi Partner Programme | Refer PGs & Earn Online",
+  description: "Join the PGSathi Partner Programme. Onboard PG owners in your city and earn 10% recurring commission on every paid conversion with fast direct bank payouts.",
   alternates: {
     canonical: "https://pgsathi.in/partner",
   },
   openGraph: {
-    title: "PGSathi Partner Programme | Refer PGs & Earn Money Online",
-    description: "Start your own business with the PGSathi Partner Programme. Onboard PG owners and earn guaranteed lifetime commissions.",
+    title: "PGSathi Partner Programme | Refer PGs & Earn Online",
+    description: "Join the PGSathi Partner Programme. Onboard PG owners in your city and earn 10% recurring commission on every paid conversion.",
     url: "https://pgsathi.in/partner",
   },
 };
 
 const STEPS = [
-  { Icon: Handshake, title: "Register for Free", body: "100% free signup. Your portal will be activated after admin approval." },
-  { Icon: Building2, title: "Onboard PG Owners", body: "Onboard PGs in your area to the PGSathi platform. Their listing, your commission." },
-  { Icon: IndianRupee, title: "Life-time Earnings", body: "Whenever your onboarded PG purchases a premium plan, you will receive your share instantly." },
+  { Icon: Handshake, title: "Register for Free", body: "100% free signup. Your portal will be activated after admin verification." },
+  { Icon: Building2, title: "Onboard PG Owners", body: "Introduce PG owners in your area to PGSathi. Their listing, your commission." },
+  { Icon: IndianRupee, title: "Recurring Earnings", body: "Earn a transparent 10% commission on every paid subscription renewed by your onboarded PGs." },
 ];
 
 const FEATURES = [
-  { Icon: BarChart3, title: "Smart Dashboard", body: "Track all your onboarded PGs, active plans, and total earnings in one place." },
-  { Icon: ShieldCheck, title: "Secure & Transparent", body: "Your data is completely secure. We ensure full transparency for every transaction and payout." },
-  { Icon: Wallet, title: "Fast Payouts", body: "As soon as you meet the minimum threshold, your earnings are credited directly to your bank account." },
+  { Icon: BarChart3, title: "Smart Dashboard", body: "Track all your onboarded PGs, active plans, and commission earnings in one place." },
+  { Icon: ShieldCheck, title: "Secure & Transparent", body: "Every subscription transaction and commission attribution is logged in your real-time ledger." },
+  { Icon: Wallet, title: "Fast Payouts", body: "Once you meet the ₹500 minimum payout threshold, your earnings are credited directly to your bank account." },
 ];
 
 export default async function PartnerLandingPage() {
@@ -93,14 +93,14 @@ export default async function PartnerLandingPage() {
               {/* Right Side Image/Visual */}
               <div className="relative">
                 <div className="bg-white/60 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-primary-900/5 border border-neutral-100 relative">
-                  <div className="absolute -top-4 -right-4 bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transform rotate-6 z-10">
-                    Live Updates
+                  <div className="absolute -top-4 -right-4 bg-primary-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transform rotate-6 z-10">
+                    Dashboard Preview
                   </div>
                   
                   <div className="bg-neutral-900 rounded-3xl p-6 sm:p-8 text-white shadow-inner mb-6 relative overflow-hidden">
                     {/* Add a subtle glow inside the black card */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/20 blur-2xl rounded-full pointer-events-none"></div>
-                    <div className="text-neutral-400 text-sm font-semibold mb-2 relative">Total Earnings This Month</div>
+                    <div className="text-neutral-400 text-xs font-semibold mb-1 relative uppercase tracking-wider">Example Monthly Commission</div>
                     <div className="text-4xl sm:text-5xl font-black text-white mb-6 sm:mb-8 tracking-tight relative">₹45,500</div>
                     
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 relative">

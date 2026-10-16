@@ -3,23 +3,39 @@ import { CheckCircle2, ShieldCheck, Heart, MapPin, Users, Building2, TrendingUp,
 import Image from "next/image";
 import heroImg from "@/app/assets/images/hero-home.png"; // We can reuse an existing image or just use CSS gradients
 
-export const metadata = {
-  title: "About Us | PGSathi - Zero Brokerage PG & Cloud CRM for Owners",
-  description: "PGSathi is India's most trusted platform for finding verified PGs without brokers. For PG owners, we provide a powerful Cloud CRM to manage tenants, rent, and leads.",
-  keywords: "PG, paying guest, zero brokerage PG, PG management software, CRM for PG owners, find PG, rent room",
-  openGraph: {
-    title: "About Us | PGSathi",
-    description: "Find verified PGs with zero brokerage or manage your PG properties with our powerful Cloud CRM.",
-    url: "https://pgsathi.in/about",
-    siteName: "PGSathi",
-    locale: "en_IN",
-    type: "website",
-  }
+import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
+
+export const metadata = constructMetadata({
+  title: "About Us | PGSathi - Zero Brokerage PG Platform",
+  description: "PGSathi is India's most trusted zero brokerage PG list platform and cloud CRM. Find verified PGs or manage your hostel properties effortlessly.",
+  canonicalPath: "/about",
+  keywords: ["About PGSathi", "Zero brokerage PG platform", "PG list platform", "PG management software India"],
+});
+
+const BREADCRUMB_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://pgsathi.in"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "About Us",
+      "item": "https://pgsathi.in/about"
+    }
+  ]
 };
 
 export default function AboutPage() {
   return (
     <div className="bg-neutral-50 min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
       
       {/* ── Hero Section ── */}
       <section className="bg-white border-b border-neutral-200 py-16 md:py-24 relative overflow-hidden">

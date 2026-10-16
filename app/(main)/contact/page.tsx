@@ -2,14 +2,39 @@ import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact/ContactForm";
 
-export const metadata = {
-  title: "Contact Us - PGSathi",
-  description: "Get in touch with the PGSathi team for support, partnerships, or general inquiries.",
+import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
+
+export const metadata = constructMetadata({
+  title: "Contact Us | Customer Support & Help - PGSathi",
+  description: "Contact PGSathi support at +91 9696110243 or email. Get help with PG listings, owner CRM onboarding, tenant inquiries, or partnership opportunities.",
+  canonicalPath: "/contact",
+  keywords: ["Contact PGSathi", "PGSathi customer care", "PG support", "List PG help"],
+});
+
+const BREADCRUMB_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://pgsathi.in"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Contact Us",
+      "item": "https://pgsathi.in/contact"
+    }
+  ]
 };
 
 export default function ContactPage() {
   return (
     <div className="bg-neutral-50 min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
       
       {/* ── Hero Section ── */}
       <section className="bg-white border-b border-neutral-200 py-16 md:py-24 relative overflow-hidden">

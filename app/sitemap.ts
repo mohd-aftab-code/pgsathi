@@ -53,11 +53,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   activeLocalities.forEach((loc) => {
     if (loc.city?.slug) {
+      // Base locality page
       programmaticUrls.push({
         url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.8,
+      });
+
+      // Locality types (boys-pg, girls-pg, co-living)
+      ['boys-pg', 'girls-pg', 'co-living'].forEach((type) => {
+        programmaticUrls.push({
+          url: `${baseUrl}/pg/${loc.city?.slug}/${loc.slug}/${type}`,
+          lastModified: new Date(),
+          changeFrequency: 'daily',
+          priority: 0.8,
+        });
       });
     }
   });
@@ -85,6 +96,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/faq',
     '/for-owners',
     '/partner',
+    '/pg-management-software',
+    '/compare',
+    '/compare/pgsathi-vs-rentok',
+    '/compare/pgsathi-vs-nobroker',
     '/trust-and-safety',
     '/how-it-works',
     '/help',

@@ -64,14 +64,14 @@ export default async function HeroSection() {
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
               <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-500" />
-              India's #1 PG Platform
+              India's #1 PG List Platform
             </div>
 
             <h1
               className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
-              Find 100% Verified PGs & <br className="hidden lg:block" />
+              India's #1 PG List Platform &amp; <br className="hidden lg:block" />
               <span className="text-primary-700">Free PG Management Software.</span>
             </h1>
 

@@ -30,13 +30,16 @@ const notoDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
   title: {
-    default: "PGSathi: India's #1 PG Platform & Management Software",
+    default: "PGSathi: India's #1 PG List Platform & Management Software",
     template: "%s | PGSathi",
   },
   description:
-    "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
+    "India's #1 PG list platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
   alternates: {
     canonical: "https://pgsathi.in",
+    languages: {
+      "en-IN": "https://pgsathi.in",
+    },
   },
   authors: [{ name: "PGSathi" }],
   creator: "PGSathi",
@@ -45,22 +48,23 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://pgsathi.in",
     siteName: "PGSathi",
-    title: "PGSathi: India's #1 PG Platform & Management Software",
+    title: "PGSathi: India's #1 PG List Platform & Management Software",
     description:
-      "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
+      "India's #1 PG list platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PGSathi: India's #1 PG Platform & Management Software",
+        alt: "PGSathi: India's #1 PG List Platform & Management Software",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PGSathi: India's #1 PG Platform & Management Software",
-    description: "Find verified PGs, direct tenant leads, free PG management software, and partner earning opportunities.",
+    title: "PGSathi: India's #1 PG List Platform & Management Software",
+    description:
+      "India's #1 PG list platform. Find verified PGs, direct tenant leads, free PG management software, and partner earning opportunities.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -152,7 +156,7 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${inter.variable} ${plusJakarta.variable} ${notoDevanagari.variable}`}
     >
       <GoogleTagManager gtmId="GTM-PF5NWQMS" />

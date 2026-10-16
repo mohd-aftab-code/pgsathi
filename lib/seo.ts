@@ -14,30 +14,38 @@ interface ConstructMetadataProps {
   type?: 'website' | 'article' | 'profile';
   publishedTime?: string;
   authors?: string[];
+  languages?: Record<string, string>;
 }
 
 export function constructMetadata({
   title = defaultSiteName,
   description = defaultDescription,
-  image = '/icon.png',
+  image = '/og-image.jpg',
   noIndex = false,
   canonicalPath,
   keywords = [],
   type = 'website',
   publishedTime,
   authors,
+  languages,
 }: ConstructMetadataProps = {}): Metadata {
-  const canonicalUrl = canonicalPath ? `${defaultUrl}${canonicalPath}` : defaultUrl;
+  const canonicalUrl = canonicalPath ? `${defaultUrl}${canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`}` : defaultUrl;
 
-  const defaultKeywords = ['PG', 'Paying Guest', 'Hostel', 'Co-living', 'Room for rent', 'No brokerage'];
+  // Rule 1: <title> max 60 chars, meta description max 155 chars
+  const cleanTitle = title.length > 60 ? `${title.slice(0, 57).trim()}...` : title;
+  const cleanDescription = description.length > 155 ? `${description.slice(0, 152).trim()}...` : description;
+
+  const defaultKeywords = ['PG', 'Paying Guest', 'Hostel', 'Co-living', 'Room for rent', 'Zero brokerage', 'PG list platform'];
   const allKeywords = [...new Set([...keywords, ...defaultKeywords])].join(', ');
 
+  const defaultLanguages: Record<string, string> = {
+    'en-IN': canonicalUrl,
+    ...(languages || {}),
+  };
+
   const metadata: Metadata = {
-    title: {
-      default: title,
-      template: `%s | ${defaultSiteName}`,
-    },
-    description,
+    title: cleanTitle,
+    description: cleanDescription,
     keywords: allKeywords,
     authors: authors?.map((author) => ({ name: author })) || [{ name: 'PGSathi Team' }],
     creator: 'PGSathi',
@@ -45,6 +53,7 @@ export function constructMetadata({
     metadataBase: new URL(defaultUrl),
     alternates: {
       canonical: canonicalUrl,
+      languages: defaultLanguages,
     },
     robots: {
       index: !noIndex,
@@ -60,15 +69,15 @@ export function constructMetadata({
     openGraph: {
       type,
       siteName: defaultSiteName,
-      title,
-      description,
+      title: cleanTitle,
+      description: cleanDescription,
       url: canonicalUrl,
       images: [
         {
-          url: image,
+          url: image.startsWith('http') ? image : `${defaultUrl}${image.startsWith('/') ? image : `/${image}`}`,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: cleanTitle,
         },
       ],
       locale: 'en_IN',
@@ -77,9 +86,9 @@ export function constructMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
-      images: [image],
+      title: cleanTitle,
+      description: cleanDescription,
+      images: [image.startsWith('http') ? image : `${defaultUrl}${image.startsWith('/') ? image : `/${image}`}`],
       creator: '@PGSathi',
     },
   };

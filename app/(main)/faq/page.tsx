@@ -1,9 +1,12 @@
-import { Metadata } from "next";
+import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Frequently Asked Questions | PGSathi",
-  description: "Find answers to commonly asked questions about renting PGs, booking hostels, and managing properties on PGSathi.",
-};
+export const metadata = constructMetadata({
+  title: "Frequently Asked Questions | PGSathi Support & Help",
+  description: "Find clear answers to common questions about zero brokerage PGs, booking hostels, owner listings, and rent management on PGSathi.",
+  canonicalPath: "/faq",
+  keywords: ["PGSathi FAQ", "Zero brokerage PG questions", "Hostel booking help", "PG owner listing FAQ"],
+});
 
 export default function FAQPage() {
   const faqs = [
@@ -29,8 +32,42 @@ export default function FAQPage() {
     }
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((f) => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": f.a
+      }
+    }))
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://pgsathi.in"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "FAQ",
+        "item": "https://pgsathi.in/faq"
+      }
+    ]
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }} />
       <div className="container-max section-padding px-4 sm:px-6 py-10 md:py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">

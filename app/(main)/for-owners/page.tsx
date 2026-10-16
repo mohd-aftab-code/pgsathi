@@ -1,29 +1,65 @@
 import Link from "next/link";
-import { Metadata } from "next";
 import { CheckCircle, TrendingUp, Users, Smartphone, ArrowRight } from "lucide-react";
+import { constructMetadata } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/json-ld";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 
-export const metadata: Metadata = {
-  title: "PG Owner Registration | List PG Online & Get Tenants | PGSathi",
-  description: "List your PG or hostel on PGSathi. Get verified tenant leads directly on WhatsApp with zero brokerage. Manage rent, bills, and tenants easily with our CRM.",
-  alternates: {
-    canonical: "https://pgsathi.in/for-owners",
-  },
-  openGraph: {
-    title: "PG Owner Registration | List PG Online & Get Tenants | PGSathi",
-    description: "Get verified tenant leads directly on WhatsApp with zero brokerage. Manage rent, bills, and tenants easily with our CRM.",
-    url: "https://pgsathi.in/for-owners",
-  },
+export const metadata = constructMetadata({
+  title: "Free PG List Platform | List PG Online & Get Leads | PGSathi",
+  description: "List your PG on India's #1 PG list platform. Get verified tenant leads on WhatsApp with zero brokerage, manage rent, and automate billing effortlessly.",
+  canonicalPath: "/for-owners",
+  keywords: ["Free PG list platform", "PG listing platform", "List PG online", "PG owner registration", "Zero brokerage PG leads"],
+});
+
+const FOR_OWNERS_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PGSathi PG List Platform & CRM for Owners",
+  "operatingSystem": "Web, Mobile Browser, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "description": "Smart PG listing platform and Cloud CRM. List your property for free, receive direct WhatsApp inquiries, and manage rent collection.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR",
+    "description": "Free 15-day trial and 1 free basic PG listing on PGSathi"
+  }
+};
+
+const BREADCRUMB_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://pgsathi.in"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "For Owners",
+      "item": "https://pgsathi.in/for-owners"
+    }
+  ]
 };
 
 export default function ForOwnersPage() {
   return (
     <div className="bg-white min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FOR_OWNERS_SCHEMA) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
+
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary-950 via-primary-900 to-primary-800 text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556761175-5973dc0f32b7?q=80&w=2000&auto=format&fit=crop')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
         <div className="container-max section-padding relative z-10 text-center">
+          <div className="mb-6 flex justify-center">
+            <Breadcrumbs items={[{ label: "For PG Owners" }]} />
+          </div>
           <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-            Fill Your PG Faster. <br/>
+            India's #1 Free PG List Platform <br/>
             <span className="text-orange-500">Zero Commission. 100% Direct Leads.</span>
           </h1>
           <p className="text-lg md:text-xl text-primary-100 max-w-2xl mx-auto mb-10">
@@ -112,22 +148,39 @@ export default function ForOwnersPage() {
                 </div>
               </div>
             </div>
-            <div className="flex-1 w-full bg-neutral-100 rounded-[2rem] p-8 md:p-12 border border-neutral-200">
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-200 p-6">
-                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-neutral-100">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-                      <CheckCircle size={32} />
+            <div className="flex-1 w-full bg-gradient-to-br from-neutral-100 to-neutral-200/80 rounded-[2rem] p-6 sm:p-10 border border-neutral-200">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-200 p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
+                      <CheckCircle size={26} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-lg">New Lead on WhatsApp!</h4>
-                      <p className="text-sm text-neutral-500">Just now</p>
+                      <h4 className="font-extrabold text-base text-neutral-900">Direct Tenant Inquiry</h4>
+                      <p className="text-xs text-neutral-500">Delivered via PGSathi • Just now</p>
                     </div>
-                 </div>
-                 <div className="space-y-3">
-                   <div className="h-4 bg-neutral-100 rounded w-3/4"></div>
-                   <div className="h-4 bg-neutral-100 rounded w-1/2"></div>
-                   <div className="h-4 bg-neutral-100 rounded w-full"></div>
-                 </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-wider border border-emerald-200">
+                    Verified Lead
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-100 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-neutral-800">
+                    <span>Aman Verma (Software Engineer)</span>
+                    <span className="text-emerald-600 font-extrabold">0% Brokerage</span>
+                  </div>
+                  <p className="text-xs text-neutral-600 leading-relaxed">
+                    "Hi! I saw your PG on PGSathi. I'm looking for a Single Room starting next week. Is food included?"
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 text-xs font-semibold text-neutral-500">
+                  <span>Contact: +91 98765 *****</span>
+                  <span className="text-primary-600 font-bold flex items-center gap-1">
+                    Connect on WhatsApp <ArrowRight size={14} />
+                  </span>
+                </div>
               </div>
             </div>
           </div>

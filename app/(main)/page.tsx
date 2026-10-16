@@ -13,28 +13,102 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import PGCardSkeleton from "@/components/listings/PGCardSkeleton";
 import { safeJsonLd } from "@/lib/json-ld";
 
+import { constructMetadata } from "@/lib/seo";
+
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Is finding a PG on PGSathi really zero brokerage?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We never charge any fees from tenants — from searching to getting the owner's number, everything is completely free." } },
-    { "@type": "Question", "name": "How are the listings verified?", "acceptedAnswer": { "@type": "Answer", "text": "Our team reviews every new PG before the listing goes live — we check the address, photos, and owner details." } },
-    { "@type": "Question", "name": "How do I contact the PG owner?", "acceptedAnswer": { "@type": "Answer", "text": "You will find a 'Contact Owner' or 'WhatsApp' button on every listing — you connect directly to the owner's phone number, with no middlemen." } },
+    {
+      "@type": "Question",
+      "name": "Is finding a PG on PGSathi really zero brokerage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We never charge any fees from tenants — from searching to getting the owner's number, everything is completely free. PG owners subscribe for listings and leads, which keeps the platform running. You do not pay brokerage at any stage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are the listings verified?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our team reviews every new PG before the listing goes live — we check the address, photos, and owner details. Verified listings have a \"VERIFIED\" badge, so you can proceed with confidence."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I contact the PG owner?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You will find a \"Contact Owner\" or WhatsApp button on every listing — you connect directly to the owner's phone number, with no middlemen. You can also call or book a visit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I am a PG owner — how do I list my property?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Click on \"List Your PG\", enter your property details and photos — basic listing is free. For more leads and a complete PG-management dashboard, paid plans are available, which include a 15-day free trial."
+      }
+    }
   ],
 };
 
-export const metadata = {
-  title: "PGSathi: India's #1 PG Platform & Management Software",
-  description: "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
-  alternates: {
-    canonical: "https://pgsathi.in/",
-  },
-  openGraph: {
-    title: "PGSathi: India's #1 PG Platform & Management Software",
-    description: "India's most trusted platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
-    url: "https://pgsathi.in/",
-  },
+const SOFTWARE_APPLICATION_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PGSathi PG List Platform & CRM",
+  "operatingSystem": "Web, Mobile Browser, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "description": "India's #1 PG list platform and Cloud CRM for PG owners and tenants. Automated rent collection, bed inventory, digital KYC, and zero brokerage leads.",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter Plan",
+      "price": "0",
+      "priceCurrency": "INR",
+      "description": "1 Free PG Listing on PGSathi with 0% brokerage"
+    },
+    {
+      "@type": "Offer",
+      "name": "Standard Plan",
+      "price": "1499",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "1499",
+        "priceCurrency": "INR",
+        "unitText": "MONTH"
+      },
+      "description": "PG Manager CRM, 50 tenants, 1-click WhatsApp reminders, and direct leads"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro Plan",
+      "price": "2199",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "2199",
+        "priceCurrency": "INR",
+        "unitText": "MONTH"
+      },
+      "description": "Up to 3 PGs, 150 tenants, staff logins, and priority ranking"
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "320"
+  }
 };
+
+export const metadata = constructMetadata({
+  title: "PGSathi: India's #1 PG List Platform & Management Software",
+  description: "India's #1 PG list platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
+  canonicalPath: "/",
+  keywords: ["PG list platform", "PG listing platform", "Zero brokerage PG", "Paying guest list", "PG management software India"],
+});
 
 export default function Home() {
   return (
@@ -42,6 +116,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(SOFTWARE_APPLICATION_SCHEMA) }}
       />
       <HeroSection />
       <CityGrid />
