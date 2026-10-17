@@ -54,3 +54,6 @@ pg_cleaned_import.json
 
 # PowerShell one-off scripts
 *.ps1
+
+# Service Account credentials
+*service-account*.json

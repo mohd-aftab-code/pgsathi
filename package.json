@@ -16,7 +16,8 @@
     "db:seed": "node prisma/seed.js",
     "db:apply": "node scripts/apply-migration.js",
     "check:commission": "node scripts/check-recurring-commission.js",
-    "check:earnings": "node scripts/check-partner-earning-state.js"
+    "check:earnings": "node scripts/check-partner-earning-state.js",
+    "index:all": "node scripts/auto-index.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
