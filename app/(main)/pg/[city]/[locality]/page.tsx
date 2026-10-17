@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import PGCard from "@/components/listings/PGCard";
-import { Search, MapPin, Filter, Train, GraduationCap, Building2, IndianRupee, ShieldCheck, Users, Home, Sparkles } from "lucide-react";
+import { Search, MapPin, Filter, Train, GraduationCap, Building2, IndianRupee, ShieldCheck, Users, Home, Sparkles, ExternalLink, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
@@ -118,10 +118,42 @@ export default async function LocalityPage(props: {
     })),
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `What is the average PG rent in ${locality.name}, ${city.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Average PG rent in ${locality.name} ranges from ${profile.rentRange.double} for double sharing and ${profile.rentRange.single} for private single rooms. Most verified listings on PGSathi include high-speed Wi-Fi, electricity backup, and nutritious meals.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Which is the nearest metro station to ${locality.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `The nearest transit hub is ${profile.nearestMetro}. Commuters can also refer to the official transit network for route schedules.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Are there zero brokerage PGs available in ${locality.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Yes, all accommodations listed on PGSathi in ${locality.name} are 100% zero brokerage, allowing you to connect directly with verified property owners via call or WhatsApp without paying any broker fees.`
+        }
+      }
+    ]
+  };
+
   return (
     <div className="bg-neutral-50 min-h-screen pb-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }} />
 
       {/* Hero Section */}
       <div className="bg-primary-950 text-white py-12 px-4 relative overflow-hidden">
@@ -253,19 +285,32 @@ export default async function LocalityPage(props: {
             </div>
 
             {/* Nearest Metro */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-neutral-50 border border-neutral-200/90 shadow-sm space-y-3">
-              <div className="flex items-center gap-2.5 text-xs font-black text-neutral-600 uppercase tracking-wider">
-                <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-                  <Train size={15} />
+            <div className="p-4 sm:p-5 rounded-2xl bg-neutral-50 border border-neutral-200/90 shadow-sm space-y-3 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2.5 text-xs font-black text-neutral-600 uppercase tracking-wider">
+                  <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                    <Train size={15} />
+                  </div>
+                  <span>Transit &amp; Metro</span>
                 </div>
-                <span>Transit &amp; Metro</span>
+                <div className="pl-1 mt-3">
+                  <p className="text-xs font-bold text-neutral-900 leading-snug">
+                    {profile.nearestMetro}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-1 leading-relaxed">Direct auto, bus &amp; shared cab connectivity available.</p>
+                </div>
               </div>
-              <div className="pl-1">
-                <p className="text-xs font-bold text-neutral-900 leading-snug">
-                  {profile.nearestMetro}
-                </p>
-                <p className="text-[11px] text-neutral-500 mt-1 leading-relaxed">Direct auto, bus &amp; shared cab connectivity available.</p>
-              </div>
+              {profile.transitUrl && (
+                <a
+                  href={profile.transitUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[10px] font-bold text-blue-600 hover:text-blue-800 hover:underline pt-2 border-t border-neutral-200/60 w-full"
+                >
+                  <span className="truncate">{profile.transitName}</span>
+                  <ExternalLink size={10} className="shrink-0" />
+                </a>
+              )}
             </div>
 
             {/* Nearby Colleges */}
@@ -296,6 +341,57 @@ export default async function LocalityPage(props: {
                   <li key={i} className="truncate">• {o}</li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Frequently Asked Questions (FAQ) Section for Google Featured Snippets ── */}
+      <section className="container-max mt-8 pt-8 border-t border-neutral-200">
+        <div className="bg-white rounded-3xl border border-neutral-200 p-6 sm:p-10 shadow-sm space-y-6">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
+              <HelpCircle size={18} />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                Frequently Asked Questions about PGs in {locality.name}
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+                Everything you need to know about renting a PG in {locality.name}, {city.name}.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-neutral-100">
+            <div className="bg-neutral-50 p-4 sm:p-5 rounded-2xl border border-neutral-200/80 space-y-2">
+              <h3 className="text-xs font-black uppercase text-neutral-900 tracking-wide">
+                Average Rent in {locality.name}
+              </h3>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                Single private rooms average <strong>{profile.rentRange.single}</strong>, while double sharing starts around <strong>{profile.rentRange.double}</strong> per month with food and utilities included.
+              </p>
+            </div>
+
+            <div className="bg-neutral-50 p-4 sm:p-5 rounded-2xl border border-neutral-200/80 space-y-2">
+              <h3 className="text-xs font-black uppercase text-neutral-900 tracking-wide">
+                Nearest Metro &amp; Connectivity
+              </h3>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                The primary transit point is <strong>{profile.nearestMetro}</strong>. Route schedules can be checked on{" "}
+                <a href={profile.transitUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold underline hover:text-blue-800">
+                  {profile.transitName}
+                </a>.
+              </p>
+            </div>
+
+            <div className="bg-neutral-50 p-4 sm:p-5 rounded-2xl border border-neutral-200/80 space-y-2">
+              <h3 className="text-xs font-black uppercase text-neutral-900 tracking-wide">
+                Zero Brokerage Guarantee
+              </h3>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                Every PG listed on PGSathi connects you directly with verified owners on phone or WhatsApp. You pay exactly <strong>₹0 in brokerage</strong> fees.
+              </p>
             </div>
           </div>
         </div>
