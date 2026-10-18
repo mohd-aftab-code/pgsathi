@@ -185,8 +185,9 @@ export default async function SearchPage(props: {
   let searchData;
   try {
     searchData = await fetchQueries();
-  } catch (error: any) {
-    if (error?.code === "P1001" || error?.message?.includes("Can't reach database server")) {
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string } | null;
+    if (err?.code === "P1001" || err?.message?.includes("Can't reach database server")) {
       // Allow Neon serverless compute 1.5s to finish spinning up and retry
       await new Promise((res) => setTimeout(res, 1500));
       searchData = await fetchQueries();
