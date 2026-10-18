@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 const defaultSiteName = 'PGSathi';
 const defaultDescription = 'Find the best Paying Guest (PG) accommodations, hostels, and co-living spaces for rent in India without any brokerage.';
-const defaultUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in';
+const defaultUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.pgsathi.in';
 
 interface ConstructMetadataProps {
   title?: string;

@@ -1,88 +1,172 @@
 import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
-import { CITY_SLUGS } from '@/constants/cities';
 import { BLOG_POSTS } from '@/lib/data/blogs';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // cache for 24 hours
 
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://pgsathi.in';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.pgsathi.in';
 
-  // Get all active PG listings
+  // 1. Get all genuinely active PG listings
   const activeListings = await db.listing.findMany({
-    where: { status: 'ACTIVE' },
-    select: { slug: true, updatedAt: true, city: { select: { slug: true } }, locality: { select: { slug: true } } },
+    where: {
+      status: 'ACTIVE',
+      isActive: true,
+      cityId: { not: null },
+    },
+    select: {
+      slug: true,
+      updatedAt: true,
+      city: { select: { slug: true } },
+      locality: { select: { slug: true } },
+    },
   });
 
-  const listingUrls = activeListings.map((listing) => ({
-    url: `${baseUrl}/pg/${listing.city?.slug || 'unknown'}/${listing.locality?.slug || 'all'}/${listing.slug}`,
+  const listingUrls: MetadataRoute.Sitemap = activeListings.map((listing) => ({
+    url: `${baseUrl}/pg/${listing.city?.slug}/${listing.locality?.slug || 'all'}/${listing.slug}`,
     lastModified: listing.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
-  // Generate Advanced Programmatic City URLs
-  const programmaticUrls: any[] = [];
-  
-  CITY_SLUGS.forEach((slug) => {
-    // Base city PG page
-    programmaticUrls.push({
-      url: `${baseUrl}/pg-in-${slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+  // 2. Fetch cities that have genuine active listings (eligible for indexing)
+  // Empty city pages have `noIndex: true` and must not be submitted to the sitemap.
+  const citiesWithListings = await db.city.findMany({
+    where: {
+      isActive: true,
+      listings: {
+        some: {
+          status: 'ACTIVE',
+          isActive: true,
+        },
+      },
+    },
+    select: {
+      slug: true,
+      listings: {
+        where: {
+          status: 'ACTIVE',
+          isActive: true,
+        },
+        select: {
+          genderAllowed: true,
+        },
+      },
+    },
+  });
+
+  const cityUrls: MetadataRoute.Sitemap = [];
+  for (const city of citiesWithListings) {
+    if (!city.slug) continue;
+
+    cityUrls.push({
+      url: `${baseUrl}/pg-in-${city.slug}`,
+      changeFrequency: 'daily' as const,
       priority: 0.9,
     });
 
-    // Gender specific pages for each city
-    ['boys', 'girls', 'coed'].forEach((gender) => {
-      programmaticUrls.push({
-        url: `${baseUrl}/${gender}-pg-in-${slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'daily',
+    const hasBoys = city.listings.some((l) => l.genderAllowed === 'BOYS');
+    const hasGirls = city.listings.some((l) => l.genderAllowed === 'GIRLS');
+    const hasCoed = city.listings.some((l) => l.genderAllowed === 'COED');
+
+    if (hasBoys) {
+      cityUrls.push({
+        url: `${baseUrl}/boys-pg-in-${city.slug}`,
+        changeFrequency: 'daily' as const,
         priority: 0.8,
-      });
-    });
-  });
-
-  // Fetch all active localities to generate micro-location pages
-  const activeLocalities = await db.locality.findMany({
-    where: { isActive: true },
-    include: { city: true }
-  });
-
-  activeLocalities.forEach((loc) => {
-    if (loc.city?.slug) {
-      // Base locality page
-      programmaticUrls.push({
-        url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'daily',
-        priority: 0.8,
-      });
-
-      // Locality types (boys-pg, girls-pg, co-living)
-      ['boys-pg', 'girls-pg', 'co-living'].forEach((type) => {
-        programmaticUrls.push({
-          url: `${baseUrl}/pg/${loc.city?.slug}/${loc.slug}/${type}`,
-          lastModified: new Date(),
-          changeFrequency: 'daily',
-          priority: 0.8,
-        });
       });
     }
+    if (hasGirls) {
+      cityUrls.push({
+        url: `${baseUrl}/girls-pg-in-${city.slug}`,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      });
+    }
+    if (hasCoed) {
+      cityUrls.push({
+        url: `${baseUrl}/coed-pg-in-${city.slug}`,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      });
+    }
+  }
+
+  // 3. Fetch localities that have genuine active listings
+  const localitiesWithListings = await db.locality.findMany({
+    where: {
+      isActive: true,
+      city: { isActive: true },
+      listings: {
+        some: {
+          status: 'ACTIVE',
+          isActive: true,
+        },
+      },
+    },
+    select: {
+      slug: true,
+      city: { select: { slug: true } },
+      listings: {
+        where: {
+          status: 'ACTIVE',
+          isActive: true,
+        },
+        select: {
+          genderAllowed: true,
+        },
+      },
+    },
   });
 
-  // Blog Posts URLs
-  const blogUrls = BLOG_POSTS.map((post) => ({
+  const localityUrls: MetadataRoute.Sitemap = [];
+  for (const loc of localitiesWithListings) {
+    if (!loc.city?.slug || !loc.slug) continue;
+
+    localityUrls.push({
+      url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}`,
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    });
+
+    const hasBoys = loc.listings.some((l) => l.genderAllowed === 'BOYS');
+    const hasGirls = loc.listings.some((l) => l.genderAllowed === 'GIRLS');
+    const hasCoed = loc.listings.some((l) => l.genderAllowed === 'COED');
+
+    if (hasBoys) {
+      localityUrls.push({
+        url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}/boys-pg`,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      });
+    }
+    if (hasGirls) {
+      localityUrls.push({
+        url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}/girls-pg`,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      });
+    }
+    if (hasCoed) {
+      localityUrls.push({
+        url: `${baseUrl}/pg/${loc.city.slug}/${loc.slug}/co-living`,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      });
+    }
+  }
+
+  // 4. Blog Posts URLs (using verified article publication dates)
+  const blogUrls: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.id}`,
     lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  // Static core routes (only clean 200 OK indexable pages)
-  const staticRoutes = [
+  // 5. Static core routes (omit lastModified when real modification date is unavailable)
+  const staticRoutes: MetadataRoute.Sitemap = [
     '',
     '/about',
     '/contact',
@@ -100,13 +184,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/trust-and-safety',
     '/how-it-works',
     '/help',
-    '/careers'
+    '/careers',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: route === '' ? 1.0 : 0.8,
   }));
 
-  return [...staticRoutes, ...programmaticUrls, ...blogUrls, ...listingUrls];
+  return [...staticRoutes, ...cityUrls, ...localityUrls, ...blogUrls, ...listingUrls];
 }

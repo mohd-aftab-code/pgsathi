@@ -11,7 +11,7 @@ interface BreadcrumbsProps {
 }
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
-  // Generate JSON-LD Schema for Breadcrumbs
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.pgsathi.in";
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -20,13 +20,13 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://pgsathi.in/"
+        "item": `${baseUrl}/`
       },
       ...items.map((item, index) => ({
         "@type": "ListItem",
         "position": index + 2,
         "name": item.label,
-        "item": item.href ? `https://pgsathi.in${item.href}` : undefined
+        "item": item.href ? `${baseUrl}${item.href}` : undefined
       }))
     ]
   };

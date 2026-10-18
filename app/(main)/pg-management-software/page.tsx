@@ -2,29 +2,18 @@ import Link from "next/link";
 import {
   CheckCircle2,
   TrendingUp,
-  Shield,
   Smartphone,
-  Zap,
   ArrowRight,
-  Building,
-  Building2,
-  Users,
   CreditCard,
   ChevronDown,
   Sparkles,
   MessageCircle,
   FileText,
-  Clock,
   ShieldCheck,
-  IndianRupee,
   Bed,
   Check,
   X,
   AlertCircle,
-  PhoneCall,
-  UserCheck,
-  BarChart3,
-  HelpCircle,
 } from "lucide-react";
 import { constructMetadata } from "@/lib/seo";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
@@ -32,7 +21,7 @@ import { safeJsonLd } from "@/lib/json-ld";
 
 export const metadata = constructMetadata({
   title: "PG Management Software & Cloud CRM for Owners | PGSathi",
-  description: "India's #1 PG Management Software. Automate rent collection via WhatsApp, digital tenant KYC, real-time bed occupancy, and zero brokerage leads on PGSathi.",
+  description: "Smart PG Management Software and Cloud CRM. Automate rent collection via WhatsApp, digital tenant KYC, real-time bed occupancy, and zero brokerage leads on PGSathi.",
   canonicalPath: "/pg-management-software",
   keywords: [
     "PG management software",
@@ -59,7 +48,7 @@ const SOFTWARE_SCHEMA = {
       "name": "Starter Plan",
       "price": "0",
       "priceCurrency": "INR",
-      "description": "Free lifetime PG listing on India's #1 PG list platform",
+      "description": "Free lifetime PG listing on PGSathi discovery portal",
     },
     {
       "@type": "Offer",
@@ -75,11 +64,6 @@ const SOFTWARE_SCHEMA = {
       "description": "Complete PG Manager CRM with 15-day free trial",
     },
   ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "320",
-  },
 };
 
 const FAQ_ITEMS = [
@@ -190,7 +174,7 @@ export default function PGManagementSoftwarePage() {
                   href="/for-owners"
                   className="bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-300 px-6 py-4 rounded-xl font-bold text-sm sm:text-base transition-all inline-flex items-center justify-center text-center min-h-[48px] shadow-sm"
                 >
-                  Explore Owner Benefits
+                  List Your PG Online Free
                 </Link>
               </div>
 
@@ -273,7 +257,7 @@ export default function PGManagementSoftwarePage() {
                       </span>
                     </div>
                     <p className="text-[11px] text-neutral-700 leading-snug mb-3 font-medium">
-                      "Hi Rohan, your rent of ₹8,500 for Room 204 is due. Pay via UPI: <strong>owner@upi</strong>"
+                      &quot;Hi Rohan, your rent of ₹8,500 for Room 204 is due. Pay via UPI: <strong>owner@upi</strong>&quot;
                     </p>
                     <div className="flex items-center justify-between text-[11px] font-bold text-emerald-900 pt-2 border-t border-emerald-200/70">
                       <span className="text-neutral-600">No manual calculations</span>
@@ -495,6 +479,9 @@ export default function PGManagementSoftwarePage() {
                     <CheckCircle2 size={16} className="text-emerald-600 shrink-0" /> Photo &amp; Amenity Showcase
                   </li>
                 </ul>
+                <p className="text-xs text-neutral-500 mt-4 leading-relaxed">
+                  Looking only to list your PG for tenant discovery? Check out our <Link href="/for-owners" className="text-primary-700 font-bold hover:underline">free PG listing website guide for owners</Link>.
+                </p>
               </div>
               <Link
                 href="/dashboard/owner/listings/new"

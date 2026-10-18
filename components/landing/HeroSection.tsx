@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import AuthProtectedLink from "@/components/common/AuthProtectedLink";
 import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2, Handshake } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
@@ -36,9 +35,11 @@ const getHeroData = unstable_cache(
   { revalidate: 60 }
 );
 
+type HeroData = Awaited<ReturnType<typeof getHeroData>>;
+
 export default async function HeroSection() {
-  let cities: any[] = [];
-  let showcase: any[] = [];
+  let cities: HeroData["cities"] = [];
+  let showcase: HeroData["showcase"] = [];
   try {
     const data = await getHeroData();
     cities = data.cities;
@@ -65,14 +66,14 @@ export default async function HeroSection() {
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 sm:bg-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none border border-primary-100 sm:border-none">
               <span className="w-2 sm:w-6 h-2 sm:h-px rounded-full sm:rounded-none bg-primary-500" />
-              India's #1 PG List Platform
+              India&apos;s #1 PG List Platform
             </div>
 
             <h1
               className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
               style={{ textWrap: "balance" }}
             >
-              India's #1 PG List Platform &amp; <br className="hidden lg:block" />
+              India&apos;s #1 PG List Platform &amp; <br className="hidden lg:block" />
               <span className="text-primary-700">Free PG Management Software.</span>
             </h1>
 
@@ -179,10 +180,10 @@ const FALLBACK_PHOTOS = [
   "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=560&q=80",
 ];
 
-function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: any; fallbackPhoto: string; className: string }) {
+function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: HeroData["showcase"][number]; fallbackPhoto: string; className: string }) {
   const photo = listing.photos?.[0]?.url || fallbackPhoto;
   return (
-    <AuthProtectedLink
+    <Link
       href={`/pg/${listing.city?.slug}/${listing.locality?.slug || "all"}/${listing.slug}`}
       className={`block bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden hover:-translate-y-1 hover:rotate-0 transition-all duration-300 ${className}`}
     >
@@ -212,6 +213,6 @@ function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: any; fal
           </span>
         </div>
       </div>
-    </AuthProtectedLink>
+    </Link>
   );
 }

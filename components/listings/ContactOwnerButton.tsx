@@ -6,15 +6,16 @@ import toast from "react-hot-toast";
 
 interface Props {
   listingId: number;
-  ownerPhone: string;
+  ownerPhone?: string;
   listingTitle: string;
   hasActiveSubscription?: boolean;
   layout?: "row" | "column";
 }
 
-export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle, hasActiveSubscription = true, layout = "column" }: Props) {
+export default function ContactOwnerButton({ listingId, ownerPhone = "", listingTitle, hasActiveSubscription = true, layout = "column" }: Props) {
   const [loading, setLoading] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [revealedPhone, setRevealedPhone] = useState<string>(ownerPhone);
   
   // Popup state
   const [showPopup, setShowPopup] = useState(false);
@@ -25,8 +26,8 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
 
   const handleActionClick = (action: "PHONE" | "WHATSAPP") => {
     // If the phone is already revealed and they clicked phone, just call
-    if (action === "PHONE" && showPhone) {
-      window.location.href = `tel:+91${ownerPhone}`;
+    if (action === "PHONE" && showPhone && revealedPhone) {
+      window.location.href = `tel:+91${revealedPhone}`;
       return;
     }
     setLeadAction(action);
@@ -47,7 +48,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
 
     setLoading(true);
     try {
-      await fetch("/api/leads", {
+      const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,15 +60,28 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
         })
       });
 
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
+        toast.error(resData.message || "Failed to submit lead");
+        return;
+      }
+
       toast.success("Contact details submitted successfully!");
-      if (hasActiveSubscription) {
+      const targetPhone = resData.contact?.phone || revealedPhone || ownerPhone || "";
+
+      if (targetPhone) {
+        setRevealedPhone(targetPhone);
+        setShowPhone(true);
+      }
+
+      if (hasActiveSubscription && targetPhone) {
         // Reveal contact directly
         setShowPopup(false);
         if (leadAction === "WHATSAPP") {
-          const waUrl = `https://wa.me/91${ownerPhone}?text=Hi, I am interested in your PG: ${listingTitle}`;
+          const waUrl = `https://wa.me/91${targetPhone}?text=Hi, I am interested in your PG: ${listingTitle}`;
           window.open(waUrl, "_blank");
-        } else {
-          setShowPhone(true);
+        } else if (leadAction === "PHONE") {
+          window.location.href = `tel:+91${targetPhone}`;
         }
       } else {
         // Intercept lead (Admin will contact)
@@ -102,7 +116,7 @@ export default function ContactOwnerButton({ listingId, ownerPhone, listingTitle
         >
           <Phone size={layout === "row" ? 15 : 18} className="shrink-0" /> 
           <span className="whitespace-nowrap font-bold">
-            {showPhone ? ownerPhone : "Call"}
+            {showPhone && revealedPhone ? revealedPhone : "Call"}
           </span>
         </button>
       </div>

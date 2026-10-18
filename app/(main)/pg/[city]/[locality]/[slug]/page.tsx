@@ -1,12 +1,11 @@
 import { db } from "@/lib/db";
-import { notFound, redirect } from "next/navigation";
-import Image from "next/image";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import ImageGallery from "@/components/listings/ImageGallery";
 import ContactOwnerButton from "@/components/listings/ContactOwnerButton";
 import ViewTracker from "@/components/listings/ViewTracker";
-import { MapPin, CheckCircle, Star, Wifi, Car, Utensils, Shirt, Brush, Clock, Shield, Users, Home, ArrowLeft, Share2 } from "lucide-react";
+import { MapPin, CheckCircle, Star, Wifi, Car, Utensils, Shirt, Brush, Clock, Shield, Users, Home, ArrowLeft } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import { auth } from "@/lib/auth";
 import ReviewSection from "@/components/listings/ReviewSection";
@@ -31,7 +30,7 @@ function getListingBySlug(slug: string) {
             orderBy: { createdAt: "desc" },
             take: 10,
           },
-          owner: { select: { name: true, phone: true, avatar: true } },
+          owner: { select: { name: true, avatar: true } },
         },
       });
     },
@@ -47,7 +46,7 @@ import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
 import { isLocalityType, getTypeLabel, generateLocalityGuideContent, getLocalityProfile } from "@/lib/locality-content";
 import PGCard from "@/components/listings/PGCard";
-import { Filter, Search, IndianRupee, Train, GraduationCap, Building2, ShieldCheck, Sparkles } from "lucide-react";
+import { Filter, Search, IndianRupee, Train, GraduationCap, Building2, ShieldCheck } from "lucide-react";
 
 export async function generateMetadata(props: {
   params: Promise<{ city: string; locality: string; slug: string }>;
@@ -85,7 +84,7 @@ export async function generateMetadata(props: {
   const localityName = pg.locality?.name || "";
   const title = pg.metaTitle || `${pg.title.slice(0, 40)} - PG in ${localityName} | PGSathi`;
   const description = pg.metaDesc || `${pg.genderAllowed} PG in ${localityName}, ${cityName} from ₹${pg.priceMin}/mo. Zero brokerage verified PG on India's #1 PG list platform.`;
-  const image = pg.photos?.[0]?.url || "https://pgsathi.in/og-image.jpg";
+  const image = pg.photos?.[0]?.url || "https://www.pgsathi.in/og-image.jpg";
   const canonicalPath = `/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`;
 
   return constructMetadata({
@@ -157,25 +156,25 @@ export default async function PGDetailPage(props: {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://pgsathi.in",
+          "item": "https://www.pgsathi.in",
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": `PGs in ${city.name}`,
-          "item": `https://pgsathi.in/pg-in-${city.slug}`,
+          "item": `https://www.pgsathi.in/pg-in-${city.slug}`,
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": `PGs in ${locality.name}`,
-          "item": `https://pgsathi.in/pg/${city.slug}/${locality.slug}`,
+          "item": `https://www.pgsathi.in/pg/${city.slug}/${locality.slug}`,
         },
         {
           "@type": "ListItem",
           "position": 4,
           "name": typeInfo.title,
-          "item": `https://pgsathi.in/pg/${city.slug}/${locality.slug}/${params.slug}`,
+          "item": `https://www.pgsathi.in/pg/${city.slug}/${locality.slug}/${params.slug}`,
         },
       ],
     };
@@ -188,7 +187,7 @@ export default async function PGDetailPage(props: {
       "itemListElement": listings.slice(0, 10).map((l, idx) => ({
         "@type": "ListItem",
         "position": idx + 1,
-        "url": `https://pgsathi.in/pg/${city.slug}/${locality.slug}/${l.slug}`,
+        "url": `https://www.pgsathi.in/pg/${city.slug}/${locality.slug}/${l.slug}`,
         "name": l.title,
       })),
     };
@@ -214,7 +213,7 @@ export default async function PGDetailPage(props: {
               Best {typeInfo.title} in {locality.name}, {city.name}
             </h1>
             <p className="text-primary-100 text-base md:text-lg max-w-3xl leading-relaxed">
-              Find 100% verified zero brokerage {typeInfo.title.toLowerCase()} in {locality.name}. Direct owner contact via phone &amp; WhatsApp on India's #1 PG list platform.
+              Find 100% verified zero brokerage {typeInfo.title.toLowerCase()} in {locality.name}. Direct owner contact via phone &amp; WhatsApp on India&apos;s #1 PG list platform.
             </p>
 
             {/* Quick sibling links */}
@@ -285,7 +284,7 @@ export default async function PGDetailPage(props: {
           {listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {listings.map((pg) => (
-                <PGCard key={pg.id} pg={pg as any} />
+                <PGCard key={pg.id} pg={pg} />
               ))}
             </div>
           ) : (
@@ -425,10 +424,6 @@ export default async function PGDetailPage(props: {
 
   // ── Otherwise: Render the individual PG Listing Detail Page ──
   const session = await auth();
-  if (!session?.user) {
-    const callbackUrl = encodeURIComponent(`/pg/${params.city}/${params.locality}/${params.slug}`);
-    redirect(`/login?callbackUrl=${callbackUrl}`);
-  }
 
   const pg = await getListingBySlug(params.slug);
 
@@ -447,7 +442,7 @@ export default async function PGDetailPage(props: {
     "@type": "LodgingBusiness",
     "name": pg.title,
     "description": pg.description,
-    "url": `https://pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`,
+    "url": `https://www.pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`,
     "image": pg.photos.map(p => p.url),
     "address": {
       "@type": "PostalAddress",
@@ -483,31 +478,31 @@ export default async function PGDetailPage(props: {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://pgsathi.in"
+        "item": "https://www.pgsathi.in"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": `PGs in ${cityName}`,
-        "item": `https://pgsathi.in/pg-in-${pg.city?.slug}`
+        "item": `https://www.pgsathi.in/pg-in-${pg.city?.slug}`
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": `PGs in ${localityName}`,
-        "item": `https://pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug}`
+        "item": `https://www.pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug}`
       },
       {
         "@type": "ListItem",
         "position": 4,
         "name": pg.title,
-        "item": `https://pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`
+        "item": `https://www.pgsathi.in/pg/${pg.city?.slug}/${pg.locality?.slug || "all"}/${pg.slug}`
       }
     ]
   };
 
   const genderLabel = pg.genderAllowed === "BOYS" ? "Boys" : pg.genderAllowed === "GIRLS" ? "Girls" : "Co-ed";
-  const amenityIcons: Record<string, any> = {
+  const amenityIcons: Record<string, React.ReactNode> = {
     wifi: <Wifi size={16} />, parking: <Car size={16} />, food: <Utensils size={16} />,
     laundry: <Shirt size={16} />, cleaning: <Brush size={16} />,
   };
@@ -670,7 +665,7 @@ export default async function PGDetailPage(props: {
               {pg.reviewsEnabled && (
                 <ReviewSection
                   listingId={pg.id}
-                  reviews={approvedReviews as any}
+                  reviews={approvedReviews}
                   avgRating={Number(avgRating || 0)}
                   totalReviews={approvedReviews.length}
                   isLoggedIn={!!session?.user?.id}
@@ -696,7 +691,6 @@ export default async function PGDetailPage(props: {
 
                   <ContactOwnerButton
                     listingId={pg.id}
-                    ownerPhone={pg.owner?.phone || ""}
                     listingTitle={pg.title}
                     hasActiveSubscription={true}
                   />
@@ -760,7 +754,6 @@ export default async function PGDetailPage(props: {
         <div className="w-[65%]">
           <ContactOwnerButton
             listingId={pg.id}
-            ownerPhone={pg.owner?.phone || ""}
             listingTitle={pg.title}
             hasActiveSubscription={true}
             layout="row"

@@ -1,11 +1,25 @@
 import Image from "next/image";
-import { MapPin, CheckCircle, ArrowRight, Utensils, Shirt, Brush, Car } from "lucide-react";
-import AuthProtectedLink from "@/components/common/AuthProtectedLink";
+import Link from "next/link";
+import { MapPin, CheckCircle, ArrowRight } from "lucide-react";
 import { getThumbnailUrl } from "@/lib/cloudinary";
 import SaveButton from "./SaveButton";
 
+export interface PGCardData {
+  id: number;
+  slug: string;
+  title: string;
+  photos?: Array<{ url: string }> | null;
+  genderAllowed?: string | null;
+  isFeatured?: boolean;
+  address?: string | null;
+  priceMin: number;
+  priceMax: number;
+  locality?: { name: string; slug: string } | null;
+  city?: { name: string; slug: string } | null;
+}
+
 interface PGCardProps {
-  pg: any; // Ideally we use proper Prisma type here
+  pg: PGCardData;
 }
 
 export default function PGCard({ pg }: PGCardProps) {
@@ -16,7 +30,7 @@ export default function PGCard({ pg }: PGCardProps) {
   const genderLabel = pg.genderAllowed === "BOYS" ? "Boys" : pg.genderAllowed === "GIRLS" ? "Girls" : "Co-ed";
 
   return (
-    <AuthProtectedLink href={`/pg/${pg.city?.slug || 'unknown'}/${pg.locality?.slug || 'all'}/${pg.slug}`} className="group flex flex-col bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <Link href={`/pg/${pg.city?.slug || 'unknown'}/${pg.locality?.slug || 'all'}/${pg.slug}`} className="group flex flex-col bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-56 md:h-48 w-full overflow-hidden bg-neutral-100 shrink-0">
         <Image 
           src={imageUrl} 
@@ -71,6 +85,6 @@ export default function PGCard({ pg }: PGCardProps) {
           </div>
         </div>
       </div>
-    </AuthProtectedLink>
+    </Link>
   );
 }

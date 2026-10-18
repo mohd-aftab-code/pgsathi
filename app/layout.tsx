@@ -28,7 +28,7 @@ const notoDevanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pgsathi.in"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.pgsathi.in"),
   title: {
     default: "PGSathi: India's #1 PG List Platform & Management Software",
     template: "%s | PGSathi",
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   description:
     "India's #1 PG list platform. Find 100% verified zero brokerage PGs, get direct tenant leads, use free PG management software, or earn as a partner.",
   alternates: {
-    canonical: "https://pgsathi.in",
+    canonical: "https://www.pgsathi.in",
     languages: {
-      "en-IN": "https://pgsathi.in",
+      "en-IN": "https://www.pgsathi.in",
     },
   },
   authors: [{ name: "PGSathi" }],
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://pgsathi.in",
+    url: "https://www.pgsathi.in",
     siteName: "PGSathi",
     title: "PGSathi: India's #1 PG List Platform & Management Software",
     description:
@@ -104,8 +104,8 @@ export default async function RootLayout({
     "@type": "Organization",
     "name": "PGSathi",
     "alternateName": ["PG Sathi", "PGSathi Platform", "PGSathi PG List & Management Software"],
-    "url": "https://pgsathi.in",
-    "logo": "https://pgsathi.in/mobileaapicon.png",
+    "url": "https://www.pgsathi.in",
+    "logo": "https://www.pgsathi.in/mobileaapicon.png",
     "description": "India's dedicated 3-in-1 ecosystem for tenants (zero brokerage verified PGs), PG owners (free listings, direct WhatsApp leads & cloud CRM), and affiliate partners (10% recurring commission).",
     "knowsAbout": [
       "Zero Brokerage PG Accommodation for Tenants",
@@ -136,40 +136,19 @@ export default async function RootLayout({
     }
   };
 
-  const softwareApplicationSchema = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "PGSathi PG Management Software & CRM",
-    "operatingSystem": "Web, Android, iOS",
-    "applicationCategory": "BusinessApplication",
-    "url": "https://pgsathi.in/pg-management-software",
-    "description": "Complete cloud-based PG and hostel management software with bed-level inventory tracking, 1-click WhatsApp rent collection with UPI, digital Aadhaar KYC, and meal mess management.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR",
-      "description": "Free Starter Tier with lifetime free listing and 15-day trial of PG Manager CRM"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "1250",
-      "bestRating": "5",
-      "worstRating": "1"
-    }
-  };
+
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "PGSathi",
     "alternateName": "PG Sathi",
-    "url": "https://pgsathi.in",
+    "url": "https://www.pgsathi.in",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://pgsathi.in/search?q={search_term_string}"
+        "urlTemplate": "https://www.pgsathi.in/search?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }
@@ -191,7 +170,7 @@ export default async function RootLayout({
     },
     "telephone": "+919696110243",
     "email": "pgsathi.support@gmail.com",
-    "url": "https://pgsathi.in"
+    "url": "https://www.pgsathi.in"
   };
 
   return (
@@ -207,7 +186,6 @@ export default async function RootLayout({
             for the rest of the site — which is light-only. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <script

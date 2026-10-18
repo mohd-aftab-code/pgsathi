@@ -95,12 +95,7 @@ const SOFTWARE_APPLICATION_SCHEMA = {
       },
       "description": "Up to 3 PGs, 150 tenants, staff logins, and priority ranking"
     }
-  ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "320"
-  }
+  ]
 };
 
 export const metadata = constructMetadata({

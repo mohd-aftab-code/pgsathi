@@ -7,49 +7,41 @@ import {
   Smartphone,
   ArrowRight,
   ShieldCheck,
-  Building2,
-  Sparkles,
   MessageCircle,
-  Bed,
-  FileText,
   ChevronDown,
   PhoneCall,
   IndianRupee,
-  Star,
   Search,
-  Check,
-  Clock,
-  Shield,
 } from "lucide-react";
 import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 export const metadata = constructMetadata({
-  title: "Free PG List Platform | List PG Online & Get Leads | PGSathi",
+  title: "Free PG Listing Website | List Your PG Online Free | PGSathi",
   description:
-    "List your PG on India's #1 PG list platform. Get verified tenant leads directly on WhatsApp with zero brokerage, manage rent, and automate operations effortlessly.",
+    "List your PG online free on PGSathi, a trusted free PG listing website in India. Connect with verified tenants directly with zero brokerage, direct WhatsApp leads, and free listing tools.",
   canonicalPath: "/for-owners",
   keywords: [
-    "Free PG list platform",
-    "PG listing platform",
+    "Free PG listing website",
+    "List your PG online free",
+    "PG listing website in India",
+    "Free PG listing",
     "List PG online",
     "PG owner registration",
     "Zero brokerage PG leads",
-    "PG listing Noida Delhi Gurgaon",
-    "Hostel listing platform India",
-    "PG manager CRM",
+    "Hostel listing website India",
   ],
 });
 
 const FOR_OWNERS_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "PGSathi PG List Platform & CRM for Owners",
+  "name": "PGSathi Free PG Listing Website & CRM for Owners",
   "operatingSystem": "Web, Mobile Browser, Android, iOS",
   "applicationCategory": "BusinessApplication",
   "description":
-    "Smart PG listing platform and Cloud CRM. List your property for free, receive direct WhatsApp inquiries, and manage rent collection with zero commission.",
+    "Free PG listing website in India. List your PG online free, receive direct WhatsApp inquiries from students and professionals, and manage rent collection with zero commission.",
   "offers": [
     {
       "@type": "Offer",
@@ -161,12 +153,12 @@ export default function ForOwnersPage() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-black text-neutral-900 leading-[1.12] mb-5 tracking-tight">
-            Fill Vacant Beds Faster on India's <br className="hidden sm:inline" />
-            <span className="text-primary-700">#1 Free PG List Platform.</span>
+            Free PG Listing Website in India — <br className="hidden sm:inline" />
+            <span className="text-primary-700">List Your PG Online Free.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Join 10,000+ verified PG owners across Delhi-NCR, Noida, Gurgaon, Kota &amp; Bengaluru. List your property for free, receive direct tenant inquiries on WhatsApp, and automate rent collection.
+            Connect directly with verified students and working professionals. Use our free PG listing website to publish your property, get direct WhatsApp inquiries with zero brokerage, and fill vacant beds fast.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto mb-10">
@@ -238,10 +230,10 @@ export default function ForOwnersPage() {
                   Fast &amp; Transparent
                 </span>
                 <h2 className="text-2xl sm:text-4xl font-black text-neutral-900 tracking-tight mt-3 mb-3">
-                  How to Fill Your Vacant Beds in 3 Steps
+                  How to List Your PG Online Free in 3 Simple Steps
                 </h2>
                 <p className="text-neutral-600 text-sm sm:text-base leading-relaxed">
-                  No dealing with aggressive brokers or paying hefty commissions. Here is how PGSathi connects you directly with genuine tenants.
+                  Listing your property on our free PG listing website in India takes just a few minutes. Connect directly with genuine tenants with zero brokerage.
                 </p>
               </div>
 
@@ -251,9 +243,9 @@ export default function ForOwnersPage() {
                     1
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Create Your Free Listing in 5 Minutes</h3>
+                    <h3 className="text-lg font-black text-neutral-900 mb-1">Create Your Free Owner Account</h3>
                     <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Upload your PG photos, set monthly rent for single/double/triple sharing rooms, list amenities (Wi-Fi, AC, Food), and specify house rules.
+                      Sign up in under 2 minutes with your mobile number. No credit card or registration fee required.
                     </p>
                   </div>
                 </div>
@@ -263,9 +255,9 @@ export default function ForOwnersPage() {
                     2
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Get Verified &amp; Rank in Locality Search</h3>
+                    <h3 className="text-lg font-black text-neutral-900 mb-1">Add Photos, Room Sharing &amp; Rent Details</h3>
                     <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Our automated system validates your property address. Verified listings earn a green badge and rank higher when students search your locality.
+                      Upload PG photos, set monthly rent for single, double, or triple sharing rooms, select amenities (Wi-Fi, AC, Food), and specify rules.
                     </p>
                   </div>
                 </div>
@@ -275,9 +267,9 @@ export default function ForOwnersPage() {
                     3
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Receive Direct Calls &amp; WhatsApp Messages</h3>
+                    <h3 className="text-lg font-black text-neutral-900 mb-1">Publish Live &amp; Receive Direct Inquiries</h3>
                     <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Interested tenants contact you directly without any intermediaries. Schedule room visits, finalize rent, and collect deposits directly.
+                      Your property goes live on our free PG listing website. Interested tenants call or WhatsApp you directly without any broker commissions.
                     </p>
                   </div>
                 </div>
@@ -320,7 +312,7 @@ export default function ForOwnersPage() {
                       <span className="text-emerald-600 font-extrabold bg-emerald-100/60 px-2 py-0.5 rounded">0% Brokerage</span>
                     </div>
                     <p className="text-xs text-neutral-600 leading-relaxed">
-                      "Namaste! I saw your PG listing on PGSathi. I need a Single AC room with food from 1st of next month. Is a room currently vacant for visit today?"
+                      &quot;Namaste! I saw your PG listing on PGSathi. I need a Single AC room with food from 1st of next month. Is a room currently vacant for visit today?&quot;
                     </p>
                   </div>
 
@@ -392,9 +384,15 @@ export default function ForOwnersPage() {
                 <Smartphone size={24} />
               </div>
               <h3 className="text-lg font-black text-neutral-900 mb-2">Smart PG Manager CRM</h3>
-              <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-3">
                 Send 1-click WhatsApp rent reminders, track real-time bed occupancy, store Aadhaar KYC, and log expenses in one dashboard.
               </p>
+              <Link
+                href="/pg-management-software"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-700 hover:text-primary-800"
+              >
+                Explore PG management software <ArrowRight size={14} />
+              </Link>
             </div>
 
             {/* Card 4 */}
@@ -609,6 +607,9 @@ export default function ForOwnersPage() {
               >
                 Start 15-Day Free Trial
               </Link>
+              <p className="text-xs text-neutral-500 mt-3 text-center">
+                Need more CRM details? <Link href="/pg-management-software" className="text-primary-600 font-bold hover:underline">Explore PG Management Software</Link>
+              </p>
             </div>
           </div>
         </div>
