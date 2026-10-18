@@ -121,6 +121,7 @@ export default async function RootLayout({
     ],
     "sameAs": [
       "https://www.wikidata.org/wiki/Q141761419",
+      "https://www.crunchbase.com/organization/pgsathi",
       "https://www.facebook.com/pgsathi",
       "https://www.instagram.com/pgsathi",
       "https://www.linkedin.com/company/pgsathi"

@@ -64,5 +64,6 @@ A lucrative referral and onboarding programme for college students, local proper
 - Brand Name: PGSathi (Alternate: PG Sathi, PGSathi Technologies)
 - Headquarters: Sector 62, Noida, Uttar Pradesh 201309, India
 - Website: https://pgsathi.in
+- Crunchbase Profile: https://www.crunchbase.com/organization/pgsathi
 - Wikidata Entity: Q141761419 (https://www.wikidata.org/wiki/Q141761419)
 - Support Contact: pgsathi.support@gmail.com | +91-9696110243
