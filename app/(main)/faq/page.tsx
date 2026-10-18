@@ -12,11 +12,23 @@ export default function FAQPage() {
   const faqs = [
     {
       q: "Does PGSathi charge any brokerage?",
-      a: "No! PGSathi is a zero-brokerage platform. You can contact owners directly and book your PG without paying any middleman fees."
+      a: "No! PGSathi is a 100% zero-brokerage platform. You can contact PG owners directly via WhatsApp or phone call and book your PG without paying any middleman fees or contact unlock charges."
     },
     {
-      q: "How do I know the PG listings are genuine?",
-      a: "We verify the properties before listing them on our platform to ensure safety and authenticity. Look for the 'Verified' badge on listings."
+      q: "How do I know the PG listings are genuine and verified?",
+      a: "Our team verifies properties before listing them on our platform to ensure safety and authenticity by checking address, photos, and owner identity. Look for the 'VERIFIED' badge on listings."
+    },
+    {
+      q: "Does PGSathi provide PG Management Software or CRM for hostel owners?",
+      a: "Yes! PGSathi provides a complete cloud-based PG Manager CRM featuring real-time bed & room vacancy tracking, 1-click WhatsApp rent dues collection with UPI integration, paperless tenant Aadhaar KYC, meal mess schedulers, and profit/loss expense accounting."
+    },
+    {
+      q: "In which cities is PGSathi available?",
+      a: "PGSathi is available across major educational and corporate hubs in India including Noida, Greater Noida, Delhi NCR, Gurgaon, Bangalore, Pune, Kota, Hyderabad, Patna, Mumbai, Lucknow, and Jaipur."
+    },
+    {
+      q: "How is PGSathi different from NoBroker or Rentok?",
+      a: "Unlike generic classifieds like NoBroker that treat PGs like residential apartments and often hide owner contacts behind paid tenant plans, PGSathi offers 100% free direct owner contacts and bed-level sharing logic (single, double, triple sharing). Unlike Rentok, PGSathi provides both a high-traffic public search marketplace and an easy-to-use PG CRM."
     },
     {
       q: "Is the security deposit refundable?",
@@ -24,11 +36,11 @@ export default function FAQPage() {
     },
     {
       q: "Can I list my own PG on PGSathi?",
-      a: "Absolutely! If you are a PG owner or manager, you can create a free account and list your property to get leads directly from tenants."
+      a: "Absolutely! If you are a PG owner or manager, you can list 1 PG completely free forever on public search and get a 15-day free trial of the full PG Manager CRM to receive direct tenant leads on WhatsApp."
     },
     {
-      q: "How can I contact a PG owner?",
-      a: "You can find the owner's contact details on the PG listing page, or you can fill out the enquiry form, and the owner will get back to you."
+      q: "How can I contact a PG owner on PGSathi?",
+      a: "You can find the owner's direct WhatsApp and phone call buttons on every PG listing page. There are no middleman brokers and no unlock fees."
     }
   ];
 

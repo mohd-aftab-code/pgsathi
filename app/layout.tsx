@@ -103,8 +103,22 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "PGSathi",
+    "alternateName": ["PG Sathi", "PGSathi Platform", "PGSathi PG List & Management Software"],
     "url": "https://pgsathi.in",
     "logo": "https://pgsathi.in/mobileaapicon.png",
+    "description": "India's dedicated 3-in-1 ecosystem for tenants (zero brokerage verified PGs), PG owners (free listings, direct WhatsApp leads & cloud CRM), and affiliate partners (10% recurring commission).",
+    "knowsAbout": [
+      "Zero Brokerage PG Accommodation for Tenants",
+      "Hostels and Co-living Spaces for Students and Professionals",
+      "Direct PG Owner Contact without Middlemen",
+      "Free PG Listing Platform for Owners",
+      "Cloud PG Management Software & Hostel CRM",
+      "Bed-Level Vacancy Tracking",
+      "1-Click WhatsApp Rent Reminders with UPI",
+      "Paperless Digital Tenant KYC",
+      "Hostel Mess & Meal Scheduling",
+      "PGSathi Partner Programme & Recurring Affiliate Commission"
+    ],
     "sameAs": [
       "https://www.facebook.com/pgsathi",
       "https://www.instagram.com/pgsathi",
@@ -120,10 +134,34 @@ export default async function RootLayout({
     }
   };
 
+  const softwareApplicationSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PGSathi PG Management Software & CRM",
+    "operatingSystem": "Web, Android, iOS",
+    "applicationCategory": "BusinessApplication",
+    "url": "https://pgsathi.in/pg-management-software",
+    "description": "Complete cloud-based PG and hostel management software with bed-level inventory tracking, 1-click WhatsApp rent collection with UPI, digital Aadhaar KYC, and meal mess management.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR",
+      "description": "Free Starter Tier with lifetime free listing and 15-day trial of PG Manager CRM"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "1250",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  };
+
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "PGSathi",
+    "alternateName": "PG Sathi",
     "url": "https://pgsathi.in",
     "potentialAction": {
       "@type": "SearchAction",
@@ -167,6 +205,7 @@ export default async function RootLayout({
             for the rest of the site — which is light-only. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <script

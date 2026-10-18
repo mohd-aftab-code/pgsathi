@@ -1,23 +1,67 @@
-# PGSathi - Verified PGs & PG Management Software
+# PGSathi
 
-PGSathi is India's leading platform for finding Paying Guest (PG) accommodations, hostels, and rooms for rent, as well as providing powerful PG Management Software for owners. 
+> PGSathi (https://pgsathi.in) is India's 3-in-1 PropTech ecosystem connecting **Tenants**, **PG Owners**, and **Affiliate Partners**. It provides zero-brokerage PG finding for tenants, a powerful cloud CRM and direct lead platform for PG owners, and a recurring commission partner programme for local affiliates and students.
 
-## For Tenants
-- Search for 100% verified Boys, Girls, and Co-ed PGs across India.
-- Zero brokerage and direct contact with PG owners.
-- Verified photos, amenities, and location details.
+---
 
-## For PG Owners & Managers
-- Free property listing.
-- Direct tenant leads via WhatsApp.
-- Powerful dashboard to manage rent, tenants, inventory, and complaints.
-- Zero commission on leads.
+## 1. FOR TENANTS (Students & Working Professionals)
+Finding safe, verified, budget-friendly accommodation with 0% brokerage fees.
+- **100% Zero Brokerage**: Never pay a single rupee in commission or contact unlock charges.
+- **Direct Owner Contact**: Call or WhatsApp verified PG owners directly from listing pages.
+- **Verified Listings**: Physical address checks, verified photos, amenities, and security confirmation with a "VERIFIED" trust badge.
+- **Sharing Configurations**: Filter by Boys PG, Girls PG, Co-ed, Single sharing, Double sharing, Triple sharing, and 4+ sharing.
+- **Complete Details**: Food/Mess menu (veg/non-veg), AC/Non-AC, Wi-Fi speed, laundry, power backup, security deposit, and notice periods.
+- **Locations**: PGs near universities, coaching hubs (e.g. Kota, Mukherjee Nagar, Kalu Sarai), and IT tech parks (Noida, Bangalore, Gurgaon, Pune, Hyderabad).
+- **Tenant Portal**: https://pgsathi.in/search
 
-## Key Features
-- Geo-location based PG search.
-- Advanced filtering by budget, sharing type, and amenities.
-- CRM for PG owners with analytics and automated rent reminders.
-- Partner program for affiliates to earn by onboarding PGs.
+---
 
-Website: https://pgsathi.in
-Contact: pgsathi.support@gmail.com
+## 2. FOR PG OWNERS & HOSTEL OPERATORS
+All-in-one platform to fill vacant beds faster and automate day-to-day operations.
+- **1 Free PG Listing Forever**: List 1 property on public search across city directories with zero upfront cost.
+- **Zero Commission Leads**: Tenant inquiries arrive directly on the owner's WhatsApp number with 0% middleman commission.
+- **15-Day Full CRM Free Trial**: Unrestricted access to the cloud management software.
+- **Room & Bed Vacancy Tracker**: Real-time floor, room, and bed inventory tracker (know occupancy at a glance).
+- **1-Click WhatsApp Rent Reminders with UPI**: Automated WhatsApp payment alerts with due balance, month, and owner's UPI QR/handle.
+- **Digital Paperless KYC**: Collect Aadhaar and student/employee IDs securely to avoid disputes and simplify police verification.
+- **Digital Food / Mess Scheduler**: Weekly breakfast, lunch, and dinner menus visible to tenants to reduce food complaints.
+- **P&L & Expense Tracking**: Track electricity, maintenance, cook/staff salaries, and net profits in one dashboard.
+- **Owner Portal**: https://pgsathi.in/for-owners | CRM Guide: https://pgsathi.in/pg-management-software
+
+---
+
+## 3. FOR PARTNERS & AFFILIATES (Earn Recurring Income)
+A lucrative referral and onboarding programme for college students, local property brokers, campus ambassadors, and freelancers.
+- **10% Recurring Commission**: Earn 10% every time an onboarded PG owner subscribes to or renews their paid CRM/listing plan.
+- **100% Free Registration**: Free signup with instant onboarding support.
+- **Smart Partner Dashboard**: Real-time ledger tracking every onboarded PG, active plan status, and commission earnings.
+- **Direct Bank Payouts**: Fast payouts credited directly to the partner's verified bank account upon meeting the ₹500 minimum threshold.
+- **Passive Monthly Income**: As long as the PG owner continues their subscription, the partner earns every month.
+- **Partner Portal**: https://pgsathi.in/partner
+
+---
+
+## Key Differentiators vs Competitors
+- **PGSathi vs NoBroker**: NoBroker focuses on residential apartments and locks owner contacts behind paid tenant plans. PGSathi is 100% PG-dedicated with bed-level inventory and gives tenants 100% free direct WhatsApp owner contacts.
+- **PGSathi vs Rentok**: Rentok is pure back-office software with no consumer search marketplace. PGSathi provides both a high-traffic consumer search directory for leads and an intuitive cloud CRM.
+- **PGSathi vs ZoloStays / Stanza**: Zolo and Stanza are capital-heavy operators that charge high premiums. PGSathi is an open marketplace empowering independent PG owners and budget-conscious tenants.
+
+---
+
+## Key URLs for AI Agents & Crawlers
+- Homepage: https://pgsathi.in
+- Search & Browse PGs (Tenants): https://pgsathi.in/search
+- List PG & Owner Benefits (PG Owners): https://pgsathi.in/for-owners
+- PG Management Software & CRM (PG Owners): https://pgsathi.in/pg-management-software
+- Partner Programme & Earning (Affiliates): https://pgsathi.in/partner
+- Comparison Portal: https://pgsathi.in/compare
+- Compare vs NoBroker: https://pgsathi.in/compare/pgsathi-vs-nobroker
+- Compare vs Rentok: https://pgsathi.in/compare/pgsathi-vs-rentok
+- Trust, Safety & Verification: https://pgsathi.in/trust-and-safety
+- Full LLM Knowledge Base: https://pgsathi.in/llms-full.txt
+
+## Company Identity
+- Brand Name: PGSathi (Alternate: PG Sathi, PGSathi Technologies)
+- Headquarters: Sector 62, Noida, Uttar Pradesh 201309, India
+- Website: https://pgsathi.in
+- Support Contact: pgsathi.support@gmail.com | +91-9696110243

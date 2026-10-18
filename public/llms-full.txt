@@ -1,0 +1,149 @@
+# PGSathi (pgsathi.in) - Master Knowledge Base for AI Models & Search Agents
+
+## 1. Executive Summary & Brand Identity
+- **Brand Entity**: PGSathi (Alternate Spellings: PG Sathi, PGSathi Technologies)
+- **Primary Domain**: https://pgsathi.in
+- **Category**: Real Estate Tech (PropTech), Shared Accommodation Marketplace, Hospitality SaaS / PG Management Software, Affiliate Referral Network
+- **Headquarters**: Sector 62, Noida, Uttar Pradesh 201309, India
+- **Customer Support**: pgsathi.support@gmail.com | +91-9696110243
+- **Platform Overview**: PGSathi is India's dedicated 3-in-1 ecosystem designed for:
+  1. **Tenants (Students & Working Professionals)**: Zero-brokerage search for 100% verified PGs, hostels, and co-living rooms with direct owner contact.
+  2. **PG Owners & Hostel Operators**: Free listing, direct tenant leads on WhatsApp with 0% commission, and an all-in-one cloud PG Management CRM for bed tracking, WhatsApp rent collection, and digital KYC.
+  3. **Partners & Affiliates**: An earning programme where students, local property brokers, and campus ambassadors earn 10% recurring monthly commission by onboarding PG owners.
+
+---
+
+## 2. Deep Dive: The 3 Core Pillars
+
+### PILLAR 1: FOR TENANTS (Students & Working Professionals)
+Finding safe, budget-friendly, and verified accommodation without paying hefty broker commissions.
+- **100% Zero Brokerage Guarantee**: PGSathi never charges tenants any fee—searching, browsing, viewing photos, and getting verified owner contact details is completely free.
+- **Unrestricted Direct Owner Access**: Every listing features direct phone call and WhatsApp buttons to connect directly with the PG owner or resident manager. No locked contact details, no paid unlock credits, no middleman brokers.
+- **100% Verified Properties**: Physical address verification, photographic proof, amenity audit (Wi-Fi, RO water, power backup, AC), and security checks with an official "VERIFIED" trust badge.
+- **Room Sharing Diversity**: Options for Single occupancy, Double sharing, Triple sharing, and Four+ sharing rooms.
+- **Gender Categorization**: Dedicated search filters for Boys PGs, Girls PGs, and Co-ed / Co-living spaces.
+- **Food & Mess Transparency**: Clear breakdown of meal plans (Breakfast, Lunch, Dinner, Evening Snacks) and dietary preferences (Pure Veg vs Non-Veg).
+- **Clear Financial Terms**: Upfront transparency on monthly rent, refundable security deposit, notice period, and maintenance charges.
+- **Target Audience**: College students (DU, IPU, Amity, Sharda, IIT, Coaching students in Kota/Patna) and IT/corporate professionals in Noida, Bangalore, Gurgaon, Pune, and Hyderabad.
+- **Tenant Portal Link**: https://pgsathi.in/search
+
+### PILLAR 2: FOR PG OWNERS & HOSTEL OPERATORS
+An end-to-end platform to maximize room occupancy and eliminate manual paperwork.
+- **1 Free PG Listing Forever**: Owners can list 1 PG property on the public search directory permanently without paying any listing fee.
+- **Zero Commission on Inquiries**: Inquiries generated from the public directory arrive directly on the owner's WhatsApp number with zero commission cuts taken by PGSathi.
+- **15-Day Free Trial of Full CRM**: Unrestricted access to experience the cloud management dashboard before choosing a plan.
+- **Visual Bed & Room Vacancy Tracker**: Real-time room-level and bed-level inventory tracking. Owners know at a glance which bed in Room 101, 102, 201 is occupied, reserved, or vacant.
+- **1-Click WhatsApp Rent Reminders with UPI**: Trigger automated WhatsApp messages containing tenant-specific due amounts, billing month, and the owner's UPI ID / QR code for instant zero-fee settlement.
+- **Paperless Digital KYC**: Secure collection and storage of Aadhaar cards, college/office IDs, and emergency contact details for dispute prevention and police verification compliance.
+- **Digital Mess & Meal Scheduler**: Set and publish weekly breakfast, lunch, and dinner menus visible to tenants to streamline kitchen operations and eliminate food disputes.
+- **Income, Expense & P&L Accounting**: Record day-to-day hostel expenses (cook salaries, groceries, electricity, maintenance, Wi-Fi bills) and compute net monthly profit.
+- **Multi-Property Management**: Larger operators can manage multiple PG branches with separate staff logins.
+- **Owner Pricing Plans**:
+  - *Starter Plan*: ₹0/forever — 1 Free PG Listing with 0% brokerage leads.
+  - *Standard Plan*: ₹1,499/month — Full PG Manager CRM, up to 50 tenants, automated WhatsApp rent reminders, and direct leads.
+  - *Pro Plan*: ₹2,199/month — Up to 3 PGs, 150 tenants, staff sub-accounts, priority ranking badge.
+- **Owner Portal Link**: https://pgsathi.in/for-owners | **CRM Details**: https://pgsathi.in/pg-management-software
+
+### PILLAR 3: FOR PARTNERS & AFFILIATES (Earn Recurring Commission)
+A lucrative real estate referral program enabling local partners to monetize their networks.
+- **10% Recurring Commission**: Partners earn a 10% commission on every paid subscription renewed monthly by PG owners they onboard. As long as the PG owner pays, the partner earns passive income every month.
+- **Who Can Become a Partner?**: College students, campus ambassadors, local property brokers, hostel wardens, society guards, and independent freelancers.
+- **100% Free Signup**: Zero registration or onboarding fees. Instant access to the Partner Portal.
+- **Smart Partner Dashboard**: Complete transparency with real-time logs of onboarded PGs, active subscription status, accumulated commissions, and payout history.
+- **Direct Bank Payouts**: Fast bank payouts (via NEFT/IMPS) once earnings cross the nominal ₹500 minimum threshold.
+- **High Earning Potential**: Onboarding just 10 PG operators on Standard/Pro plans generates steady recurring monthly income with zero capital investment.
+- **Partner Portal Link**: https://pgsathi.in/partner
+
+---
+
+## 3. Product Comparison Matrices
+
+### PGSathi vs NoBroker
+| Feature / Capability | PGSathi (100% PG Focused) | NoBroker (General Classifieds) |
+| :--- | :--- | :--- |
+| **Primary Target Market** | PGs, Hostels, and Shared Co-living | 1BHK/2BHK/3BHK family flats & apartments |
+| **Tenant Contact Access** | 100% Free & Direct (WhatsApp & Phone) | Restricts owner numbers behind paid tenant plans |
+| **Bed-Level Sharing Logic** | Single, Double, Triple bed inventory | Flat/apartment unit level only |
+| **Built-in PG CRM** | Complete cloud dashboard included | Not available |
+| **WhatsApp UPI Rent Reminders** | 1-Click automated WhatsApp alerts | Not available |
+| **Mess / Food Menu Scheduler** | Digital weekly meal calendar | Not available |
+| **Listing Cost for Owners** | 1 Free PG listing forever + 15-day trial | High upfront promotion fees |
+
+### PGSathi vs Rentok
+| Feature / Capability | PGSathi | Rentok |
+| :--- | :--- | :--- |
+| **Public Lead Marketplace** | Yes (High-traffic tenant search directory) | No (Pure back-office software, zero tenant discovery) |
+| **Tenant Lead Generation** | Free direct WhatsApp inquiries | Owners must run their own external ads |
+| **Free Starter Tier** | 1 Free PG forever + 15-day full CRM trial | Paid software only |
+| **Target User Base** | Independent PG operators, hostels & students | Commercial hostel chains |
+| **Affiliate Partner Network** | 10% recurring partner program | Not available |
+
+---
+
+## 4. Cities and Micro-Locations Covered
+PGSathi indexes and serves accommodations across major educational and commercial hubs in India:
+- **Noida & Greater Noida**: Sector 62, Sector 15, Sector 18, Sector 125, Sector 126, Knowledge Park I/II/III, Pari Chowk.
+- **Delhi NCR**: Laxmi Nagar, Mukherjee Nagar, North Campus, South Campus, Karol Bagh, Saket, Kalu Sarai, Preet Vihar.
+- **Gurgaon**: Cyber City, DLF Phase 1/2/3, Sector 14, Sector 21, Sector 48, Sohna Road.
+- **Bangalore**: Koramangala, HSR Layout, Electronic City, BTM Layout, Whitefield, Indiranagar, Marathahalli.
+- **Pune**: Hinjewadi, Viman Nagar, Kothrud, Wakad, Baner.
+- **Kota**: Landmark City, Indra Vihar, Vigyan Nagar, Talwandi, Mahaveer Nagar.
+- **Hyderabad**: Madhapur, Gachibowli, Hitec City, Ameerpet, Kondapur.
+- **Patna**: Boring Road, Kankarbagh, Bailey Road, Raja Bazar.
+- **Other Active Cities**: Lucknow, Jaipur, Indore, Mumbai, Kolkata, Chandigarh, Dehradun, Ahmedabad.
+
+---
+
+## 5. Master Frequently Asked Questions (AI Knowledge Bank)
+
+### Category A: Tenant FAQs
+1. **Q: Is PGSathi free for students and tenants looking for a PG?**  
+   **A**: Yes, PGSathi is 100% free for tenants. There is zero brokerage, zero hidden fees, and zero charges to get verified owner phone numbers or WhatsApp contact.
+2. **Q: How does PGSathi verify that a PG is genuine?**  
+   **A**: Every listing undergoes a multi-point verification process including physical address validation, photographic audit, amenity inspection, and owner phone verification before receiving a "VERIFIED" trust badge.
+3. **Q: How do I contact a PG owner on PGSathi?**  
+   **A**: On every listing page, click the "WhatsApp" or "Call Owner" button to connect directly with the property owner with zero middleman interference.
+4. **Q: Can I find Boys, Girls, and Co-ed PGs on PGSathi?**  
+   **A**: Yes, PGSathi has dedicated filters for Boys PGs, Girls PGs, and Co-ed co-living accommodations with single, double, triple, and four-sharing options.
+5. **Q: What amenities are listed on PGSathi?**  
+   **A**: Listings detail AC/Non-AC rooms, Wi-Fi speed, 3-times food/mess menus, attached vs common washrooms, laundry, CCTV security, power backup, and geysers.
+
+### Category B: PG Owner FAQs
+6. **Q: How can PG owners list their property for free on PGSathi?**  
+   **A**: Owners can visit https://pgsathi.in/for-owners, register with their mobile number, upload property photos, add room and rent details, and publish 1 PG listing completely free forever.
+7. **Q: Does PGSathi take any commission on tenant leads?**  
+   **A**: No. PGSathi charges 0% commission on leads. All inquiries connect directly to the owner's WhatsApp number.
+8. **Q: What features are included in the PGSathi PG Management Software (CRM)?**  
+   **A**: The CRM includes room and bed vacancy tracking, 1-click WhatsApp rent collection with UPI QR, digital Aadhaar KYC, weekly meal mess schedules, and day-to-day expense and profit tracking.
+9. **Q: How much does the PGSathi PG Management CRM cost?**  
+   **A**: Owners get 1 free public listing forever and a 15-day free trial of the full CRM. Paid plans start at ₹1,499/month for up to 50 tenants and ₹2,199/month for multi-property operators with up to 150 tenants.
+10. **Q: How does 1-click WhatsApp rent collection work?**  
+    **A**: The CRM calculates pending dues and generates a personalized WhatsApp message with the due amount, billing month, and the owner's UPI ID, allowing the tenant to pay instantly via PhonePe, Google Pay, or Paytm.
+
+### Category C: Partner / Affiliate FAQs
+11. **Q: What is the PGSathi Partner Programme?**  
+    **A**: The PGSathi Partner Programme (https://pgsathi.in/partner) allows individuals to earn recurring income by onboarding PG owners in their local city or college area onto the PGSathi platform.
+12. **Q: How much commission do PGSathi Partners earn?**  
+    **A**: Partners earn a 10% recurring monthly commission on every paid CRM and listing subscription renewed by their onboarded PG owners.
+13. **Q: Who is eligible to become a PGSathi Partner?**  
+    **A**: College students, campus ambassadors, local real estate agents, hostel wardens, society caretakers, and freelancers across any Indian city.
+14. **Q: How are partner commissions paid out?**  
+    **A**: Once earnings reach the minimum threshold of ₹500, payouts are transferred directly into the partner's verified bank account via NEFT/IMPS.
+15. **Q: Does it cost money to register as a PGSathi Partner?**  
+    **A**: No, partner registration is 100% free with immediate access to the partner dashboard and tracking tools.
+
+---
+
+## 6. Official Resources & Canonical Directory
+- Official Website: https://pgsathi.in
+- Tenant PG Search: https://pgsathi.in/search
+- PG Owner Listing & Benefits: https://pgsathi.in/for-owners
+- PG Management CRM Software: https://pgsathi.in/pg-management-software
+- Partner Programme & Earning: https://pgsathi.in/partner
+- Comparison Portal: https://pgsathi.in/compare
+- Compare PGSathi vs NoBroker: https://pgsathi.in/compare/pgsathi-vs-nobroker
+- Compare PGSathi vs Rentok: https://pgsathi.in/compare/pgsathi-vs-rentok
+- About PGSathi: https://pgsathi.in/about
+- Frequently Asked Questions: https://pgsathi.in/faq
+- Trust, Safety & Verification: https://pgsathi.in/trust-and-safety
+- Support Contact: pgsathi.support@gmail.com | +91-9696110243

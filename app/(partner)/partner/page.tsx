@@ -4,6 +4,7 @@ import { Handshake, Building2, IndianRupee, BarChart3, ShieldCheck, ArrowRight, 
 import Footer from "@/components/common/Footer";
 import Navbar from "@/components/common/Navbar";
 import { auth } from "@/lib/auth";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export const metadata = {
   title: "PGSathi Partner Programme | Refer PGs & Earn Online",
@@ -16,6 +17,64 @@ export const metadata = {
     description: "Join the PGSathi Partner Programme. Onboard PG owners in your city and earn 10% recurring commission on every paid conversion.",
     url: "https://pgsathi.in/partner",
   },
+};
+
+const BREADCRUMB_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://pgsathi.in",
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Partner Programme",
+      "item": "https://pgsathi.in/partner",
+    },
+  ],
+};
+
+const PARTNER_FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the PGSathi Partner Programme?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The PGSathi Partner Programme allows college students, local brokers, and campus ambassadors to earn recurring monthly income by onboarding PG and hostel owners onto the PGSathi platform."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much commission do PGSathi Partners earn?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Partners earn a transparent 10% recurring commission on every paid subscription renewed by their onboarded PG properties every month."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are partner commission payouts made?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Once earnings reach the ₹500 minimum payout threshold, your earnings are credited directly to your bank account via NEFT/IMPS with full transaction tracking in your dashboard."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is registration free for partners?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, 100% free signup. Your portal will be activated immediately with complete dashboard tracking and onboarding links."
+      }
+    }
+  ]
 };
 
 const STEPS = [
@@ -35,6 +94,8 @@ export default async function PartnerLandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-neutral-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(PARTNER_FAQ_SCHEMA) }} />
       <Navbar user={session?.user} />
 
       <main className="flex-1">

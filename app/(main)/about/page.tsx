@@ -32,10 +32,42 @@ const BREADCRUMB_SCHEMA = {
   ]
 };
 
+const ABOUT_PAGE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About PGSathi",
+  "description": "Learn about PGSathi, India's leading zero-brokerage PG finding platform and cloud management software for PG owners and hostel operators.",
+  "url": "https://pgsathi.in/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "PGSathi",
+    "alternateName": ["PG Sathi", "PGSathi Technologies"],
+    "url": "https://pgsathi.in",
+    "logo": "https://pgsathi.in/mobileaapicon.png",
+    "foundingLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Noida",
+        "addressRegion": "Uttar Pradesh",
+        "addressCountry": "India"
+      }
+    },
+    "knowsAbout": [
+      "Zero Brokerage PG Accommodation",
+      "Student Hostels in India",
+      "PG Management Software",
+      "Co-living Spaces",
+      "Hostel Inventory Tracking"
+    ]
+  }
+};
+
 export default function AboutPage() {
   return (
     <div className="bg-neutral-50 min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ABOUT_PAGE_SCHEMA) }} />
       
       {/* ── Hero Section ── */}
       <section className="bg-white border-b border-neutral-200 py-16 md:py-24 relative overflow-hidden">
