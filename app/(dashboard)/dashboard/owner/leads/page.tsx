@@ -192,10 +192,10 @@ export default async function VisitsInboxPage({
           </div>
           
           {/* Pipeline summary + stage filter */}
-          <div className="mb-3 flex flex-wrap items-center gap-1.5">
+          <div className="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-hide -mx-1 px-1 sm:flex-wrap">
             <Link
               href={`/dashboard/owner/leads${q ? `?q=${encodeURIComponent(q)}` : ""}`}
-              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors uppercase tracking-wider ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white/60 backdrop-blur-md text-neutral-600 border-neutral-200/60 hover:bg-neutral-50"}`}
+              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors uppercase tracking-wider shrink-0 whitespace-nowrap ${!stage ? "bg-neutral-900 text-white border-neutral-900" : "bg-white/60 backdrop-blur-md text-neutral-600 border-neutral-200/60 hover:bg-neutral-50"}`}
             >
               All <span className="tabular-nums ml-0.5">{totalLeads}</span>
             </Link>
@@ -206,13 +206,13 @@ export default async function VisitsInboxPage({
                 <Link
                   key={s.value}
                   href={href}
-                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors hover:opacity-90 uppercase tracking-wider ${active ? s.active : s.cls}`}
+                  className={`text-[10px] font-bold px-2.5 py-1.5 rounded-xl border transition-colors hover:opacity-90 uppercase tracking-wider shrink-0 whitespace-nowrap ${active ? s.active : s.cls}`}
                 >
                   {s.label} <span className="tabular-nums ml-0.5">{countBy[s.value] ?? 0}</span>
                 </Link>
               );
             })}
-            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-50 border border-neutral-200/60 px-2.5 py-1.5 rounded-xl">
+            <span className="sm:ml-auto text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-50 border border-neutral-200/60 px-2.5 py-1.5 rounded-xl shrink-0 whitespace-nowrap">
               Conv: <span className="text-emerald-600 font-black tabular-nums">{convRate}%</span>{" "}
               <span className="text-neutral-400 font-medium">({convertedLeads}/{totalLeads})</span>
             </span>
@@ -354,22 +354,37 @@ export default async function VisitsInboxPage({
 
                       <div className="pt-2.5 border-t border-neutral-100/60 flex items-center justify-between gap-2">
                         {hasAccess ? (
-                          <div className="flex items-center gap-1.5">
-                            <a href={`tel:${lead.phone}`} className="h-8 px-2.5 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-2xl transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
-                              <Phone size={12} /> Call
+                          <div className="flex items-center gap-1.5 flex-1">
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className="h-9 px-3 flex-1 flex items-center justify-center bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 rounded-xl transition-all text-xs font-bold gap-1 border border-blue-200/60"
+                            >
+                              <Phone size={13} />
+                              <span>Call</span>
                             </a>
-                            <a href={`https://wa.me/91${sanitizePhone(lead.phone)}`} target="_blank" rel="noreferrer" className="h-8 px-2.5 flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 rounded-2xl transition-colors text-[10px] font-bold gap-1 uppercase tracking-wider">
-                              <MessageCircle size={12} /> WA
+                            <a
+                              href={`https://wa.me/91${sanitizePhone(lead.phone)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="h-9 px-3 flex-1 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-700 rounded-xl transition-all text-xs font-bold gap-1 border border-emerald-200/60"
+                            >
+                              <MessageCircle size={13} />
+                              <span>WhatsApp</span>
                             </a>
                           </div>
                         ) : (
-                          <Link href="/dashboard/owner/subscription/upgrade" className="text-[10px] bg-indigo-600 text-white px-2.5 py-1.5 rounded-2xl font-bold shadow-sm uppercase tracking-wider">Unlock</Link>
+                          <Link
+                            href="/dashboard/owner/subscription/upgrade"
+                            className="h-9 px-3 flex items-center justify-center text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm uppercase tracking-wider"
+                          >
+                            Unlock Number
+                          </Link>
                         )}
                         <Link
                           href={`/dashboard/manager/tenants/new?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone)}&email=${encodeURIComponent(lead.email ?? "")}`}
-                          className="bg-violet-50 hover:bg-violet-100 text-violet-700 text-[10px] font-bold px-2.5 py-1.5 rounded-2xl transition-colors uppercase tracking-wider"
+                          className="h-9 px-3 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center shadow-2xs shrink-0"
                         >
-                          Convert
+                          ➜ Convert
                         </Link>
                       </div>
                     </div>

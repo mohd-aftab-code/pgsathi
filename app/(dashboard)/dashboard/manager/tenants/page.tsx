@@ -3,7 +3,7 @@
  * Tenants list page with search, status filter, and pagination.
  */
 import Link from "next/link";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, Phone, MessageCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireManagerAccess, listingScope } from "@/lib/manager-auth";
 import { StatusBadge } from "@/components/manage/StatusBadge";
@@ -180,34 +180,35 @@ export default async function TenantsPage({
                 </tbody>
               </table>
 
-              <div className="md:hidden flex flex-col space-y-4 p-4">
+              <div className="md:hidden flex flex-col space-y-3 p-3">
                 {tenants.map((t) => {
                   const paid = t.payments.reduce((s, p) => s + p.amount, 0);
                   const due  = Math.max(0, t.monthlyRent - paid);
+                  const cleanPhone = t.phone.replace(/\D/g, "").replace(/^(91)/, "");
                   return (
-                    <Link key={t.id} href={`/dashboard/manager/tenants/${t.id}`} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex flex-col gap-3 hover:bg-white/80 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-violet-100/80 text-[10px] font-black text-violet-700 shadow-sm border border-violet-200/60">
+                    <div key={t.id} className="bg-white/80 backdrop-blur-md p-3.5 rounded-2xl border border-neutral-200/70 shadow-2xs space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <Link href={`/dashboard/manager/tenants/${t.id}`} className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-[11px] font-black text-white shadow-xs">
                             {initials(t.name)}
                           </div>
-                          <div>
-                            <div className="font-black text-neutral-900 tracking-tight">{t.name}</div>
-                            <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{t.phone}</div>
+                          <div className="min-w-0">
+                            <div className="font-black text-neutral-900 tracking-tight text-sm truncate">{t.name}</div>
+                            <div className="text-[10px] font-semibold text-neutral-400 mt-0.5 truncate">{t.phone}</div>
                           </div>
-                        </div>
+                        </Link>
                         <StatusBadge status={t.status} />
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2 text-[10px] uppercase tracking-wider bg-white/40 p-3 rounded-xl border border-neutral-200/60">
+                      <div className="grid grid-cols-2 gap-2 text-[10px] bg-neutral-50/80 p-2.5 rounded-xl border border-neutral-200/50">
                         <div>
-                          <span className="font-bold text-neutral-400 block mb-1">Property</span>
+                          <span className="font-extrabold text-neutral-400 uppercase tracking-wider block mb-0.5">Property / Room</span>
                           <span className="font-black text-neutral-900 block truncate">{t.listing.title}</span>
-                          {t.room && <span className="font-bold text-neutral-500 mt-0.5 block">Room {t.room.name}</span>}
+                          {t.room && <span className="font-bold text-violet-700 mt-0.5 block">Room {t.room.name}</span>}
                         </div>
                         <div>
-                          <span className="font-bold text-neutral-400 block mb-1">Rent</span>
-                          <span className="font-black text-emerald-700 block">{formatINR(t.monthlyRent)}</span>
+                          <span className="font-extrabold text-neutral-400 uppercase tracking-wider block mb-0.5">Rent Status</span>
+                          <span className="font-black text-emerald-700 block">{formatINR(t.monthlyRent)}/mo</span>
                           {due > 0 ? (
                             <span className="text-[9px] text-red-600 font-black mt-0.5 block">{formatINR(due)} due</span>
                           ) : (
@@ -215,7 +216,33 @@ export default async function TenantsPage({
                           )}
                         </div>
                       </div>
-                    </Link>
+
+                      {/* Touch action row */}
+                      <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+                        <a
+                          href={`tel:${t.phone}`}
+                          className="h-9 rounded-xl bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 font-bold text-xs flex items-center justify-center gap-1 border border-blue-200/60 transition-all"
+                        >
+                          <Phone size={13} />
+                          <span>Call</span>
+                        </a>
+                        <a
+                          href={`https://wa.me/91${cleanPhone}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="h-9 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-700 font-bold text-xs flex items-center justify-center gap-1 border border-emerald-200/60 transition-all"
+                        >
+                          <MessageCircle size={13} />
+                          <span>WhatsApp</span>
+                        </a>
+                        <Link
+                          href={`/dashboard/manager/tenants/${t.id}`}
+                          className="h-9 rounded-xl bg-violet-50 hover:bg-violet-100 active:scale-95 text-violet-700 font-bold text-xs flex items-center justify-center gap-1 border border-violet-200/60 transition-all"
+                        >
+                          <span>Profile →</span>
+                        </Link>
+                      </div>
+                    </div>
                   );
                 })}
               </div>

@@ -275,7 +275,8 @@ export default async function OwnerDashboardPage({
   return (
     <div className="space-y-6">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
+      {/* Desktop Header */}
+      <div className="hidden lg:flex items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-900 tracking-tight">
             {greeting}, {ownerName} 👋
@@ -297,6 +298,104 @@ export default async function OwnerDashboardPage({
           </Link>
           <Link href="/dashboard/owner/listings/new" className="bg-neutral-900 hover:bg-black text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2">
             <PlusCircle size={16} /> Add New PG
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile App Header (iOS/Android Native App Style) */}
+      <div className="lg:hidden space-y-3 pb-3 border-b border-neutral-200/60">
+        {/* Top bar with greeting & quick actions */}
+        <div className="flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md shadow-violet-500/20">
+              {initials(ownerName)}
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-base font-black text-neutral-900 truncate tracking-tight">
+                {greeting}, {ownerName} 👋
+              </h1>
+              <p className="text-[10px] font-semibold text-neutral-400 flex items-center gap-1">
+                <span>{format(now, "EEE, d MMM")}</span>
+                <span>•</span>
+                <LiveTime />
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/manager/reports"
+            className="h-8.5 px-3 rounded-xl bg-white/80 backdrop-blur-md border border-neutral-200/80 text-neutral-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs shrink-0 active:scale-95 transition-transform"
+          >
+            <BarChart3 size={13} className="text-violet-600" />
+            <span>Reports</span>
+          </Link>
+        </div>
+
+        {/* Property Selector for Mobile */}
+        {listings.length > 0 && (
+          <div className="w-full">
+            <PropertyFilterSelect
+              listings={listings}
+              value={listingId}
+              className="input-base text-xs font-bold w-full bg-white/90 backdrop-blur-md border border-violet-200/80 rounded-xl py-2 px-3 shadow-2xs"
+            />
+          </div>
+        )}
+
+        {/* Quick App Action Grid (4 native-style app tiles) */}
+        <div className="grid grid-cols-4 gap-2 pt-0.5">
+          <Link
+            href="/dashboard/owner/listings/new"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-violet-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white flex items-center justify-center shadow-sm shadow-violet-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <PlusCircle size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Add PG</span>
+          </Link>
+
+          <Link
+            href="/dashboard/manager/tenants"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-emerald-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {activeTenants > 0 && (
+              <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                {activeTenants}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-sm shadow-emerald-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <Users size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Tenants</span>
+          </Link>
+
+          <Link
+            href="/dashboard/manager/reminders"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-rose-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {pending.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                {pending.length}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shadow-sm shadow-rose-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <Wallet size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Collect</span>
+          </Link>
+
+          <Link
+            href="/dashboard/owner/leads"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-blue-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {newLeads > 0 && (
+              <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                +{newLeads}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white flex items-center justify-center shadow-sm shadow-blue-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <MessageSquare size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Leads</span>
           </Link>
         </div>
       </div>
@@ -410,8 +509,8 @@ export default async function OwnerDashboardPage({
             <span className="text-[10px] font-medium text-neutral-400">Kisi bhi PG par click karke uska poora data dekhein</span>
           </div>
 
-          {/* The table scrolls on its own so the page never scrolls sideways */}
-          <div className="overflow-x-auto">
+          {/* Desktop Table (Preserved exactly as-is) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left min-w-[750px]">
               <thead className="bg-neutral-50/80 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-100">
                 <tr>
@@ -485,6 +584,83 @@ export default async function OwnerDashboardPage({
                 </tr>
               </tfoot>
             </table>
+          </div>
+
+          {/* Mobile App Property Cards (Native card layout — no horizontal table scroll) */}
+          <div className="md:hidden divide-y divide-neutral-100">
+            {rows.map((r) => (
+              <div key={r.id} className="p-3.5 space-y-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/dashboard/owner?listingId=${r.id}`}
+                      className="font-black text-neutral-900 text-sm hover:text-violet-700 truncate block"
+                    >
+                      {r.title}
+                    </Link>
+                    <span className="text-[10px] font-bold text-neutral-400">
+                      {r.city?.name ?? "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {r.issues > 0 && (
+                      <span className="inline-flex items-center gap-1 text-[9px] font-black text-orange-700 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded-lg">
+                        <AlertTriangle size={9} /> {r.issues}
+                      </span>
+                    )}
+                    <Link
+                      href={`/dashboard/owner?listingId=${r.id}`}
+                      className="text-[10px] font-bold text-violet-700 bg-violet-50 hover:bg-violet-100 px-2 py-1 rounded-xl transition-colors"
+                    >
+                      Filter →
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Occupancy bar */}
+                <div>
+                  <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+                    <span className="text-neutral-500 uppercase tracking-wider">Occupancy</span>
+                    <span className="text-neutral-800 font-extrabold">
+                      {r.occupancy !== null ? `${r.occupancy}% (${r.occupied}/${r.beds} beds)` : "No beds set"}
+                    </span>
+                  </div>
+                  {r.occupancy !== null && (
+                    <div className="h-1.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${r.occupancy >= 85 ? "bg-green-500" : r.occupancy >= 60 ? "bg-amber-500" : "bg-red-500"}`}
+                        style={{ width: `${Math.min(100, r.occupancy)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 4-col compact metric strip */}
+                <div className="grid grid-cols-4 gap-1.5 pt-0.5 text-center">
+                  <div className="bg-neutral-50/80 rounded-xl p-1.5 border border-neutral-100">
+                    <div className="text-[8px] font-extrabold text-neutral-400 uppercase">Tenants</div>
+                    <div className="text-xs font-black text-neutral-900 mt-0.5">{r.tenants}</div>
+                  </div>
+                  <div className="bg-emerald-50/80 rounded-xl p-1.5 border border-emerald-100">
+                    <div className="text-[8px] font-extrabold text-emerald-600 uppercase">Collected</div>
+                    <div className="text-xs font-black text-emerald-700 mt-0.5">{formatINR(r.collected)}</div>
+                  </div>
+                  <div className="bg-rose-50/80 rounded-xl p-1.5 border border-rose-100">
+                    <div className="text-[8px] font-extrabold text-rose-600 uppercase">Pending</div>
+                    <div className={`text-xs font-black mt-0.5 ${r.pending > 0 ? "text-rose-700" : "text-neutral-400"}`}>
+                      {formatINR(r.pending)}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50/80 rounded-xl p-1.5 border border-blue-100">
+                    <div className="text-[8px] font-extrabold text-blue-600 uppercase">Leads</div>
+                    <div className="text-xs font-black text-blue-700 mt-0.5">
+                      {r.leads}
+                      {r.newLeads > 0 && <span className="text-[8px] text-green-600 ml-0.5">+{r.newLeads}</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -628,9 +804,9 @@ export default async function OwnerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-1.5 rounded-xl bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
+                        className="p-2 sm:p-1.5 rounded-xl bg-emerald-500 sm:bg-green-50 text-white sm:text-green-700 hover:bg-emerald-600 sm:hover:bg-green-100 transition-colors shadow-2xs flex items-center justify-center min-w-[34px] min-h-[34px] active:scale-95 shrink-0"
                       >
-                        <MessageCircle size={14} />
+                        <MessageCircle size={15} />
                       </a>
                     </div>
                   </div>

@@ -153,38 +153,38 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
       </div>
 
       {/* Occupancy Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-neutral-100/80 rounded-xl flex items-center justify-center border border-neutral-200/60">
-            <BedDouble size={20} className="text-neutral-500" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-3 sm:p-4 shadow-sm flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-neutral-100/80 rounded-xl flex items-center justify-center border border-neutral-200/60 shrink-0">
+            <BedDouble size={18} className="text-neutral-500" />
           </div>
-          <div>
-            <div className="text-xl font-black tracking-tight text-neutral-900">{totalBeds}</div>
-            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Total Beds</div>
-          </div>
-        </div>
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-red-200/60 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-red-50/80 rounded-xl flex items-center justify-center border border-red-200/60">
-            <Users size={20} className="text-red-500" />
-          </div>
-          <div>
-            <div className="text-xl font-black tracking-tight text-red-600">{occupied}</div>
-            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Occupied</div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black tracking-tight text-neutral-900">{totalBeds}</div>
+            <div className="text-[9px] font-extrabold uppercase tracking-wider text-neutral-400 truncate">Total Beds</div>
           </div>
         </div>
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-emerald-200/60 p-4 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center border border-emerald-200/60">
-            <CheckCircle size={20} className="text-emerald-500" />
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-red-200/60 p-3 sm:p-4 shadow-sm flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-red-50/80 rounded-xl flex items-center justify-center border border-red-200/60 shrink-0">
+            <Users size={18} className="text-red-500" />
           </div>
-          <div>
-            <div className="text-xl font-black tracking-tight text-emerald-600">{vacant}</div>
-            <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-500">Vacant</div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black tracking-tight text-red-600">{occupied}</div>
+            <div className="text-[9px] font-extrabold uppercase tracking-wider text-neutral-400 truncate">Occupied</div>
+          </div>
+        </div>
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-emerald-200/60 p-3 sm:p-4 shadow-sm flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center border border-emerald-200/60 shrink-0">
+            <CheckCircle size={18} className="text-emerald-500" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black tracking-tight text-emerald-600">{vacant}</div>
+            <div className="text-[9px] font-extrabold uppercase tracking-wider text-neutral-400 truncate">Vacant</div>
           </div>
         </div>
         {/* Circular Occupancy Gauge */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-200/60 p-4 shadow-sm flex items-center gap-3">
-          <div className="relative w-12 h-12 shrink-0">
-            <svg viewBox="0 0 36 36" className="w-12 h-12 -rotate-90">
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-violet-200/60 p-3 sm:p-4 shadow-sm flex items-center gap-2.5 sm:gap-3">
+          <div className="relative w-10 h-10 sm:w-12 sm:h-12 shrink-0">
+            <svg viewBox="0 0 36 36" className="w-10 h-10 sm:w-12 sm:h-12 -rotate-90">
               <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" className="text-neutral-200/60" strokeWidth="4" />
               <circle
                 cx="18" cy="18" r="14" fill="none"
@@ -243,15 +243,15 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
             return (
               <div key={listing.id} className="bg-white/60 backdrop-blur-md rounded-3xl border border-neutral-200/60 shadow-sm overflow-hidden">
                 {/* PG Header */}
-                <div className="px-6 py-5 border-b border-neutral-200/60 bg-white/40 flex items-center justify-between flex-wrap gap-3">
+                <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-neutral-200/60 bg-white/40 flex items-center justify-between flex-wrap gap-2.5">
                   <div>
-                    <h2 className="text-lg font-black tracking-tight text-neutral-900">{listing.title}</h2>
-                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">{listing.rooms.length} rooms · {listingTotal} beds · {listingOccupied} occupied</p>
+                    <h2 className="text-base sm:text-lg font-black tracking-tight text-neutral-900">{listing.title}</h2>
+                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{listing.rooms.length} rooms · {listingTotal} beds · {listingOccupied} occupied</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="h-2.5 w-32 bg-neutral-200/60 rounded-full overflow-hidden shadow-inner">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-2 w-24 sm:w-32 bg-neutral-200/60 rounded-full overflow-hidden shadow-inner">
                       <div
-                        className={`h-2.5 rounded-full transition-all ${listingPct > 85 ? "bg-red-500" : listingPct > 60 ? "bg-amber-500" : "bg-violet-500"}`}
+                        className={`h-full rounded-full transition-all ${listingPct > 85 ? "bg-red-500" : listingPct > 60 ? "bg-amber-500" : "bg-violet-500"}`}
                         style={{ width: `${listingPct}%` }}
                       />
                     </div>
@@ -259,7 +259,7 @@ export default async function RoomsPage({ searchParams }: { searchParams: Promis
                   </div>
                 </div>
 
-                <div className="p-5">
+                <div className="p-3.5 sm:p-5">
                   {listing.rooms.length === 0 ? (
                     <div className="text-sm text-neutral-400 flex items-center gap-2 py-4">
                       <AlertCircle className="h-4 w-4" /> Is property mein koi room add nahi kiya gaya hai.

@@ -39,21 +39,24 @@ export default async function PaymentsPage({
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-200/60">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Payments</h1>
-          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">
-            {total} payments · Total: <strong className="text-emerald-700">{formatINR(summary._sum.amount ?? 0)}</strong>
+          <h1 className="text-xl font-black text-neutral-900 tracking-tight uppercase flex items-center gap-2">
+            <Wallet className="h-5 w-5 text-violet-600" />
+            Payments Ledger
+          </h1>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
+            {total} payments · Total: <strong className="text-emerald-700 font-black">{formatINR(summary._sum.amount ?? 0)}</strong>
           </p>
         </div>
-        <Link href="/dashboard/manager/payments/new" className="btn-primary text-sm">
+        <Link href="/dashboard/manager/payments/new" className="btn-primary text-xs font-bold py-2 px-4 rounded-xl shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 w-full sm:w-auto">
           <Plus className="h-4 w-4" /> Record Payment
         </Link>
       </div>
 
-      <form className="mb-6 flex flex-wrap gap-3">
-        <input name="month" type="month" defaultValue={month} className="input-base max-w-[170px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl" />
-        <select name="type" defaultValue={type} className="input-base max-w-[160px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl">
+      <form className="mb-5 flex flex-wrap gap-2 sm:gap-3">
+        <input name="month" type="month" defaultValue={month} className="input-base flex-1 min-w-[130px] sm:max-w-[170px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl text-xs font-bold py-2" />
+        <select name="type" defaultValue={type} className="input-base flex-1 min-w-[130px] sm:max-w-[160px] bg-white/60 backdrop-blur-md shadow-sm rounded-xl text-xs font-bold py-2">
           <option value="">All Types</option>
           <option value="RENT">Rent</option>
           <option value="DEPOSIT">Deposit</option>
@@ -61,7 +64,7 @@ export default async function PaymentsPage({
           <option value="LATE_FEE">Late Fee</option>
           <option value="OTHER">Other</option>
         </select>
-        <button type="submit" className="btn-primary text-sm px-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">Filter</button>
+        <button type="submit" className="btn-primary text-xs font-bold px-5 py-2 rounded-xl shadow-sm hover:shadow-md transition-shadow w-full sm:w-auto">Filter</button>
       </form>
 
       {payments.length === 0 ? (

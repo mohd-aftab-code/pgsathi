@@ -10,6 +10,8 @@ import {
   TrendingUp,
   MessageCircle,
   ArrowRight,
+  UserPlus,
+  PlusCircle,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 
@@ -182,7 +184,8 @@ export default async function ManagerDashboardPage({
   return (
     <div className="space-y-6">
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center justify-between gap-4 pb-5 border-b border-neutral-200/60">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
             {greeting}, {managerName} 👋
@@ -198,6 +201,94 @@ export default async function ManagerDashboardPage({
           </Link>
           <Link href="/dashboard/manager/complaints/new" className="bg-white/60 backdrop-blur-md border border-neutral-300 text-neutral-700 hover:bg-neutral-50 py-2 px-4 text-sm font-semibold rounded-2xl shadow-sm transition-colors">
             Log Issue
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile App Header (Native App Layout) */}
+      <div className="md:hidden space-y-3 pb-3 border-b border-neutral-200/60">
+        {/* Top bar with greeting & quick actions */}
+        <div className="flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md shadow-violet-500/20">
+              {initials(managerName)}
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-base font-black text-neutral-900 truncate tracking-tight">
+                {greeting}, {managerName} 👋
+              </h1>
+              <p className="text-[10px] font-semibold text-neutral-400 flex items-center gap-1">
+                <span>{format(now, "EEE, d MMM")}</span>
+                <span>•</span>
+                <LiveTime />
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/manager/complaints/new"
+            className="h-8.5 px-3 rounded-xl bg-white/80 backdrop-blur-md border border-neutral-200/80 text-neutral-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs shrink-0 active:scale-95 transition-transform"
+          >
+            <Wrench size={13} className="text-orange-500" />
+            <span>Log Issue</span>
+          </Link>
+        </div>
+
+        {/* Property Selector for Mobile */}
+        {ownerListings.length > 0 && (
+          <div className="w-full">
+            <PropertyFilterSelect
+              listings={ownerListings}
+              value={listingId}
+              className="input-base text-xs font-bold w-full bg-white/90 backdrop-blur-md border border-violet-200/80 rounded-xl py-2 px-3 shadow-2xs"
+            />
+          </div>
+        )}
+
+        {/* Quick App Action Grid (4 native-style app tiles) */}
+        <div className="grid grid-cols-4 gap-2 pt-0.5">
+          <Link
+            href="/dashboard/manager/tenants/new"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-emerald-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-sm shadow-emerald-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <UserPlus size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">+ Tenant</span>
+          </Link>
+
+          <Link
+            href="/dashboard/manager/reminders"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-rose-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {pendingCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                {pendingCount}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shadow-sm shadow-rose-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <Wallet size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Reminders</span>
+          </Link>
+
+          <Link
+            href="/dashboard/manager/payments/new"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-violet-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white flex items-center justify-center shadow-sm shadow-violet-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <PlusCircle size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Payment</span>
+          </Link>
+
+          <Link
+            href="/dashboard/manager/rooms"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-blue-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white flex items-center justify-center shadow-sm shadow-blue-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <BedDouble size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Rooms</span>
           </Link>
         </div>
       </div>
@@ -357,9 +448,9 @@ export default async function ManagerDashboardPage({
                         target="_blank"
                         rel="noreferrer"
                         title="Send WhatsApp reminder"
-                        className="p-1.5 rounded-xl bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 transition-colors"
+                        className="p-2 sm:p-1.5 rounded-xl bg-emerald-500 sm:bg-green-50 text-white sm:text-green-700 hover:bg-emerald-600 sm:hover:bg-green-100 transition-colors shadow-2xs flex items-center justify-center min-w-[34px] min-h-[34px] active:scale-95 shrink-0"
                       >
-                        <MessageCircle size={14} />
+                        <MessageCircle size={15} />
                       </a>
                       <Link
                         href={`/dashboard/manager/payments/new?tenantId=${t.id}`}

@@ -68,47 +68,110 @@ export default async function RemindersPage({
             <span>Har tenant ke saamne <strong>WA button</strong> hai — click karein to open WhatsApp with pre-filled message.</span>
           </div>
 
-          {pending.map(({ id, name, phone, listing, monthlyRent, paid, due }) => (
-            <div key={id} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 shadow-sm rounded-2xl p-4 flex items-center justify-between gap-4 hover:bg-white/80 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100/80 text-sm font-black text-red-700 shadow-sm border border-red-200/60">
-                  {initials(name)}
+          {/* Desktop List */}
+          <div className="hidden sm:block space-y-3">
+            {pending.map(({ id, name, phone, listing, monthlyRent, paid, due }) => (
+              <div key={id} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 shadow-sm rounded-2xl p-4 flex items-center justify-between gap-4 hover:bg-white/80 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100/80 text-sm font-black text-red-700 shadow-sm border border-red-200/60">
+                    {initials(name)}
+                  </div>
+                  <div>
+                    <Link href={`/dashboard/manager/tenants/${id}`} className="font-black text-neutral-900 hover:underline tracking-tight">
+                      {name}
+                    </Link>
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{listing.title} · {phone}</div>
+                    {paid > 0 && (
+                      <div className="text-[9px] font-bold text-amber-600 uppercase tracking-wider mt-0.5">Partial: {formatINR(paid)} of {formatINR(monthlyRent)} paid</div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <Link href={`/dashboard/manager/tenants/${id}`} className="font-black text-neutral-900 hover:underline tracking-tight">
-                    {name}
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <div className="font-black text-red-600 text-sm">{formatINR(due)}</div>
+                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">pending</div>
+                  </div>
+                  <a
+                    href={buildRentReminderLink({
+                      phone, tenantName: name, ownerName,
+                      propertyName: listing.title,
+                      amount: due, month,
+                    })}
+                    target="_blank" rel="noreferrer"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm border border-emerald-600/20 transition-colors rounded-xl text-[10px] font-bold uppercase tracking-wider px-3 py-2 flex items-center gap-1.5"
+                  >
+                    <MessageCircle size={14} />
+                    <span>WhatsApp</span>
+                  </a>
+                  <Link
+                    href={`/dashboard/manager/payments/new?tenantId=${id}`}
+                    className="text-[10px] font-bold text-violet-700 uppercase tracking-wider hover:underline"
+                  >
+                    Record →
                   </Link>
-                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">{listing.title} · {phone}</div>
-                  {paid > 0 && (
-                    <div className="text-[9px] font-bold text-amber-600 uppercase tracking-wider mt-0.5">Partial: {formatINR(paid)} of {formatINR(monthlyRent)} paid</div>
-                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="text-right">
-                  <div className="font-black text-red-600 text-sm">{formatINR(due)}</div>
-                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">pending</div>
+            ))}
+          </div>
+
+          {/* Mobile App Cards */}
+          <div className="sm:hidden space-y-3">
+            {pending.map(({ id, name, phone, listing, monthlyRent, paid, due }) => (
+              <div key={id} className="bg-white/90 backdrop-blur-md border border-neutral-200/80 shadow-sm rounded-2xl p-3.5 space-y-3">
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-sm font-black text-white shadow-sm">
+                      {initials(name)}
+                    </div>
+                    <div className="min-w-0">
+                      <Link href={`/dashboard/manager/tenants/${id}`} className="font-black text-neutral-900 text-sm hover:text-violet-700 truncate block">
+                        {name}
+                      </Link>
+                      <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider truncate">
+                        {listing.title}
+                      </div>
+                      <div className="text-[10px] font-semibold text-neutral-500">{phone}</div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-black text-red-600 text-base">{formatINR(due)}</div>
+                    <div className="text-[9px] font-extrabold uppercase tracking-wider text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-md inline-block">
+                      due
+                    </div>
+                  </div>
                 </div>
-                <a
-                  href={buildRentReminderLink({
-                    phone, tenantName: name, ownerName,
-                    propertyName: listing.title,
-                    amount: due, month,
-                  })}
-                  target="_blank" rel="noreferrer"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm border border-emerald-600/20 transition-colors rounded-xl text-[10px] font-bold uppercase tracking-wider px-3 py-2"
-                >
-                  WA
-                </a>
-                <Link
-                  href={`/dashboard/manager/payments/new?tenantId=${id}`}
-                  className="text-[10px] font-bold text-violet-700 uppercase tracking-wider hover:underline hidden sm:inline"
-                >
-                  Record →
-                </Link>
+
+                {paid > 0 && (
+                  <div className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-xl">
+                    Partial paid: {formatINR(paid)} of {formatINR(monthlyRent)}
+                  </div>
+                )}
+
+                {/* Mobile Touch Action Row */}
+                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-neutral-100">
+                  <a
+                    href={buildRentReminderLink({
+                      phone, tenantName: name, ownerName,
+                      propertyName: listing.title,
+                      amount: due, month,
+                    })}
+                    target="_blank" rel="noreferrer"
+                    className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                  >
+                    <MessageCircle size={15} />
+                    <span>WhatsApp</span>
+                  </a>
+                  <Link
+                    href={`/dashboard/manager/payments/new?tenantId=${id}`}
+                    className="h-10 rounded-xl bg-violet-50 hover:bg-violet-100 active:scale-95 text-violet-700 border border-violet-200/80 font-bold text-xs flex items-center justify-center gap-1 transition-all"
+                  >
+                    <span>Record Rent</span>
+                    <span>→</span>
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

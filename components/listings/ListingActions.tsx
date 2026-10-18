@@ -39,33 +39,33 @@ export default function ListingActions({ listingId, listingSlug, status }: Listi
   };
 
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className="flex items-center justify-end gap-1.5 sm:gap-2">
       {status === "ACTIVE" && (
-        <button className="bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 border border-orange-200 cursor-pointer">
-          <Zap size={14} /> Boost
+        <button className="bg-orange-50 hover:bg-orange-100 text-orange-600 px-2.5 sm:px-3 h-9 sm:h-8 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 border border-orange-200 cursor-pointer active:scale-95">
+          <Zap size={13} /> <span>Boost</span>
         </button>
       )}
       <Link
         href={`/dashboard/owner/listings/${listingId}/edit`}
-        className="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 p-2 rounded-lg transition-colors border border-neutral-200"
+        className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center bg-neutral-100/80 hover:bg-neutral-200 active:scale-95 text-neutral-700 rounded-xl transition-all border border-neutral-200/80 shrink-0"
         title="Edit Listing"
       >
-        <Edit size={16} />
+        <Edit size={15} />
       </Link>
       <Link
         href={`/pg/${listingSlug}`}
-        className="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 p-2 rounded-lg transition-colors border border-neutral-200"
+        className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center bg-neutral-100/80 hover:bg-neutral-200 active:scale-95 text-neutral-700 rounded-xl transition-all border border-neutral-200/80 shrink-0"
         title="View Listing"
       >
-        <Eye size={16} />
+        <Eye size={15} />
       </Link>
       <button
         onClick={handleDelete}
         disabled={deleting}
-        className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors cursor-pointer border border-red-100 disabled:opacity-50"
+        className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center bg-red-50 hover:bg-red-100 active:scale-95 text-red-600 rounded-xl transition-all cursor-pointer border border-red-200/80 disabled:opacity-50 shrink-0"
         title="Delete Listing"
       >
-        {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+        {deleting ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
       </button>
     </div>
   );
