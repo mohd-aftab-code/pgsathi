@@ -283,11 +283,11 @@ export default function AdminSettingsPage() {
                 Pushes all active listings, city pages, and blogs to Google Indexing API in batches.
               </p>
             </div>
-            <div className="flex items-center gap-2 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
               <button
                 onClick={handleIndexAll}
                 disabled={batchIndexing}
-                className="flex-1 flex items-center justify-center gap-1.5 h-8 bg-neutral-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-xs disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-1.5 h-9 bg-neutral-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-xs disabled:opacity-50"
               >
                 {batchIndexing ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                 {batchIndexing ? "Indexing..." : "Index All Site Pages"}
@@ -295,7 +295,7 @@ export default function AdminSettingsPage() {
               <button
                 onClick={handlePingSitemap}
                 title="Ping sitemap to Google & Bing"
-                className="h-8 px-3 border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 text-[10px] font-bold uppercase rounded-xl transition-colors shadow-xs"
+                className="h-9 px-3 border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 text-[10px] font-bold uppercase rounded-xl transition-colors shadow-xs"
               >
                 Ping Sitemap
               </button>

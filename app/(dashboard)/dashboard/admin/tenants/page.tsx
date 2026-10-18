@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Users, UserCheck, UserMinus, Clock, RefreshCcw, Search } from "lucide-react";
+import { Users, UserCheck, UserMinus, Clock, RefreshCcw, Search, Phone } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AdminTenantsPage() {
@@ -57,20 +57,20 @@ export default function AdminTenantsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {[
           { label: "Total Tenants", value: data.stats.totalTenants, icon: Users, color: "text-violet-600", bg: "bg-violet-50/80 border-violet-200/60" },
           { label: "Active Tenants", value: data.stats.activeTenants, icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-50/80 border-emerald-200/60" },
           { label: "Checking Out", value: data.stats.checkingOut, icon: Clock, color: "text-amber-600", bg: "bg-amber-50/80 border-amber-200/60" },
           { label: "Inactive/Evicted", value: data.stats.inactiveTenants, icon: UserMinus, color: "text-red-600", bg: "bg-red-50/80 border-red-200/60" },
         ].map((s, i) => (
-          <div key={i} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm ${s.bg}`}>
-              <s.icon size={18} className={s.color} />
+          <div key={i} className="bg-white/70 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-neutral-200/60 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shadow-2xs shrink-0 ${s.bg}`}>
+              <s.icon size={17} className={s.color} />
             </div>
-            <div>
-              <div className="text-2xl font-black text-neutral-900 tracking-tight uppercase">{s.value}</div>
-              <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">{s.label}</div>
+            <div className="min-w-0">
+              <div className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight uppercase leading-none">{s.value}</div>
+              <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider truncate mt-1">{s.label}</div>
             </div>
           </div>
         ))}
@@ -157,36 +157,72 @@ export default function AdminTenantsPage() {
         </div>
 
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-2 p-3 md:hidden">
+        <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {data.tenants.map((t: any) => (
-            <div key={`mob-${t.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${t.id}`} className="bg-white/80 backdrop-blur-md border border-neutral-200/70 rounded-2xl p-4 shadow-2xs hover:shadow-sm transition-all flex flex-col gap-2.5">
               <div className="flex justify-between items-start gap-2">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate">{t.name}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">{t.phone}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">
+                    {t.phone} {t.email ? `· ${t.email}` : ""}
+                  </div>
                 </div>
-                <div>
-                  {t.status === "ACTIVE" && <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase">Active</span>}
-                  {t.status === "CHECKING_OUT" && <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-black uppercase">Checking Out</span>}
-                  {(t.status === "INACTIVE" || t.status === "EVICTED") && <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-black uppercase">{t.status}</span>}
+                <div className="shrink-0 flex items-center gap-1.5">
+                  {t.phone && (
+                    <a
+                      href={`tel:${t.phone}`}
+                      className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center shadow-2xs hover:bg-emerald-100 transition-colors"
+                      title="Call Tenant"
+                    >
+                      <Phone size={13} />
+                    </a>
+                  )}
+                  {t.status === "ACTIVE" && (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-100/90 text-emerald-800 border border-emerald-200 text-[9px] font-black uppercase shadow-2xs">
+                      Active
+                    </span>
+                  )}
+                  {t.status === "CHECKING_OUT" && (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-100/90 text-amber-800 border border-amber-200 text-[9px] font-black uppercase shadow-2xs">
+                      Checking Out
+                    </span>
+                  )}
+                  {(t.status === "INACTIVE" || t.status === "EVICTED") && (
+                    <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200 text-[9px] font-black uppercase shadow-2xs">
+                      {t.status}
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-neutral-100">
-                <div>
-                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">PG</div>
-                  <div className="text-[11px] font-black text-neutral-700 uppercase truncate">{t.listing?.title || "N/A"}</div>
+
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-100 text-center bg-neutral-50/50 rounded-xl">
+                <div className="truncate px-1">
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Rent</div>
+                  <div className="text-xs font-black text-emerald-700">₹{t.monthlyRent || 0}</div>
                 </div>
-                <div>
+                <div className="border-l border-neutral-200/60 truncate px-1">
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">PG</div>
+                  <div className="text-xs font-black text-neutral-800 truncate">{t.listing?.title || "N/A"}</div>
+                </div>
+                <div className="border-l border-neutral-200/60 truncate px-1">
                   <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Owner</div>
-                  <a href={`/dashboard/admin/users/${t.owner?.id}`} className="text-[11px] font-black text-violet-700 uppercase truncate block">
+                  <a href={`/dashboard/admin/users/${t.owner?.id}`} className="text-xs font-black text-violet-700 truncate block">
                     {t.owner?.name || "N/A"}
                   </a>
                 </div>
               </div>
+
+              {t.checkInDate && (
+                <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">
+                  Joined: {new Date(t.checkInDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                </div>
+              )}
             </div>
           ))}
           {data.tenants.length === 0 && (
-            <div className="text-center p-4 text-neutral-500 text-xs">No tenants found.</div>
+            <div className="text-center p-8 text-neutral-500 text-xs bg-white/40 rounded-2xl border border-neutral-100">
+              No tenants found.
+            </div>
           )}
         </div>
       </div>

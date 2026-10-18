@@ -400,13 +400,14 @@ export default function AdminCitiesPage() {
                     <button
                       onClick={() => saveEdit(city.id)}
                       disabled={processing === city.id}
-                      className="flex-1 flex items-center justify-center p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 rounded-2xl transition-colors"
+                      className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-colors cursor-pointer"
                     >
                       {processing === city.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+                      Save
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="flex-1 flex items-center justify-center p-1.5 bg-neutral-50 text-neutral-500 hover:bg-neutral-100 border border-neutral-200/60 rounded-2xl transition-colors"
+                      className="h-9 px-4 flex items-center justify-center bg-neutral-100 text-neutral-600 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
                     >
                       <X size={13} />
                     </button>
@@ -420,23 +421,24 @@ export default function AdminCitiesPage() {
                         setEditState(city.state);
                         setEditPriority(String(city.priority));
                       }}
-                      className="flex-1 flex items-center justify-center p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 rounded-2xl transition-colors"
+                      className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200/60 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                     >
-                      <Edit2 size={13} />
+                      <Edit2 size={12} /> Edit
                     </button>
                     <button
                       onClick={() => toggle(city.id)}
                       disabled={processing === city.id}
-                      className={`flex-1 flex items-center justify-center p-1.5 rounded-2xl border transition-colors ${
+                      className={`flex-1 h-9 flex items-center justify-center gap-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shadow-2xs ${
                         city.isActive
-                          ? "bg-red-50 text-red-600 hover:bg-red-100 border-red-100"
-                          : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-100"
+                          ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/60"
+                          : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60"
                       }`}
                     >
                       {processing === city.id
-                        ? <Loader2 size={13} className="animate-spin" />
-                        : city.isActive ? <PowerOff size={13} /> : <Power size={13} />
+                        ? <Loader2 size={12} className="animate-spin" />
+                        : city.isActive ? <PowerOff size={12} /> : <Power size={12} />
                       }
+                      {city.isActive ? "Deactivate" : "Activate"}
                     </button>
                   </>
                 )}

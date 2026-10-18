@@ -418,12 +418,17 @@ export default function AdminPlansPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-1 pt-2 border-t border-neutral-200/50">
-                  <button onClick={() => handleOpenForm(plan)} className="flex-1 p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl font-bold text-xs flex justify-center transition-colors"><Edit size={13} /></button>
-                  <button onClick={() => toggleStatus(plan)} className={`flex-1 p-1.5 rounded-xl text-xs font-bold flex justify-center transition-colors ${plan.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
-                    {plan.isActive ? <PowerOff size={13} /> : <Power size={13} />}
+                <div className="flex items-center gap-1.5 pt-2 border-t border-neutral-200/50">
+                  <button onClick={() => handleOpenForm(plan)} className="flex-1 h-9 px-2 text-blue-700 bg-blue-50/80 hover:bg-blue-100 border border-blue-200/60 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors cursor-pointer shadow-2xs">
+                    <Edit size={12} /> Edit
                   </button>
-                  <button onClick={() => handleDelete(plan.id)} className="flex-1 p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl font-bold text-xs flex justify-center transition-colors"><Trash2 size={13} /></button>
+                  <button onClick={() => toggleStatus(plan)} className={`flex-1 h-9 px-2 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 transition-colors cursor-pointer shadow-2xs ${plan.isActive ? 'bg-amber-50 text-amber-700 border border-amber-200/60 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 hover:bg-emerald-100'}`}>
+                    {plan.isActive ? <PowerOff size={12} /> : <Power size={12} />}
+                    {plan.isActive ? "Pause" : "Live"}
+                  </button>
+                  <button onClick={() => handleDelete(plan.id)} className="h-9 px-2.5 text-rose-700 bg-rose-50/80 hover:bg-rose-100 border border-rose-200/60 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors cursor-pointer shadow-2xs">
+                    <Trash2 size={12} /> Del
+                  </button>
                 </div>
               </div>
             </div>

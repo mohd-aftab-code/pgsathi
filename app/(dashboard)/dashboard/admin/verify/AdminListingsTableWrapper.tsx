@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, Eye, Trash2, Loader2 } from "lucide-react";
+import { CheckCircle, Eye, Trash2, Loader2, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
 import AdminListingActions from "./AdminListingActions";
 import { useRouter } from "next/navigation";
@@ -181,63 +181,86 @@ export default function AdminListingsTableWrapper({
         </table>
       </div>
       
-      <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+      <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
         {listings.map((listing) => (
-          <div key={`mob-${listing.id}`} className={`bg-white/60 backdrop-blur-md border ${selectedIds.includes(listing.id) ? 'border-red-300 ring-2 ring-red-100' : 'border-neutral-200/60'} rounded-2xl p-4 shadow-sm flex flex-col gap-3 relative`}>
-            <div className="absolute top-4 right-4 z-10">
-              <input 
-                type="checkbox" 
-                className="rounded border-neutral-300 w-5 h-5 text-primary-600 focus:ring-primary-500 cursor-pointer"
-                checked={selectedIds.includes(listing.id)}
-                onChange={() => toggleSelect(listing.id)}
-              />
-            </div>
-            <div className="pr-8">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="font-black text-neutral-900 text-base uppercase tracking-tight">{listing.title}</div>
-                {listing.hasPendingChanges && (
-                  <span className="text-[9px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded shadow-sm">
-                    Updated
-                  </span>
-                )}
-                {listing.partner && (
-                  <Link
-                    href={`/dashboard/admin/partners/${listing.partner.id}`}
-                    className="text-[9px] font-black uppercase tracking-wider text-violet-700 bg-violet-100/80 border border-violet-200/60 px-1.5 py-0.5 rounded shadow-sm"
-                  >
-                    Partner · {listing.partner.partnerCode}
-                  </Link>
-                )}
+          <div key={`mob-${listing.id}`} className={`bg-white/80 backdrop-blur-md border ${selectedIds.includes(listing.id) ? 'border-red-300 ring-2 ring-red-100' : 'border-neutral-200/70'} rounded-2xl p-4 shadow-2xs hover:shadow-sm transition-all flex flex-col gap-2.5 relative`}>
+            {/* Top row: Checkbox, Title & Status/Badges */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                <input 
+                  type="checkbox" 
+                  className="rounded border-neutral-300 w-5 h-5 text-violet-600 focus:ring-violet-500 cursor-pointer shrink-0 mt-0.5"
+                  checked={selectedIds.includes(listing.id)}
+                  onChange={() => toggleSelect(listing.id)}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                    <span className="font-black text-neutral-900 text-sm uppercase tracking-tight truncate">
+                      {listing.title}
+                    </span>
+                    {listing.hasPendingChanges && (
+                      <span className="text-[8px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.2 rounded-full shadow-2xs">
+                        Updated
+                      </span>
+                    )}
+                    {listing.partner && (
+                      <Link
+                        href={`/dashboard/admin/partners/${listing.partner.id}`}
+                        className="text-[8px] font-black uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1.5 py-0.2 rounded-full shadow-2xs"
+                      >
+                        Partner · {listing.partner.partnerCode}
+                      </Link>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-neutral-600">
+                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded-lg border border-neutral-200/60 font-semibold">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ") || "Rooms"}</span>
+                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded-lg border border-neutral-200/60 font-semibold">{listing.genderAllowed}</span>
+                    <span className="text-emerald-700 font-black px-1">₹{listing.priceMin}/mo</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-wider text-neutral-700 mt-1">
-                <span className="bg-white/60 px-2 py-1 rounded-xl border border-neutral-200/60 shadow-sm">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
-                <span className="bg-white/60 px-2 py-1 rounded-xl border border-neutral-200/60 shadow-sm">{listing.genderAllowed}</span>
-                <span className="text-emerald-700 font-black">₹{listing.priceMin}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 py-2 border-y border-neutral-200/60">
-              <div className="w-8 h-8 bg-violet-100/80 border border-violet-200/60 text-violet-700 rounded-full flex items-center justify-center font-black text-xs shadow-sm">
-                {listing.owner?.name?.charAt(0) || "U"}
-              </div>
-              <div>
-                <div className="font-black text-neutral-900 tracking-tight text-sm uppercase">{listing.owner?.name || "Unknown"}</div>
-                <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{listing.owner?.phone || "No phone"}</div>
-              </div>
-            </div>
-            <div className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider">
-              {[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ")}
-            </div>
-            <div className="flex items-center justify-end gap-2 mt-2">
+
+              {/* Preview Button */}
               <Link 
                 href={`/pg/${listing.slug}`} 
                 target="_blank"
-                className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-colors" 
-                title="Preview"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-2xs shrink-0" 
+                title="Preview PG"
               >
-                <Eye size={18} />
+                <Eye size={13} /> View
               </Link>
-              <AdminListingActions listingId={listing.id} currentStatus={listing.status} />
             </div>
+
+            {/* Owner Details Row */}
+            <div className="flex items-center justify-between py-2 border-y border-neutral-100">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-black text-[11px] shadow-2xs shrink-0">
+                  {listing.owner?.name?.charAt(0) || "U"}
+                </div>
+                <div className="min-w-0">
+                  <div className="font-black text-neutral-900 tracking-tight text-xs uppercase truncate">{listing.owner?.name || "Unknown Owner"}</div>
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider truncate">{listing.owner?.phone || "No phone"}</div>
+                </div>
+              </div>
+
+              {listing.owner?.phone && (
+                <a
+                  href={`tel:${listing.owner.phone}`}
+                  className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/60 px-2.5 py-1.5 rounded-xl transition-colors shadow-2xs shrink-0 uppercase tracking-wider"
+                >
+                  <Phone size={12} /> Call
+                </a>
+              )}
+            </div>
+
+            {/* Location Pill */}
+            <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider flex items-center gap-1">
+              <MapPin size={12} className="text-neutral-400 shrink-0" />
+              <span className="truncate">{[listing.locality?.name, listing.city?.name].filter(Boolean).join(", ") || "Location not set"}</span>
+            </div>
+
+            {/* Native Mobile Action Bar */}
+            <AdminListingActions listingId={listing.id} currentStatus={listing.status} isMobile={true} />
           </div>
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Handshake, Eye } from "lucide-react";
+import { Handshake, Eye, Phone } from "lucide-react";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
 import { PartnerTabs } from "@/components/dashboard/PartnerTabs";
 
@@ -10,8 +10,8 @@ const TYPE_LABEL: Record<string, string> = {
   MARKETING_EXECUTIVE: "Marketing Exec", SALES_EXECUTIVE: "Sales Exec", SUB_BROKER: "Sub Broker",
 };
 const statusStyle: Record<string, string> = {
-  APPROVED: "bg-green-100 text-green-700", PENDING: "bg-amber-100 text-amber-700",
-  REJECTED: "bg-red-100 text-red-700", SUSPENDED: "bg-neutral-200 text-neutral-600",
+  APPROVED: "bg-emerald-100 text-emerald-800 border-emerald-200", PENDING: "bg-amber-100 text-amber-800 border-amber-200",
+  REJECTED: "bg-rose-100 text-rose-800 border-rose-200", SUSPENDED: "bg-neutral-200 text-neutral-700 border-neutral-300",
 };
 
 export default async function AdminPartnersPage({
@@ -50,13 +50,13 @@ export default async function AdminPartnersPage({
   const tab = (label: string, val: string, n: number) => (
     <a
       href={val ? `/dashboard/admin/partners?status=${val}` : "/dashboard/admin/partners"}
-      className={`h-8 px-3 rounded-xl text-[10px] font-black inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors shadow-sm ${
+      className={`h-8 px-3 rounded-xl text-[10px] font-black inline-flex items-center gap-1.5 uppercase tracking-wider whitespace-nowrap transition-all shadow-2xs ${
         status === val
-          ? "bg-neutral-900 text-white"
-          : "bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white/80 hover:text-neutral-900"
+          ? "bg-neutral-900 text-white shadow-sm"
+          : "bg-white/70 backdrop-blur-md border border-neutral-200/60 text-neutral-600 hover:bg-white hover:text-neutral-900"
       }`}
     >
-      {label} <span className={`text-[9px] ${status === val ? "text-white/70" : "text-neutral-400"}`}>{n}</span>
+      {label} <span className={`text-[9px] px-1 py-0.2 rounded-full ${status === val ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-500"}`}>{n}</span>
     </a>
   );
 
@@ -66,11 +66,11 @@ export default async function AdminPartnersPage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
           <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Partners</h1>
-          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Partner applications approve karein aur accounts manage karein.</p>
+          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">Partner applications review karein aur accounts manage karein.</p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
         {tab("All", "", counts.reduce((s, c) => s + c._count._all, 0))}
         {tab("Pending", "PENDING", countBy("PENDING"))}
         {tab("Approved", "APPROVED", countBy("APPROVED"))}
@@ -154,42 +154,60 @@ export default async function AdminPartnersPage({
         </div>
         
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-2 md:hidden">
+        <div className="grid grid-cols-1 gap-3 md:hidden">
           {partners.map((p) => (
-            <div key={`mob-${p.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${p.id}`} className="bg-white/80 backdrop-blur-md border border-neutral-200/70 rounded-2xl p-4 shadow-2xs hover:shadow-sm transition-all flex flex-col gap-2.5">
               <div className="flex justify-between items-start gap-2">
-                <div className="min-w-0">
-                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate block">
+                <div className="min-w-0 flex-1">
+                  <a href={`/dashboard/admin/partners/${p.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 hover:text-violet-700 transition-colors truncate block">
                     {p.user.name}
                   </a>
-                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider truncate">{p.user.phone ?? "No phone"} · {p.user.email}</div>
-                  <div className="text-[9px] text-neutral-400 font-black tracking-widest uppercase mt-0.5">{p.partnerCode}{p.city ? ` · ${p.city}` : ""}</div>
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider truncate mt-0.5">
+                    {p.user.phone ?? "No phone"} {p.user.email ? `· ${p.user.email}` : ""}
+                  </div>
+                  <div className="text-[9px] text-neutral-400 font-black tracking-widest uppercase mt-0.5">
+                    {p.partnerCode}{p.city ? ` · ${p.city}` : ""}
+                  </div>
                 </div>
-                <div className="shrink-0 flex flex-col items-end gap-1">
-                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-xl border shadow-sm ${statusStyle[p.status]}`}>{p.status}</span>
-                  <span className="text-[9px] font-black text-neutral-500 bg-white/60 border border-neutral-200/60 px-1.5 py-0.5 rounded-xl uppercase shadow-sm">{TYPE_LABEL[p.type] ?? p.type}</span>
+
+                <div className="shrink-0 flex items-center gap-1.5">
+                  {p.user.phone && (
+                    <a
+                      href={`tel:${p.user.phone}`}
+                      className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center shadow-2xs hover:bg-emerald-100 transition-colors"
+                      title="Call Partner"
+                    >
+                      <Phone size={13} />
+                    </a>
+                  )}
+                  <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border shadow-2xs ${statusStyle[p.status]}`}>
+                    {p.status}
+                  </span>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50/50 text-center">
+
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-100 text-center bg-neutral-50/50 rounded-xl">
                 <div>
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Owners</div>
-                  <div className="text-xs font-bold text-neutral-700">{p._count.owners}</div>
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Owners</div>
+                  <div className="text-xs font-black text-neutral-800">{p._count.owners}</div>
                 </div>
-                <div className="border-l border-neutral-100/60">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
-                  <div className="text-xs font-bold text-neutral-700">{p._count.listings + (p.user?._count?.listings || 0)}</div>
+                <div className="border-l border-neutral-200/60">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">PGs</div>
+                  <div className="text-xs font-black text-neutral-800">{p._count.listings + (p.user?._count?.listings || 0)}</div>
                 </div>
-                <div className="border-l border-neutral-100/60">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Earnings</div>
-                  <div className="text-xs font-bold text-neutral-700">{p._count.earnings}</div>
+                <div className="border-l border-neutral-200/60">
+                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Earnings</div>
+                  <div className="text-xs font-black text-neutral-800">{p._count.earnings}</div>
                 </div>
               </div>
-              <div className="mt-0.5 flex justify-between items-center gap-2">
+
+              {/* Actions */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-neutral-100">
                 <a
                   href={`/dashboard/admin/partners/${p.id}`}
-                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-bold bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-black uppercase tracking-wider bg-violet-50 text-violet-700 border border-violet-200/60 hover:bg-violet-100 transition-colors shadow-2xs"
                 >
-                  <Eye size={12} /> Details Dekho
+                  <Eye size={13} /> View
                 </a>
                 <AdminPartnerActions id={p.id} status={p.status} />
               </div>
@@ -199,12 +217,12 @@ export default async function AdminPartnersPage({
           {totalPages > 1 && (
             <div className="flex justify-center gap-2 mt-2">
               {page > 1 && (
-                <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-sm uppercase tracking-wider">
+                <a href={`?status=${status}&page=${page - 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 bg-white/70 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-2xs uppercase tracking-wider">
                   Prev
                 </a>
               )}
               {page < totalPages && (
-                <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-neutral-600 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-sm uppercase tracking-wider">
+                <a href={`?status=${status}&page=${page + 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 bg-white/70 backdrop-blur-md border border-neutral-200/60 px-3 py-1.5 rounded-xl shadow-2xs uppercase tracking-wider">
                   Next
                 </a>
               )}

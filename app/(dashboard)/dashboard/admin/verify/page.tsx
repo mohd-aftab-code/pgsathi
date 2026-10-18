@@ -57,32 +57,29 @@ export default async function AdminListingsPage({
       </div>
 
       {/* Tabs & Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-neutral-200/60 pb-4">
-        <div className="flex gap-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <Link 
-            href={`?tab=pending&query=${query}`} 
-            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "pending" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
-          >
-            Pending Review
-          </Link>
-          <Link
-            href={`?tab=active&query=${query}`}
-            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "active" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
-          >
-            Active PGs
-          </Link>
-          <Link
-            href={`?tab=updated&query=${query}`}
-            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "updated" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
-          >
-            Updated Since Verified
-          </Link>
-          <Link
-            href={`?tab=inactive&query=${query}`} 
-            className={`pb-2 px-4 font-black text-[10px] uppercase tracking-wider transition-colors border-b-2 ${currentTab === "inactive" ? "border-violet-600 text-violet-600" : "border-transparent text-neutral-400 hover:text-neutral-900"}`}
-          >
-            Inactive / Deleted
-          </Link>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+          {[
+            { id: "pending", label: "Pending Review" },
+            { id: "active", label: "Active PGs" },
+            { id: "updated", label: "Updated" },
+            { id: "inactive", label: "Inactive" },
+          ].map((tab) => {
+            const isActive = currentTab === tab.id;
+            return (
+              <Link
+                key={tab.id}
+                href={`?tab=${tab.id}&query=${query}`}
+                className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-all shadow-2xs ${
+                  isActive
+                    ? "bg-violet-600 text-white shadow-violet-500/20 shadow-sm"
+                    : "bg-white/70 hover:bg-white text-neutral-600 border border-neutral-200/60"
+                }`}
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
         </div>
         <form method="GET" className="flex items-center gap-2 w-full md:w-auto">
           <input type="hidden" name="tab" value={currentTab} />
@@ -90,10 +87,10 @@ export default async function AdminListingsPage({
             type="text" 
             name="query" 
             defaultValue={query} 
-            placeholder="Search PGs..." 
-            className="px-3 py-2 bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-xl text-[10px] font-bold uppercase tracking-wider w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-sm"
+            placeholder="Search PGs by name..." 
+            className="px-3.5 py-2 bg-white/70 backdrop-blur-md border border-neutral-200/70 rounded-xl text-xs font-semibold placeholder:text-neutral-400 placeholder:text-[10px] placeholder:uppercase placeholder:font-bold placeholder:tracking-wider w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-2xs"
           />
-          <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-xl text-[10px] uppercase tracking-wider font-black hover:bg-neutral-800 cursor-pointer shadow-sm">
+          <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-xl text-[10px] uppercase tracking-wider font-black hover:bg-neutral-800 transition-colors cursor-pointer shadow-sm shrink-0">
             Search
           </button>
         </form>

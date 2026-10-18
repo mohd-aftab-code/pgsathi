@@ -414,71 +414,76 @@ export function EnquiriesManager({
                     </div>
                   </div>
 
-                  {/* Right Actions */}
-                  <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
-                    {/* WhatsApp */}
-                    {waUrl && (
+                  {/* Actions Row */}
+                  <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-2 pt-2.5 md:pt-0 border-t border-neutral-100 md:border-0 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      {/* WhatsApp */}
+                      {waUrl && (
+                        <a
+                          href={waUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Chat on WhatsApp"
+                          className="h-8.5 px-2.5 rounded-xl text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/60 transition-colors inline-flex items-center gap-1 text-[11px] font-bold shadow-2xs"
+                        >
+                          <Send size={13} />
+                          <span className="md:hidden">WhatsApp</span>
+                        </a>
+                      )}
+
+                      {/* Call */}
+                      {item.phone && (
+                        <a
+                          href={`tel:${item.phone}`}
+                          title="Call"
+                          className="w-8.5 h-8.5 rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 transition-colors flex items-center justify-center shadow-2xs"
+                        >
+                          <Phone size={14} />
+                        </a>
+                      )}
+
+                      {/* Email */}
                       <a
-                        href={waUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        title="Chat on WhatsApp"
-                        className="p-2 rounded-xl text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        href={`mailto:${item.email}?subject=Re:%20${encodeURIComponent(
+                          item.subject
+                        )}%20-%20PGSathi%20Support`}
+                        title="Reply via Email"
+                        className="w-8.5 h-8.5 rounded-xl text-violet-600 bg-violet-50 hover:bg-violet-100 border border-violet-200/60 transition-colors flex items-center justify-center shadow-2xs"
                       >
-                        <Send size={15} />
+                        <Mail size={14} />
                       </a>
-                    )}
+                    </div>
 
-                    {/* Email */}
-                    <a
-                      href={`mailto:${item.email}?subject=Re:%20${encodeURIComponent(
-                        item.subject
-                      )}%20-%20PGSathi%20Support`}
-                      title="Reply via Email"
-                      className="p-2 rounded-xl text-violet-600 hover:bg-violet-50 transition-colors"
-                    >
-                      <Mail size={15} />
-                    </a>
-
-                    {/* Call */}
-                    {item.phone && (
-                      <a
-                        href={`tel:${item.phone}`}
-                        title="Call"
-                        className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors"
+                    <div className="flex items-center gap-1.5">
+                      {/* Mark Read/Unread */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleRead(item)}
+                        title={item.isRead ? "Mark Unread" : "Mark Read"}
+                        className="w-8.5 h-8.5 rounded-xl text-neutral-500 hover:bg-neutral-100 border border-neutral-200/60 transition-colors cursor-pointer flex items-center justify-center shadow-2xs"
                       >
-                        <Phone size={15} />
-                      </a>
-                    )}
+                        {item.isRead ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
 
-                    {/* Mark Read/Unread */}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleRead(item)}
-                      title={item.isRead ? "Mark Unread" : "Mark Read"}
-                      className="p-2 rounded-xl text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
-                    >
-                      {item.isRead ? <EyeOff size={15} /> : <Eye size={15} />}
-                    </button>
+                      {/* View Details */}
+                      <button
+                        type="button"
+                        onClick={() => openEnquiryModal(item)}
+                        className="h-8.5 px-3 rounded-xl bg-neutral-900 text-white font-black text-xs hover:bg-neutral-800 transition-colors cursor-pointer shadow-sm uppercase tracking-wider"
+                      >
+                        View
+                      </button>
 
-                    {/* View Details */}
-                    <button
-                      type="button"
-                      onClick={() => openEnquiryModal(item)}
-                      className="px-3 py-1.5 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-neutral-800 transition-colors cursor-pointer"
-                    >
-                      View
-                    </button>
-
-                    {/* Delete */}
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(item.id)}
-                      title="Delete enquiry"
-                      className="p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                      {/* Delete */}
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(item.id)}
+                        title="Delete enquiry"
+                        className="w-8.5 h-8.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-200/60 transition-colors cursor-pointer flex items-center justify-center shadow-2xs"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

@@ -56,6 +56,13 @@ const NAV: SidebarNavGroup[] = [
   },
 ];
 
+const MOBILE_NAV = [
+  { name: "Overview", href: "/dashboard/admin", icon: LayoutDashboard, exact: true },
+  { name: "Verify", href: "/dashboard/admin/verify", icon: ShieldCheck },
+  { name: "Users", href: "/dashboard/admin/users", icon: Users },
+  { name: "Enquiries", href: "/dashboard/admin/enquiries", icon: MessageSquare },
+];
+
 export function AdminSidebar({
   footer,
   children,
@@ -65,7 +72,7 @@ export function AdminSidebar({
   children?: React.ReactNode;
 }) {
   return (
-    <DashboardSidebar brandHref="/dashboard/admin" groups={NAV} footer={footer}>
+    <DashboardSidebar brandHref="/dashboard/admin" groups={NAV} mobileItems={MOBILE_NAV} footer={footer}>
       {children}
     </DashboardSidebar>
   );

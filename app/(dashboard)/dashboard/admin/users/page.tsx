@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ShieldCheck, Users, Building2, MousePointerClick, RefreshCcw } from "lucide-react";
+import { ShieldCheck, Users, Building2, MousePointerClick, RefreshCcw, Phone, LogIn, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AdminUsersPage() {
@@ -106,36 +106,38 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {[
-          { label: "Total PG Owners", value: data.stats.totalUsers, icon: Users, color: "text-violet-600", bg: "bg-violet-50/80 border-violet-200/60" },
-          { label: "Active PG Listings", value: data.stats.totalListings, icon: Building2, color: "text-blue-600", bg: "bg-blue-50/80 border-blue-200/60" },
-          { label: "Active Tenants (CRM)", value: data.stats.totalTenants, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50/80 border-emerald-200/60" },
-          { label: "Total Platform Leads", value: data.stats.totalLeads, icon: MousePointerClick, color: "text-amber-600", bg: "bg-amber-50/80 border-amber-200/60" },
+          { label: "Total Owners", value: data.stats.totalUsers, icon: Users, color: "text-violet-600", bg: "bg-violet-50/80 border-violet-200/60" },
+          { label: "Active Listings", value: data.stats.totalListings, icon: Building2, color: "text-blue-600", bg: "bg-blue-50/80 border-blue-200/60" },
+          { label: "Tenants (CRM)", value: data.stats.totalTenants, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50/80 border-emerald-200/60" },
+          { label: "Platform Leads", value: data.stats.totalLeads, icon: MousePointerClick, color: "text-amber-600", bg: "bg-amber-50/80 border-amber-200/60" },
         ].map((s, i) => (
-          <div key={i} className="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-neutral-200/60 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm ${s.bg}`}>
-              <s.icon size={18} className={s.color} />
+          <div key={i} className="bg-white/70 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-neutral-200/60 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shadow-2xs shrink-0 ${s.bg}`}>
+              <s.icon size={17} className={s.color} />
             </div>
-            <div>
-              <div className="text-2xl font-black text-neutral-900 tracking-tight uppercase">{s.value}</div>
-              <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">{s.label}</div>
+            <div className="min-w-0">
+              <div className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight uppercase leading-none">{s.value}</div>
+              <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider truncate mt-1">{s.label}</div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Role Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-1.5 p-1 bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 w-fit shadow-2xs">
         {["OWNER", "TENANT"].map(r => (
           <button
             key={r}
             onClick={() => { setRole(r); setPage(1); }}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm ${
-              role === r ? "bg-violet-600 text-white" : "bg-white text-neutral-600 border border-neutral-200/60 hover:bg-neutral-50"
+            className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+              role === r 
+                ? "bg-violet-600 text-white shadow-sm shadow-violet-500/20" 
+                : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"
             }`}
           >
-            {r}s
+            {r === "OWNER" ? "PG Owners" : "Tenants"}
           </button>
         ))}
       </div>
@@ -266,87 +268,108 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-2 p-3 md:hidden">
+        <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {data.owners.map((o: any) => (
-            <div key={`mob-${o.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${o.id}`} className="bg-white/80 backdrop-blur-md border border-neutral-200/70 rounded-2xl p-4 shadow-2xs hover:shadow-sm transition-all flex flex-col gap-2.5">
               <div className="flex justify-between items-start gap-2">
-                <div className="min-w-0">
-                  <div className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate">{o.name}</div>
-                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider truncate">{o.phone || "No phone"} · {o.email}</div>
+                <div className="min-w-0 flex-1">
+                  <a href={`/dashboard/admin/users/${o.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 hover:text-violet-700 transition-colors truncate block">
+                    {o.name}
+                  </a>
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider truncate mt-0.5">
+                    {o.phone || "No phone"} · {o.email}
+                  </div>
                   {o.partner && (
                     <a
                       href={`/dashboard/admin/partners/${o.partner.id}`}
-                      className="inline-block mt-0.5 text-[9px] font-black px-1.5 py-0.5 rounded bg-violet-100/80 border border-violet-200/60 shadow-sm text-violet-700 uppercase tracking-wider"
+                      className="inline-block mt-1 text-[8px] font-black px-1.5 py-0.2 rounded-full bg-violet-100 border border-violet-200 shadow-2xs text-violet-700 uppercase tracking-wider"
                     >
                       Partner · {o.partner.partnerCode}
                     </a>
                   )}
                 </div>
-                <div className="shrink-0">
+
+                <div className="shrink-0 flex items-center gap-1.5">
+                  {o.phone && (
+                    <a
+                      href={`tel:${o.phone}`}
+                      className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center shadow-2xs hover:bg-emerald-100 transition-colors"
+                      title="Call User"
+                    >
+                      <Phone size={13} />
+                    </a>
+                  )}
                   {o.status === "FREE_TRIAL" && (
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-100/80 border border-blue-200/60 shadow-sm text-blue-800 uppercase tracking-wider">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-100/90 border border-blue-200 shadow-2xs text-blue-800 uppercase tracking-wider">
                       Trial
                     </span>
                   )}
                   {o.status === "PREMIUM" && (
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-100/80 border border-emerald-200/60 shadow-sm text-emerald-800 uppercase tracking-wider">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100/90 border border-emerald-200 shadow-2xs text-emerald-800 uppercase tracking-wider">
                       Pro
                     </span>
                   )}
                   {o.status === "EXPIRED" && (
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-red-100/80 border border-red-200/60 shadow-sm text-red-800 uppercase tracking-wider">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-100 border border-rose-200 shadow-2xs text-rose-800 uppercase tracking-wider">
                       Expired
                     </span>
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1 py-2 border-y border-neutral-200/60 text-center">
-                <div>
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">PGs</div>
-                  <div className="text-xs font-black text-neutral-700">{o.pgCount}</div>
+
+              {role === "OWNER" && (
+                <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-100 text-center bg-neutral-50/50 rounded-xl">
+                  <div>
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">PGs</div>
+                    <div className="text-xs font-black text-neutral-800">{o.pgCount}</div>
+                  </div>
+                  <div className="border-l border-neutral-200/60">
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Tenants</div>
+                    <div className="text-xs font-black text-neutral-800">{o.tenantCount}</div>
+                  </div>
+                  <div className="border-l border-neutral-200/60">
+                    <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Leads</div>
+                    <div className="text-xs font-black text-neutral-800">{o.leadCount}</div>
+                  </div>
                 </div>
-                <div className="border-l border-neutral-200/60">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Tenants</div>
-                  <div className="text-xs font-black text-neutral-700">{o.tenantCount}</div>
-                </div>
-                <div className="border-l border-neutral-200/60">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Leads</div>
-                  <div className="text-xs font-black text-neutral-700">{o.leadCount}</div>
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1">
+              )}
+
+              {/* Action Buttons Row */}
+              <div className="grid grid-cols-4 gap-1.5 pt-1">
                 <button 
                   onClick={() => handleImpersonate(o.id, o.name)}
-                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-black px-1.5 py-2 rounded-xl bg-orange-100/80 border border-orange-200/60 shadow-sm text-orange-700 hover:bg-orange-200 transition-colors uppercase tracking-wider text-center"
+                  className="cursor-pointer h-9 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs transition-all active:scale-95"
                 >
-                  Login
+                  <LogIn size={11} /> Login
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "extend_trial", 7)} 
-                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-black px-1.5 py-2 rounded-xl bg-white/60 border border-neutral-200/60 shadow-sm text-neutral-700 hover:bg-neutral-100 transition-colors uppercase tracking-wider text-center"
+                  className="cursor-pointer h-9 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-200/80 text-neutral-700 text-[10px] font-black uppercase tracking-wider flex items-center justify-center shadow-2xs transition-all active:scale-95 disabled:opacity-50"
                 >
                   +7D
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "activate_plan")} 
-                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-black px-1.5 py-2 rounded-xl bg-violet-600 text-white shadow-sm hover:bg-violet-700 transition-colors uppercase tracking-wider text-center"
+                  className="cursor-pointer h-9 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[10px] font-black uppercase tracking-wider flex items-center justify-center shadow-sm shadow-violet-500/20 transition-all active:scale-95 disabled:opacity-50"
                 >
                   Pro
                 </button>
                 <button 
                   disabled={processing}
                   onClick={() => handleAction(o.id, "delete")} 
-                  className="cursor-pointer flex-1 min-w-[70px] text-[10px] font-black px-1.5 py-2 rounded-xl bg-red-100/80 border border-red-200/60 shadow-sm text-red-700 hover:bg-red-200 transition-colors uppercase tracking-wider text-center"
+                  className="cursor-pointer h-9 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs transition-all active:scale-95 disabled:opacity-50"
                 >
-                  Del
+                  <Trash2 size={11} /> Del
                 </button>
               </div>
             </div>
           ))}
           {data.owners.length === 0 && (
-            <div className="text-center p-4 text-neutral-500 text-xs">No {role === "OWNER" ? "owners" : "tenants"} found.</div>
+            <div className="text-center p-8 text-neutral-500 text-xs bg-white/40 rounded-2xl border border-neutral-100">
+              No {role === "OWNER" ? "owners" : "tenants"} found.
+            </div>
           )}
         </div>
         

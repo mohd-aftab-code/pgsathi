@@ -66,13 +66,66 @@ export default async function AdminDashboardPage({
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Admin Overview</h1>
             <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">{format(now, "EEEE, d MMMM yyyy")} · Platform Statistics</p>
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-2.5 py-1.5 rounded-full shrink-0 shadow-sm uppercase tracking-wide">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-2.5 py-1.5 rounded-full shrink-0 shadow-sm uppercase tracking-wide self-start sm:self-auto">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
             </span>
             System Online
           </div>
+        </div>
+
+        {/* ── Mobile Quick Action App Hub (lg:hidden) ────────────────── */}
+        <div className="grid grid-cols-4 gap-2 lg:hidden">
+          <Link
+            href="/dashboard/admin/verify"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-amber-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {pendingListings > 0 && (
+              <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                {pendingListings}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-sm shadow-amber-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <ShieldCheck size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Verify</span>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/users"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-blue-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-sm shadow-blue-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <Users size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Users</span>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/enquiries"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-violet-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group relative"
+          >
+            {unreadEnquiries > 0 && (
+              <span className="absolute -top-1 -right-1 bg-violet-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                {unreadEnquiries}
+              </span>
+            )}
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shadow-sm shadow-violet-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <MessageSquare size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Enquiries</span>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/partners"
+            className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white/80 backdrop-blur-md border border-emerald-200/70 shadow-2xs hover:shadow-sm active:scale-95 transition-all text-center group"
+          >
+            <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-sm shadow-emerald-500/25 mb-1 group-hover:scale-105 transition-transform">
+              <Handshake size={17} />
+            </div>
+            <span className="text-[10px] font-black text-neutral-800 leading-tight">Partners</span>
+          </Link>
         </div>
 
         {/* ── Compact VIP Stats Row ────────────────────────────────────────── */}
@@ -162,8 +215,8 @@ export default async function AdminDashboardPage({
               </Link>
             </div>
 
-            {/* Compact table */}
-            <div className="overflow-x-auto flex-1">
+            {/* Desktop Table (Preserved exactly as-is) */}
+            <div className="hidden md:block overflow-x-auto flex-1">
               <table className="w-full text-sm min-w-[500px]">
                 <thead>
                   <tr className="text-left text-[9px] uppercase tracking-wider text-neutral-400 bg-neutral-50/80 border-b border-neutral-100">
@@ -224,6 +277,52 @@ export default async function AdminDashboardPage({
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile App Cards (Native card layout — no horizontal table scroll) */}
+            <div className="md:hidden divide-y divide-neutral-100 flex-1">
+              {recentListings.map((listing) => (
+                <div key={listing.id} className="p-3.5 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-black text-neutral-900 text-sm truncate">
+                        {listing.title}
+                      </div>
+                      <div className="text-[10px] font-semibold text-neutral-400 flex items-center gap-1 mt-0.5">
+                        <span className="text-violet-700 font-bold">{listing.city?.name ?? "—"}</span>
+                        <span>·</span>
+                        <span className="truncate">{listing.owner?.name ?? "—"}</span>
+                      </div>
+                    </div>
+                    <span className={`text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ${
+                      listing.status === "ACTIVE"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : listing.status === "PENDING"
+                        ? "bg-amber-50 text-amber-700 border border-amber-200"
+                        : "bg-neutral-100 text-neutral-500"
+                    }`}>
+                      ● {listing.status}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 text-[10px]">
+                    <span className="text-neutral-400 font-medium">
+                      Added {formatDistanceToNow(listing.createdAt, { addSuffix: true })}
+                    </span>
+                    <Link
+                      href={`/dashboard/admin/verify?query=${encodeURIComponent(listing.title)}`}
+                      className="font-bold text-violet-700 hover:text-violet-800 bg-violet-50 px-2.5 py-1 rounded-xl transition-colors"
+                    >
+                      Manage →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {recentListings.length === 0 && (
+                <div className="p-6 text-center text-xs text-neutral-400">
+                  No listings found.
+                </div>
+              )}
             </div>
 
             {/* Pagination */}
