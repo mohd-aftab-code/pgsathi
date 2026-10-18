@@ -299,21 +299,21 @@ function RegisterContent() {
                 onClick={() => setRole("PARTNER")}
                 className={`relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                   role === "PARTNER"
-                    ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
+                    ? "border-emerald-500 bg-emerald-50 shadow-md shadow-emerald-100"
                     : "border-neutral-200 bg-white hover:border-neutral-300"
                 }`}
               >
                 {role === "PARTNER" && (
                   <CheckCircle2
                     size={16}
-                    className="absolute top-2 right-2 sm:top-3 sm:right-3 text-blue-500"
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 text-emerald-600"
                     fill="currentColor"
                   />
                 )}
                 <div
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${
                     role === "PARTNER"
-                      ? "bg-blue-500 text-white"
+                      ? "bg-emerald-500 text-white"
                       : "bg-neutral-100 text-neutral-500"
                   }`}
                 >
@@ -322,17 +322,26 @@ function RegisterContent() {
                 <div className="text-center">
                   <div
                     className={`text-xs sm:text-sm font-bold ${
-                      role === "PARTNER" ? "text-blue-600" : "text-neutral-700"
+                      role === "PARTNER" ? "text-emerald-700" : "text-neutral-700"
                     }`}
                   >
                     Partner
                   </div>
                   <div className="text-[10px] sm:text-xs text-neutral-400 mt-0.5">
-                    Earn with us
+                    Earn 10%
                   </div>
                 </div>
               </button>
             </div>
+
+            {role === "PARTNER" && (
+              <div className="mt-3.5 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between gap-2">
+                <span>Looking for the dedicated Channel Partner onboarding with bank payouts?</span>
+                <Link href="/partner/signup" className="font-bold underline shrink-0 hover:text-emerald-950">
+                  Open Portal &rarr;
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Error */}

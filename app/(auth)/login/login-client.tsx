@@ -18,6 +18,7 @@ import {
   User,
   ArrowRight,
   Loader2,
+  Handshake,
 } from "lucide-react";
 
 type Tab = "user" | "manager";
@@ -134,8 +135,8 @@ function LoginContent() {
   };
 
   const tabs: { id: Tab; label: string; icon: React.ElementType; desc: string }[] = [
-    { id: "user", label: "Tenant / Owner / Partner", icon: User, desc: "Login with phone number" },
-    { id: "manager", label: "Manager / Staff", icon: Building2, desc: "PG staff sub-login" },
+    { id: "user", label: "Tenant & PG Owner", icon: User, desc: "Login with registered mobile number" },
+    { id: "manager", label: "Manager & Staff", icon: Building2, desc: "PG staff sub-account login" },
   ];
 
   return (
@@ -212,8 +213,8 @@ function LoginContent() {
             {tab === "user" && <User size={14} className="text-violet-600 shrink-0" />}
             {tab === "manager" && <Building2 size={14} className="text-violet-600 shrink-0" />}
             <p className="text-xs text-violet-700 font-medium">
-              {tab === "user" && "For tenants, PG owners, and partners. Login with your registered phone number."}
-              {tab === "manager" && "For PG staff. Use your manager email provided by your PG owner."}
+              {tab === "user" && "For tenants and PG owners. Sign in with your 10-digit registered mobile number."}
+              {tab === "manager" && "For hostel staff and wardens. Use the manager email provided by your PG owner."}
             </p>
           </div>
 
@@ -394,6 +395,21 @@ function LoginContent() {
           )}
 
 
+
+          {/* Partner Callout */}
+          <div className="mt-6 pt-5 border-t border-neutral-200/80 text-center">
+            <p className="text-xs text-neutral-500 mb-2">
+              Are you an Affiliate Partner or Campus Ambassador?
+            </p>
+            <Link
+              href="/partner/login"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 hover:bg-emerald-100 transition-colors shadow-sm"
+            >
+              <Handshake size={14} className="text-emerald-600" />
+              <span>Go to Partner Portal Login</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
 
           {/* Footer */}
           <p className="mt-8 text-center text-xs text-neutral-400 leading-relaxed">

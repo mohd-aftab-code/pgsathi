@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AuthProtectedLink from "@/components/common/AuthProtectedLink";
-import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2 } from "lucide-react";
+import { ShieldCheck, MapPin, MessageCircle, Star, User, Building2, Handshake } from "lucide-react";
 import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
@@ -83,17 +83,27 @@ export default async function HeroSection() {
                 </div>
                 <p className="leading-snug">
                   <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-primary-700 transition-colors">For Tenants:</strong> 
-                  <span className="text-neutral-500 sm:text-neutral-600"> Find verified PGs. No brokers.</span>
+                  <span className="text-neutral-500 sm:text-neutral-600"> Find verified PGs with zero brokerage.</span>
                 </p>
               </Link>
               
-              <Link href="/register?role=owner" className="relative z-20 cursor-pointer group flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none sm:hover:bg-neutral-50 transition-colors sm:p-2 sm:-ml-2 sm:rounded-xl">
+              <Link href="/for-owners" className="relative z-20 cursor-pointer group flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none sm:hover:bg-neutral-50 transition-colors sm:p-2 sm:-ml-2 sm:rounded-xl">
                 <div className="bg-emerald-50 sm:bg-emerald-100 text-emerald-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1 group-hover:scale-105 transition-transform">
                   <Building2 size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
                 <p className="leading-snug">
                   <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-emerald-700 transition-colors">For Owners:</strong> 
-                  <span className="text-neutral-500 sm:text-neutral-600"> Generate leads & manage your PG easily.</span>
+                  <span className="text-neutral-500 sm:text-neutral-600"> List for free, get WhatsApp leads &amp; manage rent.</span>
+                </p>
+              </Link>
+
+              <Link href="/partner" className="relative z-20 cursor-pointer group flex items-start gap-3.5 sm:gap-2.5 bg-white sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] sm:shadow-none sm:hover:bg-neutral-50 transition-colors sm:p-2 sm:-ml-2 sm:rounded-xl">
+                <div className="bg-amber-50 sm:bg-amber-100 text-amber-700 p-2 sm:p-1.5 rounded-xl sm:rounded-lg shrink-0 mt-0.5 sm:mt-1 group-hover:scale-105 transition-transform">
+                  <Handshake size={20} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
+                </div>
+                <p className="leading-snug">
+                  <strong className="text-neutral-900 block sm:inline text-[15px] sm:text-lg mb-0.5 sm:mb-0 group-hover:text-amber-700 transition-colors">For Partners:</strong> 
+                  <span className="text-neutral-500 sm:text-neutral-600"> Onboard PG owners &amp; earn 10% monthly commission.</span>
                 </p>
               </Link>
             </div>

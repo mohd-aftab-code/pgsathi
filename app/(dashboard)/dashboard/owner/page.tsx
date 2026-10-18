@@ -301,6 +301,74 @@ export default async function OwnerDashboardPage({
         </div>
       </div>
 
+      {/* ── First-Time Owner Welcome & Onboarding Guide ──────────── */}
+      {listings.length === 0 && (
+        <div className="bg-gradient-to-br from-violet-900 via-primary-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-violet-200 mb-4">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Quick Start Guide</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-3 text-white">
+              Welcome to PGSathi, {ownerName}! Let&apos;s set up your first PG 🚀
+            </h2>
+            <p className="text-violet-200 text-sm sm:text-base leading-relaxed mb-6">
+              Complete these 3 quick steps to activate your free listing, start getting direct tenant inquiries on WhatsApp, and automate your rent collection.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-violet-500 text-white font-black text-sm flex items-center justify-center">
+                  1
+                </div>
+                <h3 className="font-extrabold text-sm text-white">List Your Property</h3>
+                <p className="text-xs text-violet-200/80 leading-relaxed">
+                  Add photos, address, and rent to appear on the public directory. (100% Free)
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white font-black text-sm flex items-center justify-center">
+                  2
+                </div>
+                <h3 className="font-extrabold text-sm text-white">Add Rooms &amp; Beds</h3>
+                <p className="text-xs text-violet-200/80 leading-relaxed">
+                  Set single, double, or triple sharing beds to track live vacancy.
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-500 text-white font-black text-sm flex items-center justify-center">
+                  3
+                </div>
+                <h3 className="font-extrabold text-sm text-white">Collect Rent on WhatsApp</h3>
+                <p className="text-xs text-violet-200/80 leading-relaxed">
+                  Send 1-click WhatsApp reminders with your UPI QR for instant settlement.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <Link
+                href="/dashboard/owner/listings/new"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-violet-950 font-black text-sm shadow-lg hover:bg-violet-50 transition-all hover:scale-[1.02]"
+              >
+                <PlusCircle size={17} className="text-violet-600" />
+                <span>Create Your First PG Listing</span>
+                <ArrowRight size={15} />
+              </Link>
+              <Link
+                href="/pg-management-software"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition-colors"
+              >
+                <span>Learn How PG CRM Works</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── KPI row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
         {kpis.map((k) => {

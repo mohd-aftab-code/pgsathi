@@ -174,6 +174,15 @@ export default function PartnerLoginPage() {
               Register
             </Link>
           </p>
+
+          <div className="mt-6 pt-5 border-t border-neutral-700/60 text-center">
+            <p className="text-xs text-neutral-400">
+              PG Owner ya Tenant hain?{" "}
+              <Link href="/login" className="font-bold text-primary-400 hover:text-primary-300 hover:underline">
+                Main Login par jayein &rarr;
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -64,11 +64,13 @@ export default function Footer() {
           {/* For PG Owners */}
           <div>
             <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
+              <span className="w-2 h-2 rounded-full bg-primary-500"></span>
               For PG Owners
             </h4>
             <ul className="flex flex-col gap-3">
               {[
+                { label: "Why List on PGSathi", href: "/for-owners", highlight: true },
+                { label: "PG Management Software", href: "/pg-management-software" },
                 { label: "List PG for Free", href: "/dashboard/owner/listings/new" },
                 { label: "Owner Dashboard", href: "/dashboard/owner" },
                 { label: "Tenant Management", href: "/dashboard/owner/tenants" },
@@ -76,9 +78,9 @@ export default function Footer() {
                 { label: "Lead Management", href: "/dashboard/owner/leads" },
                 { label: "Expense Tracking", href: "/dashboard/owner/expenses" },
                 { label: "Business Analytics", href: "/dashboard/owner/analytics" },
-              ].map(({ label, href }) => (
+              ].map(({ label, href, highlight }) => (
                 <li key={href}>
-                  <Link href={href} className="text-slate-400 hover:text-violet-400 text-sm transition-colors block">
+                  <Link href={href} className={`${highlight ? 'text-primary-300 font-semibold hover:text-primary-200' : 'text-slate-400 hover:text-primary-300'} text-sm transition-colors block`}>
                     {label}
                   </Link>
                 </li>
@@ -89,17 +91,14 @@ export default function Footer() {
           {/* For Partners */}
           <div>
             <h4 className="text-white font-semibold mb-6 text-base flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
               For Partners
             </h4>
             <ul className="flex flex-col gap-3">
               {[
-                // The partner portal lives under /partner/*, not /dashboard/partner/*.
-                // These pointed at routes that never existed and 404'd, and
-                // "Partner Login" went to the general three-role login.
                 { label: "Join Partner Program", href: "/partner", highlight: true },
-                { label: "Login", href: "/login" },
-                { label: "Register", href: "/register" },
+                { label: "Partner Login", href: "/partner/login" },
+                { label: "Partner Sign Up", href: "/partner/signup" },
                 { label: "Partner Dashboard", href: "/partner/dashboard" },
                 { label: "Track Earnings", href: "/partner/earnings" },
                 { label: "Onboarded PGs", href: "/partner/pgs" },
