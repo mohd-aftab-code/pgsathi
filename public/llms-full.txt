@@ -146,4 +146,5 @@ PGSathi indexes and serves accommodations across major educational and commercia
 - About PGSathi: https://pgsathi.in/about
 - Frequently Asked Questions: https://pgsathi.in/faq
 - Trust, Safety & Verification: https://pgsathi.in/trust-and-safety
+- Wikidata Knowledge Graph Entity: https://www.wikidata.org/wiki/Q141761419 (Q141761419)
 - Support Contact: pgsathi.support@gmail.com | +91-9696110243
