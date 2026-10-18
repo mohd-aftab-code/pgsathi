@@ -706,7 +706,7 @@ export default function NewListingPage() {
       {renderStepIndicator()}
 
       {/* Form Area */}
-      <div className="mb-6">
+      <div className="mb-6 pb-28 md:pb-0">
         {currentStep === 1 && renderStep1()}
         {currentStep === 2 && renderStep2()}
         {currentStep === 3 && renderStep3()}

@@ -770,7 +770,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
       {renderStepIndicator()}
 
       {/* Form Area */}
-      <div className="mb-8">
+      <div className="mb-8 pb-28 md:pb-0">
         {currentStep === 1 && renderStep1()}
         {currentStep === 2 && renderStep2()}
         {currentStep === 3 && renderStep3()}

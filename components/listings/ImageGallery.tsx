@@ -87,9 +87,9 @@ export default function ImageGallery({ photos, title }: { photos: Photo[], title
         {/* View all button overlay */}
         <button 
           onClick={() => openModal(0)}
-          className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold text-neutral-800 shadow-lg flex items-center gap-2 hover:bg-white transition-colors"
+          className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 bg-white/95 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-neutral-800 shadow-md flex items-center gap-1.5 sm:gap-2 hover:bg-white active:scale-95 transition-all"
         >
-          <ImageIcon size={16} /> Show all photos
+          <ImageIcon size={14} className="sm:w-4 sm:h-4" /> Show all photos
         </button>
       </div>
 

@@ -520,7 +520,7 @@ export default async function PGDetailPage(props: {
       <ViewTracker listingId={pg.id} />
 
       <div className="bg-neutral-50 min-h-screen">
-        <div className="container-max section-padding py-6 md:py-8">
+        <div className="container-max section-padding pt-4 pb-28 sm:py-6 md:py-8">
 
           {/* Breadcrumb */}
           <Breadcrumbs 

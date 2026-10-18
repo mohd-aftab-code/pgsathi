@@ -138,8 +138,8 @@ export function DashboardSidebar({
         </div>
       </aside>
 
-      {/* ── Content — static offset for fixed sidebar ─────── */}
-      <div className="lg:pl-64">{children}</div>
+      {/* ── Content — static offset for fixed sidebar & clearance for mobile bottom bar ─────── */}
+      <div className="lg:pl-64 pb-24 lg:pb-0">{children}</div>
 
       {/* ── Mobile Bottom Navigation Bar ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
