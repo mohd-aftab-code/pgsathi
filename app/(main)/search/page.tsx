@@ -156,30 +156,46 @@ export default async function SearchPage(props: {
   else if (sortBy === "price_desc") orderBy = [{ priceMin: "desc" }];
   else if (sortBy === "newest") orderBy = [{ createdAt: "desc" }];
 
-  // Direct real-time fetch (no stale cache lag)
-  const [listings, totalCount, rawCities, cityCounts] = await Promise.all([
-    db.listing.findMany({
-      where,
-      include: {
-        city: true,
-        locality: true,
-        photos: { take: 1 },
-      },
-      orderBy,
-      skip: (currentPage - 1) * ITEMS_PER_PAGE,
-      take: ITEMS_PER_PAGE,
-    }),
-    db.listing.count({ where }),
-    db.city.findMany({
-      where: { isActive: true },
-      orderBy: { priority: "asc" },
-    }),
-    db.listing.groupBy({
-      by: ["cityId"],
-      where: { isActive: true, status: "ACTIVE" },
-      _count: { id: true },
-    }),
-  ]);
+  // Fetch real-time search data with resilient retry for serverless DB cold starts
+  const fetchQueries = () =>
+    Promise.all([
+      db.listing.findMany({
+        where,
+        include: {
+          city: true,
+          locality: true,
+          photos: { take: 1 },
+        },
+        orderBy,
+        skip: (currentPage - 1) * ITEMS_PER_PAGE,
+        take: ITEMS_PER_PAGE,
+      }),
+      db.listing.count({ where }),
+      db.city.findMany({
+        where: { isActive: true },
+        orderBy: { priority: "asc" },
+      }),
+      db.listing.groupBy({
+        by: ["cityId"],
+        where: { isActive: true, status: "ACTIVE" },
+        _count: { id: true },
+      }),
+    ]);
+
+  let searchData;
+  try {
+    searchData = await fetchQueries();
+  } catch (error: any) {
+    if (error?.code === "P1001" || error?.message?.includes("Can't reach database server")) {
+      // Allow Neon serverless compute 1.5s to finish spinning up and retry
+      await new Promise((res) => setTimeout(res, 1500));
+      searchData = await fetchQueries();
+    } else {
+      throw error;
+    }
+  }
+
+  const [listings, totalCount, rawCities, cityCounts] = searchData;
 
   // Clean deduplicated cities list & live city pills
   const cities = getNormalizedCityList(rawCities);

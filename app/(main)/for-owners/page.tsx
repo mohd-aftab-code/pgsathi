@@ -132,8 +132,8 @@ export default function ForOwnersPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_SCHEMA) }} />
 
-      {/* ── 1. Hero Section (Unified with Homepage Design Language) ── */}
-      <section className="relative bg-neutral-50 pt-8 pb-16 sm:pt-12 sm:pb-24 overflow-hidden border-b border-neutral-200/80">
+      {/* ── 1. Hero Section (Unified with Homepage Left-Right Layout) ── */}
+      <section className="relative bg-neutral-50 pt-6 pb-12 sm:pt-10 sm:pb-16 md:pt-14 md:pb-20 overflow-hidden border-b border-neutral-200/80">
         <div
           className="absolute inset-0 opacity-[0.035] pointer-events-none"
           style={{
@@ -142,155 +142,112 @@ export default function ForOwnersPage() {
             backgroundSize: "48px 48px",
           }}
         />
-        <div className="container-max section-padding relative z-10 text-center max-w-4xl mx-auto">
-          <div className="mb-6 flex justify-center">
-            <Breadcrumbs items={[{ label: "For PG Owners" }]} />
-          </div>
 
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-primary-700 uppercase tracking-widest mb-4 bg-primary-50 px-3.5 py-1.5 rounded-full border border-primary-100">
-            <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse" />
-            <span>Zero Brokerage • 100% Direct Tenant Leads</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-black text-neutral-900 leading-[1.12] mb-5 tracking-tight">
-            Free PG Listing Website in India — <br className="hidden sm:inline" />
-            <span className="text-primary-700">List Your PG Online Free.</span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Connect directly with verified students and working professionals. Use our free PG listing website to publish your property, get direct WhatsApp inquiries with zero brokerage, and fill vacant beds fast.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto mb-10">
-            <Link
-              href="/dashboard/owner/listings/new"
-              className="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base transition-all shadow-lg shadow-primary-500/20 flex items-center justify-center gap-2 min-h-[48px]"
-            >
-              List Your PG for Free <ArrowRight size={18} />
-            </Link>
-            <Link
-              href="/pg-management-software"
-              className="w-full sm:w-auto bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-300 px-6 py-4 rounded-xl font-bold text-sm sm:text-base transition-all text-center min-h-[48px] shadow-sm"
-            >
-              Explore PG CRM Software
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-neutral-600 pt-6 border-t border-neutral-200">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span className="text-neutral-800 font-bold">100% Free Forever Listing</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span className="text-neutral-800 font-bold">Direct Phone &amp; WhatsApp Calls</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span className="text-neutral-800 font-bold">15-Day Free Software Trial</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 2. Trust Stats Bar ── */}
-      <section className="container-max section-padding -mt-8 relative z-20">
-        <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-black text-primary-700">10,000+</div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-700">Active PG Owners</div>
-            <p className="text-[11px] text-neutral-500">Across major educational hubs</p>
-          </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-black text-emerald-600">0%</div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-700">Broker Commission</div>
-            <p className="text-[11px] text-neutral-500">Keep 100% of your earnings</p>
-          </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-black text-neutral-900">2 Mins</div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-700">Instant Setup</div>
-            <p className="text-[11px] text-neutral-500">From mobile or desktop</p>
-          </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-black text-primary-950">₹0</div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-700">Registration Fee</div>
-            <p className="text-[11px] text-neutral-500">Free starter discovery plan</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. How It Works (3 Steps to Fill Beds + Live Lead Mockup) ── */}
-      <section className="py-16 sm:py-20 bg-neutral-50">
-        <div className="container-max section-padding">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Steps Left */}
-            <div className="lg:col-span-7 space-y-8">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-primary-700 bg-primary-50 px-3.5 py-1.5 rounded-full border border-primary-100">
-                  Fast &amp; Transparent
-                </span>
-                <h2 className="text-2xl sm:text-4xl font-black text-neutral-900 tracking-tight mt-3 mb-3">
-                  How to List Your PG Online Free in 3 Simple Steps
-                </h2>
-                <p className="text-neutral-600 text-sm sm:text-base leading-relaxed">
-                  Listing your property on our free PG listing website in India takes just a few minutes. Connect directly with genuine tenants with zero brokerage.
-                </p>
+        <div className="container-max section-padding relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] xl:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-8 items-center">
+            {/* ── Left Column: Value Copy + Highlights + Actions ── */}
+            <div>
+              <div className="mb-4">
+                <Breadcrumbs items={[{ label: "For PG Owners" }]} />
               </div>
 
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 shrink-0 bg-primary-600 text-white rounded-2xl flex items-center justify-center font-black text-base shadow-md shadow-primary-500/25">
-                    1
+              <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-bold text-primary-700 uppercase tracking-widest mb-4 sm:mb-5 bg-primary-50 px-3.5 py-1.5 rounded-full border border-primary-100">
+                <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse" />
+                <span>Zero Brokerage • 100% Direct Tenant Leads</span>
+              </div>
+
+              <h1
+                className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 tracking-tight"
+                style={{ textWrap: "balance" }}
+              >
+                Free PG Listing Website in India — <br className="hidden lg:block" />
+                <span className="text-primary-700">List Your PG Online Free.</span>
+              </h1>
+
+              <p className="text-sm md:text-lg text-neutral-600 mb-7 max-w-xl leading-relaxed">
+                Connect directly with verified students and working professionals. Use our free PG listing website to publish your property, get direct WhatsApp inquiries with zero brokerage, and fill vacant beds fast.
+              </p>
+
+              {/* 3 Benefit Feature Rows (Matching Homepage Aesthetic) */}
+              <div className="flex flex-col gap-3 text-sm md:text-base text-neutral-600 mb-8 max-w-xl">
+                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-neutral-200/80 shadow-[0_2px_8px_rgb(0,0,0,0.03)] hover:border-emerald-200 transition-colors">
+                  <div className="bg-emerald-50 text-emerald-700 p-2 rounded-xl shrink-0 mt-0.5">
+                    <TrendingUp size={18} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Create Your Free Owner Account</h3>
-                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Sign up in under 2 minutes with your mobile number. No credit card or registration fee required.
-                    </p>
+                    <strong className="text-neutral-900 block font-bold text-sm">100% Free Listing &amp; Zero Brokerage:</strong>
+                    <span className="text-neutral-500 text-xs sm:text-sm">Keep 100% of your rent &amp; deposit. No commission cuts or middleman charges forever.</span>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 shrink-0 bg-primary-600 text-white rounded-2xl flex items-center justify-center font-black text-base shadow-md shadow-primary-500/25">
-                    2
+                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-neutral-200/80 shadow-[0_2px_8px_rgb(0,0,0,0.03)] hover:border-primary-200 transition-colors">
+                  <div className="bg-primary-50 text-primary-700 p-2 rounded-xl shrink-0 mt-0.5">
+                    <MessageCircle size={18} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Add Photos, Room Sharing &amp; Rent Details</h3>
-                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Upload PG photos, set monthly rent for single, double, or triple sharing rooms, select amenities (Wi-Fi, AC, Food), and specify rules.
-                    </p>
+                    <strong className="text-neutral-900 block font-bold text-sm">Direct Phone &amp; WhatsApp Inquiries:</strong>
+                    <span className="text-neutral-500 text-xs sm:text-sm">Tenants discover your PG and contact your phone or WhatsApp directly with pre-filled room details.</span>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 shrink-0 bg-primary-600 text-white rounded-2xl flex items-center justify-center font-black text-base shadow-md shadow-primary-500/25">
-                    3
+                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-neutral-200/80 shadow-[0_2px_8px_rgb(0,0,0,0.03)] hover:border-violet-200 transition-colors">
+                  <div className="bg-violet-50 text-violet-700 p-2 rounded-xl shrink-0 mt-0.5">
+                    <Smartphone size={18} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-neutral-900 mb-1">Publish Live &amp; Receive Direct Inquiries</h3>
-                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      Your property goes live on our free PG listing website. Interested tenants call or WhatsApp you directly without any broker commissions.
-                    </p>
+                    <strong className="text-neutral-900 block font-bold text-sm">Smart PG Cloud CRM &amp; 15-Day Free Trial:</strong>
+                    <span className="text-neutral-500 text-xs sm:text-sm">Send 1-click WhatsApp rent reminders with UPI, record Aadhaar KYC &amp; track bed vacancies.</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2">
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
                 <Link
                   href="/dashboard/owner/listings/new"
-                  className="inline-flex items-center gap-2 text-sm font-black text-primary-700 hover:text-primary-800 underline underline-offset-4"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-7 py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all shadow-lg shadow-primary-500/20 flex items-center justify-center gap-2 min-h-[48px]"
                 >
-                  Create your first listing now <ArrowRight size={16} />
+                  List Your PG for Free <ArrowRight size={18} />
                 </Link>
+                <Link
+                  href="/pg-management-software"
+                  className="bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-300 px-6 py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all text-center min-h-[48px] shadow-sm flex items-center justify-center"
+                >
+                  Explore PG CRM Software
+                </Link>
+              </div>
+
+              {/* Quick Trust Highlights */}
+              <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-x-6 sm:gap-y-3 text-sm">
+                <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
+                  <span className="font-extrabold text-neutral-900 text-lg sm:text-sm sm:mr-1">10,000+</span>
+                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Active Owners</span>
+                </div>
+                <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
+                <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
+                  <span className="font-extrabold text-emerald-600 text-lg sm:text-sm sm:mr-1">0%</span>
+                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Broker Commission</span>
+                </div>
+                <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
+                <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
+                  <span className="font-extrabold text-neutral-900 text-lg sm:text-sm sm:mr-1">2 Mins</span>
+                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Instant Setup</span>
+                </div>
+                <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
+                <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
+                  <span className="font-extrabold text-primary-700 text-lg sm:text-sm sm:mr-1">₹0</span>
+                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Forever Free</span>
+                </div>
               </div>
             </div>
 
-            {/* Interactive Lead Mockup Right */}
-            <div className="lg:col-span-5">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100/50 via-primary-100/40 to-violet-100/30 rounded-3xl blur-2xl transform scale-105 pointer-events-none" />
+            {/* ── Right Column: Interactive PG Owner Experience Showcase ── */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100/60 via-primary-100/40 to-violet-100/40 rounded-3xl blur-2xl transform scale-105 pointer-events-none" />
 
-                <div className="relative bg-white rounded-3xl shadow-xl border border-neutral-200 p-6 sm:p-7 space-y-4">
+              <div className="relative space-y-4">
+                {/* Main WhatsApp Lead Card */}
+                <div className="bg-white rounded-3xl shadow-xl border border-neutral-200/90 p-5 sm:p-7 space-y-4">
                   <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center shrink-0">
@@ -334,8 +291,112 @@ export default function ForOwnersPage() {
                     <span className="text-primary-700 font-bold">Instant Tenant Connection</span>
                   </div>
                 </div>
+
+                {/* Overlapping Floating Feature Badge */}
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-neutral-200 p-4 shadow-lg flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-extrabold text-neutral-900">Bed Occupancy Boost</div>
+                      <div className="text-[11px] text-neutral-500">Fill vacant beds 3x faster with local students</div>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-black text-xs rounded-lg border border-emerald-100 shrink-0">
+                    +40% Faster
+                  </span>
+                </div>
               </div>
             </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2. Trust Stats Bar ── */}
+      <section className="container-max section-padding -mt-8 relative z-20">
+        <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="space-y-1">
+            <div className="text-2xl sm:text-3xl font-black text-primary-700">10,000+</div>
+            <div className="text-xs sm:text-sm font-bold text-neutral-700">Active PG Owners</div>
+            <p className="text-[11px] text-neutral-500">Across major educational hubs</p>
+          </div>
+          <div className="space-y-1">
+            <div className="text-2xl sm:text-3xl font-black text-emerald-600">0%</div>
+            <div className="text-xs sm:text-sm font-bold text-neutral-700">Broker Commission</div>
+            <p className="text-[11px] text-neutral-500">Keep 100% of your earnings</p>
+          </div>
+          <div className="space-y-1">
+            <div className="text-2xl sm:text-3xl font-black text-neutral-900">2 Mins</div>
+            <div className="text-xs sm:text-sm font-bold text-neutral-700">Instant Setup</div>
+            <p className="text-[11px] text-neutral-500">From mobile or desktop</p>
+          </div>
+          <div className="space-y-1">
+            <div className="text-2xl sm:text-3xl font-black text-primary-950">₹0</div>
+            <div className="text-xs sm:text-sm font-bold text-neutral-700">Registration Fee</div>
+            <p className="text-[11px] text-neutral-500">Free starter discovery plan</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. How It Works (3 Simple Steps to Fill Beds) ── */}
+      <section className="py-16 sm:py-20 bg-neutral-50">
+        <div className="container-max section-padding">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary-700 bg-primary-50 px-3.5 py-1.5 rounded-full border border-primary-100">
+              Fast &amp; Transparent
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-black text-neutral-900 tracking-tight mt-3 mb-3">
+              How to List Your PG Online Free in 3 Simple Steps
+            </h2>
+            <p className="text-neutral-600 text-sm sm:text-base leading-relaxed">
+              Listing your property on our free PG listing website in India takes just a few minutes. Connect directly with genuine tenants with zero brokerage.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {/* Step 1 */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow relative">
+              <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center font-black text-lg mb-5 border border-primary-100">
+                01
+              </div>
+              <h3 className="text-lg font-black text-neutral-900 mb-2">Create Your Free Owner Account</h3>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                Sign up in under 2 minutes with your mobile number. No credit card or registration fee required.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow relative">
+              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-lg mb-5 border border-emerald-100">
+                02
+              </div>
+              <h3 className="text-lg font-black text-neutral-900 mb-2">Add Photos, Sharing &amp; Rent</h3>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                Upload PG photos, set monthly rent for single, double, or triple sharing rooms, select amenities (Wi-Fi, AC, Food), and specify rules.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow relative">
+              <div className="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center font-black text-lg mb-5 border border-violet-100">
+                03
+              </div>
+              <h3 className="text-lg font-black text-neutral-900 mb-2">Publish Live &amp; Receive Inquiries</h3>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                Your property goes live on our free PG listing website. Interested tenants call or WhatsApp you directly without any broker commissions.
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/dashboard/owner/listings/new"
+              className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base transition-all shadow-lg shadow-primary-500/20"
+            >
+              Create Your First Free Listing Now <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
