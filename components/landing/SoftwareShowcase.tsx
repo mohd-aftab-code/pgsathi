@@ -3,24 +3,24 @@ import { Building, Smartphone, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function SoftwareShowcase() {
   return (
-    <section className="py-20 md:py-28 bg-white border-t border-neutral-100 overflow-hidden">
+    <section className="py-12 md:py-24 bg-white border-t border-neutral-100 overflow-hidden">
       <div className="container-max section-padding">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
           {/* Content */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-50 text-violet-700 text-sm font-bold uppercase tracking-widest rounded-full mb-6 border border-violet-100">
-              <Building size={16} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-violet-50 text-violet-700 text-xs sm:text-sm font-bold uppercase tracking-widest rounded-full mb-4 sm:mb-6 border border-violet-100">
+              <Building size={14} className="sm:w-4 sm:h-4" />
               PGSathi Business
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-6 tracking-tight leading-[1.1]">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 sm:mb-6 tracking-tight leading-[1.15]">
               Powerful Cloud CRM <br />
               for <span className="text-primary-600">PG Owners.</span>
             </h2>
-            <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-neutral-600 mb-6 sm:mb-8 leading-relaxed">
               Managing a PG shouldn't mean drowning in Excel sheets and WhatsApp messages. We built the ultimate software to digitize your operations and increase your profit margins.
             </p>
             
-            <ul className="space-y-4 mb-10">
+            <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10">
               {[
                 "Digital Tenant KYC & Onboarding",
                 "Automated Rent Reminders & Billing",
@@ -28,17 +28,17 @@ export default function SoftwareShowcase() {
                 "Direct Verified Leads from our Platform",
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={14} />
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 size={13} className="sm:w-3.5 sm:h-3.5" />
                   </div>
-                  <span className="text-neutral-700 font-medium">{item}</span>
+                  <span className="text-neutral-700 text-xs sm:text-base font-medium">{item}</span>
                 </li>
               ))}
             </ul>
             
             <Link 
               href="/pg-management-software" 
-              className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-bold transition-all w-full sm:w-auto inline-flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all w-full sm:w-auto inline-flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 active:scale-[0.98] min-h-[44px]"
             >
               Explore PG Software <ArrowRight size={18} />
             </Link>

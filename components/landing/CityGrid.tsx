@@ -46,12 +46,12 @@ export default async function CityGrid() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {topCities.map((city: any) => (
             <Link 
               key={city.id} 
               href={`/pg-in-${city.slug}`}
-              className="group relative h-40 md:h-56 rounded-2xl overflow-hidden block shadow-sm hover:shadow-hover transition-all duration-300"
+              className="group relative h-36 sm:h-44 md:h-56 rounded-2xl overflow-hidden block shadow-sm hover:shadow-hover transition-all duration-300 active:scale-[0.98]"
             >
               {/* Background Image */}
               {city.imageUrl ? (
@@ -67,15 +67,15 @@ export default async function CityGrid() {
               )}
               
               {/* Gradient Overlay for Text Readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity group-hover:opacity-100"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
               
-              <div className="absolute inset-0 p-5 flex flex-col justify-end text-white z-10 bg-gradient-to-t from-black/60 to-transparent">
-                <div className="flex items-center gap-2 mb-1">
-                  <MapPin size={16} className="text-orange-400" />
-                  <span className="text-sm font-medium text-neutral-200">{city.state}</span>
+              <div className="absolute inset-0 p-3 sm:p-5 flex flex-col justify-end text-white z-10">
+                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                  <MapPin size={13} className="text-orange-400 shrink-0 sm:w-4 sm:h-4" />
+                  <span className="text-[11px] sm:text-sm font-medium text-neutral-200 truncate">{city.state}</span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-white">{city.name}</h3>
-                <p className="text-sm text-neutral-300 mt-1 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                <h3 className="text-base sm:text-xl md:text-2xl font-black text-white leading-tight">{city.name}</h3>
+                <p className="text-[11px] sm:text-sm text-neutral-300 mt-0.5 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   {city._count?.localities || 0} localities
                 </p>
               </div>

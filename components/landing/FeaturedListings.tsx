@@ -59,24 +59,36 @@ export default async function FeaturedListings() {
   if (listings.length === 0) return null;
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 md:py-20 bg-white">
       <div className="container-max section-padding">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-3">
           <div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-2 tracking-tight">{isFeatured ? "Featured PGs" : "Latest PGs"}</h2>
-            <p className="section-subtitle mb-0">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-900 mb-1.5 sm:mb-2 tracking-tight">
+              {isFeatured ? "Featured PGs" : "Latest PGs"}
+            </h2>
+            <p className="section-subtitle mb-0 text-sm sm:text-base">
               {isFeatured ? "Handpicked top-rated PGs across India." : "Freshly listed PGs — be the first to enquire."}
             </p>
           </div>
-          <Link href="/search" className="btn-ghost flex items-center gap-2 group whitespace-nowrap">
+          <Link href="/search" className="btn-ghost hidden md:flex items-center gap-2 group whitespace-nowrap">
             View All <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {listings.map((pg) => (
             <PGCard key={pg.id} pg={pg} />
           ))}
+        </div>
+
+        {/* Mobile-only Bottom CTA */}
+        <div className="mt-8 text-center md:hidden">
+          <Link
+            href="/search"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900 text-white font-bold text-sm shadow-md active:scale-[0.98] transition-transform min-h-[44px]"
+          >
+            Explore All PGs <ArrowRight size={16} />
+          </Link>
         </div>
       </div>
     </section>

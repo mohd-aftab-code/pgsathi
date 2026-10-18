@@ -33,31 +33,31 @@ export default function TrustSection() {
   ];
 
   return (
-    <section className="py-24 bg-neutral-50 border-t border-neutral-100">
+    <section className="py-12 md:py-24 bg-neutral-50 border-t border-neutral-100">
       <div className="container-max section-padding">
-        <div className="max-w-3xl mb-16 text-left">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary-100 text-primary-700 text-sm font-bold tracking-wide uppercase mb-4">
+        <div className="max-w-3xl mb-8 sm:mb-16 text-left">
+          <span className="inline-block px-3.5 py-1 rounded-full bg-primary-100 text-primary-700 text-xs sm:text-sm font-bold tracking-wide uppercase mb-3 sm:mb-4">
             Why Choose PGSathi?
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-900 mb-3 sm:mb-4 tracking-tight">
             Finding a PG is Now <span className="text-primary-600">Smart and Free</span>
           </h2>
-          <p className="section-subtitle max-w-2xl text-left">
+          <p className="section-subtitle max-w-2xl text-left text-sm sm:text-base">
             Forget about brokers. PGSathi connects you directly with verified PG owners. Safe, secure, and hassle-free.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {features.map((feature, idx) => (
             <div 
               key={idx} 
-              className="bg-white rounded-3xl p-8 border border-neutral-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 border border-neutral-200/80 sm:border-neutral-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
-              <div className={`w-14 h-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-6`}>
-                <feature.icon size={28} />
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-4 sm:mb-6`}>
+                <feature.icon size={24} className="sm:w-7 sm:h-7" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">{feature.title}</h3>
-              <p className="text-neutral-500 leading-relaxed text-sm">
+              <h3 className="text-lg sm:text-xl font-bold text-neutral-900 mb-2">{feature.title}</h3>
+              <p className="text-neutral-500 leading-relaxed text-xs sm:text-sm">
                 {feature.desc}
               </p>
             </div>

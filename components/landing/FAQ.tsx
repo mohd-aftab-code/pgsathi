@@ -34,23 +34,23 @@ const FAQS = [
 
 export default function FAQ() {
   return (
-    <section className="py-20 md:py-24 bg-white border-t border-neutral-100">
+    <section className="py-12 md:py-24 bg-white border-t border-neutral-100">
       <div className="container-max section-padding">
-        <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8 lg:gap-16">
           {/* Left: intro */}
           <div>
-            <div className="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-5">
-              <MessageCircleQuestion size={22} />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-4 sm:mb-5">
+              <MessageCircleQuestion size={20} className="sm:w-[22px] sm:h-[22px]" />
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4 tracking-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-900 mb-3 sm:mb-4 tracking-tight">
               Common Questions
             </h2>
-            <p className="text-neutral-500 leading-relaxed mb-6 max-w-sm">
+            <p className="text-neutral-500 leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
               Some things people ask before using PGSathi. Have any other questions?
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-colors"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-primary-700 hover:text-primary-800 transition-colors"
             >
               Contact Us →
             </Link>
@@ -59,15 +59,15 @@ export default function FAQ() {
           {/* Right: accordion — plain <details>, no JS needed */}
           <div className="divide-y divide-neutral-200 border-y border-neutral-200">
             {FAQS.map((item, idx) => (
-              <details key={idx} className="group py-5">
-                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none">
-                  <span className="font-bold text-neutral-900 text-base md:text-lg">{item.q}</span>
+              <details key={idx} className="group py-4 sm:py-5">
+                <summary className="flex items-center justify-between gap-3 sm:gap-4 cursor-pointer list-none">
+                  <span className="font-bold text-neutral-900 text-sm sm:text-base md:text-lg">{item.q}</span>
                   <ChevronDown
-                    size={20}
+                    size={18}
                     className="shrink-0 text-neutral-400 transition-transform duration-300 group-open:rotate-180 group-open:text-primary-600"
                   />
                 </summary>
-                <p className="text-neutral-600 leading-relaxed mt-3 pr-8">{item.a}</p>
+                <p className="text-neutral-600 leading-relaxed mt-2.5 sm:mt-3 pr-2 sm:pr-8 text-xs sm:text-sm">{item.a}</p>
               </details>
             ))}
           </div>

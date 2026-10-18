@@ -155,32 +155,32 @@ export default function Home() {
       <SoftwareShowcase />
 
       {/* CTA Section for Owners */}
-      <section className="py-20 md:py-24 bg-primary-950 text-white">
+      <section className="py-12 md:py-24 bg-primary-950 text-white">
         <div className="container-max section-padding">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-16 items-center">
             {/* Left: copy + benefits */}
             <div>
-              <div className="inline-flex items-center gap-2.5 text-xs font-bold text-primary-300 uppercase tracking-widest mb-5">
+              <div className="inline-flex items-center gap-2.5 text-xs font-bold text-primary-300 uppercase tracking-widest mb-3 sm:mb-5">
                 <span className="w-6 h-px bg-primary-400" />
                 For PG Owners
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-5 text-white tracking-tight leading-[1.1]">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black mb-3 sm:mb-5 text-white tracking-tight leading-[1.15]">
                 Are you a PG Owner? List on PGSathi.
               </h2>
-              <p className="text-primary-200/70 text-base md:text-lg mb-9 max-w-xl leading-relaxed">
+              <p className="text-primary-200/70 text-sm sm:text-base md:text-lg mb-6 sm:mb-9 max-w-xl leading-relaxed">
                 Join 10,000+ owners getting verified leads directly on WhatsApp — manage tenants and rent from one dashboard, zero commission.
               </p>
 
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-4">
                 {[
                   "100% Free Basic Listing",
                   "Direct WhatsApp Leads",
                   "No Brokerage / Commission",
                   "Easy Dashboard Management",
                 ].map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2.5 font-medium text-primary-50 text-sm">
-                    <CheckCircle2 className="text-primary-400 shrink-0" size={17} />
+                  <li key={benefit} className="flex items-center gap-2.5 font-medium text-primary-50 text-xs sm:text-sm">
+                    <CheckCircle2 className="text-primary-400 shrink-0" size={16} />
                     {benefit}
                   </li>
                 ))}
@@ -188,27 +188,27 @@ export default function Home() {
             </div>
 
             {/* Right: action card */}
-            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl">
-              <p className="text-xs font-bold text-primary-700 uppercase tracking-widest mb-2">Get started free</p>
-              <h3 className="text-2xl font-extrabold text-neutral-900 mb-6">List your first PG in under 5 minutes</h3>
-              <div className="flex flex-col gap-3">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 shadow-xl">
+              <p className="text-[11px] sm:text-xs font-bold text-primary-700 uppercase tracking-widest mb-1.5 sm:mb-2">Get started free</p>
+              <h3 className="text-xl sm:text-2xl font-black text-neutral-900 mb-5 sm:mb-6 leading-tight">List your first PG in under 5 minutes</h3>
+              <div className="flex flex-col gap-2.5 sm:gap-3">
                 <Link
                   href="/dashboard/owner/listings/new"
-                  className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2.5"
+                  className="bg-primary-500 hover:bg-primary-600 text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base active:scale-[0.98] min-h-[44px]"
                 >
-                  List Your PG Now <ArrowRight size={18} />
+                  List Your PG Now <ArrowRight size={17} />
                 </Link>
                 <Link
                   href="/for-owners"
-                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-6 py-4 rounded-xl font-bold transition-colors flex items-center justify-center"
+                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-bold transition-all flex items-center justify-center text-sm sm:text-base active:scale-[0.98] min-h-[44px]"
                 >
                   Learn More
                 </Link>
                 <Link
                   href="/pg-management-software"
-                  className="text-primary-300 hover:text-white px-6 py-2 font-bold transition-colors flex items-center justify-center text-sm underline-offset-4 hover:underline"
+                  className="text-primary-700 hover:text-primary-900 px-4 py-2 font-bold transition-colors flex items-center justify-center text-xs sm:text-sm underline-offset-4 hover:underline"
                 >
-                  Explore PG Software
+                  Explore PG Software &rarr;
                 </Link>
               </div>
             </div>
