@@ -5,6 +5,7 @@ import SearchBar from "@/components/landing/SearchBar";
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import { getNormalizedCityList } from "@/lib/city-filter";
+import { getPlatformStats, formatStatNumber } from "@/lib/platform-stats";
 
 const getHeroData = unstable_cache(
   async () => {
@@ -32,7 +33,7 @@ const getHeroData = unstable_cache(
     }
   },
   ["hero-data"],
-  { revalidate: 60 }
+  { revalidate: 30, tags: ["hero-data"] }
 );
 
 type HeroData = Awaited<ReturnType<typeof getHeroData>>;
@@ -40,10 +41,15 @@ type HeroData = Awaited<ReturnType<typeof getHeroData>>;
 export default async function HeroSection() {
   let cities: HeroData["cities"] = [];
   let showcase: HeroData["showcase"] = [];
+  let stats = { pgCount: 0, cityCount: 0, tenantCount: 0, ownerCount: 0, userCount: 0 };
   try {
-    const data = await getHeroData();
+    const [data, platformStats] = await Promise.all([
+      getHeroData(),
+      getPlatformStats(),
+    ]);
     cities = data.cities;
     showcase = data.showcase;
+    stats = platformStats;
   } catch (error) {
     console.error("[HeroSection] Failed to load data:", error);
   }
@@ -115,20 +121,32 @@ export default async function HeroSection() {
 
             <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-x-6 sm:gap-y-3 text-sm">
               <div className="bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
-                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">500+</span>
-                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Verified PGs</span>
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">
+                  {formatStatNumber(stats.pgCount)}
+                </span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">
+                  {stats.pgCount === 1 ? "Verified PG" : "Verified PGs"}
+                </span>
               </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
               
               <div className="bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
-                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">12+</span>
-                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Cities</span>
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">
+                  {formatStatNumber(stats.cityCount || cities.length)}
+                </span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">
+                  {(stats.cityCount || cities.length) === 1 ? "City" : "Cities"}
+                </span>
               </div>
               <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
               
               <div className="col-span-2 sm:col-span-1 bg-white sm:bg-transparent py-3 px-2 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-[0_2px_8px_rgb(0,0,0,0.03)] sm:shadow-none flex flex-col sm:flex-row items-center justify-center sm:justify-start text-center sm:text-left">
-                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">50,000+</span>
-                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">Tenants Helped</span>
+                <span className="font-extrabold text-neutral-900 text-xl sm:text-sm sm:mr-1 leading-none mb-1 sm:mb-0">
+                  {formatStatNumber(stats.tenantCount)}
+                </span>
+                <span className="font-medium text-neutral-500 text-[10px] sm:text-sm uppercase sm:normal-case tracking-wider sm:tracking-normal">
+                  {stats.tenantCount === 1 ? "Registered Tenant" : "Registered Tenants"}
+                </span>
               </div>
             </div>
           </div>

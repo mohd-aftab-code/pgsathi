@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notifyGoogleIndexingAPI } from "@/lib/google-indexing";
@@ -77,6 +78,13 @@ export async function POST(req: NextRequest) {
       
       // Ping Google in the background (no need to await and block the API response)
       notifyGoogleIndexingAPI(fullUrl, "URL_UPDATED").catch(console.error);
+    }
+
+    try {
+      revalidateTag("hero-data", { expire: 0 });
+      revalidateTag("platform-stats", { expire: 0 });
+    } catch (e) {
+      console.error("[REVALIDATE_HERO_STATS_ERROR]", e);
     }
 
     return NextResponse.json({ success: true, data: listing });

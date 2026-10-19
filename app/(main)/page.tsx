@@ -164,7 +164,7 @@ export default function Home() {
                 Are you a PG Owner? List on PGSathi.
               </h2>
               <p className="text-primary-200/70 text-sm sm:text-base md:text-lg mb-6 sm:mb-9 max-w-xl leading-relaxed">
-                Join 10,000+ owners getting verified leads directly on WhatsApp — manage tenants and rent from one dashboard, zero commission.
+                Join PG owners getting verified leads directly on WhatsApp — manage tenants and rent from one dashboard, zero commission.
               </p>
 
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-4">

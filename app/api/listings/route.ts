@@ -5,7 +5,7 @@ import { TRIAL_CUTOFF } from "@/lib/manage-auth";
 import { resolveCity } from "@/lib/geo";
 import slugify from "slugify";
 
-import { unstable_cache } from "next/cache";
+import { unstable_cache, revalidateTag } from "next/cache";
 
 import { buildCityFilterClause } from "@/lib/city-filter";
 
@@ -244,6 +244,13 @@ export async function POST(req: NextRequest) {
         })
       },
     });
+
+    try {
+      revalidateTag("hero-data", { expire: 0 });
+      revalidateTag("platform-stats", { expire: 0 });
+    } catch (e) {
+      console.error("[REVALIDATE_HERO_STATS_ERROR]", e);
+    }
 
     return NextResponse.json({ success: true, data: listing });
   } catch (error: any) {

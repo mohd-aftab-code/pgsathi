@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -189,6 +190,13 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   sendAdminNewUserNotificationEmail(name.trim(), userRole, phone, email.trim().toLowerCase()).catch((e) => {
     console.error("[ADMIN_NOTIFY_EMAIL_ERROR]", e);
   });
+
+  try {
+    revalidateTag("hero-data", { expire: 0 });
+    revalidateTag("platform-stats", { expire: 0 });
+  } catch (e) {
+    console.error("[REVALIDATE_HERO_STATS_ERROR]", e);
+  }
 
   const res = NextResponse.json(
     { success: true, message: "Registration successful" },

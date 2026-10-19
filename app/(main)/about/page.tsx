@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, ShieldCheck, Heart, MapPin, Users, Building2, TrendingUp, Smartphone } from "lucide-react";
 import Image from "next/image";
 import heroImg from "@/app/assets/images/hero-home.png"; // We can reuse an existing image or just use CSS gradients
+import { getPlatformStats, formatStatNumber } from "@/lib/platform-stats";
 
 import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
@@ -63,7 +64,8 @@ const ABOUT_PAGE_SCHEMA = {
   }
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const stats = await getPlatformStats();
   return (
     <div className="bg-neutral-50 min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_SCHEMA) }} />
@@ -216,20 +218,26 @@ export default function AboutPage() {
         <section className="bg-white rounded-3xl p-6 sm:p-10 md:p-16 shadow-sm border border-neutral-200 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">10k+</div>
-              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Active Tenants</div>
+              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">
+                {formatStatNumber(stats.tenantCount)}
+              </div>
+              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Registered Tenants</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">5k+</div>
+              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">
+                {formatStatNumber(stats.pgCount)}
+              </div>
               <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Verified PGs</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">30+</div>
-              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Cities</div>
+              <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">
+                {formatStatNumber(stats.cityCount)}
+              </div>
+              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Cities Covered</div>
             </div>
             <div>
               <div className="text-4xl md:text-5xl font-black text-primary-600 mb-2">₹0</div>
-              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Brokerage</div>
+              <div className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Brokerage Fee</div>
             </div>
           </div>
         </section>

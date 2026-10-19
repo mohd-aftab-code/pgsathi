@@ -143,8 +143,8 @@ function RegisterContent() {
           accentWord="starts here."
           subtext="Browse verified listings, message owners directly, and book a visit — no broker in the middle."
           stats={[
-            { value: "10,000+", label: "Verified listings" },
-            { value: "12+", label: "Cities covered" },
+            { value: "100%", label: "Verified listings" },
+            { value: "Direct", label: "Owner Contact" },
             { value: "0%", label: "Brokerage" },
           ]}
           footer="© 2026 PGSathi. Your data stays private."
@@ -156,7 +156,7 @@ function RegisterContent() {
           accentWord="faster."
           subtext="List your property free, get leads straight on WhatsApp, and manage tenants & rent from one dashboard."
           stats={[
-            { value: "10,000+", label: "PG owners onboard" },
+            { value: "Direct", label: "WhatsApp Leads" },
             { value: "0%", label: "Commission on leads" },
             { value: "15 days", label: "Free CRM trial" },
           ]}

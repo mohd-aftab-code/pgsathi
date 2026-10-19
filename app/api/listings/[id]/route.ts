@@ -173,6 +173,8 @@ export async function PATCH(
     // the reviews toggle, anything) would silently sit behind that cache instead
     // of showing up right away.
     revalidateTag(`listing-${updated.slug}`, { expire: 0 });
+    revalidateTag("hero-data", { expire: 0 });
+    revalidateTag("platform-stats", { expire: 0 });
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error: any) {
@@ -220,6 +222,9 @@ export async function DELETE(
       where: { id: listingId },
       data: { isActive: false, status: "INACTIVE" },
     });
+
+    revalidateTag("hero-data", { expire: 0 });
+    revalidateTag("platform-stats", { expire: 0 });
 
     return NextResponse.json({ success: true, message: "Listing deleted successfully" });
   } catch (error: any) {

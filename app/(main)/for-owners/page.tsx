@@ -220,8 +220,8 @@ export default function ForOwnersPage() {
               {/* Quick Trust Highlights */}
               <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-x-6 sm:gap-y-3 text-sm">
                 <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
-                  <span className="font-extrabold text-neutral-900 text-lg sm:text-sm sm:mr-1">10,000+</span>
-                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Active Owners</span>
+                  <span className="font-extrabold text-neutral-900 text-lg sm:text-sm sm:mr-1">100%</span>
+                  <span className="font-medium text-neutral-500 text-xs sm:text-sm">Direct Leads</span>
                 </div>
                 <span className="w-1 h-1 rounded-full bg-neutral-300 hidden sm:block" />
                 <div className="bg-white sm:bg-transparent py-2.5 px-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-neutral-200 shadow-sm sm:shadow-none flex flex-col sm:flex-row items-center sm:items-baseline">
@@ -318,9 +318,9 @@ export default function ForOwnersPage() {
       <section className="container-max section-padding -mt-8 relative z-20">
         <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-black text-primary-700">10,000+</div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-700">Active PG Owners</div>
-            <p className="text-[11px] text-neutral-500">Across major educational hubs</p>
+            <div className="text-2xl sm:text-3xl font-black text-primary-700">100%</div>
+            <div className="text-xs sm:text-sm font-bold text-neutral-700">Direct Tenant Leads</div>
+            <p className="text-[11px] text-neutral-500">Delivered directly on WhatsApp</p>
           </div>
           <div className="space-y-1">
             <div className="text-2xl sm:text-3xl font-black text-emerald-600">0%</div>

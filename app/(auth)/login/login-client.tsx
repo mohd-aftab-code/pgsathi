@@ -147,11 +147,11 @@ function LoginContent() {
         accentWord="the simple way."
         subtext="List properties, track tenants, and collect rent — everything in one place, zero brokerage."
         stats={[
-          { value: "10,000+", label: "PG Listings" },
-          { value: "50,000+", label: "Users on PGSathi" },
+          { value: "100%", label: "Verified Listings" },
+          { value: "Direct", label: "Owner Contact" },
           { value: "0%", label: "Brokerage, always" },
         ]}
-        footer="© 2026 PGSathi. Trusted by 10,000+ PG owners."
+        footer="© 2026 PGSathi. India's trusted zero-brokerage PG platform."
       />
 
       {/* ── Right Panel (Form) ───────────────────────────────────── */}
