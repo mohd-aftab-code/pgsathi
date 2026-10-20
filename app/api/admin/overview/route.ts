@@ -54,11 +54,29 @@ export async function GET(req: NextRequest) {
         email: true,
         phone: true,
         createdAt: true,
+        isVerified: true,
+        isActive: true,
+        phoneVerified: true,
+        lastLoginAt: true,
         // Which partner brought this owner in — a partner-sourced owner carries a
         // commission liability on every payment, so the admin must see it here.
         partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
+        tenantProfiles: {
+          where: { deletedAt: null },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            monthlyRent: true,
+            checkInDate: true,
+            createdAt: true,
+            listing: { select: { id: true, title: true } },
+            room: { select: { id: true, name: true } },
+            bed: { select: { id: true, name: true } },
+          }
+        },
         _count: {
-          select: { listings: true, pgTenantsOwned: true, leads: true }
+          select: { listings: true, pgTenantsOwned: true, leads: true, visits: true }
         },
         subscriptions: {
           where: { status: "ACTIVE" },
@@ -92,9 +110,15 @@ export async function GET(req: NextRequest) {
         email: o.email,
         phone: o.phone,
         createdAt: o.createdAt,
+        isVerified: o.isVerified,
+        isActive: o.isActive,
+        phoneVerified: o.phoneVerified,
+        lastLoginAt: o.lastLoginAt,
         pgCount: o._count.listings,
         tenantCount: o._count.pgTenantsOwned,
         leadCount: o._count.leads,
+        visitCount: o._count.visits,
+        currentStay: o.tenantProfiles && o.tenantProfiles.length > 0 ? o.tenantProfiles[0] : null,
         // Flattened for the users table's Partner badge. Null for self-registered
         // owners, which is most of them.
         partner: o.partner
