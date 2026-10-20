@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Phone, Mail, MapPin, Landmark, Activity, FileText, CheckCircle2, XCircle, ExternalLink, ShieldCheck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Building2, IndianRupee, Clock, Wallet, User, Users, Phone, Mail, MapPin, Landmark, Activity, FileText, CheckCircle2, XCircle, ExternalLink, ShieldCheck, ShieldAlert, Eye } from "lucide-react";
 import { db } from "@/lib/db";
 import { AdminPartnerActions } from "@/components/dashboard/AdminPartnerActions";
 import { AdminPartnerControls } from "@/components/dashboard/AdminPartnerControls";
@@ -93,9 +93,14 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
 
   const owners = await db.user.findMany({
     where: { partnerId },
+    orderBy: { createdAt: "desc" },
     select: {
       id: true,
-      _count: { select: { listings: true } },
+      name: true,
+      phone: true,
+      email: true,
+      createdAt: true,
+      _count: { select: { listings: true, pgTenantsOwned: true } },
       subscriptions: {
         where: { status: { in: ["ACTIVE", "TRIAL"] }, endDate: { gt: now } },
         orderBy: { endDate: "desc" },
@@ -417,6 +422,80 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sourced PG Owners */}
+          <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs">
+            <div className="px-5 py-3.5 border-b border-slate-200/80 flex items-center justify-between">
+              <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <Users size={15} className="text-violet-600" />
+                <span>Sourced PG Owners ({owners.length})</span>
+              </h2>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Total PGs: {totalOwnerPgs}
+              </span>
+            </div>
+            {owners.length === 0 ? (
+              <p className="px-5 py-8 text-center text-xs text-slate-500">Abhi koi PG owner source nahi kiya</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs min-w-[600px]">
+                  <thead>
+                    <tr className="text-left text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50/80 border-b border-slate-200/80">
+                      <th className="px-5 py-2.5 font-bold">Owner Name</th>
+                      <th className="px-3 py-2.5 font-bold">Contact</th>
+                      <th className="px-3 py-2.5 font-bold text-center">PGs</th>
+                      <th className="px-3 py-2.5 font-bold text-center">CRM Tenants</th>
+                      <th className="px-3 py-2.5 font-bold">Plan / Status</th>
+                      <th className="px-3 py-2.5 font-bold">Joined</th>
+                      <th className="px-5 py-2.5 font-bold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {owners.map((o) => {
+                      const sub = o.subscriptions[0];
+                      return (
+                        <tr key={o.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="px-5 py-2.5 font-bold text-slate-900 uppercase">
+                            <Link href={`/dashboard/admin/users/${o.id}`} className="hover:text-violet-700 transition-colors">
+                              {o.name}
+                            </Link>
+                          </td>
+                          <td className="px-3 py-2.5 text-slate-600">
+                            <div>{o.phone || "—"}</div>
+                            <div className="text-[10px] text-slate-400 truncate max-w-[140px]">{o.email}</div>
+                          </td>
+                          <td className="px-3 py-2.5 text-center font-black text-slate-800">{o._count.listings}</td>
+                          <td className="px-3 py-2.5 text-center font-black text-slate-800">{o._count.pgTenantsOwned}</td>
+                          <td className="px-3 py-2.5">
+                            {sub ? (
+                              <span className="inline-flex items-center text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                                {sub.plan?.name || "Active"}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center text-[9px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 uppercase">
+                                Trial
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 text-slate-500 text-[10px] whitespace-nowrap">
+                            {fmtDate(o.createdAt)}
+                          </td>
+                          <td className="px-5 py-2.5 text-right">
+                            <Link
+                              href={`/dashboard/admin/users/${o.id}`}
+                              className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 uppercase tracking-wider"
+                            >
+                              <Eye size={11} /> Details
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

@@ -113,6 +113,22 @@ export default function AdminTenantsPage() {
         </div>
       </div>
 
+      {/* Category Tabs: PG Stay Tenants (CRM) vs Portal Registered Users */}
+      <div className="flex gap-1 p-1 bg-white rounded-lg border border-slate-200/80 w-fit shadow-2xs">
+        <span className="px-3.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider bg-violet-600 text-white shadow-xs">
+          PG Stay Tenants (CRM)
+        </span>
+        <a
+          href="/dashboard/admin/users?role=TENANT"
+          className="px-3.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all flex items-center gap-1.5"
+        >
+          <span>Portal Registered Users</span>
+          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">
+            {data.stats?.totalRegisteredUsers || 0}
+          </span>
+        </a>
+      </div>
+
       {/* Stats Cards - Crisp labels that never truncate */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
         {[

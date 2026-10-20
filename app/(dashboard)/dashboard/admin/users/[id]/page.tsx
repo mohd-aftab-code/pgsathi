@@ -5,7 +5,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import {
   ArrowLeft, Mail, Phone, Calendar, Shield, Building2,
   CreditCard, MessageSquare, CheckCircle2, XCircle, Clock, Ban,
-  Home, Bed, MapPin, Eye, User
+  Home, Bed, MapPin, Eye, User, Users, Handshake
 } from "lucide-react";
 import { UserDetailActions } from "./UserDetailActions";
 import { ReattributeOwner } from "@/components/dashboard/ReattributeOwner";
@@ -39,6 +39,16 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
           owner: { select: { id: true, name: true, phone: true } },
         },
       },
+      pgTenantsOwned: {
+        where: { deletedAt: null },
+        orderBy: { checkInDate: "desc" },
+        take: 100,
+        include: {
+          listing: { select: { id: true, title: true, address: true, city: { select: { name: true } } } },
+          room: { select: { id: true, name: true } },
+          bed: { select: { id: true, name: true } },
+        },
+      },
       visits: {
         take: 10,
         orderBy: { createdAt: "desc" },
@@ -53,7 +63,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
           listing: { select: { id: true, title: true } },
         },
       },
-      _count: { select: { listings: true } },
+      _count: { select: { listings: true, pgTenantsOwned: true } },
     },
   });
 
@@ -184,10 +194,10 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
       {user.role === "OWNER" ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Listings", value: user._count.listings, icon: Building2, color: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
+            { label: "PG Listings", value: user._count.listings, icon: Building2, color: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
+            { label: "CRM Tenants", value: user.pgTenantsOwned.length, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
             { label: "Total Leads", value: leadCount, icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
-            { label: "Subscriptions", value: user.subscriptions.length, icon: CreditCard, color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
-            { label: "Active Plan", value: activeSubscription?.plan.name ?? "None", icon: Shield, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
+            { label: "Active Plan", value: activeSubscription?.plan.name ?? "Active Trial", icon: Shield, color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-xs">
               <div className={`p-2 rounded-lg border ${s.bg} w-fit mb-3`}>
@@ -219,74 +229,143 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
 
       {/* Main Content Panels */}
       {user.role === "OWNER" ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* Listings */}
-          <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <Building2 size={14} className="text-violet-600" /> Their Listings ({user._count.listings})
-              </h2>
-              <Link href={`/dashboard/admin/verify?query=${encodeURIComponent(user.name ?? "")}`} className="text-xs text-violet-600 font-semibold hover:underline">
-                View in Verify →
-              </Link>
+        <div className="space-y-5">
+          {/* Top Row: Listings & Subscriptions */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Listings */}
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+                <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                  <Building2 size={14} className="text-violet-600" /> Their Listings ({user._count.listings})
+                </h2>
+                <Link href={`/dashboard/admin/verify?query=${encodeURIComponent(user.name ?? "")}`} className="text-xs text-violet-600 font-semibold hover:underline">
+                  View in Verify →
+                </Link>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {user.listings.map((l) => (
+                  <div key={l.id} className="flex items-center gap-3 px-5 py-3">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                      l.status === "ACTIVE" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                      l.status === "PENDING" ? "bg-amber-50 text-amber-600 border border-amber-100" :
+                      "bg-slate-100 text-slate-400"
+                    }`}>
+                      {l.status === "ACTIVE" ? <CheckCircle2 size={13} /> : l.status === "PENDING" ? <Clock size={13} /> : <XCircle size={13} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-slate-800 truncate">{l.title}</p>
+                      <p className="text-[10px] text-slate-400">{l.city?.name} · {formatDistanceToNow(l.createdAt, { addSuffix: true })}</p>
+                    </div>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase ${
+                      l.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" :
+                      l.status === "PENDING" ? "bg-amber-50 text-amber-700 border border-amber-100" :
+                      "bg-slate-100 text-slate-500"
+                    }`}>{l.status}</span>
+                  </div>
+                ))}
+                {user.listings.length === 0 && (
+                  <p className="text-xs text-slate-400 text-center py-8">No listings yet.</p>
+                )}
+              </div>
             </div>
-            <div className="divide-y divide-slate-100">
-              {user.listings.map((l) => (
-                <div key={l.id} className="flex items-center gap-3 px-5 py-3">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                    l.status === "ACTIVE" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
-                    l.status === "PENDING" ? "bg-amber-50 text-amber-600 border border-amber-100" :
-                    "bg-slate-100 text-slate-400"
-                  }`}>
-                    {l.status === "ACTIVE" ? <CheckCircle2 size={13} /> : l.status === "PENDING" ? <Clock size={13} /> : <XCircle size={13} />}
+
+            {/* Subscription History */}
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-slate-100">
+                <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                  <CreditCard size={14} className="text-blue-600" /> Subscription History
+                </h2>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {user.subscriptions.map((sub) => (
+                  <div key={sub.id} className="px-5 py-3 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-slate-800">{sub.plan?.name}</p>
+                      <p className="text-[10px] text-slate-400">
+                        {format(sub.startDate, "d MMM yy")} → {format(sub.endDate, "d MMM yy")} · {sub.billingCycle}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs font-bold text-slate-800">{inr(sub.amount)}</p>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase ${
+                        sub.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700" :
+                        sub.status === "EXPIRED" ? "bg-slate-100 text-slate-500" :
+                        "bg-amber-50 text-amber-700"
+                      }`}>{sub.status}</span>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-800 truncate">{l.title}</p>
-                    <p className="text-[10px] text-slate-400">{l.city?.name} · {formatDistanceToNow(l.createdAt, { addSuffix: true })}</p>
-                  </div>
-                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase ${
-                    l.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" :
-                    l.status === "PENDING" ? "bg-amber-50 text-amber-700 border border-amber-100" :
-                    "bg-slate-100 text-slate-500"
-                  }`}>{l.status}</span>
-                </div>
-              ))}
-              {user.listings.length === 0 && (
-                <p className="text-xs text-slate-400 text-center py-8">No listings yet.</p>
-              )}
+                ))}
+                {user.subscriptions.length === 0 && (
+                  <p className="text-xs text-slate-400 text-center py-8">No subscriptions.</p>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Subscription History */}
+          {/* Dedicated CRM Tenants Section */}
           <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-slate-100">
-              <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <CreditCard size={14} className="text-blue-600" /> Subscription History
+            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider">
+                <Users size={14} className="text-emerald-600" /> CRM Tenants Living in Properties ({user.pgTenantsOwned.length})
               </h2>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Active: {user.pgTenantsOwned.filter((t) => t.status === "ACTIVE").length}
+              </span>
             </div>
-            <div className="divide-y divide-slate-100">
-              {user.subscriptions.map((sub) => (
-                <div key={sub.id} className="px-5 py-3 flex items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-800">{sub.plan?.name}</p>
-                    <p className="text-[10px] text-slate-400">
-                      {format(sub.startDate, "d MMM yy")} → {format(sub.endDate, "d MMM yy")} · {sub.billingCycle}
-                    </p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-xs font-bold text-slate-800">{inr(sub.amount)}</p>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase ${
-                      sub.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700" :
-                      sub.status === "EXPIRED" ? "bg-slate-100 text-slate-500" :
-                      "bg-amber-50 text-amber-700"
-                    }`}>{sub.status}</span>
-                  </div>
-                </div>
-              ))}
-              {user.subscriptions.length === 0 && (
-                <p className="text-xs text-slate-400 text-center py-8">No subscriptions.</p>
-              )}
-            </div>
+
+            {user.pgTenantsOwned.length === 0 ? (
+              <div className="p-8 text-center text-slate-400 text-xs">
+                No tenants currently registered in CRM by this owner.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left min-w-[700px]">
+                  <thead className="bg-slate-50 text-[9px] uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                    <tr>
+                      <th className="px-5 py-2.5 font-bold">Tenant Name</th>
+                      <th className="px-3 py-2.5 font-bold">Contact</th>
+                      <th className="px-3 py-2.5 font-bold">PG Property</th>
+                      <th className="px-3 py-2.5 font-bold">Room & Bed</th>
+                      <th className="px-3 py-2.5 font-bold">Monthly Rent</th>
+                      <th className="px-3 py-2.5 font-bold">Check-in Date</th>
+                      <th className="px-5 py-2.5 font-bold text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {user.pgTenantsOwned.map((t) => (
+                      <tr key={t.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="px-5 py-2.5 font-bold text-slate-900 uppercase">
+                          {t.name}
+                        </td>
+                        <td className="px-3 py-2.5 text-slate-600">
+                          <div>{t.phone}</div>
+                          {t.email && <div className="text-[10px] text-slate-400">{t.email}</div>}
+                        </td>
+                        <td className="px-3 py-2.5 font-semibold text-slate-800">
+                          {t.listing?.title || "PG"}
+                        </td>
+                        <td className="px-3 py-2.5 text-violet-700 font-bold uppercase text-[11px]">
+                          {cleanRoomName(t.room?.name)} {t.bed?.name ? `· ${cleanBedName(t.bed.name)}` : ""}
+                        </td>
+                        <td className="px-3 py-2.5 font-bold text-emerald-700">
+                          {inr(t.monthlyRent)}/mo
+                        </td>
+                        <td className="px-3 py-2.5 text-slate-500 whitespace-nowrap">
+                          {format(t.checkInDate, "d MMM yyyy")}
+                        </td>
+                        <td className="px-5 py-2.5 text-right">
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                            t.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-slate-100 text-slate-600"
+                          }`}>
+                            {t.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       ) : (

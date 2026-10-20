@@ -38,9 +38,11 @@ export async function GET(req: NextRequest) {
     const usersWhere: any = { role: roleFilter };
     if (query) {
       usersWhere.OR = [
-        { name: { contains: query } },
-        { email: { contains: query } },
+        { name: { contains: query, mode: "insensitive" } },
+        { email: { contains: query, mode: "insensitive" } },
         { phone: { contains: query } },
+        { partner: { partnerCode: { contains: query, mode: "insensitive" } } },
+        { partner: { user: { name: { contains: query, mode: "insensitive" } } } },
       ];
     }
 
@@ -58,9 +60,39 @@ export async function GET(req: NextRequest) {
         isActive: true,
         phoneVerified: true,
         lastLoginAt: true,
-        // Which partner brought this owner in — a partner-sourced owner carries a
-        // commission liability on every payment, so the admin must see it here.
-        partner: { select: { id: true, partnerCode: true, user: { select: { name: true } } } },
+        // Which partner brought this owner in
+        partner: { select: { id: true, partnerCode: true, user: { select: { name: true, phone: true } } } },
+        listings: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            city: { select: { name: true } },
+            address: true,
+            _count: { select: { rooms: true, pgTenants: true } },
+          },
+        },
+        pgTenantsOwned: {
+          where: { deletedAt: null },
+          orderBy: { checkInDate: "desc" },
+          take: 50,
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            email: true,
+            status: true,
+            monthlyRent: true,
+            securityDeposit: true,
+            checkInDate: true,
+            policeVerificationStatus: true,
+            room: { select: { id: true, name: true } },
+            bed: { select: { id: true, name: true } },
+            listing: { select: { id: true, title: true } },
+          },
+        },
         tenantProfiles: {
           where: { deletedAt: null },
           take: 1,
@@ -118,11 +150,13 @@ export async function GET(req: NextRequest) {
         tenantCount: o._count.pgTenantsOwned,
         leadCount: o._count.leads,
         visitCount: o._count.visits,
+        listings: o.listings || [],
+        tenants: o.pgTenantsOwned || [],
         currentStay: o.tenantProfiles && o.tenantProfiles.length > 0 ? o.tenantProfiles[0] : null,
         // Flattened for the users table's Partner badge. Null for self-registered
         // owners, which is most of them.
         partner: o.partner
-          ? { id: o.partner.id, partnerCode: o.partner.partnerCode, name: o.partner.user.name }
+          ? { id: o.partner.id, partnerCode: o.partner.partnerCode, name: o.partner.user?.name, phone: o.partner.user?.phone }
           : null,
         status,
         trialEndDate: trialEndDate.toISOString(),

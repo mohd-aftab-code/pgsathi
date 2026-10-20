@@ -3,7 +3,7 @@
 import {
   LayoutDashboard, ShieldCheck, Users, PieChart, Settings, Handshake,
   IndianRupee, ShieldAlert, Wallet, FileBarChart, MapPin, Activity, SlidersHorizontal,
-  MessageSquare,
+  MessageSquare, Building2,
 } from "lucide-react";
 import { DashboardSidebar, type SidebarNavGroup } from "./DashboardSidebar";
 
@@ -34,7 +34,7 @@ const NAV: SidebarNavGroup[] = [
   {
     category: "People",
     items: [
-      { name: "Users", href: "/dashboard/admin/users", icon: Users },
+      { name: "PG Owners", href: "/dashboard/admin/users", icon: Building2 },
       { name: "Tenants", href: "/dashboard/admin/tenants", icon: Users },
       { name: "Partners", href: "/dashboard/admin/partners", icon: Handshake },
     ],
@@ -59,8 +59,9 @@ const NAV: SidebarNavGroup[] = [
 const MOBILE_NAV = [
   { name: "Overview", href: "/dashboard/admin", icon: LayoutDashboard, exact: true },
   { name: "Verify", href: "/dashboard/admin/verify", icon: ShieldCheck },
-  { name: "Users", href: "/dashboard/admin/users", icon: Users },
-  { name: "Enquiries", href: "/dashboard/admin/enquiries", icon: MessageSquare },
+  { name: "PG Owners", href: "/dashboard/admin/users", icon: Building2 },
+  { name: "Tenants", href: "/dashboard/admin/tenants", icon: Users },
+  { name: "Partners", href: "/dashboard/admin/partners", icon: Handshake },
 ];
 
 export function AdminSidebar({
