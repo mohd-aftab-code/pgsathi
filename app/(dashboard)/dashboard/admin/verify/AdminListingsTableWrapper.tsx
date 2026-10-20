@@ -65,12 +65,12 @@ export default function AdminListingsTableWrapper({
 
   if (listings.length === 0) {
     return (
-      <div className="p-16 flex flex-col items-center text-center bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-sm mt-4">
-        <div className="w-24 h-24 bg-white/80 rounded-full flex items-center justify-center mb-6 text-neutral-400 shadow-sm border border-neutral-200/60">
-          <CheckCircle size={48} />
+      <div className="p-16 flex flex-col items-center text-center bg-white rounded-xl border border-slate-200/80 shadow-xs mt-4">
+        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-400 border border-slate-200">
+          <CheckCircle size={40} />
         </div>
-        <h3 className="text-2xl font-black text-neutral-900 mb-2 uppercase tracking-tight">No Listings Found</h3>
-        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider max-w-sm">There are no listings in the '{currentTab}' category.</p>
+        <h3 className="text-xl font-bold text-slate-900 mb-1.5 uppercase tracking-tight">No Listings Found</h3>
+        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider max-w-sm">There are no listings in the &apos;{currentTab}&apos; category.</p>
       </div>
     );
   }
@@ -78,16 +78,16 @@ export default function AdminListingsTableWrapper({
   return (
     <>
       {selectedIds.length > 0 && (
-        <div className="bg-red-50/80 backdrop-blur-md border-b border-red-200/60 px-6 py-3 flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-wider text-red-700">
+        <div className="bg-red-50/80 border-b border-red-200/60 px-6 py-2.5 flex items-center justify-between">
+          <div className="text-xs font-bold uppercase tracking-wider text-red-700">
             {selectedIds.length} listings selected
           </div>
           <button
             onClick={handleBulkDelete}
             disabled={isDeleting}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-[10px] uppercase tracking-wider font-black transition-colors cursor-pointer disabled:opacity-50 shadow-sm"
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg text-xs uppercase tracking-wider font-bold transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
           >
-            {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+            {isDeleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
             Delete Selected
           </button>
         </div>
@@ -111,22 +111,22 @@ export default function AdminListingsTableWrapper({
               <th className="py-2 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-[11px] divide-y divide-neutral-200/60 bg-white/60">
+          <tbody className="text-xs divide-y divide-slate-100 bg-white">
             {listings.map((listing) => (
-              <tr key={listing.id} className={`transition-colors group ${selectedIds.includes(listing.id) ? 'bg-red-50/50 hover:bg-red-50/80' : 'hover:bg-white/80'}`}>
-                <td className="py-2 px-4">
+              <tr key={listing.id} className={`transition-colors group ${selectedIds.includes(listing.id) ? 'bg-red-50/50 hover:bg-red-50/80' : 'hover:bg-slate-50/60'}`}>
+                <td className="py-2.5 px-4">
                   <input 
                     type="checkbox" 
-                    className="rounded border-neutral-300 w-3 h-3 text-violet-600 focus:ring-violet-500 cursor-pointer"
+                    className="rounded border-slate-300 w-3.5 h-3.5 text-violet-600 focus:ring-violet-500 cursor-pointer"
                     checked={selectedIds.includes(listing.id)}
                     onChange={() => toggleSelect(listing.id)}
                   />
                 </td>
-                <td className="py-2 px-4">
+                <td className="py-2.5 px-4">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <div className="font-black text-neutral-900 text-xs tracking-tight uppercase">{listing.title}</div>
+                    <div className="font-bold text-slate-900 text-xs tracking-tight uppercase">{listing.title}</div>
                     {listing.hasPendingChanges && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1 py-0.5 rounded" title="Owner updated this listing after it was verified">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md" title="Owner updated this listing after it was verified">
                         Updated
                       </span>
                     )}
@@ -135,17 +135,17 @@ export default function AdminListingsTableWrapper({
                     {listing.partner && (
                       <Link
                         href={`/dashboard/admin/partners/${listing.partner.id}`}
-                        className="text-[9px] font-black uppercase tracking-wider text-violet-700 bg-violet-100/80 border border-violet-200/60 px-1.5 py-0.5 rounded shadow-sm hover:bg-violet-200 transition-colors"
+                        className="text-[9px] font-bold uppercase tracking-wider text-violet-700 bg-violet-50 border border-violet-200 px-1.5 py-0.5 rounded-md shadow-2xs hover:bg-violet-100 transition-colors"
                         title={`Registered by partner ${listing.partner.user?.name ?? ""} (${listing.partner.partnerCode})`}
                       >
                         Partner · {listing.partner.partnerCode}
                       </Link>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-neutral-600">
-                    <span className="bg-white/60 px-1.5 py-0.5 rounded border border-neutral-200/60 shadow-sm">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 rounded border border-neutral-200/60 shadow-sm">{listing.genderAllowed}</span>
-                    <span className="text-emerald-700 font-black px-1.5 py-0.5">₹{listing.priceMin}</span>
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                    <span className="bg-slate-50 px-1.5 py-0.5 rounded-md border border-slate-200 shadow-2xs">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ")}</span>
+                    <span className="bg-slate-50 px-1.5 py-0.5 rounded-md border border-slate-200 shadow-2xs">{listing.genderAllowed}</span>
+                    <span className="text-emerald-700 font-bold px-1.5 py-0.5">₹{listing.priceMin}</span>
                   </div>
                 </td>
                 <td className="py-2 px-4">
@@ -167,10 +167,10 @@ export default function AdminListingsTableWrapper({
                     <Link 
                       href={`/pg/${listing.slug}`} 
                       target="_blank"
-                      className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-colors" 
+                      className="cursor-pointer p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200/60 shadow-2xs" 
                       title="Preview"
                     >
-                      <Eye size={18} />
+                      <Eye size={16} />
                     </Link>
                     <AdminListingActions listingId={listing.id} currentStatus={listing.status} />
                   </div>
@@ -183,39 +183,39 @@ export default function AdminListingsTableWrapper({
       
       <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
         {listings.map((listing) => (
-          <div key={`mob-${listing.id}`} className={`bg-white/80 backdrop-blur-md border ${selectedIds.includes(listing.id) ? 'border-red-300 ring-2 ring-red-100' : 'border-neutral-200/70'} rounded-2xl p-4 shadow-2xs hover:shadow-sm transition-all flex flex-col gap-2.5 relative`}>
+          <div key={`mob-${listing.id}`} className={`bg-white border ${selectedIds.includes(listing.id) ? 'border-rose-300 ring-2 ring-rose-100' : 'border-slate-200/80'} rounded-xl p-4 shadow-xs hover:shadow-sm transition-all flex flex-col gap-2.5 relative`}>
             {/* Top row: Checkbox, Title & Status/Badges */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-2.5 min-w-0 flex-1">
                 <input 
                   type="checkbox" 
-                  className="rounded border-neutral-300 w-5 h-5 text-violet-600 focus:ring-violet-500 cursor-pointer shrink-0 mt-0.5"
+                  className="rounded border-slate-300 w-4 h-4 text-violet-600 focus:ring-violet-500 cursor-pointer shrink-0 mt-0.5"
                   checked={selectedIds.includes(listing.id)}
                   onChange={() => toggleSelect(listing.id)}
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                    <span className="font-black text-neutral-900 text-sm uppercase tracking-tight truncate">
+                    <span className="font-bold text-slate-900 text-sm uppercase tracking-tight truncate">
                       {listing.title}
                     </span>
                     {listing.hasPendingChanges && (
-                      <span className="text-[8px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.2 rounded-full shadow-2xs">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded-md shadow-2xs">
                         Updated
                       </span>
                     )}
                     {listing.partner && (
                       <Link
                         href={`/dashboard/admin/partners/${listing.partner.id}`}
-                        className="text-[8px] font-black uppercase tracking-wider text-violet-700 bg-violet-100 border border-violet-200 px-1.5 py-0.2 rounded-full shadow-2xs"
+                        className="text-[9px] font-bold uppercase tracking-wider text-violet-700 bg-violet-50 border border-violet-200/80 px-1.5 py-0.5 rounded-md shadow-2xs"
                       >
                         Partner · {listing.partner.partnerCode}
                       </Link>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-neutral-600">
-                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded-lg border border-neutral-200/60 font-semibold">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ") || "Rooms"}</span>
-                    <span className="bg-neutral-100 px-1.5 py-0.5 rounded-lg border border-neutral-200/60 font-semibold">{listing.genderAllowed}</span>
-                    <span className="text-emerald-700 font-black px-1">₹{listing.priceMin}/mo</span>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-semibold text-slate-600">
+                    <span className="bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 font-semibold">{listing.roomTypes?.map((r: string) => r.replace("_", " ")).join(", ") || "Rooms"}</span>
+                    <span className="bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 font-semibold">{listing.genderAllowed}</span>
+                    <span className="text-emerald-700 font-bold px-1">₹{listing.priceMin}/mo</span>
                   </div>
                 </div>
               </div>
@@ -224,29 +224,29 @@ export default function AdminListingsTableWrapper({
               <Link 
                 href={`/pg/${listing.slug}`} 
                 target="_blank"
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-2xs shrink-0" 
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200/80 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs shrink-0" 
                 title="Preview PG"
               >
-                <Eye size={13} /> View
+                <Eye size={12} /> View
               </Link>
             </div>
 
             {/* Owner Details Row */}
-            <div className="flex items-center justify-between py-2 border-y border-neutral-100">
+            <div className="flex items-center justify-between py-2 border-y border-slate-100">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-black text-[11px] shadow-2xs shrink-0">
+                <div className="w-7 h-7 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
                   {listing.owner?.name?.charAt(0) || "U"}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-black text-neutral-900 tracking-tight text-xs uppercase truncate">{listing.owner?.name || "Unknown Owner"}</div>
-                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider truncate">{listing.owner?.phone || "No phone"}</div>
+                  <div className="font-bold text-slate-900 tracking-tight text-xs uppercase truncate">{listing.owner?.name || "Unknown Owner"}</div>
+                  <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">{listing.owner?.phone || "No phone"}</div>
                 </div>
               </div>
 
               {listing.owner?.phone && (
                 <a
                   href={`tel:${listing.owner.phone}`}
-                  className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/60 px-2.5 py-1.5 rounded-xl transition-colors shadow-2xs shrink-0 uppercase tracking-wider"
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-lg transition-colors shadow-2xs shrink-0 uppercase tracking-wider"
                 >
                   <Phone size={12} /> Call
                 </a>

@@ -33,19 +33,19 @@ export default async function AdminDashboardLayout({
 
   // Sits at the bottom of the desktop rail — identity + logout
   const footer = (
-    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-violet-100 p-3 shadow-sm">
+    <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 shadow-2xs">
       <div className="flex items-center gap-2.5 mb-2.5">
         <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
           {initial}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-neutral-900 truncate">{name}</p>
+          <p className="text-xs font-bold text-slate-900 truncate">{name}</p>
           <p className="text-[10px] font-bold text-violet-600 uppercase tracking-wider">
             {session.user.role || "ADMIN"}
           </p>
         </div>
       </div>
-      <LogoutButton className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer" />
+      <LogoutButton className="w-full h-8 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer border border-red-100" />
     </div>
   );
 
@@ -54,14 +54,14 @@ export default async function AdminDashboardLayout({
       <div className="min-h-screen bg-canvas">
         {/* Mobile top bar — the desktop rail carries identity and logout, but on a
             phone the rail is gone, so they live here instead. */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-neutral-200/60">
+        <header className="lg:hidden sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-slate-200/80">
           <div className="h-14 px-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-2xl bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
+              <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 grid place-items-center font-bold text-sm shrink-0">
                 {initial}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-neutral-900 truncate leading-tight">{name}</p>
+                <p className="text-sm font-bold text-slate-900 truncate leading-tight">{name}</p>
                 <p className="text-[10px] font-bold text-violet-600 uppercase tracking-wider">Admin</p>
               </div>
             </div>
@@ -69,8 +69,8 @@ export default async function AdminDashboardLayout({
           </div>
         </header>
 
-        {/* pb-28 keeps the last row clear of the fixed mobile tab bar. */}
-        <main className="p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-8">{children}</main>
+        {/* pb-24 keeps the last row clear of the fixed mobile tab bar. */}
+        <main className="px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-5 pb-24 lg:pb-6">{children}</main>
       </div>
     </AdminSidebar>
   );

@@ -62,38 +62,38 @@ export function DashboardSidebar({
 
   return (
     <>
-      {/* ── Desktop Rail — premium gradient, glassmorphism accent ─────── */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-gradient-to-b from-violet-200/90 via-violet-100/95 to-slate-100/90 border-r border-violet-300/60 shadow-[4px_0_24px_rgba(109,40,217,0.04)] w-64">
+      {/* ── Desktop Rail — clean white SaaS sidebar with crisp border ─────── */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-white border-r border-slate-200/80 shadow-[1px_0_12px_rgba(0,0,0,0.02)] w-64">
 
         {/* Brand mark */}
         <Link
           href={brandHref}
-          className="flex items-center justify-center h-20 [@media(min-height:800px)]:h-24 shrink-0 border-b border-violet-300/60 px-4 bg-white/40 backdrop-blur-md hover:bg-white/60 transition-colors"
+          className="flex items-center justify-center h-16 shrink-0 border-b border-slate-100 px-5 bg-white hover:bg-slate-50/50 transition-colors"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/owner%20logo.png"
             alt="PGSathi"
-            className="h-14 [@media(min-height:800px)]:h-16 w-auto object-contain transition-all hover:scale-[1.02]"
+            className="h-10 w-auto object-contain transition-all hover:scale-[1.02]"
           />
         </Link>
 
         {backLink && (
           <Link
             href={backLink.href}
-            className="flex items-center h-9 mx-3 mt-3 rounded-xl px-3 gap-2.5 text-neutral-600 hover:bg-white/70 hover:text-violet-900 transition-all shrink-0 border border-transparent hover:border-violet-200/50"
+            className="flex items-center h-9 mx-3 mt-3 rounded-lg px-3 gap-2 text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all shrink-0 border border-slate-200/60"
           >
-            <ArrowLeft size={16} className="shrink-0 text-neutral-500" />
-            <span className="text-sm font-semibold whitespace-nowrap">{backLink.label}</span>
+            <ArrowLeft size={15} className="shrink-0 text-slate-400" />
+            <span className="text-xs font-semibold whitespace-nowrap">{backLink.label}</span>
           </Link>
         )}
 
         {/* Nav + footer scroll container */}
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col scrollbar-hide">
-          <nav className="flex flex-col px-3 py-2.5 [@media(min-height:800px)]:py-3.5 space-y-3">
+          <nav className="flex flex-col px-3 py-3 space-y-3.5">
             {visibleGroups.map((group) => (
               <div key={group.category}>
-                <p className="px-3 mb-1.5 text-[10px] font-extrabold text-violet-950/60 uppercase tracking-wider whitespace-nowrap">
+                <p className="px-3 mb-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">
                   {group.category}
                 </p>
                 <div className="flex flex-col space-y-0.5">
@@ -104,25 +104,25 @@ export function DashboardSidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group relative flex items-center h-9 rounded-xl px-3 gap-2.5 text-sm transition-all duration-200 ${
+                        className={`group relative flex items-center h-9 rounded-lg px-3 gap-2.5 text-xs transition-all duration-150 ${
                           active
-                            ? "bg-white text-violet-800 font-extrabold shadow-sm border border-violet-200/70"
-                            : "text-neutral-700 font-semibold hover:bg-white/70 hover:text-violet-900 hover:translate-x-0.5"
+                            ? "bg-violet-50 text-violet-700 font-bold border border-violet-200/70 shadow-2xs"
+                            : "text-slate-600 font-medium hover:bg-slate-100/70 hover:text-slate-900"
                         }`}
                       >
                         {active && (
-                          <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-violet-600 shadow-sm" />
+                          <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-violet-600" />
                         )}
                         <Icon
-                          size={18}
+                          size={17}
                           strokeWidth={active ? 2.2 : 1.8}
                           className={`shrink-0 transition-colors ${
-                            active ? "text-violet-700" : "text-neutral-500 group-hover:text-violet-700"
+                            active ? "text-violet-600" : "text-slate-400 group-hover:text-slate-700"
                           }`}
                         />
-                        <span className="whitespace-nowrap flex-1">{item.name}</span>
+                        <span className="whitespace-nowrap flex-1 truncate">{item.name}</span>
                         {item.badge && (
-                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 uppercase tracking-wider">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 uppercase tracking-wider">
                             {item.badge}
                           </span>
                         )}
@@ -134,7 +134,7 @@ export function DashboardSidebar({
             ))}
           </nav>
 
-          {footer && <div className="mt-auto px-3 pt-2 pb-3.5">{footer}</div>}
+          {footer && <div className="mt-auto px-3 pt-2 pb-3">{footer}</div>}
         </div>
       </aside>
 
@@ -144,16 +144,16 @@ export function DashboardSidebar({
       {/* ── Mobile Bottom Navigation Bar ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div
-          className="mx-2 rounded-t-3xl overflow-hidden"
+          className="mx-2 rounded-t-2xl overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.88)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            borderTop: "1px solid rgba(255,255,255,0.6)",
-            boxShadow: "0 -8px 32px rgba(109,40,217,0.08), 0 -2px 8px rgba(0,0,0,0.04)",
+            background: "rgba(255,255,255,0.95)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderTop: "1px solid rgba(226,232,240,0.8)",
+            boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
           }}
         >
-          <div className="flex items-end justify-around px-2 h-[68px]">
+          <div className="flex items-end justify-around px-2 h-[64px]">
             {primaryMobile.map((item) => {
               const Icon = item.icon;
               const active = isActive(item);
@@ -161,22 +161,22 @@ export function DashboardSidebar({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
+                  className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-1.5"
                 >
                   <div
-                    className={`w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                    className={`w-9 h-8 rounded-lg flex items-center justify-center transition-all duration-150 ${
                       active
-                        ? "bg-violet-100 shadow-sm"
-                        : "hover:bg-neutral-100"
+                        ? "bg-violet-100 shadow-2xs"
+                        : "hover:bg-slate-100"
                     }`}
                   >
                     <Icon
-                      size={20}
-                      className={active ? "text-violet-700" : "text-neutral-400"}
-                      strokeWidth={active ? 2.5 : 1.8}
+                      size={18}
+                      className={active ? "text-violet-700" : "text-slate-400"}
+                      strokeWidth={active ? 2.4 : 1.8}
                     />
                   </div>
-                  <span className={`text-[10px] font-semibold transition-colors ${active ? "text-violet-700" : "text-neutral-400"}`}>
+                  <span className={`text-[10px] font-semibold transition-colors ${active ? "text-violet-700" : "text-slate-400"}`}>
                     {item.name}
                   </span>
                 </Link>
@@ -184,12 +184,12 @@ export function DashboardSidebar({
             })}
             <button
               onClick={() => setIsMoreOpen(true)}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-2"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative pb-1 pt-1.5"
             >
-              <div className="w-10 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-neutral-100">
-                <LayoutGrid size={20} className="text-neutral-400" strokeWidth={1.8} />
+              <div className="w-9 h-8 rounded-lg flex items-center justify-center transition-all duration-150 hover:bg-slate-100">
+                <LayoutGrid size={18} className="text-slate-400" strokeWidth={1.8} />
               </div>
-              <span className="text-[10px] font-semibold text-neutral-400">More</span>
+              <span className="text-[10px] font-semibold text-slate-400">More</span>
             </button>
           </div>
         </div>
@@ -203,23 +203,22 @@ export function DashboardSidebar({
           onClick={() => setIsMoreOpen(false)}
         >
           <div
-            className="rounded-t-3xl overflow-hidden max-h-[80vh] flex flex-col"
-            style={{ background: "rgba(255,255,255,0.98)" }}
+            className="rounded-t-2xl overflow-hidden max-h-[80vh] flex flex-col bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b border-neutral-100 flex justify-between items-center">
-              <h2 className="font-bold text-neutral-900">All Sections</h2>
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+              <h2 className="font-bold text-slate-900 text-sm">All Sections</h2>
               <button
                 onClick={() => setIsMoreOpen(false)}
-                className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-full text-neutral-600 transition-colors"
+                className="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600 transition-colors"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
-            <div className="overflow-y-auto p-4 flex flex-col gap-5">
+            <div className="overflow-y-auto p-4 flex flex-col gap-4">
               {visibleGroups.map((group) => (
                 <div key={group.category}>
-                  <p className="px-2 mb-2 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">{group.category}</p>
+                  <p className="px-2 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{group.category}</p>
                   <div className="grid grid-cols-4 gap-2">
                     {group.items.map((item) => {
                       const Icon = item.icon;
@@ -229,14 +228,14 @@ export function DashboardSidebar({
                           key={item.href}
                           href={item.href}
                           onClick={() => setIsMoreOpen(false)}
-                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-200 ${
+                          className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl transition-all duration-150 ${
                             active
-                              ? "bg-violet-50 text-violet-700 shadow-sm border border-violet-100"
-                              : "hover:bg-neutral-50 text-neutral-600 border border-transparent"
+                              ? "bg-violet-50 text-violet-700 shadow-2xs border border-violet-100"
+                              : "hover:bg-slate-50 text-slate-600 border border-transparent"
                           }`}
                         >
-                          <Icon size={22} className={active ? "text-violet-600" : "text-neutral-400"} />
-                          <span className="text-[9px] font-semibold text-center leading-tight">{item.name}</span>
+                          <Icon size={20} className={active ? "text-violet-600" : "text-slate-400"} />
+                          <span className="text-[9px] font-semibold text-center leading-tight truncate w-full">{item.name}</span>
                         </Link>
                       );
                     })}

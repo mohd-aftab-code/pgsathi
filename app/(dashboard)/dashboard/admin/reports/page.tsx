@@ -94,20 +94,19 @@ export default async function AdminReportsPage() {
         <div className="flex gap-1.5 flex-wrap">
           <a
             href="/api/admin/reports/export?type=users"
-            className="h-8 px-3 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/60 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="h-8 px-3 rounded-lg bg-white border border-slate-200 hover:border-violet-300 hover:text-violet-700 text-slate-600 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             Export Users CSV
           </a>
           <a
             href="/api/admin/reports/export?type=listings"
-            className="h-8 px-3 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/60 hover:border-violet-300 hover:text-violet-700 text-neutral-600 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="h-8 px-3 rounded-lg bg-white border border-slate-200 hover:border-violet-300 hover:text-violet-700 text-slate-600 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             Export Listings CSV
           </a>
         </div>
       </div>
 
-      {/* KPI Grid */}
       {/* KPI Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
@@ -116,22 +115,22 @@ export default async function AdminReportsPage() {
           { label: "Active Revenue", value: inr(totalRevenue), sub: `${subscriptions.length} active plans`, icon: IndianRupee, color: "text-violet-600", bg: "bg-violet-50/50 border-violet-200/50" },
           { label: "Total Leads", value: totalLeads.toLocaleString(), sub: `${totalReviews} platform reviews`, icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50/50 border-amber-200/50" },
         ].map((s) => (
-          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border ${s.bg}`}>
+          <div key={s.label} className={`bg-white rounded-xl p-4 shadow-xs border ${s.bg}`}>
             <div className="flex items-start justify-between mb-2">
-              <div className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">{s.label}</div>
-              <div className={`p-1.5 rounded-2xl bg-white/60 backdrop-blur-md border ${s.bg} bg-opacity-50`}><s.icon size={12} className={s.color} /></div>
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</div>
+              <div className={`p-1.5 rounded-lg bg-white border ${s.bg}`}><s.icon size={13} className={s.color} /></div>
             </div>
-            <div className="text-2xl font-black text-neutral-900 leading-none">{s.value}</div>
-            <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
+            <div className="text-2xl font-black text-slate-900 leading-none">{s.value}</div>
+            <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{s.sub}</div>
           </div>
         ))}
       </div>
 
       {/* Listing Status Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-            <Building2 size={12} className="text-violet-600" /> Listing Status Breakdown
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+            <Building2 size={13} className="text-violet-600" /> Listing Status Breakdown
           </h2>
           <div className="space-y-3">
             {[
@@ -141,10 +140,10 @@ export default async function AdminReportsPage() {
             ].map((s) => (
               <div key={s.label}>
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-neutral-700">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
                     <s.icon size={13} className={s.textColor} /> {s.label}
                   </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.badgeBg} ${s.textColor}`}>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${s.badgeBg} ${s.textColor}`}>
                     {s.count}
                   </span>
                 </div>
@@ -154,7 +153,7 @@ export default async function AdminReportsPage() {
                     style={{ width: `${totalListings > 0 ? (s.count / totalListings) * 100 : 0}%` }}
                   />
                 </div>
-                <div className="text-[10px] text-neutral-400 mt-0.5">
+                <div className="text-[10px] text-slate-400 mt-0.5">
                   {totalListings > 0 ? Math.round((s.count / totalListings) * 100) : 0}% of total
                 </div>
               </div>
@@ -163,12 +162,12 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* Subscription / Plan Distribution */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-            <IndianRupee size={12} className="text-violet-600" /> Subscription Breakdown
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+            <IndianRupee size={13} className="text-violet-600" /> Subscription Breakdown
           </h2>
           {Object.keys(planDist).length === 0 ? (
-            <div className="text-center py-8 text-neutral-400 text-sm">No active subscriptions</div>
+            <div className="text-center py-8 text-slate-400 text-sm">No active subscriptions</div>
           ) : (
             <div className="space-y-3">
               {Object.entries(planDist)
@@ -176,8 +175,8 @@ export default async function AdminReportsPage() {
                 .map(([plan, count]) => (
                   <div key={plan}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-neutral-700">{plan}</span>
-                      <span className="text-xs font-bold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-full">{count}</span>
+                      <span className="text-xs font-semibold text-slate-700">{plan}</span>
+                      <span className="text-xs font-bold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-md">{count}</span>
                     </div>
                     <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
                       <div
@@ -187,13 +186,13 @@ export default async function AdminReportsPage() {
                     </div>
                   </div>
                 ))}
-              <div className="pt-2 border-t border-neutral-100">
+              <div className="pt-2 border-t border-slate-100">
                 <div className="flex justify-between text-xs">
-                  <span className="text-neutral-500 font-medium">Monthly Revenue</span>
+                  <span className="text-slate-500 font-medium">Monthly Revenue</span>
                   <span className="font-bold text-violet-700">{inr(monthlyRevenue)}</span>
                 </div>
                 <div className="flex justify-between text-xs mt-1">
-                  <span className="text-neutral-500 font-medium">Total Active Revenue</span>
+                  <span className="text-slate-500 font-medium">Total Active Revenue</span>
                   <span className="font-bold text-emerald-700">{inr(totalRevenue)}</span>
                 </div>
               </div>
@@ -202,9 +201,9 @@ export default async function AdminReportsPage() {
         </div>
 
         {/* User Breakdown */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-            <Users size={12} className="text-blue-600" /> User Breakdown
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+            <Users size={13} className="text-blue-600" /> User Breakdown
           </h2>
           <div className="space-y-3">
             {[
@@ -214,79 +213,79 @@ export default async function AdminReportsPage() {
             ].map((s) => (
               <div key={s.label}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-neutral-700">{s.label}</span>
-                  <span className="text-xs font-bold text-neutral-600">{s.count}</span>
+                  <span className="text-xs font-semibold text-slate-700">{s.label}</span>
+                  <span className="text-xs font-bold text-slate-600">{s.count}</span>
                 </div>
                 <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${s.color}`} style={{ width: `${s.pct}%` }} />
                 </div>
               </div>
             ))}
-            <div className="pt-2 border-t border-neutral-100 flex justify-between text-xs">
-              <span className="text-neutral-500 font-medium">Total Users</span>
-              <span className="font-bold text-neutral-800">{totalUsers}</span>
+            <div className="pt-2 border-t border-slate-100 flex justify-between text-xs">
+              <span className="text-slate-500 font-medium">Total Users</span>
+              <span className="font-bold text-slate-800">{totalUsers}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Monthly Trend Charts (bar chart using CSS) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* New Users */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">New Users / Month</h2>
-          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">New Users / Month</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Last 6 months</p>
           <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-[9px] font-bold text-blue-600">{d.users}</span>
-                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                <span className="text-[10px] font-bold text-blue-600">{d.users}</span>
+                <div className="w-full bg-slate-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
                   <div
                     className="bg-blue-500 rounded-t-md w-full transition-all"
                     style={{ height: `${(d.users / maxUsers) * 100}%`, marginTop: "auto" }}
                   />
                 </div>
-                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+                <span className="text-[10px] text-slate-400 font-medium">{d.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* New Leads */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">Leads / Month</h2>
-          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">Leads / Month</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Last 6 months</p>
           <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-[9px] font-bold text-amber-600">{d.leads}</span>
-                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                <span className="text-[10px] font-bold text-amber-600">{d.leads}</span>
+                <div className="w-full bg-slate-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
                   <div
                     className="bg-amber-500 rounded-t-md w-full"
                     style={{ height: `${(d.leads / maxLeads) * 100}%`, marginTop: "auto" }}
                   />
                 </div>
-                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+                <span className="text-[10px] text-slate-400 font-medium">{d.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* New Listings */}
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-neutral-200/60">
-          <h2 className="text-[11px] font-black text-neutral-900 uppercase tracking-widest mb-1">New PGs Added / Month</h2>
-          <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Last 6 months</p>
+        <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80">
+          <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">New PGs Added / Month</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Last 6 months</p>
           <div className="flex items-end gap-1.5 h-24">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-[9px] font-bold text-emerald-600">{d.listings}</span>
-                <div className="w-full bg-neutral-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
+                <span className="text-[10px] font-bold text-emerald-600">{d.listings}</span>
+                <div className="w-full bg-slate-100 rounded-t-md overflow-hidden" style={{ height: "80px" }}>
                   <div
                     className="bg-emerald-500 rounded-t-md w-full"
                     style={{ height: `${(d.listings / maxListings) * 100}%`, marginTop: "auto" }}
                   />
                 </div>
-                <span className="text-[9px] text-neutral-400 font-medium">{d.label}</span>
+                <span className="text-[10px] text-slate-400 font-medium">{d.label}</span>
               </div>
             ))}
           </div>
@@ -294,7 +293,7 @@ export default async function AdminReportsPage() {
       </div>
 
       {/* City-wise PG Distribution */}
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200/80 overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100/60">
           <div className="flex items-center gap-1.5">
             <MapPin size={12} className="text-violet-600" />

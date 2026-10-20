@@ -122,7 +122,7 @@ export default async function AdminPayoutCyclePage() {
 
       {/* ── Awaiting UTR ───────────────────────────────────────── */}
       {processing.length > 0 && (
-        <section className="rounded-2xl border border-amber-200 bg-amber-50/60 overflow-hidden">
+        <section className="rounded-xl border border-amber-200 bg-amber-50/70 overflow-hidden shadow-xs">
           <div className="flex items-center gap-2 px-5 py-3.5 border-b border-amber-200">
             <Clock size={16} className="text-amber-600" />
             <h2 className="font-bold text-amber-900 text-sm">
@@ -137,20 +137,20 @@ export default async function AdminPayoutCyclePage() {
               {processing.map((p) => (
                 <tr key={p.id} className="hover:bg-amber-50">
                   <td className="px-5 py-3">
-                    <Link href={`/dashboard/admin/partners/${p.partner.id}`} className="font-semibold text-neutral-900 hover:text-violet-600">
+                    <Link href={`/dashboard/admin/partners/${p.partner.id}`} className="font-semibold text-slate-900 hover:text-violet-600">
                       {p.partner.user.name}
                     </Link>
-                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider tracking-widest">{p.partner.partnerCode}</div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{p.partner.partnerCode}</div>
                   </td>
-                  <td className="px-3 py-3 text-xs text-neutral-500">
+                  <td className="px-3 py-3 text-xs text-slate-500">
                     {p.method}
                     {p.periodLabel ? ` · ${p.periodLabel}` : ""}
                     <div>{fmtDate(p.createdAt)}</div>
                   </td>
                   <td className="px-3 py-3 text-right">
-                    <div className="font-bold text-neutral-900">{inr(p.amount)}</div>
+                    <div className="font-bold text-slate-900">{inr(p.amount)}</div>
                     {p.tdsAmount > 0 && (
-                      <div className="text-[11px] text-neutral-500">
+                      <div className="text-[11px] text-slate-500">
                         gross {inr(p.grossAmount)} − TDS {p.tdsRate}% {inr(p.tdsAmount)}
                       </div>
                     )}
@@ -166,88 +166,88 @@ export default async function AdminPayoutCyclePage() {
       )}
 
       {blockedCount > 0 && (
-        <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800 shadow-2xs">
           <AlertTriangle size={16} />
           {blockedCount} partner ka balance to hai par KYC adhoori hai — unka payout nahi ban sakta.
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {[
-          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, textCls: "text-emerald-600", borderCls: "border-emerald-200", iconBg: "bg-emerald-100" },
-          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, textCls: "text-amber-600", borderCls: "border-amber-200", iconBg: "bg-amber-100" },
-          { label: "Partners", value: String(rows.length), sub: "jinka bakaya hai", Icon: Users, textCls: "text-blue-600", borderCls: "border-blue-200", iconBg: "bg-blue-100" },
-          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, textCls: "text-violet-600", borderCls: "border-violet-200", iconBg: "bg-violet-100" },
+          { label: "Abhi dena hai", value: inr(totalPayable), sub: `${readyCount} partner ready`, Icon: Wallet, textCls: "text-emerald-600", borderCls: "border-slate-200/80", iconBg: "bg-emerald-50 text-emerald-600" },
+          { label: "Approval baaki", value: inr(totalPending), sub: "review karna hai", Icon: AlertTriangle, textCls: "text-amber-600", borderCls: "border-slate-200/80", iconBg: "bg-amber-50 text-amber-600" },
+          { label: "Partners", value: String(rows.length), sub: "jinka bakaya hai", Icon: Users, textCls: "text-blue-600", borderCls: "border-slate-200/80", iconBg: "bg-blue-50 text-blue-600" },
+          { label: "Kul bakaya", value: inr(totalPayable + totalPending), sub: "approved + pending", Icon: IndianRupee, textCls: "text-violet-600", borderCls: "border-slate-200/80", iconBg: "bg-violet-50 text-violet-600" },
         ].map((s) => (
-          <div key={s.label} className={`bg-white/60 backdrop-blur-md rounded-2xl border ${s.borderCls} p-3.5 shadow-sm`}>
-            <div className="flex items-start justify-between mb-1.5">
-              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-wider">{s.label}</span>
-              <div className={`p-1.5 rounded-2xl ${s.iconBg}`}><s.Icon size={12} className={s.textCls} /></div>
+          <div key={s.label} className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-xs">
+            <div className="flex items-start justify-between mb-2">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</span>
+              <div className={`p-2 rounded-lg border border-slate-200/60 ${s.iconBg}`}><s.Icon size={14} /></div>
             </div>
             <div className={`text-xl font-black leading-none ${s.textCls}`}>{s.value}</div>
-            <div className="text-[9px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">{s.sub}</div>
+            <div className="text-[10px] font-semibold text-slate-400 mt-1.5 uppercase tracking-wider">{s.sub}</div>
           </div>
         ))}
       </div>
 
       {rows.length === 0 ? (
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-dashed border-neutral-300 p-12 text-center shadow-sm">
-          <Wallet className="mx-auto text-neutral-300 mb-3" size={32} />
-          <p className="font-bold text-neutral-700">Kisi partner ka kuch bakaya nahi</p>
-          <p className="text-sm text-neutral-500 mt-1">Jab koi owner plan lega ya renew karega, commission yahan aa jayega.</p>
+        <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center shadow-xs">
+          <Wallet className="mx-auto text-slate-300 mb-3" size={32} />
+          <p className="font-bold text-slate-700">Kisi partner ka kuch bakaya nahi</p>
+          <p className="text-sm text-slate-500 mt-1">Jab koi owner plan lega ya renew karega, commission yahan aa jayega.</p>
         </div>
       ) : (
         <>
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[700px]">
-              <thead className="bg-white/40 text-neutral-400 text-[9px] uppercase tracking-wider border-b border-neutral-200/60">
+              <thead className="bg-slate-50/80 text-slate-400 text-[10px] uppercase tracking-wider border-b border-slate-200/80">
                 <tr>
-                  <th className="px-4 py-2 font-bold">Partner</th>
-                  <th className="px-4 py-2 font-bold text-center">Is mahine</th>
-                  <th className="px-4 py-2 font-bold text-right">Approval baaki</th>
-                  <th className="px-4 py-2 font-bold text-right">Dena hai</th>
-                  <th className="px-4 py-2 font-bold">Pichla payout</th>
-                  <th className="px-4 py-2 font-bold text-right">Action</th>
+                  <th className="px-4 py-2.5 font-bold">Partner</th>
+                  <th className="px-4 py-2.5 font-bold text-center">Is mahine</th>
+                  <th className="px-4 py-2.5 font-bold text-right">Approval baaki</th>
+                  <th className="px-4 py-2.5 font-bold text-right">Dena hai</th>
+                  <th className="px-4 py-2.5 font-bold">Pichla payout</th>
+                  <th className="px-4 py-2.5 font-bold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-200/60 text-[11px] bg-white/60">
+              <tbody className="divide-y divide-slate-100 text-xs bg-white">
                 {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-white/80 transition-colors group">
-                    <td className="px-4 py-2">
-                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-black text-xs uppercase tracking-tight text-neutral-900 hover:text-violet-700 transition-colors">
+                  <tr key={r.id} className="hover:bg-slate-50/60 transition-colors group">
+                    <td className="px-4 py-3">
+                      <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-xs uppercase tracking-tight text-slate-900 hover:text-violet-700 transition-colors">
                         {r.user.name}
                       </Link>
-                      <div className="text-[9px] font-bold text-neutral-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
+                      <div className="text-[10px] font-semibold text-slate-400 tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
                       {!r.hasPayoutDetails && (
-                        <span className="inline-flex items-center gap-1 mt-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-xl bg-amber-100 border border-amber-200/60 shadow-sm text-amber-700 tracking-wider uppercase">
+                        <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 border border-amber-200/80 shadow-2xs text-amber-700 tracking-wider uppercase">
                           <AlertTriangle size={10} /> UPI/bank missing
                         </span>
                       )}
                       {r.status !== "APPROVED" && (
-                        <span className="inline-block mt-0.5 ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-xl bg-neutral-200 text-neutral-600 tracking-wider uppercase">
+                        <span className="inline-block mt-1 ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 tracking-wider uppercase">
                           {r.status}
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-center text-neutral-600 font-bold">{r.thisMonthCount}</td>
-                    <td className="px-4 py-2 text-right font-bold text-amber-600">
+                    <td className="px-4 py-3 text-center text-slate-600 font-bold">{r.thisMonthCount}</td>
+                    <td className="px-4 py-3 text-right font-bold text-amber-600">
                       {r.pendingTotal > 0 ? `${inr(r.pendingTotal)} (${r.pendingCount})` : "—"}
                     </td>
-                    <td className="px-4 py-2 text-right font-black text-neutral-900">
+                    <td className="px-4 py-3 text-right font-bold text-slate-900">
                       {r.payableTotal > 0 ? inr(r.payableTotal) : "—"}
                     </td>
-                    <td className="px-4 py-2 text-neutral-500 font-medium">
+                    <td className="px-4 py-3 text-slate-500 font-medium">
                       {r.payouts[0] ? `${inr(r.payouts[0].amount)} · ${fmtDate(r.payouts[0].paidAt)}` : "—"}
                     </td>
-                    <td className="px-4 py-2 text-right">
+                    <td className="px-4 py-3 text-right">
                       {/* If all docs are present but admin hasn't verified yet — show quick verify */}
                       {!r.kycVerifiedAt && r.kycAllFilled && r.payableTotal > 0 ? (
                         <div className="inline-flex flex-col items-end gap-1">
                           <QuickKycVerifyButton partnerId={r.id} />
                           <Link
                             href={`/dashboard/admin/partners/${r.id}`}
-                            className="text-[9px] text-neutral-400 hover:text-violet-600 font-bold uppercase tracking-wider"
+                            className="text-[9px] text-slate-400 hover:text-violet-600 font-bold uppercase tracking-wider"
                           >
                             Detail →
                           </Link>
@@ -280,46 +280,46 @@ export default async function AdminPayoutCyclePage() {
         </div>
         
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-2 md:hidden">
+        <div className="grid grid-cols-1 gap-2.5 md:hidden">
           {rows.map((r) => (
-            <div key={`mob-${r.id}`} className="bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+            <div key={`mob-${r.id}`} className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-xs flex flex-col gap-2.5">
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <Link href={`/dashboard/admin/partners/${r.id}`} className="font-black text-sm uppercase tracking-tight text-neutral-900 truncate block">
+                  <Link href={`/dashboard/admin/partners/${r.id}`} className="font-bold text-sm uppercase tracking-tight text-slate-900 truncate block">
                     {r.user.name}
                   </Link>
-                  <div className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase mt-0.5">{r.partnerCode}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">{r.partnerCode}</div>
                   
                   <div className="flex flex-wrap gap-1 mt-1">
                     {!r.hasPayoutDetails && (
-                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 border border-amber-200/80 text-amber-700">
                         <AlertTriangle size={10} /> UPI/bank nahi
                       </span>
                     )}
                     {r.status !== "APPROVED" && (
-                      <span className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-600">
+                      <span className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600">
                         {r.status}
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1 text-right">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Dena hai</div>
-                  <div className="text-sm font-extrabold text-neutral-900 leading-none">{r.payableTotal > 0 ? inr(r.payableTotal) : "—"}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold uppercase">Dena hai</div>
+                  <div className="text-sm font-bold text-slate-900 leading-none">{r.payableTotal > 0 ? inr(r.payableTotal) : "—"}</div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-neutral-50 text-center">
+              <div className="grid grid-cols-3 gap-1 py-1.5 border-y border-slate-100 text-center bg-slate-50/60 rounded-lg">
                 <div className="truncate px-1">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Is mahine</div>
-                  <div className="text-[10px] font-semibold text-neutral-600 truncate">{r.thisMonthCount}</div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase">Is mahine</div>
+                  <div className="text-[10px] font-semibold text-slate-600 truncate">{r.thisMonthCount}</div>
                 </div>
-                <div className="border-l border-neutral-100 truncate px-1">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Baaki (Apprv)</div>
+                <div className="border-l border-slate-200/80 truncate px-1">
+                  <div className="text-[9px] text-slate-400 font-bold uppercase">Baaki (Apprv)</div>
                   <div className="text-[10px] font-semibold text-amber-700 truncate">{r.pendingTotal > 0 ? inr(r.pendingTotal) : "—"}</div>
                 </div>
-                <div className="border-l border-neutral-100 truncate px-1">
-                  <div className="text-[9px] text-neutral-400 font-bold uppercase">Last Payout</div>
-                  <div className="text-[9px] font-semibold text-neutral-500 truncate">{r.payouts[0] ? `${inr(r.payouts[0].amount)}` : "—"}</div>
+                <div className="border-l border-slate-200/80 truncate px-1">
+                  <div className="text-[9px] text-slate-400 font-bold uppercase">Last Payout</div>
+                  <div className="text-[9px] font-semibold text-slate-500 truncate">{r.payouts[0] ? `${inr(r.payouts[0].amount)}` : "—"}</div>
                 </div>
               </div>
               <div className="mt-0.5 flex justify-end">
@@ -328,7 +328,7 @@ export default async function AdminPayoutCyclePage() {
                     <QuickKycVerifyButton partnerId={r.id} />
                     <Link
                       href={`/dashboard/admin/partners/${r.id}`}
-                      className="text-[9px] text-neutral-400 hover:text-violet-600 font-bold uppercase tracking-wider"
+                      className="text-[9px] text-slate-400 hover:text-violet-600 font-bold uppercase tracking-wider"
                     >
                       Detail →
                     </Link>

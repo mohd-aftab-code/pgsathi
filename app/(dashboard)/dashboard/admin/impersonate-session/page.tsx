@@ -71,35 +71,35 @@ function ImpersonateSessionInner() {
   }, [searchParams, router]);
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 shadow-xl p-8 max-w-sm w-full text-center">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-8 max-w-sm w-full text-center">
         {status === "loading" && (
           <>
-            <div className="w-14 h-14 border-4 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
-            <h2 className="text-lg font-bold text-neutral-900 mb-2">Setting up Impersonation</h2>
-            <p className="text-sm text-neutral-500">{message}</p>
-            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mt-3">Please wait, this only takes a moment...</p>
+            <div className="w-12 h-12 border-3 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
+            <h2 className="text-lg font-bold text-slate-900 mb-1.5">Setting up Impersonation</h2>
+            <p className="text-xs text-slate-500">{message}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-3">Please wait, this only takes a moment...</p>
           </>
         )}
         {status === "success" && (
           <>
-            <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <span className="text-3xl">✅</span>
+            <div className="w-12 h-12 bg-emerald-50 border border-emerald-200/80 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">✅</span>
             </div>
-            <h2 className="text-lg font-bold text-neutral-900 mb-2">Login Successful!</h2>
-            <p className="text-sm text-neutral-500">{message}</p>
+            <h2 className="text-lg font-bold text-slate-900 mb-1.5">Login Successful!</h2>
+            <p className="text-xs text-slate-500">{message}</p>
           </>
         )}
         {status === "error" && (
           <>
-            <div className="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <span className="text-3xl">❌</span>
+            <div className="w-12 h-12 bg-rose-50 border border-rose-200/80 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">❌</span>
             </div>
-            <h2 className="text-lg font-bold text-neutral-900 mb-2">Failed</h2>
-            <p className="text-sm text-red-600 mb-4">{message}</p>
+            <h2 className="text-lg font-bold text-slate-900 mb-1.5">Failed</h2>
+            <p className="text-xs text-rose-600 mb-4">{message}</p>
             <button
               onClick={() => window.close()}
-              className="w-full px-4 py-2.5 bg-neutral-100 rounded-xl text-sm font-semibold text-neutral-700 hover:bg-neutral-200 transition"
+              className="w-full px-4 py-2 bg-slate-100 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-200 transition"
             >
               Close Tab
             </button>

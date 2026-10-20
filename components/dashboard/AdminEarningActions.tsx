@@ -119,25 +119,25 @@ export function AdminEarningActions({
       </button>
 
       {payOpen && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4" onClick={() => !busy && setPayOpen(false)}>
-          <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl text-left" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
-              <h3 className="font-bold text-neutral-900">Record Payment</h3>
-              <button onClick={() => setPayOpen(false)} className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100"><X size={16} /></button>
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-xs p-4" onClick={() => !busy && setPayOpen(false)}>
+          <div className="w-full max-w-sm bg-white rounded-xl shadow-xl border border-slate-200 text-left" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200">
+              <h3 className="font-bold text-sm text-slate-900">Record Payment</h3>
+              <button onClick={() => setPayOpen(false)} className="p-1 rounded-md text-slate-500 hover:bg-slate-100"><X size={16} /></button>
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="rounded-xl bg-neutral-50 border border-neutral-200 px-4 py-3">
-                <div className="text-xs text-neutral-500">Payment for this earning</div>
-                <div className="text-2xl font-extrabold text-neutral-900">₹{amount.toLocaleString("en-IN")}</div>
-                <div className="text-[11px] text-neutral-500 mt-1">
+              <div className="rounded-lg bg-slate-50 border border-slate-200 px-4 py-3">
+                <div className="text-xs text-slate-500">Payment for this earning</div>
+                <div className="text-2xl font-extrabold text-slate-900">₹{amount.toLocaleString("en-IN")}</div>
+                <div className="text-[11px] text-slate-500 mt-1">
                   TDS lagu hone par net amount kam ho sakta hai — payout banne ke baad exact figure dikhega.
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-neutral-700 mb-1.5">Payment method</label>
-                <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-neutral-200 text-sm cursor-pointer">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">Payment method</label>
+                <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white text-slate-900">
                   <option value="UPI">UPI</option>
                   <option value="BANK">Bank Transfer</option>
                   <option value="CASH">Cash</option>
@@ -146,19 +146,19 @@ export function AdminEarningActions({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-neutral-700 mb-1.5">Reference / UTR <span className="text-neutral-400 font-normal">(optional)</span></label>
-                <input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="e.g. UTR123456789" className="w-full h-11 px-3 rounded-xl border-2 border-neutral-200 text-sm" />
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">Reference / UTR <span className="text-slate-400 font-normal">(optional)</span></label>
+                <input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="e.g. UTR123456789" className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900" />
               </div>
 
-              <p className="text-[11px] text-neutral-400">
+              <p className="text-[11px] text-slate-400">
                 Isse ek <b>PROCESSING</b> payout banega. Actual transfer aapko bank/UPI se karna hoga, aur
                 Payouts page par UTR daalne ke baad hi wo COMPLETED hoga.
               </p>
 
               <div className="flex gap-2 pt-1">
-                <button onClick={() => setPayOpen(false)} className="flex-1 h-11 rounded-xl border-2 border-neutral-200 font-bold text-sm text-neutral-700">Cancel</button>
-                <button onClick={() => post("mark_paid", { method, reference })} disabled={!!busy} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-1.5">
-                  {spin("mark_paid") ? <><Loader2 size={15} className="animate-spin" /> Ban raha hai…</> : "Payout banayein"}
+                <button onClick={() => setPayOpen(false)} className="flex-1 h-10 rounded-lg border border-slate-200 font-bold text-xs text-slate-700 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button onClick={() => post("mark_paid", { method, reference })} disabled={!!busy} className="flex-1 h-10 rounded-lg bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+                  {spin("mark_paid") ? <><Loader2 size={14} className="animate-spin" /> Ban raha hai…</> : "Payout banayein"}
                 </button>
               </div>
             </div>

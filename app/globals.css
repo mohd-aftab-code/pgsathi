@@ -28,8 +28,8 @@
   --color-primary-950:   #2e1065;
 
   /* Canvas — tinted dashboard background so white cards float above it.
-     Pairs with the violet sidebar; change this one value to restyle all dashboards. */
-  --color-canvas:        #e4ddf5;
+     Clean, crisp neutral slate canvas for modern dashboards. */
+  --color-canvas:        #f8fafc;
 
   /* Secondary — Warm Orange */
   --color-secondary:     #ea580c;

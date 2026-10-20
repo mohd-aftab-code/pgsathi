@@ -35,13 +35,13 @@ export default async function AdminEnquiriesPage() {
   }));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-[1536px] w-full space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">
             Contact Enquiries
           </h1>
-          <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mt-0.5">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">
             Support Desk · Manage website contact messages & enquiries
           </p>
         </div>

@@ -57,8 +57,8 @@ export default async function AdminListingsPage({
       </div>
 
       {/* Tabs & Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5">
-        <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+        <div className="flex gap-1 overflow-x-auto pb-1 hide-scrollbar">
           {[
             { id: "pending", label: "Pending Review" },
             { id: "active", label: "Active PGs" },
@@ -70,10 +70,10 @@ export default async function AdminListingsPage({
               <Link
                 key={tab.id}
                 href={`?tab=${tab.id}&query=${query}`}
-                className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-all shadow-2xs ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all shadow-2xs ${
                   isActive
-                    ? "bg-violet-600 text-white shadow-violet-500/20 shadow-sm"
-                    : "bg-white/70 hover:bg-white text-neutral-600 border border-neutral-200/60"
+                    ? "bg-violet-600 text-white shadow-xs"
+                    : "bg-white hover:bg-slate-50 text-slate-600 border border-slate-200/80"
                 }`}
               >
                 {tab.label}
@@ -88,31 +88,31 @@ export default async function AdminListingsPage({
             name="query" 
             defaultValue={query} 
             placeholder="Search PGs by name..." 
-            className="px-3.5 py-2 bg-white/70 backdrop-blur-md border border-neutral-200/70 rounded-xl text-xs font-semibold placeholder:text-neutral-400 placeholder:text-[10px] placeholder:uppercase placeholder:font-bold placeholder:tracking-wider w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-2xs"
+            className="px-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold placeholder:text-slate-400 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-2xs"
           />
-          <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-xl text-[10px] uppercase tracking-wider font-black hover:bg-neutral-800 transition-colors cursor-pointer shadow-sm shrink-0">
+          <button type="submit" className="px-3.5 py-1.5 bg-slate-900 text-white rounded-lg text-xs uppercase tracking-wider font-bold hover:bg-slate-800 transition-colors cursor-pointer shadow-xs shrink-0">
             Search
           </button>
         </form>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-200/60 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200/80 overflow-hidden">
         <AdminListingsTableWrapper listings={listings} currentTab={currentTab} />
       </div>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 px-2">
-          <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
-            Showing <span className="font-black text-neutral-900">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-black text-neutral-900">{Math.min(currentPage * pageSize, totalCount)}</span> of <span className="font-black text-neutral-900">{totalCount}</span> PGs
+          <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+            Showing <span className="font-black text-slate-900">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-black text-slate-900">{Math.min(currentPage * pageSize, totalCount)}</span> of <span className="font-black text-slate-900">{totalCount}</span> PGs
           </div>
           <div className="flex gap-1">
             {currentPage > 1 && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage - 1}`} className="flex items-center gap-1 text-[10px] font-bold text-slate-600 hover:text-violet-700 bg-white border border-slate-200 px-2.5 py-1.5 rounded-lg transition-all uppercase tracking-wider shadow-2xs">
                 Prev
               </Link>
             )}
             {currentPage < totalPages && (
-              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="flex items-center gap-1 text-[10px] font-black text-neutral-600 hover:text-violet-700 bg-white/60 backdrop-blur-md border border-neutral-200/60 px-2.5 py-1.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
+              <Link href={`?tab=${currentTab}&query=${query}&page=${currentPage + 1}`} className="flex items-center gap-1 text-[10px] font-bold text-slate-600 hover:text-violet-700 bg-white border border-slate-200 px-2.5 py-1.5 rounded-lg transition-all uppercase tracking-wider shadow-2xs">
                 Next
               </Link>
             )}

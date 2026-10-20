@@ -148,14 +148,14 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       <PartnerTabs />
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-5 sm:p-6 text-white shadow-sm border border-slate-800">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-extrabold">{partner.user.name}</h1>
-              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-xl ${statusStyle[partner.status]}`}>{partner.status}</span>
+              <h1 className="text-xl font-extrabold">{partner.user.name}</h1>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${statusStyle[partner.status]}`}>{partner.status}</span>
             </div>
-            <p className="text-neutral-300 text-sm">
+            <p className="text-slate-300 text-xs">
               {TYPE_LABEL[partner.type] ?? partner.type} · <span className="tracking-widest font-bold">{partner.partnerCode}</span>
               {partner.city ? ` · ${partner.city}` : ""}
             </p>
@@ -165,10 +165,10 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       </div>
 
       {/* ── Programme controls ─────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md p-5 shadow-sm">
+      <section className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
-          <h2 className="font-bold text-neutral-900 text-sm">Partner controls</h2>
-          <span className="text-xs text-neutral-500">
+          <h2 className="font-bold text-slate-900 text-sm">Partner controls</h2>
+          <span className="text-xs text-slate-500">
             Tier <b>{tier.label}</b>
             {tier.bonusPercent > 0 ? ` (+${tier.bonusPercent}% bonus)` : ""} · {tier.conversions} paid owners
           </span>
@@ -189,22 +189,22 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       </section>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-4">
+          <div key={s.label} className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-xs">
             <div className="flex items-start justify-between mb-2">
-              <span className="text-xs text-neutral-500">{s.label}</span>
-              <div className={`p-1.5 rounded-2xl ${s.cls}`}><s.Icon size={14} /></div>
+              <span className="text-xs text-slate-500 font-semibold">{s.label}</span>
+              <div className={`p-2 rounded-lg ${s.cls}`}><s.Icon size={14} /></div>
             </div>
-            <div className="text-xl font-bold text-neutral-900">{s.value}</div>
+            <div className="text-xl font-bold text-slate-900">{s.value}</div>
           </div>
         ))}
       </div>
 
       {/* Business summary — the whole money picture for this partner in one strip.
           Collection is what the owners actually paid; owed is commission not yet sent. */}
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
-        <h2 className="font-bold text-neutral-900 text-sm mb-4">Business summary</h2>
+      <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+        <h2 className="font-bold text-slate-900 text-sm mb-4">Business summary</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
           {[
             { label: "Owners laaye", value: String(owners.length), sub: `${totalOwnerPgs} PG total` },
@@ -215,15 +215,15 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
             { label: "Dena baaki", value: inr(owed), sub: owed > 0 ? `${inr(approved)} approve ho chuka` : "sab clear" },
           ].map((s) => (
             <div key={s.label}>
-              <div className="text-[11px] text-neutral-500">{s.label}</div>
-              <div className="text-lg font-extrabold text-neutral-900">{s.value}</div>
-              <div className="text-[11px] text-neutral-400">{s.sub}</div>
+              <div className="text-[11px] text-slate-500 font-semibold">{s.label}</div>
+              <div className="text-lg font-bold text-slate-900">{s.value}</div>
+              <div className="text-[11px] text-slate-400 font-medium">{s.sub}</div>
             </div>
           ))}
         </div>
         {renewingSoon > 0 && (
-          <div className="mt-4 pt-4 border-t border-neutral-100 text-sm text-neutral-600">
-            <b className="text-neutral-900">{renewingSoon}</b> owner ka plan agle 30 din mein renew hoga — har renewal par is partner ka commission dobara banega.
+          <div className="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-600 font-medium">
+            <b className="text-slate-900">{renewingSoon}</b> owner ka plan agle 30 din mein renew hoga — har renewal par is partner ka commission dobara banega.
           </div>
         )}
       </div>
@@ -231,44 +231,44 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Contact + payout details — what the admin needs before paying */}
         <div className="space-y-5">
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
-            <h2 className="font-bold text-neutral-900 text-sm mb-3">Contact</h2>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-neutral-700"><User size={14} className="text-neutral-400" /> {partner.user.name}</div>
-              <div className="flex items-center gap-2 text-neutral-700"><Phone size={14} className="text-neutral-400" /> {partner.user.phone ?? "—"}</div>
-              <div className="flex items-center gap-2 text-neutral-700 break-all"><Mail size={14} className="text-neutral-400 shrink-0" /> {partner.user.email}</div>
-              {partner.address && <div className="flex items-start gap-2 text-neutral-700"><MapPin size={14} className="text-neutral-400 shrink-0 mt-0.5" /> {partner.address}</div>}
-              {partner.company && <div className="text-xs text-neutral-500 pt-1">Company: {partner.company}</div>}
-              <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-1">Joined {fmtDate(partner.user.createdAt)}</div>
-              {partner.approvedAt && <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Approved {fmtDate(partner.approvedAt)}</div>}
-              {partner.rejectReason && <div className="text-xs text-red-600 pt-1">Reject reason: {partner.rejectReason}</div>}
+          <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <h2 className="font-bold text-slate-900 text-sm mb-3">Contact</h2>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-slate-700 font-medium"><User size={14} className="text-slate-400" /> {partner.user.name}</div>
+              <div className="flex items-center gap-2 text-slate-700 font-medium"><Phone size={14} className="text-slate-400" /> {partner.user.phone ?? "—"}</div>
+              <div className="flex items-center gap-2 text-slate-700 font-medium break-all"><Mail size={14} className="text-slate-400 shrink-0" /> {partner.user.email}</div>
+              {partner.address && <div className="flex items-start gap-2 text-slate-700 font-medium"><MapPin size={14} className="text-slate-400 shrink-0 mt-0.5" /> {partner.address}</div>}
+              {partner.company && <div className="text-xs text-slate-500 pt-1">Company: {partner.company}</div>}
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-1">Joined {fmtDate(partner.user.createdAt)}</div>
+              {partner.approvedAt && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Approved {fmtDate(partner.approvedAt)}</div>}
+              {partner.rejectReason && <div className="text-xs text-rose-600 pt-1">Reject reason: {partner.rejectReason}</div>}
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
-            <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><Landmark size={15} className="text-neutral-400" /> Payout details</h2>
+          <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <h2 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-1.5"><Landmark size={15} className="text-slate-400" /> Payout details</h2>
             {partner.upiId || partner.bankAccountNo ? (
-              <div className="space-y-2 text-sm">
-                {partner.upiId && <div><span className="text-neutral-500 text-xs block">UPI</span><span className="font-semibold text-neutral-900">{partner.upiId}</span></div>}
-                {partner.bankName && <div><span className="text-neutral-500 text-xs block">Bank</span><span className="font-semibold text-neutral-900">{partner.bankName}</span></div>}
-                {partner.bankAccountNo && <div><span className="text-neutral-500 text-xs block">Account</span><span className="font-semibold text-neutral-900">{partner.bankAccountNo}</span></div>}
-                {partner.bankIfsc && <div><span className="text-neutral-500 text-xs block">IFSC</span><span className="font-semibold text-neutral-900">{partner.bankIfsc}</span></div>}
+              <div className="space-y-2 text-xs">
+                {partner.upiId && <div><span className="text-slate-400 text-[10px] uppercase font-bold block">UPI</span><span className="font-bold text-slate-900">{partner.upiId}</span></div>}
+                {partner.bankName && <div><span className="text-slate-400 text-[10px] uppercase font-bold block">Bank</span><span className="font-bold text-slate-900">{partner.bankName}</span></div>}
+                {partner.bankAccountNo && <div><span className="text-slate-400 text-[10px] uppercase font-bold block">Account</span><span className="font-bold text-slate-900">{partner.bankAccountNo}</span></div>}
+                {partner.bankIfsc && <div><span className="text-slate-400 text-[10px] uppercase font-bold block">IFSC</span><span className="font-bold text-slate-900">{partner.bankIfsc}</span></div>}
               </div>
             ) : (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                 Partner ne abhi payout details nahi bhare. Payment se pehle unse bharwa lein.
               </p>
             )}
           </div>
 
           {/* ── KYC Documents — premium redesign ─────────────── */}
-          <div className={`rounded-2xl border p-5 ${
+          <div className={`rounded-xl border p-5 shadow-xs ${
             partner.kycVerifiedAt
-              ? "bg-green-50/60 border-green-200"
+              ? "bg-emerald-50/70 border-emerald-200"
               : kycAllFilled
-              ? "bg-blue-50/60 border-blue-200"
-              : "bg-white/60 border-neutral-200/60"
-          } backdrop-blur-md`}>
+              ? "bg-blue-50/70 border-blue-200"
+              : "bg-white border-slate-200/80"
+          }`}>
             {/* Header row */}
             <div className="flex items-center gap-2 mb-4">
               {partner.kycVerifiedAt
@@ -358,18 +358,18 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
             )}
           </div>
 
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
-            <h2 className="font-bold text-neutral-900 text-sm mb-3 flex items-center gap-1.5"><Activity size={15} className="text-neutral-400" /> Recent activity</h2>
+          <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <h2 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-1.5"><Activity size={15} className="text-slate-400" /> Recent activity</h2>
             {partner.activity.length === 0 ? (
-              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Koi activity nahi</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Koi activity nahi</p>
             ) : (
               <ul className="space-y-2.5">
                 {partner.activity.map((a) => (
                   <li key={a.id} className="flex gap-2 text-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-600 mt-1.5 shrink-0" />
                     <div>
-                      <p className="text-neutral-700">{a.action}</p>
-                      <p className="text-neutral-400">{fmtDate(a.createdAt)}</p>
+                      <p className="text-slate-700 font-medium">{a.action}</p>
+                      <p className="text-slate-400 text-[10px]">{fmtDate(a.createdAt)}</p>
                     </div>
                   </li>
                 ))}
@@ -381,11 +381,11 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
         {/* PGs + earnings + payouts */}
         <div className="lg:col-span-2 space-y-5">
           {/* Payout batch */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 p-5">
+          <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="font-bold text-neutral-900 text-sm">Payout</h2>
-                <p className="text-xs text-neutral-500 mt-0.5">
+                <h2 className="font-bold text-slate-900 text-sm">Payout</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
                   {payable.length > 0
                     ? `${payable.length} approved earning(s) ready — total ${inr(payableTotal)}`
                     : "Koi approved earning payout ke liye pending nahi"}
@@ -401,16 +401,16 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
             </div>
 
             {partner.payouts.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-neutral-100 space-y-2">
+              <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
                 {partner.payouts.map((p) => (
-                  <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-neutral-900">{inr(p.amount)}</span>
-                      <span className="text-xs text-neutral-500">{p.method}{p.reference ? ` · ${p.reference}` : ""}</span>
+                      <span className="font-bold text-slate-900">{inr(p.amount)}</span>
+                      <span className="text-slate-500">{p.method}{p.reference ? ` · ${p.reference}` : ""}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{fmtDate(p.paidAt ?? p.createdAt)}</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusStyle[p.status]}`}>{p.status}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{fmtDate(p.paidAt ?? p.createdAt)}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${statusStyle[p.status]}`}>{p.status}</span>
                       {/* PROCESSING → record the UTR; COMPLETED → reverse if the
                           transfer bounced. Editing the earnings is never the answer. */}
                       <PayoutRowActions payoutId={p.id} status={p.status} amount={p.amount} />
@@ -422,17 +422,17 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           </div>
 
           {/* Earnings */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-200/60">
-              <h2 className="font-bold text-neutral-900 text-sm">Earnings ({partner.earnings.length})</h2>
+          <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs">
+            <div className="px-5 py-3.5 border-b border-slate-200/80">
+              <h2 className="font-bold text-slate-900 text-sm">Earnings ({partner.earnings.length})</h2>
             </div>
             {partner.earnings.length === 0 ? (
-              <p className="px-5 py-8 text-center text-sm text-neutral-500">Abhi koi earning nahi</p>
+              <p className="px-5 py-8 text-center text-xs text-slate-500">Abhi koi earning nahi</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm min-w-[600px]">
+                <table className="w-full text-xs min-w-[600px]">
                   <thead>
-                    <tr className="text-left text-[11px] uppercase tracking-wide text-neutral-400 bg-neutral-50">
+                    <tr className="text-left text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50/80 border-b border-slate-200/80">
                       <th className="px-5 py-2.5 font-bold">Owner</th>
                       <th className="px-3 py-2.5 font-bold">Plan</th>
                       <th className="px-3 py-2.5 font-bold">Date</th>
@@ -441,14 +441,14 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
                       <th className="px-5 py-2.5 font-bold text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-slate-100">
                     {partner.earnings.map((e) => (
-                      <tr key={e.id} className="hover:bg-neutral-50">
-                        <td className="px-5 py-2.5 max-w-[180px] truncate text-neutral-800">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
-                        <td className="px-3 py-2.5 text-neutral-600">{e.planNameSnapshot ?? "—"}</td>
-                        <td className="px-3 py-2.5 text-neutral-500">{fmtDate(e.createdAt)}</td>
-                        <td className="px-3 py-2.5 text-right font-bold text-neutral-900">{inr(e.amount)}</td>
-                        <td className="px-3 py-2.5"><span className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusStyle[e.status]}`}>{e.status}</span></td>
+                      <tr key={e.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="px-5 py-2.5 max-w-[180px] truncate font-medium text-slate-800">{e.owner?.name ?? e.listing?.title ?? "—"}</td>
+                        <td className="px-3 py-2.5 text-slate-600">{e.planNameSnapshot ?? "—"}</td>
+                        <td className="px-3 py-2.5 text-slate-500">{fmtDate(e.createdAt)}</td>
+                        <td className="px-3 py-2.5 text-right font-bold text-slate-900">{inr(e.amount)}</td>
+                        <td className="px-3 py-2.5"><span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${statusStyle[e.status]}`}>{e.status}</span></td>
                         <td className="px-5 py-2.5"><AdminEarningActions id={e.id} amount={e.amount} status={e.status} onHold={e.onHold} holdReason={e.holdReason} /></td>
                       </tr>
                     ))}
@@ -459,21 +459,21 @@ export default async function AdminPartnerDetailPage({ params }: { params: Promi
           </div>
 
           {/* PGs */}
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-200/60">
-              <h2 className="font-bold text-neutral-900 text-sm">Registered PGs ({allListings.length})</h2>
+          <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs">
+            <div className="px-5 py-3.5 border-b border-slate-200/80">
+              <h2 className="font-bold text-slate-900 text-sm">Registered PGs ({allListings.length})</h2>
             </div>
             {allListings.length === 0 ? (
-              <p className="px-5 py-8 text-center text-sm text-neutral-500">Abhi koi PG register nahi kiya</p>
+              <p className="px-5 py-8 text-center text-xs text-slate-500">Abhi koi PG register nahi kiya</p>
             ) : (
-              <div className="divide-y divide-neutral-100">
+              <div className="divide-y divide-slate-100">
                 {allListings.map((l) => (
-                  <div key={l.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50">
+                  <div key={l.id} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
                     <div className="min-w-0">
-                      <div className="font-semibold text-neutral-900 truncate">{l.title}</div>
-                      <div className="text-xs text-neutral-500">{l.city?.name ?? "—"} · ₹{l.priceMin} · {fmtDate(l.createdAt)}</div>
+                      <div className="font-bold text-slate-900 truncate text-xs">{l.title}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">{l.city?.name ?? "—"} · ₹{l.priceMin} · {fmtDate(l.createdAt)}</div>
                     </div>
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded shrink-0 ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${statusStyle[l.status] ?? statusStyle.INACTIVE}`}>{l.status}</span>
                   </div>
                 ))}
               </div>

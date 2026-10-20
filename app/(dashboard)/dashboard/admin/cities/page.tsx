@@ -124,7 +124,7 @@ export default function AdminCitiesPage() {
         </div>
         <button
           onClick={() => setShowAdd((v) => !v)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+          className="flex items-center gap-2 px-3.5 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
         >
           <Plus size={15} /> Add City
         </button>
@@ -132,49 +132,49 @@ export default function AdminCitiesPage() {
 
       {/* Add City Form */}
       {showAdd && (
-        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
-          <h2 className="text-sm font-bold text-violet-900 mb-4">New City</h2>
+        <div className="bg-violet-50/80 border border-violet-200 rounded-xl p-4">
+          <h2 className="text-xs font-bold text-violet-900 mb-3 uppercase tracking-wider">New City</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-xs font-semibold text-neutral-600 mb-1 block">City Name *</label>
+              <label className="text-[11px] font-semibold text-slate-600 mb-1 block">City Name *</label>
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="e.g. Pune"
-                className="w-full px-3 py-2 border border-neutral-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-neutral-600 mb-1 block">State *</label>
+              <label className="text-[11px] font-semibold text-slate-600 mb-1 block">State *</label>
               <input
                 value={newState}
                 onChange={(e) => setNewState(e.target.value)}
                 placeholder="e.g. Maharashtra"
-                className="w-full px-3 py-2 border border-neutral-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-neutral-600 mb-1 block">Priority (higher = first)</label>
+              <label className="text-[11px] font-semibold text-slate-600 mb-1 block">Priority (higher = first)</label>
               <input
                 type="number"
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
               />
             </div>
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-3.5">
             <button
               onClick={addCity}
               disabled={adding}
-              className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors"
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
             >
-              {adding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+              {adding ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
               {adding ? "Adding..." : "Add City"}
             </button>
             <button
               onClick={() => setShowAdd(false)}
-              className="px-4 py-2 bg-white/60 backdrop-blur-md border border-neutral-200/60 text-neutral-700 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-colors"
+              className="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors"
             >
               Cancel
             </button>
@@ -184,25 +184,25 @@ export default function AdminCitiesPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search cities or states..."
-          className="w-full pl-10 pr-4 py-2.5 border border-neutral-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white/60 backdrop-blur-md"
+          className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white shadow-2xs"
         />
       </div>
 
       {/* Table */}
       {loading ? (
-        <div className="flex items-center justify-center py-16 gap-3 text-neutral-400">
+        <div className="flex items-center justify-center py-16 gap-3 text-slate-400">
           <Loader2 size={20} className="animate-spin" />
           <span className="text-sm">Loading cities...</span>
         </div>
       ) : (
         <>
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-neutral-200/60 overflow-hidden shadow-sm hidden md:block">
+        <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -217,18 +217,18 @@ export default function AdminCitiesPage() {
                   <th className="px-5 py-3 font-bold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-50">
+              <tbody className="divide-y divide-slate-100 text-xs">
                 {filtered.map((city) => (
-                  <tr key={city.id} className={`hover:bg-neutral-50/70 transition-colors ${!city.isActive ? "opacity-50" : ""}`}>
+                  <tr key={city.id} className={`hover:bg-slate-50/70 transition-colors ${!city.isActive ? "opacity-50" : ""}`}>
                     <td className="px-5 py-3">
                       {editingId === city.id ? (
                         <input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="w-full px-2 py-1 border border-violet-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          className="w-full px-2.5 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       ) : (
-                        <span className="font-semibold text-neutral-800">{city.name}</span>
+                        <span className="font-semibold text-slate-800">{city.name}</span>
                       )}
                     </td>
                     <td className="px-3 py-3">
@@ -236,34 +236,34 @@ export default function AdminCitiesPage() {
                         <input
                           value={editState}
                           onChange={(e) => setEditState(e.target.value)}
-                          className="w-full px-2 py-1 border border-violet-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          className="w-full px-2.5 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       ) : (
-                        <span className="text-neutral-500 text-xs">{city.state}</span>
+                        <span className="text-slate-500 text-xs">{city.state}</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-neutral-400 text-xs font-mono">{city.slug}</td>
+                    <td className="px-3 py-3 text-slate-400 text-xs font-mono">{city.slug}</td>
                     <td className="px-3 py-3 text-center">
-                      <span className="font-bold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-full text-xs">
+                      <span className="font-bold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-md text-xs">
                         {city._count.listings}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-center text-neutral-500 text-xs">{city._count.localities}</td>
+                    <td className="px-3 py-3 text-center text-slate-500 text-xs">{city._count.localities}</td>
                     <td className="px-3 py-3 text-center">
                       {editingId === city.id ? (
                         <input
                           type="number"
                           value={editPriority}
                           onChange={(e) => setEditPriority(e.target.value)}
-                          className="w-16 px-2 py-1 border border-violet-300 rounded-2xl text-sm text-center focus:outline-none"
+                          className="w-16 px-2 py-1 border border-violet-300 rounded-lg text-xs text-center focus:outline-none"
                         />
                       ) : (
-                        <span className="text-neutral-500 text-xs">{city.priority}</span>
+                        <span className="text-slate-500 text-xs">{city.priority}</span>
                       )}
                     </td>
                     <td className="px-3 py-3 text-center">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        city.isActive ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-neutral-100 text-neutral-500"
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                        city.isActive ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-100 text-slate-500 border-slate-200"
                       }`}>
                         {city.isActive ? "Active" : "Inactive"}
                       </span>
@@ -275,13 +275,13 @@ export default function AdminCitiesPage() {
                             <button
                               onClick={() => saveEdit(city.id)}
                               disabled={processing === city.id}
-                              className="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 rounded-2xl transition-colors"
+                              className="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer"
                             >
                               {processing === city.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="p-1.5 bg-neutral-50 text-neutral-500 hover:bg-neutral-100 border border-neutral-200/60 rounded-2xl transition-colors"
+                              className="p-1.5 bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors cursor-pointer"
                             >
                               <X size={13} />
                             </button>
@@ -295,7 +295,7 @@ export default function AdminCitiesPage() {
                                 setEditState(city.state);
                                 setEditPriority(String(city.priority));
                               }}
-                              className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 rounded-2xl transition-colors"
+                              className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors cursor-pointer"
                               title="Edit"
                             >
                               <Edit2 size={13} />
@@ -303,10 +303,10 @@ export default function AdminCitiesPage() {
                             <button
                               onClick={() => toggle(city.id)}
                               disabled={processing === city.id}
-                              className={`p-1.5 rounded-2xl border transition-colors ${
+                              className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                                 city.isActive
-                                  ? "bg-red-50 text-red-600 hover:bg-red-100 border-red-100"
-                                  : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-100"
+                                  ? "bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                                  : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-200"
                               }`}
                               title={city.isActive ? "Deactivate" : "Activate"}
                             >
@@ -334,9 +334,9 @@ export default function AdminCitiesPage() {
         </div>
 
         {/* Mobile Cards */}
-        <div className="grid grid-cols-1 gap-2 md:hidden">
+        <div className="grid grid-cols-1 gap-2.5 md:hidden">
           {filtered.map((city) => (
-            <div key={`mob-${city.id}`} className={`bg-white/60 backdrop-blur-md border border-neutral-200/60 rounded-xl p-3 shadow-sm flex flex-col gap-2 ${!city.isActive ? "opacity-60" : ""}`}>
+            <div key={`mob-${city.id}`} className={`bg-white border border-slate-200/80 rounded-xl p-3.5 shadow-xs flex flex-col gap-2.5 ${!city.isActive ? "opacity-60" : ""}`}>
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0 w-full">
                   {editingId === city.id ? (
@@ -345,51 +345,51 @@ export default function AdminCitiesPage() {
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         placeholder="City Name"
-                        className="w-full px-2 py-1 border border-violet-300 rounded-2xl text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                        className="w-full px-2.5 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
                       />
                       <input
                         value={editState}
                         onChange={(e) => setEditState(e.target.value)}
                         placeholder="State"
-                        className="w-full px-2 py-1 border border-violet-300 rounded-2xl text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                        className="w-full px-2.5 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
                       />
                       <input
                         type="number"
                         value={editPriority}
                         onChange={(e) => setEditPriority(e.target.value)}
                         placeholder="Priority"
-                        className="w-full px-2 py-1 border border-violet-300 rounded-2xl text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+                        className="w-full px-2.5 py-1 border border-violet-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
                       />
                     </div>
                   ) : (
                     <>
-                      <div className="font-bold text-sm text-neutral-900 truncate">{city.name}</div>
-                      <div className="text-[10px] text-neutral-500 truncate">{city.state}</div>
-                      <div className="text-[9px] text-neutral-400 font-mono mt-0.5 truncate">{city.slug}</div>
+                      <div className="font-bold text-sm text-slate-900 truncate">{city.name}</div>
+                      <div className="text-[10px] text-slate-500 truncate">{city.state}</div>
+                      <div className="text-[9px] text-slate-400 font-mono mt-0.5 truncate">{city.slug}</div>
                     </>
                   )}
                 </div>
                 {!editingId && (
                   <div className="shrink-0 flex flex-col items-end gap-1">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-xl ${
-                      city.isActive ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-500"
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${
+                      city.isActive ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-100 text-slate-500 border-slate-200"
                     }`}>
                       {city.isActive ? "Active" : "Inactive"}
                     </span>
-                    <span className="text-[9px] font-bold text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded">Pri: {city.priority}</span>
+                    <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">Pri: {city.priority}</span>
                   </div>
                 )}
               </div>
               
               {!editingId && (
-                <div className="grid grid-cols-2 gap-1 py-1.5 border-y border-neutral-50 text-center">
+                <div className="grid grid-cols-2 gap-1 py-1.5 border-y border-slate-100 text-center">
                   <div className="truncate px-1">
-                    <div className="text-[9px] text-neutral-400 font-bold uppercase">PGs</div>
+                    <div className="text-[9px] text-slate-400 font-bold uppercase">PGs</div>
                     <div className="text-[10px] font-bold text-violet-700 truncate">{city._count.listings}</div>
                   </div>
-                  <div className="border-l border-neutral-100 truncate px-1">
-                    <div className="text-[9px] text-neutral-400 font-bold uppercase">Localities</div>
-                    <div className="text-[10px] font-bold text-neutral-700 truncate">{city._count.localities}</div>
+                  <div className="border-l border-slate-100 truncate px-1">
+                    <div className="text-[9px] text-slate-400 font-bold uppercase">Localities</div>
+                    <div className="text-[10px] font-bold text-violet-700 truncate">{city._count.localities}</div>
                   </div>
                 </div>
               )}
@@ -400,14 +400,14 @@ export default function AdminCitiesPage() {
                     <button
                       onClick={() => saveEdit(city.id)}
                       disabled={processing === city.id}
-                      className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-colors cursor-pointer"
+                      className="flex-1 h-8.5 flex items-center justify-center gap-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-2xs transition-colors cursor-pointer"
                     >
                       {processing === city.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
                       Save
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="h-9 px-4 flex items-center justify-center bg-neutral-100 text-neutral-600 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
+                      className="h-8.5 px-4 flex items-center justify-center bg-slate-100 text-slate-600 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                     >
                       <X size={13} />
                     </button>
@@ -421,17 +421,17 @@ export default function AdminCitiesPage() {
                         setEditState(city.state);
                         setEditPriority(String(city.priority));
                       }}
-                      className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200/60 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+                      className="flex-1 h-8.5 flex items-center justify-center gap-1.5 bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                     >
                       <Edit2 size={12} /> Edit
                     </button>
                     <button
                       onClick={() => toggle(city.id)}
                       disabled={processing === city.id}
-                      className={`flex-1 h-9 flex items-center justify-center gap-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shadow-2xs ${
+                      className={`flex-1 h-8.5 flex items-center justify-center gap-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs ${
                         city.isActive
-                          ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/60"
-                          : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60"
+                          ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200"
+                          : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
                       }`}
                     >
                       {processing === city.id
@@ -446,7 +446,7 @@ export default function AdminCitiesPage() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="text-center py-10 text-neutral-400 text-sm bg-white/60 backdrop-blur-md rounded-xl border border-neutral-100">
+            <div className="text-center py-10 text-slate-400 text-xs bg-white rounded-xl border border-slate-200/80">
               {search ? `No cities matching "${search}"` : "No cities yet."}
             </div>
           )}

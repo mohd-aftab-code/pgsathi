@@ -79,7 +79,7 @@ export function UserDetailActions({
       {/* Impersonate */}
       <button
         onClick={impersonate}
-        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg transition-colors"
       >
         <LogIn size={13} /> Login As
       </button>
@@ -89,7 +89,7 @@ export function UserDetailActions({
         <select
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value)}
-          className="text-xs font-semibold border border-neutral-200/60 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white/60 backdrop-blur-md text-neutral-700"
+          className="text-xs font-semibold border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white text-slate-700"
         >
           <option value="TENANT">TENANT</option>
           <option value="OWNER">OWNER</option>
@@ -98,7 +98,7 @@ export function UserDetailActions({
         <button
           onClick={changeRole}
           disabled={roleChanging || selectedRole === userRole}
-          className="flex items-center gap-1 px-3 py-2 text-xs font-bold bg-violet-50 hover:bg-violet-100 disabled:opacity-50 text-violet-700 border border-violet-200 rounded-xl transition-colors"
+          className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold bg-violet-50 hover:bg-violet-100 disabled:opacity-50 text-violet-700 border border-violet-200 rounded-lg transition-colors"
         >
           {roleChanging ? <Loader2 size={12} className="animate-spin" /> : <UserCog size={12} />}
           Set
@@ -109,7 +109,7 @@ export function UserDetailActions({
       <button
         onClick={() => doAction("ban")}
         disabled={processing}
-        className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-colors ${
+        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-colors ${
           isActive
             ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
             : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"
@@ -123,7 +123,7 @@ export function UserDetailActions({
       <button
         onClick={() => doAction("delete")}
         disabled={processing}
-        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-neutral-50 hover:bg-red-50 text-neutral-600 hover:text-red-700 border border-neutral-200/60 hover:border-red-200 rounded-xl transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-200 hover:border-red-200 rounded-lg transition-colors"
       >
         {processing ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
         Delete
