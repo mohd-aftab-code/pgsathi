@@ -42,7 +42,7 @@ export default function Testimonials() {
               <span className="w-2 h-2 rounded-full bg-primary-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
               Real Stories
             </div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.1]" style={{ textWrap: "balance" }}>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] text-balance" >
               Loved by Tenants <br className="hidden md:block" />
               <span className="text-primary-300">and PG Owners</span>
             </h2>
@@ -76,7 +76,7 @@ export default function Testimonials() {
                   <div className="absolute -bottom-0.5 -right-0.5 bg-emerald-500 w-3.5 h-3.5 rounded-full border-2 border-primary-950"></div>
                 </div>
                 <div>
-                  <h4 className="font-bold text-white text-sm sm:text-base">{t.name}</h4>
+                  <h3 className="font-bold text-white text-sm sm:text-base">{t.name}</h3>
                   <p className="text-xs sm:text-sm text-primary-300 font-medium">{t.role}</p>
                 </div>
               </div>

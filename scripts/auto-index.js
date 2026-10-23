@@ -177,9 +177,26 @@ async function main() {
       take: 100,
     });
 
+    const CITY_CANONICAL = {
+      'gautam-buddha-nagar': 'noida',
+      'south-delhi': 'delhi',
+      'south-west-delhi': 'delhi',
+      'north-24-parganas': 'kolkata',
+      'kanchipuram': 'chennai',
+      'kvrangareddy': 'hyderabad',
+      'allahabad-uttar-pradesh': 'allahabad',
+    };
+
     listings.forEach((l) => {
-      if (l.city?.slug && l.locality?.slug && l.slug) {
-        urlSet.add(`${baseUrl}/pg/${l.city.slug}/${l.locality.slug}/${l.slug}`);
+      if (l.slug) {
+        const rawCity = (l.city?.slug || 'india').toLowerCase();
+        const citySlug = CITY_CANONICAL[rawCity] || rawCity;
+        const locSlug = l.locality?.slug?.toLowerCase();
+        if (locSlug && locSlug !== 'all' && locSlug !== 'null') {
+          urlSet.add(`${baseUrl}/pg/${citySlug}/${locSlug}/${l.slug}`);
+        } else {
+          urlSet.add(`${baseUrl}/pg/${citySlug}/${l.slug}`);
+        }
       }
     });
 

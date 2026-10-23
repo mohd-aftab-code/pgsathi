@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { TRIAL_CUTOFF } from "@/lib/manage-auth";
-import { resolveCity } from "@/lib/geo";
+import { resolveCity, resolveLocality } from "@/lib/geo";
 import slugify from "slugify";
 
 import { unstable_cache, revalidateTag } from "next/cache";
@@ -164,7 +164,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const generatedSlug = slugify(`${data.title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
+    // Resolve locality from areaLocality or landmark if not explicitly passed
+    let finalLocalityId = data.localityId ? parseInt(String(data.localityId)) : null;
+    if (!finalLocalityId && (data.areaLocality || data.landmark)) {
+      const loc = await resolveLocality(resolvedCity.id, data.areaLocality || data.landmark);
+      if (loc) finalLocalityId = loc.id;
+    }
+
+    // Clean SEO slug: try base title first, then with area, then counter
+    const baseSlug = slugify(data.title, { lower: true, strict: true });
+    let generatedSlug = baseSlug;
+    const existingSlug = await db.listing.findUnique({ where: { slug: baseSlug }, select: { id: true } });
+    if (existingSlug) {
+      if (data.areaLocality) {
+        const withArea = slugify(`${data.title}-${data.areaLocality}`, { lower: true, strict: true });
+        const existsArea = await db.listing.findUnique({ where: { slug: withArea }, select: { id: true } });
+        generatedSlug = existsArea ? `${baseSlug}-${Date.now().toString().slice(-4)}` : withArea;
+      } else {
+        generatedSlug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+      }
+    }
 
     // Create listing
     const listing = await db.listing.create({
@@ -199,7 +218,7 @@ export async function POST(req: NextRequest) {
         longitude: data.longitude,
         
         cityId: resolvedCity.id,
-        localityId: data.localityId,
+        localityId: finalLocalityId,
         areaLocality: data.areaLocality,
         
         status: "PENDING", // Admin will publish later

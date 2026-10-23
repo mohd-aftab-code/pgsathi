@@ -10,6 +10,7 @@ import {
 } from "@/lib/google-indexing";
 import { CITY_SLUGS } from "@/constants/cities";
 import { BLOG_POSTS } from "@/lib/data/blogs";
+import { getListingUrl } from "@/lib/url";
 
 async function isAuthorized(req: NextRequest) {
   // Check API key header (for cron / external webhooks)
@@ -123,8 +124,8 @@ export async function POST(req: NextRequest) {
     });
 
     activeListings.forEach((listing) => {
-      if (listing.city?.slug && listing.locality?.slug && listing.slug) {
-        urlSet.add(`${baseUrl}/pg/${listing.city.slug}/${listing.locality.slug}/${listing.slug}`);
+      if (listing.slug) {
+        urlSet.add(`${baseUrl}${getListingUrl(listing)}`);
       }
     });
 

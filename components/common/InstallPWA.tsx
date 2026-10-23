@@ -70,10 +70,7 @@ export function InstallPWA() {
       <button 
         onClick={handleDismiss}
         className="absolute -top-2 -right-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors shadow-sm"
-        aria-label="Close"
-      >
-        ✕
-      </button>
+        aria-label="Close">&times;</button>
     </div>
   );
 }

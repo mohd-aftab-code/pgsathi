@@ -178,7 +178,6 @@ export default async function RootLayout({
       lang="en-IN"
       className={`${inter.variable} ${plusJakarta.variable} ${notoDevanagari.variable}`}
     >
-      <GoogleTagManager gtmId="GTM-PF5NWQMS" />
       <head>
         <meta name="google-site-verification" content="ZaMEO4rMht0Z5dlPt2AeWfLWDCu25rMA8baxz770N28" />
         {/* Applies the saved Partner Portal theme before paint, so there is no
@@ -209,6 +208,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-neutral-50 antialiased">
+        <GoogleTagManager gtmId="GTM-PF5NWQMS" />
         <ToasterProvider />
         <InstallPWA />
         {children}

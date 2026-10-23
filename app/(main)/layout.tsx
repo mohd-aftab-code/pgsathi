@@ -6,9 +6,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   const session = await auth();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div className="flex flex-col min-h-screen">
       <Navbar user={session?.user} />
-      <main style={{ flex: 1 }}>{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

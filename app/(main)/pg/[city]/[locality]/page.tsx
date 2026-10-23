@@ -1,21 +1,55 @@
 import { db } from "@/lib/db";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import PGCard from "@/components/listings/PGCard";
-import { Search, MapPin, Filter, Train, GraduationCap, Building2, IndianRupee, ShieldCheck, Users, Home, Sparkles, ExternalLink, HelpCircle } from "lucide-react";
+import { Search, MapPin, Filter, Train, GraduationCap, Building2, IndianRupee, ShieldCheck, Users, Home, ExternalLink, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { safeJsonLd } from "@/lib/json-ld";
 import { generateLocalityGuideContent, getLocalityProfile } from "@/lib/locality-content";
+import { getListingUrl, getCanonicalCitySlug } from "@/lib/url";
+import { getListingBySlug } from "@/lib/listing";
+import PGDetailView from "@/components/listings/PGDetailView";
+import { auth } from "@/lib/auth";
 
 export async function generateMetadata(props: {
   params: Promise<{ city: string; locality: string }>;
 }) {
   const params = await props.params;
-  const city = await db.city.findUnique({ where: { slug: params.city } });
-  const locality = await db.locality.findFirst({ where: { slug: params.locality, cityId: city?.id } });
 
-  if (!city || !locality) return { title: "PGs Not Found" };
+  if (params.locality === "all") {
+    return { title: "PGs in " + params.city };
+  }
+
+  const city = await db.city.findFirst({
+    where: {
+      OR: [{ slug: params.city }, { slug: getCanonicalCitySlug(params.city) }],
+      isActive: true,
+    },
+  });
+  const locality = city
+    ? await db.locality.findFirst({ where: { slug: params.locality, cityId: city.id } })
+    : null;
+
+  if (!city || !locality) {
+    const pg = await getListingBySlug(params.locality);
+    if (pg) {
+      const cityName = pg.city?.name || "";
+      const title = pg.metaTitle || `${pg.title.slice(0, 40)} - PG in ${cityName} | PGSathi`;
+      const description = pg.metaDesc || `${pg.genderAllowed} PG in ${cityName} from ₹${pg.priceMin}/mo. Zero brokerage verified PG on PGSathi.`;
+      const image = pg.photos?.[0]?.url || "https://www.pgsathi.in/og-image.jpg";
+      const canonicalPath = getListingUrl(pg);
+
+      return constructMetadata({
+        title,
+        description,
+        image,
+        canonicalPath,
+        keywords: [pg.title, `PG in ${cityName}`, `${pg.genderAllowed} PG`, "Zero Brokerage PG", "PG list platform"],
+      });
+    }
+    return { title: "PGs Not Found" };
+  }
 
   const rawTitle = `PGs in ${locality.name}, ${city.name} | Zero Brokerage PGSathi`;
   const rawDesc = `Find verified PGs in ${locality.name}, ${city.name} starting ₹4,500. Direct owner contact, zero brokerage, Wi-Fi & meals included on PGSathi.`;
@@ -39,11 +73,36 @@ export default async function LocalityPage(props: {
 }) {
   const params = await props.params;
 
-  const city = await db.city.findUnique({ where: { slug: params.city } });
-  if (!city) notFound();
+  // If someone visits /pg/{city}/all, redirect permanently to /pg-in-{city}
+  if (params.locality === "all") {
+    redirect(`/pg-in-${getCanonicalCitySlug(params.city)}`);
+  }
 
-  const locality = await db.locality.findFirst({ where: { slug: params.locality, cityId: city.id } });
-  if (!locality) notFound();
+  const city = await db.city.findFirst({
+    where: {
+      OR: [{ slug: params.city }, { slug: getCanonicalCitySlug(params.city) }],
+      isActive: true,
+    },
+  });
+
+  const locality = city
+    ? await db.locality.findFirst({ where: { slug: params.locality, cityId: city.id } })
+    : null;
+
+  if (!city || !locality) {
+    // Check if params.locality is actually a listing slug (2-segment URL /pg/[city]/[slug])
+    const pg = await getListingBySlug(params.locality);
+    if (pg) {
+      const canonicalCity = getCanonicalCitySlug(pg.city?.slug);
+      if (params.city.toLowerCase() !== canonicalCity) {
+        redirect(`/pg/${canonicalCity}/${pg.slug}`);
+      }
+
+      const session = await auth();
+      return <PGDetailView pg={pg} session={session} />;
+    }
+    notFound();
+  }
 
   // Fetch all active listings in this locality
   const listings = await db.listing.findMany({
@@ -170,7 +229,7 @@ export default async function LocalityPage(props: {
             Best PGs in {locality.name}, {city.name}
           </h1>
           <p className="text-primary-100 text-base md:text-lg max-w-3xl leading-relaxed">
-            Find 100% verified zero brokerage PG accommodations in {locality.name}. Direct owner contact via phone and WhatsApp on India's trusted PG list platform.
+            Find 100% verified zero brokerage PG accommodations in {locality.name}. Direct owner contact via phone and WhatsApp on India&apos;s trusted PG list platform.
           </p>
 
           {/* Quick Category Filters */}
@@ -222,7 +281,7 @@ export default async function LocalityPage(props: {
         {listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {listings.map((pg) => (
-              <PGCard key={pg.id} pg={pg as any} />
+              <PGCard key={pg.id} pg={pg} />
             ))}
           </div>
         ) : (

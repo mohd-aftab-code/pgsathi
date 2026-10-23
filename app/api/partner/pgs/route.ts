@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requirePartnerApi, logPartnerActivity } from "@/lib/partner-auth";
 import { can, PERMISSIONS } from "@/lib/permissions";
-import { resolveCity } from "@/lib/geo";
+import { resolveCity, resolveLocality } from "@/lib/geo";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { PGType } from "@prisma/client";
 import slugify from "slugify";
@@ -205,9 +205,27 @@ export async function POST(req: NextRequest) {
     // First partner to touch them wins and it is never reassigned — that is what
     // keeps payouts unambiguous when an owner ends up with two partners' PGs.
     const { attributeOwnerToPartner } = await import("@/lib/partner-earnings");
-    await attributeOwnerToPartner(owner.id, ctx.partnerId);
+    // Resolve locality from areaLocality or landmark
+    const areaLoc = String(body.areaLocality ?? "").trim() || String(body.landmark ?? "").trim() || null;
+    let localityId: number | null = null;
+    if (areaLoc) {
+      const loc = await resolveLocality(city.id, areaLoc);
+      if (loc) localityId = loc.id;
+    }
 
-    const slug = slugify(`${title}-${Date.now().toString().slice(-6)}`, { lower: true, strict: true });
+    // Clean SEO slug: try base first, then base-locality, then counter
+    const baseSlug = slugify(title, { lower: true, strict: true });
+    let slug = baseSlug;
+    const existingSlug = await db.listing.findUnique({ where: { slug: baseSlug }, select: { id: true } });
+    if (existingSlug) {
+      if (areaLoc) {
+        const withArea = slugify(`${title}-${areaLoc}`, { lower: true, strict: true });
+        const existsArea = await db.listing.findUnique({ where: { slug: withArea }, select: { id: true } });
+        slug = existsArea ? `${baseSlug}-${Date.now().toString().slice(-4)}` : withArea;
+      } else {
+        slug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+      }
+    }
 
     const num = (v: any) => (v === null || v === undefined || v === "" ? null : parseInt(String(v)) || null);
     const photos: { url: string; publicId: string }[] = Array.isArray(body.photos) ? body.photos : [];
@@ -242,6 +260,7 @@ export async function POST(req: NextRequest) {
         landmark: String(body.landmark ?? "").trim() || null,
         pincode,
         areaLocality: String(body.areaLocality ?? "").trim() || null,
+        localityId,
         latitude: body.latitude ?? null,
         longitude: body.longitude ?? null,
         cityId: city.id,

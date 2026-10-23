@@ -245,11 +245,23 @@ export async function geocodeAddress(parts: {
  * The typed city/state are only used when every geo lookup fails — without that
  * last resort an outage would once again block owners from registering at all.
  */
+import { CITY_ALIASES } from "@/lib/city-filter";
+
+/**
+ * Find-or-create the City row for a listing.
+ *
+ * The PIN code is trusted first (name comes from India Post, not the user).
+ * The typed city/state are only used when every geo lookup fails — without that
+ * last resort an outage would once again block owners from registering at all.
+ *
+ * District names like "Gautam Buddha Nagar" or "South Delhi" are normalized
+ * to consumer cities like "Noida" or "Delhi" for SEO and URL cleanliness.
+ */
 export async function resolveCity(input: {
   pincode?: string;
   cityName?: string;
   stateName?: string;
-}): Promise<{ id: number; name: string; state: string } | null> {
+}): Promise<{ id: number; name: string; state: string; slug: string } | null> {
   let district = "";
   let state = "";
 
@@ -266,9 +278,21 @@ export async function resolveCity(input: {
   }
   if (!district) return null;
 
+  // 1. Check if the district maps to a canonical consumer city alias
+  // e.g. "Gautam Buddha Nagar" -> "Noida", "South Delhi" -> "Delhi"
+  const normalizedDistrictSlug = slugify(district, { lower: true, strict: true });
+  const alias = CITY_ALIASES[normalizedDistrictSlug];
+  if (alias) {
+    const canonicalCity = await db.city.findFirst({
+      where: { slug: alias.canonicalSlug, isActive: true },
+      select: { id: true, name: true, state: true, slug: true },
+    });
+    if (canonicalCity) return canonicalCity;
+  }
+
   const existing = await db.city.findFirst({
     where: { name: { equals: district, mode: "insensitive" } },
-    select: { id: true, name: true, state: true },
+    select: { id: true, name: true, state: true, slug: true },
   });
   if (existing) return existing;
 
@@ -286,6 +310,55 @@ export async function resolveCity(input: {
       isActive: true,
       priority: 99, // auto-added cities sort after the curated ones
     },
-    select: { id: true, name: true, state: true },
+    select: { id: true, name: true, state: true, slug: true },
   });
 }
+
+/**
+ * Resolves or creates a Locality for a given city and area text.
+ * Prevents listings from being left with localityId: null when area is known.
+ */
+export async function resolveLocality(
+  cityId: number,
+  areaName?: string | null
+): Promise<{ id: number; name: string; slug: string } | null> {
+  if (!areaName) return null;
+  const clean = areaName.trim();
+  if (!clean || clean.toLowerCase() === "null" || clean.length < 2) return null;
+
+  const locSlug = slugify(clean, { lower: true, strict: true });
+  
+  // 1. Check existing locality in this city by slug
+  const existingBySlug = await db.locality.findFirst({
+    where: { cityId, slug: locSlug },
+    select: { id: true, name: true, slug: true },
+  });
+  if (existingBySlug) return existingBySlug;
+
+  // 2. Check existing by name (case-insensitive)
+  const existingByName = await db.locality.findFirst({
+    where: { cityId, name: { equals: clean, mode: "insensitive" } },
+    select: { id: true, name: true, slug: true },
+  });
+  if (existingByName) return existingByName;
+
+  // 3. Create new locality
+  try {
+    return await db.locality.create({
+      data: {
+        cityId,
+        name: clean,
+        slug: locSlug,
+        isActive: true,
+      },
+      select: { id: true, name: true, slug: true },
+    });
+  } catch {
+    // If concurrent create or collision, query again
+    return await db.locality.findFirst({
+      where: { cityId, slug: locSlug },
+      select: { id: true, name: true, slug: true },
+    });
+  }
+}
+

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MapPin, CheckCircle, ArrowRight } from "lucide-react";
 import { getThumbnailUrl } from "@/lib/cloudinary";
 import SaveButton from "./SaveButton";
+import { getListingUrl } from "@/lib/url";
 
 export interface PGCardData {
   id: number;
@@ -30,7 +31,7 @@ export default function PGCard({ pg }: PGCardProps) {
   const genderLabel = pg.genderAllowed === "BOYS" ? "Boys" : pg.genderAllowed === "GIRLS" ? "Girls" : "Co-ed";
 
   return (
-    <Link href={`/pg/${pg.city?.slug || 'unknown'}/${pg.locality?.slug || 'all'}/${pg.slug}`} className="group flex flex-col bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <Link href={getListingUrl(pg)} className="group flex flex-col bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-56 md:h-48 w-full overflow-hidden bg-neutral-100 shrink-0">
         <Image 
           src={imageUrl} 

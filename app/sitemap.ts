@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { BLOG_POSTS } from '@/lib/data/blogs';
+import { getListingUrl } from '@/lib/url';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // cache for 24 hours
@@ -24,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const listingUrls: MetadataRoute.Sitemap = activeListings.map((listing) => ({
-    url: `${baseUrl}/pg/${listing.city?.slug}/${listing.locality?.slug || 'all'}/${listing.slug}`,
+    url: `${baseUrl}${getListingUrl(listing)}`,
     lastModified: listing.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.8,

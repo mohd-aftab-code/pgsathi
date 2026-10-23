@@ -16,7 +16,7 @@ export default function Navbar({ user }: { user?: any }) {
         <div className="flex items-center justify-between h-16 md:h-20">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center no-underline shrink-0">
+          <Link href="/" className="flex items-center no-underline shrink-0" aria-label="PGSathi Home">
             <Image 
               src={logoImg} 
               alt="PGSathi Logo" 

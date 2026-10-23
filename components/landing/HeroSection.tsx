@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import { getNormalizedCityList } from "@/lib/city-filter";
 import { getPlatformStats, formatStatNumber } from "@/lib/platform-stats";
+import { getListingUrl } from "@/lib/url";
 
 const getHeroData = unstable_cache(
   async () => {
@@ -76,8 +77,8 @@ export default async function HeroSection() {
             </div>
 
             <h1
-              className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5"
-              style={{ textWrap: "balance" }}
+              className="text-[2.1rem] sm:text-4xl md:text-5xl lg:text-[3.2rem] font-extrabold text-neutral-900 leading-[1.15] mb-5 sm:mb-5 text-balance"
+              
             >
               India&apos;s #1 PG List Platform &amp; <br className="hidden lg:block" />
               <span className="text-primary-700">Free PG Management Software.</span>
@@ -202,7 +203,7 @@ function ShowcaseCard({ listing, fallbackPhoto, className }: { listing: HeroData
   const photo = listing.photos?.[0]?.url || fallbackPhoto;
   return (
     <Link
-      href={`/pg/${listing.city?.slug}/${listing.locality?.slug || "all"}/${listing.slug}`}
+      href={getListingUrl(listing)}
       className={`block bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden hover:-translate-y-1 hover:rotate-0 transition-all duration-300 ${className}`}
     >
       <div className="relative h-36 bg-neutral-100">
