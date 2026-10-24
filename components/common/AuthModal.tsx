@@ -9,6 +9,7 @@ interface AuthModalProps {
 }
 
 
+
 export default function AuthModal({ isOpen, onClose, callbackUrl }: AuthModalProps) {
   useEffect(() => {
     if (isOpen) {
